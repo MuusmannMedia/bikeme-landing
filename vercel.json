@@ -1,0 +1,15 @@
+{
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "bikeme.online"
+        }
+      ],
+      "destination": "https://bikeme.one/:path*",
+      "permanent": true
+    }
+  ]
+}
