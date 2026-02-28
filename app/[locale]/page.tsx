@@ -13,7 +13,6 @@ import {
 import {
   CANONICAL_DOMAIN,
   CONTACT_EMAIL,
-  PRIVACY_URL,
   TERMS_URL,
   TESTFLIGHT_URL
 } from "@/lib/site-config";
@@ -377,9 +376,9 @@ export default function LocalePage({ params }: LocalePageProps) {
         <div className="section-shell flex flex-col gap-4 text-sm text-slate-600 md:flex-row md:items-center md:justify-between">
           <p>© {new Date().getFullYear()} {t.footer.tagline}</p>
           <div className="flex flex-wrap items-center gap-4">
-            <a href={PRIVACY_URL} className="transition hover:text-slate-900">
+            <Link href={`/${locale}/privacy`} className="transition hover:text-slate-900">
               {t.footer.privacy}
-            </a>
+            </Link>
             <a href={TERMS_URL} className="transition hover:text-slate-900">
               {t.footer.terms}
             </a>
