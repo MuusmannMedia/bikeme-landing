@@ -83,21 +83,21 @@ const dictionaries: Record<Locale, Dictionary> = {
       joinTestFlight: "Join TestFlight"
     },
     hero: {
-      headline: "Find rides. Join fast. Ride together.",
+      headline: "Find someone to ride with\nRight here right now\nWith Bike ME",
       subheadline:
-        "Bike Me helps cyclists discover nearby rides, create 'Ride Now' meetups, and plan future rides - all from the map.",
+        "Bike ME makes it easy to find riders right now. Create a RIDE NOW ride in seconds, or plan a ride for later.",
       primaryCta: "Join TestFlight",
       secondaryCta: "See how it works",
       previewLabel: "App preview"
     },
     brand: {
-      intro: "A new cycling app has seen the light of day...",
+      intro: "Bike ME is built around spontaneous RIDE NOW rides",
       bullets: [
-        "Find rides on the map near you",
-        "Create RIDE NOW rides that start soon",
-        "Plan rides for the days ahead",
-        "Add a Strava route link to the ride",
-        "Get push notifications on important changes"
+        "Create a RIDE NOW ride in seconds",
+        "Find nearby riders on the map",
+        "Agree on meeting point and time",
+        "Add a Strava route (optional)",
+        "Get push alerts for important changes"
       ]
     },
     features: {
@@ -205,20 +205,20 @@ const dictionaries: Record<Locale, Dictionary> = {
       joinTestFlight: "Join TestFlight"
     },
     hero: {
-      headline: "Find ture. Kom hurtigt med. Kør sammen.",
+      headline: "Find nogen at køre med\nHer og nu\nMed Bike ME",
       subheadline:
-        "Bike Me hjælper cyklister med at finde ture i nærheden, oprette 'Ride Now'-møder og planlægge fremtidige ture - direkte fra kortet.",
+        "Bike ME gør det nemt at finde andre at køre med – her og nu. Opret en KØR NU-tur på få sekunder, eller planlæg en tur til senere.",
       primaryCta: "Join TestFlight",
       secondaryCta: "Se hvordan det virker",
       previewLabel: "App-preview"
     },
     brand: {
-      intro: "En ny cykel app har set dagens lys…",
+      intro: "Bike ME er skabt til spontane KØR NU-ture",
       bullets: [
-        "Find ture på kortet i nærheden af dig",
-        "Opret KØR NU ture der starter snart",
-        "Planlæg ture frem i tiden",
-        "Tilføj Strava rute-link til turen",
+        "Opret en KØR NU-tur på få sekunder",
+        "Find deltagere tæt på dig på kortet",
+        "Aftal mødested og tidspunkt",
+        "Tilføj Strava-rute (valgfrit)",
         "Få push-besked ved vigtige ændringer"
       ]
     },
@@ -327,20 +327,20 @@ const dictionaries: Record<Locale, Dictionary> = {
       joinTestFlight: "Join TestFlight"
     },
     hero: {
-      headline: "Fahrten finden. Schnell beitreten. Gemeinsam fahren.",
+      headline: "Finde Leute zum Fahren\nHier und jetzt\nMit Bike ME",
       subheadline:
-        "Bike Me hilft Radfahrern, Fahrten in der Nähe zu entdecken, 'Ride Now'-Treffen zu erstellen und zukünftige Fahrten direkt auf der Karte zu planen.",
+        "Mit Bike ME findest du ganz einfach andere zum Fahren – hier und jetzt. Erstelle in Sekunden eine RIDE NOW-Fahrt oder plane eine Fahrt für später.",
       primaryCta: "Join TestFlight",
       secondaryCta: "So funktioniert's",
       previewLabel: "App-Vorschau"
     },
     brand: {
-      intro: "Eine neue Fahrrad-App hat das Licht der Welt erblickt...",
+      intro: "Bike ME ist auf spontane RIDE NOW-Fahrten ausgelegt",
       bullets: [
-        "Finde Touren in deiner Nähe auf der Karte",
-        "Erstelle Ride-Now-Touren, die bald starten",
-        "Plane Touren für später",
-        "Füge der Tour einen Strava-Routenlink hinzu",
+        "Erstelle in Sekunden eine RIDE NOW-Fahrt",
+        "Finde Teilnehmende in deiner Nähe auf der Karte",
+        "Lege Treffpunkt und Zeitpunkt fest",
+        "Füge eine Strava-Route hinzu (optional)",
         "Erhalte Push-Benachrichtigungen bei wichtigen Änderungen"
       ]
     },
@@ -449,21 +449,21 @@ const dictionaries: Record<Locale, Dictionary> = {
       joinTestFlight: "Join TestFlight"
     },
     hero: {
-      headline: "Encuentra salidas. Únete rápido. Rodad juntos.",
+      headline: "Encuentra a alguien para rodar\nAquí y ahora\nCon Bike ME",
       subheadline:
-        "Bike Me ayuda a ciclistas a descubrir salidas cercanas, crear encuentros 'Ride Now' y planificar salidas futuras, todo desde el mapa.",
+        "Bike ME te lo pone fácil para encontrar con quién rodar aquí y ahora. Crea una salida RIDE NOW en segundos o planifica una salida para más tarde.",
       primaryCta: "Join TestFlight",
       secondaryCta: "Ver cómo funciona",
       previewLabel: "Vista de la app"
     },
     brand: {
-      intro: "Una nueva app ciclista ha visto la luz...",
+      intro: "Bike ME está pensado para salidas espontáneas RIDE NOW",
       bullets: [
-        "Encuentra salidas en el mapa cerca de ti",
-        "Crea salidas RIDE NOW que empiezan pronto",
-        "Planifica salidas para más adelante",
-        "Añade un enlace de ruta de Strava a la salida",
-        "Recibe notificaciones push con cambios importantes"
+        "Crea una salida RIDE NOW en segundos",
+        "Encuentra participantes cerca de ti en el mapa",
+        "Acordad punto de encuentro y hora",
+        "Añade una ruta de Strava (opcional)",
+        "Recibe notificaciones push sobre cambios importantes"
       ]
     },
     features: {
@@ -571,20 +571,20 @@ const dictionaries: Record<Locale, Dictionary> = {
       joinTestFlight: "Join TestFlight"
     },
     hero: {
-      headline: "Trova uscite. Unisciti subito. Pedala insieme.",
+      headline: "Trova qualcuno con cui pedalare\nQui e ora\nCon Bike ME",
       subheadline:
-        "Bike Me aiuta i ciclisti a trovare uscite vicine, creare incontri 'Ride Now' e pianificare uscite future direttamente dalla mappa.",
+        "Bike ME rende facile trovare altri ciclisti con cui uscire, qui e ora. Crea in pochi secondi un'uscita RIDE NOW oppure pianifica un'uscita per dopo.",
       primaryCta: "Join TestFlight",
       secondaryCta: "Scopri come funziona",
       previewLabel: "Anteprima app"
     },
     brand: {
-      intro: "Una nuova app per ciclisti ha visto la luce...",
+      intro: "Bike ME nasce per le uscite spontanee RIDE NOW",
       bullets: [
-        "Trova uscite sulla mappa vicino a te",
-        "Crea uscite RIDE NOW che partono a breve",
-        "Pianifica uscite per i prossimi giorni",
-        "Aggiungi alla uscita un link percorso Strava",
+        "Crea un'uscita RIDE NOW in pochi secondi",
+        "Trova partecipanti vicino a te sulla mappa",
+        "Concorda punto di ritrovo e orario",
+        "Aggiungi un percorso Strava (opzionale)",
         "Ricevi notifiche push per i cambiamenti importanti"
       ]
     },
@@ -693,21 +693,21 @@ const dictionaries: Record<Locale, Dictionary> = {
       joinTestFlight: "Join TestFlight"
     },
     hero: {
-      headline: "Trouvez des sorties. Rejoignez vite. Roulez ensemble.",
+      headline: "Trouvez quelqu'un avec qui rouler\nIci et maintenant\nAvec Bike ME",
       subheadline:
-        "Bike Me aide les cyclistes à trouver des sorties proches, créer des rencontres 'Ride Now' et planifier des sorties futures, directement depuis la carte.",
+        "Bike ME facilite la recherche de cyclistes avec qui rouler, ici et maintenant. Créez une sortie RIDE NOW en quelques secondes ou planifiez une sortie plus tard.",
       primaryCta: "Join TestFlight",
       secondaryCta: "Voir le fonctionnement",
       previewLabel: "Aperçu de l'app"
     },
     brand: {
-      intro: "Une nouvelle app vélo a vu le jour...",
+      intro: "Bike ME est conçu pour les sorties spontanées RIDE NOW",
       bullets: [
-        "Trouvez des sorties près de vous sur la carte",
-        "Créez des sorties RIDE NOW qui démarrent bientôt",
-        "Planifiez des sorties à l'avance",
-        "Ajoutez un lien d'itinéraire Strava à la sortie",
-        "Recevez des notifications push lors des changements importants"
+        "Créez une sortie RIDE NOW en quelques secondes",
+        "Trouvez des participants proches de vous sur la carte",
+        "Fixez le lieu et l'heure de rendez-vous",
+        "Ajoutez un itinéraire Strava (optionnel)",
+        "Recevez des notifications push en cas de changement important"
       ]
     },
     features: {
@@ -815,20 +815,20 @@ const dictionaries: Record<Locale, Dictionary> = {
       joinTestFlight: "Join TestFlight"
     },
     hero: {
-      headline: "Vind ritten. Sluit snel aan. Rijd samen.",
+      headline: "Vind iemand om mee te rijden\nHier en nu\nMet Bike ME",
       subheadline:
-        "Bike Me helpt fietsers ritten in de buurt te vinden, 'Ride Now'-meetups te maken en toekomstige ritten te plannen, allemaal vanaf de kaart.",
+        "Bike ME maakt het makkelijk om hier en nu iemand te vinden om mee te rijden. Maak in een paar seconden een RIDE NOW-rit of plan een rit voor later.",
       primaryCta: "Join TestFlight",
       secondaryCta: "Bekijk hoe het werkt",
       previewLabel: "App-preview"
     },
     brand: {
-      intro: "Een nieuwe fietsapp heeft het levenslicht gezien...",
+      intro: "Bike ME is gebouwd voor spontane RIDE NOW-ritten",
       bullets: [
-        "Vind ritten op de kaart bij jou in de buurt",
-        "Maak RIDE NOW-ritten die snel starten",
-        "Plan ritten voor later",
-        "Voeg een Strava-routelink toe aan de rit",
+        "Maak in een paar seconden een RIDE NOW-rit",
+        "Vind deelnemers bij jou in de buurt op de kaart",
+        "Spreek af waar en wanneer jullie vertrekken",
+        "Voeg een Strava-route toe (optioneel)",
         "Ontvang pushmeldingen bij belangrijke wijzigingen"
       ]
     },
