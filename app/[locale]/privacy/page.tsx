@@ -121,7 +121,7 @@ export default function PrivacyPage({ params }: LocalePageProps) {
 
           <Link
             href={`/${locale}`}
-            className="rounded-full border border-slate-300 px-5 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-400 hover:bg-white"
+            className="rounded-full border border-[var(--brand-blue)] px-5 py-2 text-sm font-medium text-[var(--brand-blue)] transition hover:border-[var(--brand-purple)] hover:bg-white hover:text-[var(--brand-purple)]"
           >
             {ui.backToHome}
           </Link>

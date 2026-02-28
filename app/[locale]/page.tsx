@@ -102,16 +102,20 @@ export default function LocalePage({ params }: LocalePageProps) {
             />
           </Link>
 
-          <nav className="hidden items-center gap-8 text-sm text-slate-700 lg:flex">
+          <nav className="hidden items-center gap-8 text-sm text-[var(--brand-blue)] lg:flex">
             {navLinks.map((link) => (
-              <a key={link.id} href={`#${link.id}`} className="transition hover:text-slate-900">
+              <a
+                key={link.id}
+                href={`#${link.id}`}
+                className="transition hover:text-[var(--brand-purple)]"
+              >
                 {link.label}
               </a>
             ))}
           </nav>
 
           <div className="flex items-center gap-3 md:gap-4">
-            <div className="flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-1 text-xs text-slate-600">
+            <div className="flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-1 text-xs text-[var(--brand-blue)]">
               {locales.map((code) => (
                 <Link
                   key={code}
@@ -119,7 +123,7 @@ export default function LocalePage({ params }: LocalePageProps) {
                   className={`rounded-full px-2 py-1 transition ${
                     code === locale
                       ? "bg-slate-900 text-white"
-                      : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+                      : "text-[var(--brand-blue)] hover:bg-slate-100 hover:text-[var(--brand-purple)]"
                   }`}
                   aria-current={code === locale ? "page" : undefined}
                 >
@@ -138,9 +142,13 @@ export default function LocalePage({ params }: LocalePageProps) {
             </a>
           </div>
         </div>
-        <div className="section-shell flex gap-4 overflow-x-auto pb-3 text-sm text-slate-700 lg:hidden">
+        <div className="section-shell flex gap-4 overflow-x-auto pb-3 text-sm text-[var(--brand-blue)] lg:hidden">
           {navLinks.map((link) => (
-            <a key={link.id} href={`#${link.id}`} className="whitespace-nowrap rounded-full px-1 py-1">
+            <a
+              key={link.id}
+              href={`#${link.id}`}
+              className="whitespace-nowrap rounded-full px-1 py-1 transition hover:text-[var(--brand-purple)]"
+            >
               {link.label}
             </a>
           ))}

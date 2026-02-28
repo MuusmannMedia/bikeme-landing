@@ -6,6 +6,8 @@
   --surface: #f7f9ff;
   --ink: #0f172a;
   --muted: #4b5563;
+  --brand-blue: #25306d;
+  --brand-purple: #802782;
 }
 
 * {
@@ -33,6 +35,7 @@ h3,
 h4 {
   font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
   letter-spacing: -0.02em;
+  color: var(--brand-blue) !important;
 }
 
 a {
