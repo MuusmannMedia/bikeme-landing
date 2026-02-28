@@ -12,15 +12,15 @@ export default function OpengraphImage() {
     (
       <div
         style={{
-          alignItems: "center",
-          background:
-            "radial-gradient(circle at 20% 20%, rgba(79,70,229,0.55), rgba(248,250,255,1) 48%), radial-gradient(circle at 85% 15%, rgba(14,165,233,0.32), rgba(248,250,255,0.9) 45%), #f8faff",
-          color: "#0f172a",
-          display: "flex",
-          flexDirection: "column",
+          width: "100%",
           height: "100%",
+          display: "flex",
+          alignItems: "center",
           justifyContent: "center",
-          width: "100%"
+          flexDirection: "column",
+          backgroundColor: "#f8faff",
+          color: "#0f172a",
+          padding: 60
         }}
       >
         <div
@@ -45,7 +45,7 @@ export default function OpengraphImage() {
             letterSpacing: "-0.04em",
             lineHeight: 1.05,
             textAlign: "center",
-            width: 960
+            maxWidth: 960
           }}
         >
           Find rides. Join fast. Ride together.
