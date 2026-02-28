@@ -87,13 +87,6 @@ export default function LocalePage({ params }: LocalePageProps) {
     { id: "faq", label: t.nav.faq }
   ];
 
-  const parsedHeadlineLines =
-    t.hero.headline
-      .split(/\n|(?<=[.!?])\s+/)
-      .map((line) => line.trim().replace(/[.!?]+$/, ""))
-      .filter(Boolean) ?? [t.hero.headline];
-  const headlineLines = [...parsedHeadlineLines, "", ""].slice(0, 3);
-
   return (
     <div className="pb-10">
       <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
@@ -161,12 +154,8 @@ export default function LocalePage({ params }: LocalePageProps) {
               Bike Me
             </div>
 
-            <h1 className="animate-fade-up font-display text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">
-              {headlineLines.map((line, index) => (
-                <span key={index} className="block">
-                  {line}
-                </span>
-              ))}
+            <h1 className="animate-fade-up max-w-[14ch] font-display text-4xl font-semibold leading-tight text-slate-950 [text-wrap:balance] md:max-w-[18ch] md:text-6xl lg:max-w-[22ch]">
+              {t.hero.headline}
             </h1>
 
             <p className="animate-fade-up text-lg leading-relaxed text-slate-600 [animation-delay:120ms] md:text-xl">

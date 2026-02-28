@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { Manrope, Space_Grotesk } from "next/font/google";
+import { Inter } from "next/font/google";
 
 import { CANONICAL_DOMAIN } from "@/lib/site-config";
 import "./globals.css";
 
-const manrope = Manrope({
+const interBody = Inter({
   subsets: ["latin"],
   variable: "--font-body"
 });
 
-const spaceGrotesk = Space_Grotesk({
+const interHeading = Inter({
   subsets: ["latin"],
   variable: "--font-heading"
 });
@@ -48,7 +48,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${manrope.variable} ${spaceGrotesk.variable} font-sans antialiased`}>
+      <body className={`${interBody.variable} ${interHeading.variable} font-sans antialiased`}>
         {children}
       </body>
     </html>
