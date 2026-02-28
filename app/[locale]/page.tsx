@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -91,8 +92,19 @@ export default function LocalePage({ params }: LocalePageProps) {
     <div className="pb-10">
       <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
         <div className="section-shell flex h-20 items-center justify-between gap-4">
-          <Link href={`/${locale}`} className="font-display text-xl font-semibold tracking-tight">
-            Bike Me
+          <Link
+            href={`/${locale}`}
+            className="flex items-center gap-2 font-display text-xl font-semibold tracking-tight"
+          >
+            <Image
+              src="/brand/bike-me-logo.png"
+              alt="Bike Me logo"
+              width={28}
+              height={28}
+              className="h-7 w-7"
+              priority
+            />
+            <span>Bike Me</span>
           </Link>
 
           <nav className="hidden items-center gap-8 text-sm text-slate-700 lg:flex">
@@ -212,6 +224,21 @@ export default function LocalePage({ params }: LocalePageProps) {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="section-shell pb-20 md:pb-24">
+          <div className="glass-panel rounded-3xl border border-slate-200/80 px-8 py-12 shadow-[0_24px_60px_-42px_rgba(15,23,42,0.6)]">
+            <div className="mx-auto w-full max-w-[220px] md:max-w-[280px]">
+              <Image
+                src="/brand/bike-me-logo.png"
+                alt="Bike Me logo"
+                width={1024}
+                height={1024}
+                className="h-auto w-full"
+                sizes="(max-width: 768px) 220px, 280px"
+              />
             </div>
           </div>
         </section>
