@@ -90,8 +90,8 @@ export default function LocalePage({ params }: LocalePageProps) {
 
   const parsedHeadlineLines =
     t.hero.headline
-      .match(/[^.!?]+[.!?]?/g)
-      ?.map((line) => line.trim())
+      .split(/\n|(?<=[.!?])\s+/)
+      .map((line) => line.trim().replace(/[.!?]+$/, ""))
       .filter(Boolean) ?? [t.hero.headline];
   const headlineLines = [...parsedHeadlineLines, "", ""].slice(0, 3);
 
@@ -174,22 +174,6 @@ export default function LocalePage({ params }: LocalePageProps) {
               {t.hero.subheadline}
             </p>
 
-            <div className="animate-fade-up flex flex-wrap items-center gap-3 [animation-delay:220ms]">
-              <a
-                href={TESTFLIGHT_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-full bg-slate-900 px-7 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
-              >
-                {t.hero.primaryCta}
-              </a>
-              <a
-                href="#how-it-works"
-                className="rounded-full border border-slate-300 px-7 py-3 text-sm font-medium text-slate-700 transition hover:border-slate-400 hover:bg-white"
-              >
-                {t.hero.secondaryCta}
-              </a>
-            </div>
           </div>
 
           <div className="relative lg:pl-8">
@@ -261,6 +245,22 @@ export default function LocalePage({ params }: LocalePageProps) {
                     </li>
                   ))}
                 </ul>
+                <div className="flex flex-wrap items-center gap-3 pt-2">
+                  <a
+                    href={TESTFLIGHT_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="rounded-full bg-slate-900 px-7 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
+                  >
+                    {t.hero.primaryCta}
+                  </a>
+                  <a
+                    href="#how-it-works"
+                    className="rounded-full border-2 border-slate-500 bg-white/70 px-7 py-3 text-sm font-medium text-slate-800 transition hover:border-slate-700 hover:bg-slate-100"
+                  >
+                    {t.hero.secondaryCta}
+                  </a>
+                </div>
               </div>
             </div>
           </div>
