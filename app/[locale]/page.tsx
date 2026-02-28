@@ -88,23 +88,26 @@ export default function LocalePage({ params }: LocalePageProps) {
     { id: "faq", label: t.nav.faq }
   ];
 
+  const parsedHeadlineLines =
+    t.hero.headline
+      .match(/[^.!?]+[.!?]?/g)
+      ?.map((line) => line.trim())
+      .filter(Boolean) ?? [t.hero.headline];
+  const headlineLines = [...parsedHeadlineLines, "", ""].slice(0, 3);
+
   return (
     <div className="pb-10">
       <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
         <div className="section-shell flex h-20 items-center justify-between gap-4">
-          <Link
-            href={`/${locale}`}
-            className="flex items-center gap-2 font-display text-xl font-semibold tracking-tight"
-          >
+          <Link href={`/${locale}`} aria-label="Bike Me" className="flex items-center">
             <Image
               src="/brand/bike-me-logo.png"
               alt="Bike Me logo"
-              width={28}
-              height={28}
-              className="h-7 w-7"
+              width={1024}
+              height={1024}
+              className="h-11 w-auto md:h-14"
               priority
             />
-            <span>Bike Me</span>
           </Link>
 
           <nav className="hidden items-center gap-8 text-sm text-slate-700 lg:flex">
@@ -160,7 +163,11 @@ export default function LocalePage({ params }: LocalePageProps) {
             </div>
 
             <h1 className="animate-fade-up font-display text-4xl font-semibold leading-tight text-slate-950 md:text-6xl">
-              {t.hero.headline}
+              {headlineLines.map((line, index) => (
+                <span key={index} className="block">
+                  {line}
+                </span>
+              ))}
             </h1>
 
             <p className="animate-fade-up text-lg leading-relaxed text-slate-600 [animation-delay:120ms] md:text-xl">
@@ -230,15 +237,31 @@ export default function LocalePage({ params }: LocalePageProps) {
 
         <section className="section-shell pb-20 md:pb-24">
           <div className="glass-panel rounded-3xl border border-slate-200/80 px-8 py-12 shadow-[0_24px_60px_-42px_rgba(15,23,42,0.6)]">
-            <div className="mx-auto w-full max-w-[220px] md:max-w-[280px]">
-              <Image
-                src="/brand/bike-me-logo.png"
-                alt="Bike Me logo"
-                width={1024}
-                height={1024}
-                className="h-auto w-full"
-                sizes="(max-width: 768px) 220px, 280px"
-              />
+            <div className="grid items-center gap-10 md:grid-cols-[0.95fr_1.05fr]">
+              <div className="flex justify-center">
+                <Image
+                  src="/brand/bike-me-logo.png"
+                  alt="Bike Me logo"
+                  width={1024}
+                  height={1024}
+                  className="h-auto w-full max-w-[220px] md:max-w-[280px]"
+                  sizes="(max-width: 768px) 220px, 280px"
+                />
+              </div>
+
+              <div className="space-y-5">
+                <p className="font-display text-2xl font-semibold leading-snug text-slate-900 md:text-3xl">
+                  {t.brand.intro}
+                </p>
+                <ul className="space-y-2.5 text-slate-600">
+                  {t.brand.bullets.map((bullet) => (
+                    <li key={bullet} className="flex items-start gap-3">
+                      <span className="mt-2 h-1.5 w-1.5 rounded-full bg-indigo-600" />
+                      <span>{bullet}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         </section>

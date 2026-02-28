@@ -34,6 +34,10 @@ export type Dictionary = {
     secondaryCta: string;
     previewLabel: string;
   };
+  brand: {
+    intro: string;
+    bullets: string[];
+  };
   features: {
     eyebrow: string;
     title: string;
@@ -85,6 +89,16 @@ const dictionaries: Record<Locale, Dictionary> = {
       primaryCta: "Join TestFlight",
       secondaryCta: "See how it works",
       previewLabel: "App preview"
+    },
+    brand: {
+      intro: "A new cycling app has seen the light of day...",
+      bullets: [
+        "Find rides on the map near you",
+        "Create RIDE NOW rides that start soon",
+        "Plan rides for the days ahead",
+        "Add a Strava route link to the ride",
+        "Get push notifications on important changes"
+      ]
     },
     features: {
       eyebrow: "Features",
@@ -198,6 +212,16 @@ const dictionaries: Record<Locale, Dictionary> = {
       secondaryCta: "Se hvordan det virker",
       previewLabel: "App-preview"
     },
+    brand: {
+      intro: "En ny cykel app har set dagens lys…",
+      bullets: [
+        "Find ture på kortet i nærheden af dig",
+        "Opret KØR NU ture der starter snart",
+        "Planlæg ture frem i tiden",
+        "Tilføj Strava rute-link til turen",
+        "Få push-besked ved vigtige ændringer"
+      ]
+    },
     features: {
       eyebrow: "Funktioner",
       title: "Planlæg fællesture uden kaos",
@@ -309,6 +333,16 @@ const dictionaries: Record<Locale, Dictionary> = {
       primaryCta: "Join TestFlight",
       secondaryCta: "So funktioniert's",
       previewLabel: "App-Vorschau"
+    },
+    brand: {
+      intro: "Eine neue Fahrrad-App hat das Licht der Welt erblickt...",
+      bullets: [
+        "Finde Touren in deiner Nähe auf der Karte",
+        "Erstelle Ride-Now-Touren, die bald starten",
+        "Plane Touren für später",
+        "Füge der Tour einen Strava-Routenlink hinzu",
+        "Erhalte Push-Benachrichtigungen bei wichtigen Änderungen"
+      ]
     },
     features: {
       eyebrow: "Funktionen",
@@ -422,6 +456,16 @@ const dictionaries: Record<Locale, Dictionary> = {
       secondaryCta: "Ver cómo funciona",
       previewLabel: "Vista de la app"
     },
+    brand: {
+      intro: "Una nueva app ciclista ha visto la luz...",
+      bullets: [
+        "Encuentra salidas en el mapa cerca de ti",
+        "Crea salidas RIDE NOW que empiezan pronto",
+        "Planifica salidas para más adelante",
+        "Añade un enlace de ruta de Strava a la salida",
+        "Recibe notificaciones push con cambios importantes"
+      ]
+    },
     features: {
       eyebrow: "Funciones",
       title: "Salidas en grupo sin complicaciones",
@@ -533,6 +577,16 @@ const dictionaries: Record<Locale, Dictionary> = {
       primaryCta: "Join TestFlight",
       secondaryCta: "Scopri come funziona",
       previewLabel: "Anteprima app"
+    },
+    brand: {
+      intro: "Una nuova app per ciclisti ha visto la luce...",
+      bullets: [
+        "Trova uscite sulla mappa vicino a te",
+        "Crea uscite RIDE NOW che partono a breve",
+        "Pianifica uscite per i prossimi giorni",
+        "Aggiungi alla uscita un link percorso Strava",
+        "Ricevi notifiche push per i cambiamenti importanti"
+      ]
     },
     features: {
       eyebrow: "Funzionalità",
@@ -646,6 +700,16 @@ const dictionaries: Record<Locale, Dictionary> = {
       secondaryCta: "Voir le fonctionnement",
       previewLabel: "Aperçu de l'app"
     },
+    brand: {
+      intro: "Une nouvelle app vélo a vu le jour...",
+      bullets: [
+        "Trouvez des sorties près de vous sur la carte",
+        "Créez des sorties RIDE NOW qui démarrent bientôt",
+        "Planifiez des sorties à l'avance",
+        "Ajoutez un lien d'itinéraire Strava à la sortie",
+        "Recevez des notifications push lors des changements importants"
+      ]
+    },
     features: {
       eyebrow: "Fonctionnalités",
       title: "Les sorties de groupe, sans friction",
@@ -757,6 +821,16 @@ const dictionaries: Record<Locale, Dictionary> = {
       primaryCta: "Join TestFlight",
       secondaryCta: "Bekijk hoe het werkt",
       previewLabel: "App-preview"
+    },
+    brand: {
+      intro: "Een nieuwe fietsapp heeft het levenslicht gezien...",
+      bullets: [
+        "Vind ritten op de kaart bij jou in de buurt",
+        "Maak RIDE NOW-ritten die snel starten",
+        "Plan ritten voor later",
+        "Voeg een Strava-routelink toe aan de rit",
+        "Ontvang pushmeldingen bij belangrijke wijzigingen"
+      ]
     },
     features: {
       eyebrow: "Functies",
