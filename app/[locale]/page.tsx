@@ -236,21 +236,21 @@ export default function LocalePage({ params }: LocalePageProps) {
         </section>
 
         <section className="section-shell pb-20 md:pb-24">
-          <div className="glass-panel rounded-3xl border border-slate-200/80 px-8 py-12 shadow-[0_24px_60px_-42px_rgba(15,23,42,0.6)]">
-            <div className="grid items-center gap-10 md:grid-cols-[0.95fr_1.05fr]">
-              <div className="flex justify-center">
+          <div className="glass-panel rounded-3xl border border-slate-200/80 px-5 py-10 shadow-[0_24px_60px_-42px_rgba(15,23,42,0.6)] md:px-6 md:py-11 lg:px-7 lg:py-12">
+            <div className="grid items-start gap-6 lg:grid-cols-[420px_minmax(0,1fr)] lg:gap-4">
+              <div className="flex justify-center lg:-ml-2 lg:justify-start">
                 <Image
                   src="/brand/bike-me-logo.png"
                   alt="Bike Me logo"
                   width={1024}
                   height={1024}
-                  className="h-auto w-full max-w-[220px] md:max-w-[280px]"
-                  sizes="(max-width: 768px) 220px, 280px"
+                  className="h-auto w-full max-w-[240px] md:max-w-[320px] lg:max-w-[380px]"
+                  sizes="(max-width: 768px) 240px, (max-width: 1024px) 320px, 380px"
                 />
               </div>
 
-              <div className="space-y-5">
-                <p className="font-display text-2xl font-semibold leading-snug text-slate-900 md:text-3xl">
+              <div className="space-y-4 lg:pr-2">
+                <p className="font-display text-2xl font-semibold leading-tight text-slate-900 md:text-3xl">
                   {t.brand.intro}
                 </p>
                 <ul className="space-y-2.5 text-slate-600">
