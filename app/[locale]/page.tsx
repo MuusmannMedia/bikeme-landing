@@ -230,7 +230,7 @@ export default function LocalePage({ params }: LocalePageProps) {
               </div>
 
               <div className="space-y-4 lg:pr-2">
-                <p className="font-display text-2xl font-semibold leading-tight text-slate-900 md:text-3xl">
+                <p className="font-display text-2xl font-semibold leading-tight text-[var(--brand-purple)] md:text-3xl">
                   {t.brand.intro}
                 </p>
                 <ul className="space-y-2.5 text-slate-600">
@@ -282,7 +282,7 @@ export default function LocalePage({ params }: LocalePageProps) {
                 <div className="mb-4 inline-flex h-8 min-w-8 items-center justify-center rounded-full bg-indigo-100 px-2 text-xs font-semibold text-indigo-700">
                   {String(index + 1).padStart(2, "0")}
                 </div>
-                <h3 className="mb-2 font-display text-xl font-semibold text-slate-900">
+                <h3 className="mb-2 font-display text-xl font-semibold text-[var(--brand-purple)]">
                   {feature.title}
                 </h3>
                 <p className="leading-relaxed text-slate-600">{feature.description}</p>
@@ -308,7 +308,7 @@ export default function LocalePage({ params }: LocalePageProps) {
                 className="rounded-3xl border border-slate-200 bg-white/80 p-6 shadow-[0_20px_50px_-42px_rgba(15,23,42,0.6)]"
               >
                 <p className="mb-4 text-sm font-semibold text-slate-400">0{index + 1}</p>
-                <h3 className="mb-2 font-display text-xl font-semibold text-slate-900">{step.title}</h3>
+                <h3 className="mb-2 font-display text-xl font-semibold text-[var(--brand-purple)]">{step.title}</h3>
                 <p className="leading-relaxed text-slate-600">{step.description}</p>
               </article>
             ))}
@@ -359,7 +359,7 @@ export default function LocalePage({ params }: LocalePageProps) {
                 key={item.question}
                 className="group rounded-2xl border border-slate-200 bg-white/90 p-5 open:border-indigo-200"
               >
-                <summary className="cursor-pointer list-none pr-8 font-medium text-slate-900 marker:hidden">
+                <summary className="cursor-pointer list-none pr-8 font-medium text-[var(--brand-purple)] marker:hidden">
                   {item.question}
                 </summary>
                 <p className="pt-3 leading-relaxed text-slate-600">{item.answer}</p>
