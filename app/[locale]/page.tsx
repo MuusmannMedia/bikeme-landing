@@ -136,7 +136,7 @@ export default function LocalePage({ params }: LocalePageProps) {
               href={TESTFLIGHT_URL}
               target="_blank"
               rel="noreferrer"
-              className="rounded-full bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-slate-700"
+              className="rounded-full bg-[var(--brand-blue)] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[var(--brand-purple)]"
             >
               {t.nav.joinTestFlight}
             </a>
@@ -229,14 +229,14 @@ export default function LocalePage({ params }: LocalePageProps) {
                 />
               </div>
 
-              <div className="space-y-4 lg:pr-2">
-                <p className="font-display text-2xl font-semibold leading-tight text-[var(--brand-purple)] md:text-3xl">
+              <div className="space-y-4 text-[var(--brand-blue)] lg:pr-2">
+                <p className="font-display text-2xl font-semibold leading-tight text-[var(--brand-blue)] md:text-3xl">
                   {t.brand.intro}
                 </p>
-                <ul className="space-y-2.5 text-slate-600">
+                <ul className="space-y-2.5 text-[var(--brand-blue)]">
                   {t.brand.bullets.map((bullet) => (
                     <li key={bullet} className="flex items-start gap-3">
-                      <span className="mt-2 h-1.5 w-1.5 rounded-full bg-indigo-600" />
+                      <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[var(--brand-blue)]" />
                       <span>{bullet}</span>
                     </li>
                   ))}
@@ -246,7 +246,7 @@ export default function LocalePage({ params }: LocalePageProps) {
                     href={TESTFLIGHT_URL}
                     target="_blank"
                     rel="noreferrer"
-                    className="rounded-full bg-slate-900 px-7 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
+                    className="rounded-full bg-[var(--brand-blue)] px-7 py-3 text-sm font-medium text-white transition hover:bg-[var(--brand-purple)]"
                   >
                     {t.hero.primaryCta}
                   </a>

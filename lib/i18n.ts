@@ -83,7 +83,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       joinTestFlight: "Join TestFlight"
     },
     hero: {
-      headline: "Find someone to ride with. Right here right now. With Bike ME",
+      headline: "Find nogen at køre med her og nu med Bike ME",
       subheadline:
         "Bike ME makes it easy to find riders right now. Create a RIDE NOW ride in seconds, or plan a ride for later.",
       primaryCta: "Join TestFlight",
@@ -205,7 +205,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       joinTestFlight: "Join TestFlight"
     },
     hero: {
-      headline: "Find nogen at køre med. Her og nu. Med Bike ME",
+      headline: "Find nogen at køre med her og nu med Bike ME",
       subheadline:
         "Bike ME gør det nemt at finde andre at køre med – her og nu. Opret en KØR NU-tur på få sekunder, eller planlæg en tur til senere.",
       primaryCta: "Join TestFlight",
@@ -327,7 +327,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       joinTestFlight: "Join TestFlight"
     },
     hero: {
-      headline: "Finde Leute zum Fahren. Hier und jetzt. Mit Bike ME",
+      headline: "Find nogen at køre med her og nu med Bike ME",
       subheadline:
         "Mit Bike ME findest du ganz einfach andere zum Fahren – hier und jetzt. Erstelle in Sekunden eine RIDE NOW-Fahrt oder plane eine Fahrt für später.",
       primaryCta: "Join TestFlight",
@@ -449,7 +449,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       joinTestFlight: "Join TestFlight"
     },
     hero: {
-      headline: "Encuentra a alguien para rodar. Aquí y ahora. Con Bike ME",
+      headline: "Find nogen at køre med her og nu med Bike ME",
       subheadline:
         "Bike ME te lo pone fácil para encontrar con quién rodar aquí y ahora. Crea una salida RIDE NOW en segundos o planifica una salida para más tarde.",
       primaryCta: "Join TestFlight",
@@ -571,7 +571,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       joinTestFlight: "Join TestFlight"
     },
     hero: {
-      headline: "Trova qualcuno con cui pedalare. Qui e ora. Con Bike ME",
+      headline: "Find nogen at køre med her og nu med Bike ME",
       subheadline:
         "Bike ME rende facile trovare altri ciclisti con cui uscire, qui e ora. Crea in pochi secondi un'uscita RIDE NOW oppure pianifica un'uscita per dopo.",
       primaryCta: "Join TestFlight",
@@ -693,7 +693,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       joinTestFlight: "Join TestFlight"
     },
     hero: {
-      headline: "Trouvez quelqu'un avec qui rouler. Ici et maintenant. Avec Bike ME",
+      headline: "Find nogen at køre med her og nu med Bike ME",
       subheadline:
         "Bike ME facilite la recherche de cyclistes avec qui rouler, ici et maintenant. Créez une sortie RIDE NOW en quelques secondes ou planifiez une sortie plus tard.",
       primaryCta: "Join TestFlight",
@@ -815,7 +815,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       joinTestFlight: "Join TestFlight"
     },
     hero: {
-      headline: "Vind iemand om mee te rijden. Hier en nu. Met Bike ME",
+      headline: "Find nogen at køre med her og nu med Bike ME",
       subheadline:
         "Bike ME maakt het makkelijk om hier en nu iemand te vinden om mee te rijden. Maak in een paar seconden een RIDE NOW-rit of plan een rit voor later.",
       primaryCta: "Join TestFlight",
