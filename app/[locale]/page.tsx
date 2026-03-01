@@ -185,29 +185,16 @@ export default function LocalePage({ params }: LocalePageProps) {
                   </span>
                 </div>
 
-                <div className="space-y-4 p-4">
-                  <div className="placeholder-shimmer animate-shimmer rounded-2xl border border-indigo-100 bg-gradient-to-r from-indigo-100/40 via-sky-100/60 to-indigo-100/40 p-4">
-                    <div className="mb-4 h-3 w-28 rounded-full bg-white/80" />
-                    <div className="grid grid-cols-3 gap-2">
-                      {[1, 2, 3, 4, 5, 6].map((dot) => (
-                        <div
-                          key={dot}
-                          className="h-12 rounded-xl border border-white/80 bg-white/70"
-                        />
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    {[1, 2].map((item) => (
-                      <div
-                        key={item}
-                        className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3"
-                      >
-                        <div className="mb-2 h-2.5 w-24 rounded-full bg-slate-300" />
-                        <div className="h-2 w-40 rounded-full bg-slate-200" />
-                      </div>
-                    ))}
+                <div className="p-4">
+                  <div className="relative h-[260px] overflow-hidden rounded-[1.7rem] border border-slate-200 bg-slate-100 sm:h-[320px] lg:h-[420px]">
+                    <Image
+                      src="/hero/hero-photo.jpg"
+                      alt="Bike ME app preview in the real world"
+                      fill
+                      priority
+                      sizes="(max-width: 1024px) 90vw, 520px"
+                      className="object-cover"
+                    />
                   </div>
                 </div>
               </div>
