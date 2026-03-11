@@ -13,8 +13,7 @@ import {
 import {
   CANONICAL_DOMAIN,
   CONTACT_EMAIL,
-  TERMS_URL,
-  TESTFLIGHT_URL
+  TERMS_URL
 } from "@/lib/site-config";
 
 type LocalePageProps = {
@@ -114,13 +113,13 @@ export default function LocalePage({ params }: LocalePageProps) {
             ))}
           </nav>
 
-          <div className="flex items-center gap-3 md:gap-4">
-            <div className="flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-1 text-xs text-[var(--brand-blue)]">
+          <div className="flex min-w-0 items-center">
+            <div className="flex max-w-[62vw] items-center gap-1 overflow-x-auto rounded-full border border-slate-200 bg-white px-2 py-1 text-xs text-[var(--brand-blue)] [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:max-w-none">
               {locales.map((code) => (
                 <Link
                   key={code}
                   href={`/${code}`}
-                  className={`rounded-full px-2 py-1 transition ${
+                  className={`shrink-0 rounded-full px-2 py-1 transition ${
                     code === locale
                       ? "bg-slate-900 text-white"
                       : "text-[var(--brand-blue)] hover:bg-slate-100 hover:text-[var(--brand-purple)]"
@@ -131,15 +130,6 @@ export default function LocalePage({ params }: LocalePageProps) {
                 </Link>
               ))}
             </div>
-
-            <a
-              href={TESTFLIGHT_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-full bg-[var(--brand-blue)] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[var(--brand-purple)]"
-            >
-              {t.nav.joinTestFlight}
-            </a>
           </div>
         </div>
         <div className="section-shell flex gap-4 overflow-x-auto pb-3 text-sm text-[var(--brand-blue)] lg:hidden">
@@ -229,14 +219,6 @@ export default function LocalePage({ params }: LocalePageProps) {
                   ))}
                 </ul>
                 <div className="flex flex-wrap items-center gap-3 pt-2">
-                  <a
-                    href={TESTFLIGHT_URL}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="rounded-full bg-[var(--brand-blue)] px-7 py-3 text-sm font-medium text-white transition hover:bg-[var(--brand-purple)]"
-                  >
-                    {t.hero.primaryCta}
-                  </a>
                   <a
                     href="#how-it-works"
                     className="rounded-full border-2 border-slate-500 bg-white/70 px-7 py-3 text-sm font-medium text-slate-800 transition hover:border-slate-700 hover:bg-slate-100"
