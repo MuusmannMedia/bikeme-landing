@@ -83,7 +83,7 @@ export default function LocalePage({ params }: LocalePageProps) {
         <div className="section-shell flex h-20 items-center justify-between gap-4">
           <Link href={`/${locale}`} aria-label="Bike Me" className="flex items-center">
             <Image
-              src="/brand/bike-me-logo.png"
+              src="/brand/bike-me-logo-white.png"
               alt="Bike Me logo"
               width={1024}
               height={1024}
@@ -188,7 +188,7 @@ export default function LocalePage({ params }: LocalePageProps) {
             <div className="grid items-start gap-6 lg:grid-cols-[420px_minmax(0,1fr)] lg:gap-4">
               <div className="flex justify-center lg:-ml-2 lg:justify-start">
                 <Image
-                  src="/brand/bike-me-logo.png"
+                  src="/brand/bike-me-logo-white.png"
                   alt="Bike Me logo"
                   width={1024}
                   height={1024}

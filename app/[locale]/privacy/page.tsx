@@ -110,7 +110,7 @@ export default function PrivacyPage({ params }: LocalePageProps) {
         <div className="section-shell flex h-20 items-center justify-between gap-4">
           <Link href={`/${locale}`} aria-label="Bike Me" className="flex items-center">
             <Image
-              src="/brand/bike-me-logo.png"
+              src="/brand/bike-me-logo-white.png"
               alt="Bike Me logo"
               width={1024}
               height={1024}
