@@ -106,7 +106,7 @@ export default function PrivacyPage({ params }: LocalePageProps) {
 
   return (
     <div className="pb-12">
-      <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-[#060b16]/80 backdrop-blur-xl supports-[backdrop-filter]:bg-[#060b16]/70">
         <div className="section-shell flex h-20 items-center justify-between gap-4">
           <Link href={`/${locale}`} aria-label="Bike Me" className="flex items-center">
             <Image
@@ -121,7 +121,7 @@ export default function PrivacyPage({ params }: LocalePageProps) {
 
           <Link
             href={`/${locale}`}
-            className="rounded-full border border-[var(--brand-blue)] px-5 py-2 text-sm font-medium text-[var(--brand-blue)] transition hover:border-[var(--brand-purple)] hover:bg-white hover:text-[var(--brand-purple)]"
+            className="rounded-full border border-white/20 bg-white/[0.03] px-5 py-2 text-sm font-medium text-[var(--ink-soft)] transition-colors hover:border-white/40 hover:text-white"
           >
             {ui.backToHome}
           </Link>
@@ -129,11 +129,11 @@ export default function PrivacyPage({ params }: LocalePageProps) {
       </header>
 
       <main className="section-shell pt-10 md:pt-14">
-        <article className="glass-panel rounded-3xl border border-slate-200/80 px-6 py-8 text-slate-700 shadow-[0_24px_60px_-42px_rgba(15,23,42,0.6)] md:px-10 md:py-10">
-          <h1 className="font-display text-3xl font-semibold leading-tight text-slate-950 md:text-4xl">
+        <article className="glass-panel rounded-3xl border px-6 py-8 text-[var(--ink-soft)] shadow-[0_30px_70px_-44px_rgba(0,0,0,0.9)] md:px-10 md:py-10">
+          <h1 className="font-display text-3xl font-semibold leading-tight text-[var(--ink)] md:text-4xl">
             {ui.pageTitle}
           </h1>
-          <p className="mt-3 text-sm text-slate-500">{ui.lastUpdated}</p>
+          <p className="mt-3 text-sm text-[rgb(155,170,206)]">{ui.lastUpdated}</p>
 
           <div className="mt-8 space-y-7 leading-relaxed">
             <section className="space-y-4">
@@ -149,7 +149,7 @@ export default function PrivacyPage({ params }: LocalePageProps) {
             </section>
 
             <section className="space-y-3">
-              <h2 className="font-display text-2xl font-semibold text-slate-900">Dataansvarlig</h2>
+              <h2 className="font-display text-2xl font-semibold text-[var(--ink)]">Dataansvarlig</h2>
               <p>Dataansvarlig for behandlingen af dine personoplysninger er:</p>
               <p>
                 Bike ME (udvikler: Morten Muusmann)
@@ -159,62 +159,65 @@ export default function PrivacyPage({ params }: LocalePageProps) {
             </section>
 
             <section className="space-y-3">
-              <h2 className="font-display text-2xl font-semibold text-slate-900">
+              <h2 className="font-display text-2xl font-semibold text-[var(--ink)]">
                 Hvilke oplysninger vi indsamler
               </h2>
               <p>
                 Når du bruger Bike ME, kan vi behandle følgende kategorier af personoplysninger:
               </p>
-              <ul className="list-disc space-y-2 pl-6">
+              <ul className="list-disc space-y-2 pl-6 marker:text-[rgb(147,171,255)]">
                 <li>
-                  <strong>Kontodata:</strong> navn og e-mailadresse i forbindelse med oprettelse og
-                  brug af konto (login håndteres via vores autentificeringsløsning).
+                  <strong className="text-[var(--ink)]">Kontodata:</strong> navn og e-mailadresse i
+                  forbindelse med oprettelse og brug af konto (login håndteres via vores
+                  autentificeringsløsning).
                 </li>
                 <li>
-                  <strong>Profil- og appdata:</strong> oplysninger du selv udfylder i din profil (fx
-                  niveau, cykeltype, hjemmeregion og "lidt om mig").
+                  <strong className="text-[var(--ink)]">Profil- og appdata:</strong> oplysninger du
+                  selv udfylder i din profil (fx niveau, cykeltype, hjemmeregion og "lidt om mig").
                 </li>
                 <li>
-                  <strong>Turdata (indhold du opretter):</strong> turens titel, beskrivelse,
-                  disciplin, tidspunkt, varighed, distance (hvis relevant), mødested/startsted og
-                  andre oplysninger, du vælger at tilføje. Oplysninger om deltagelse (fx hvem der
-                  har tilmeldt sig en tur).
+                  <strong className="text-[var(--ink)]">Turdata (indhold du opretter):</strong>
+                  turens titel, beskrivelse, disciplin, tidspunkt, varighed, distance (hvis
+                  relevant), mødested/startsted og andre oplysninger, du vælger at tilføje.
+                  Oplysninger om deltagelse (fx hvem der har tilmeldt sig en tur).
                 </li>
                 <li>
-                  <strong>Rute-link (valgfrit):</strong> hvis du indsætter et link til en
-                  Strava-rute (eller andet rutelink), gemmer vi linket sammen med turen, så andre
-                  kan åbne det fra turdetaljer.
+                  <strong className="text-[var(--ink)]">Rute-link (valgfrit):</strong> hvis du
+                  indsætter et link til en Strava-rute (eller andet rutelink), gemmer vi linket
+                  sammen med turen, så andre kan åbne det fra turdetaljer.
                 </li>
                 <li>
-                  <strong>Lokationsdata:</strong> din lokation, når du aktivt giver appen
-                  tilladelse. Lokation bruges til kortfunktioner, fx visning af ture i nærheden og
-                  valg/visning af startsted. Du kan til enhver tid slå lokation fra i dine
-                  enhedsindstillinger.
+                  <strong className="text-[var(--ink)]">Lokationsdata:</strong> din lokation, når
+                  du aktivt giver appen tilladelse. Lokation bruges til kortfunktioner, fx visning
+                  af ture i nærheden og valg/visning af startsted. Du kan til enhver tid slå
+                  lokation fra i dine enhedsindstillinger.
                 </li>
                 <li>
-                  <strong>Push-notifikationer:</strong> hvis du giver tilladelse til push, gemmer
-                  vi en push-token (enheds-id til notifikationer) for at kunne sende vigtige
-                  beskeder om ture, fx ændringer eller når værten ikke kan alligevel. Du kan slå
-                  push fra i appens indstillinger/profil eller i telefonens indstillinger.
+                  <strong className="text-[var(--ink)]">Push-notifikationer:</strong> hvis du giver
+                  tilladelse til push, gemmer vi en push-token (enheds-id til notifikationer) for
+                  at kunne sende vigtige beskeder om ture, fx ændringer eller når værten ikke kan
+                  alligevel. Du kan slå push fra i appens indstillinger/profil eller i telefonens
+                  indstillinger.
                 </li>
                 <li>
-                  <strong>Tekniske data:</strong> enhedstype, operativsystem, app-version samt
-                  logdata/fejlrapporter (i nødvendigt omfang). Dette bruges til drift, fejlfinding
-                  og forbedring af Tjenesten.
+                  <strong className="text-[var(--ink)]">Tekniske data:</strong> enhedstype,
+                  operativsystem, app-version samt logdata/fejlrapporter (i nødvendigt omfang).
+                  Dette bruges til drift, fejlfinding og forbedring af Tjenesten.
                 </li>
                 <li>
-                  <strong>Kommunikation og support:</strong> henvendelser du sender til os via
-                  e-mail, samt relevante oplysninger, du deler i forbindelse med support.
+                  <strong className="text-[var(--ink)]">Kommunikation og support:</strong>
+                  henvendelser du sender til os via e-mail, samt relevante oplysninger, du deler i
+                  forbindelse med support.
                 </li>
               </ul>
             </section>
 
             <section className="space-y-3">
-              <h2 className="font-display text-2xl font-semibold text-slate-900">
+              <h2 className="font-display text-2xl font-semibold text-[var(--ink)]">
                 Formål og behandlingsgrundlag
               </h2>
               <p>Vi behandler dine personoplysninger til følgende formål:</p>
-              <ul className="list-disc space-y-2 pl-6">
+              <ul className="list-disc space-y-2 pl-6 marker:text-[rgb(147,171,255)]">
                 <li>
                   a) Oprettelse og drift af din konto og profil — GDPR art. 6, stk. 1, litra b.
                 </li>
@@ -234,28 +237,24 @@ export default function PrivacyPage({ params }: LocalePageProps) {
             </section>
 
             <section className="space-y-3">
-              <h2 className="font-display text-2xl font-semibold text-slate-900">
+              <h2 className="font-display text-2xl font-semibold text-[var(--ink)]">
                 Modtagere og brug af databehandlere
               </h2>
               <p>
                 Vi deler ikke dine personoplysninger med andre virksomheder til deres egen
                 markedsføring.
               </p>
-              <p>
-                Vi benytter udvalgte databehandlere til drift af Tjenesten, fx:
-              </p>
-              <ul className="list-disc space-y-2 pl-6">
+              <p>Vi benytter udvalgte databehandlere til drift af Tjenesten, fx:</p>
+              <ul className="list-disc space-y-2 pl-6 marker:text-[rgb(147,171,255)]">
                 <li>hosting- og databaseleverandør</li>
                 <li>leverandør af push-notifikationer</li>
                 <li>fejl-/logningsværktøjer (hvis anvendt)</li>
               </ul>
-              <p>
-                Databehandlere må kun behandle oplysninger på vores vegne og efter instruks.
-              </p>
+              <p>Databehandlere må kun behandle oplysninger på vores vegne og efter instruks.</p>
             </section>
 
             <section className="space-y-3">
-              <h2 className="font-display text-2xl font-semibold text-slate-900">
+              <h2 className="font-display text-2xl font-semibold text-[var(--ink)]">
                 Overførsel til tredjelande
               </h2>
               <p>
@@ -266,7 +265,7 @@ export default function PrivacyPage({ params }: LocalePageProps) {
             </section>
 
             <section className="space-y-3">
-              <h2 className="font-display text-2xl font-semibold text-slate-900">Opbevaringsperiode</h2>
+              <h2 className="font-display text-2xl font-semibold text-[var(--ink)]">Opbevaringsperiode</h2>
               <p>
                 Vi opbevarer personoplysninger, så længe det er nødvendigt for de formål, de er
                 indsamlet til, eller så længe vi er retligt forpligtet hertil.
@@ -278,7 +277,7 @@ export default function PrivacyPage({ params }: LocalePageProps) {
             </section>
 
             <section className="space-y-3">
-              <h2 className="font-display text-2xl font-semibold text-slate-900">Dine rettigheder</h2>
+              <h2 className="font-display text-2xl font-semibold text-[var(--ink)]">Dine rettigheder</h2>
               <p>
                 Du har ret til: indsigt, berigtigelse, sletning, begrænsning, indsigelse,
                 dataportabilitet.
@@ -291,7 +290,7 @@ export default function PrivacyPage({ params }: LocalePageProps) {
             </section>
 
             <section className="space-y-3">
-              <h2 className="font-display text-2xl font-semibold text-slate-900">
+              <h2 className="font-display text-2xl font-semibold text-[var(--ink)]">
                 Børns brug af Tjenesten
               </h2>
               <p>
@@ -302,7 +301,7 @@ export default function PrivacyPage({ params }: LocalePageProps) {
             </section>
 
             <section className="space-y-3">
-              <h2 className="font-display text-2xl font-semibold text-slate-900">
+              <h2 className="font-display text-2xl font-semibold text-[var(--ink)]">
                 Ændringer i denne privatlivspolitik
               </h2>
               <p>

@@ -4,17 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { getDictionary } from "@/lib/i18n";
-import {
-  isLocale,
-  localeLabels,
-  locales,
-  type Locale
-} from "@/lib/locales";
-import {
-  CANONICAL_DOMAIN,
-  CONTACT_EMAIL,
-  TERMS_URL
-} from "@/lib/site-config";
+import { isLocale, localeLabels, locales, type Locale } from "@/lib/locales";
+import { CANONICAL_DOMAIN, CONTACT_EMAIL, TERMS_URL } from "@/lib/site-config";
 
 type LocalePageProps = {
   params: {
@@ -88,7 +79,7 @@ export default function LocalePage({ params }: LocalePageProps) {
 
   return (
     <div className="pb-10">
-      <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-[#060b16]/80 backdrop-blur-xl supports-[backdrop-filter]:bg-[#060b16]/70">
         <div className="section-shell flex h-20 items-center justify-between gap-4">
           <Link href={`/${locale}`} aria-label="Bike Me" className="flex items-center">
             <Image
@@ -101,12 +92,12 @@ export default function LocalePage({ params }: LocalePageProps) {
             />
           </Link>
 
-          <nav className="hidden items-center gap-8 text-sm text-[var(--brand-blue)] lg:flex">
+          <nav className="hidden items-center gap-8 text-sm font-medium text-[var(--ink-soft)] lg:flex">
             {navLinks.map((link) => (
               <a
                 key={link.id}
                 href={`#${link.id}`}
-                className="transition hover:text-[var(--brand-purple)]"
+                className="transition-colors hover:text-white"
               >
                 {link.label}
               </a>
@@ -114,15 +105,15 @@ export default function LocalePage({ params }: LocalePageProps) {
           </nav>
 
           <div className="flex min-w-0 items-center">
-            <div className="flex max-w-[62vw] items-center gap-1 overflow-x-auto rounded-full border border-slate-200 bg-white px-2 py-1 text-xs text-[var(--brand-blue)] [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:max-w-none">
+            <div className="flex max-w-[64vw] items-center gap-1 overflow-x-auto rounded-full border border-white/15 bg-white/[0.04] px-2 py-1 text-xs [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:max-w-none">
               {locales.map((code) => (
                 <Link
                   key={code}
                   href={`/${code}`}
-                  className={`shrink-0 rounded-full px-2 py-1 transition ${
+                  className={`shrink-0 rounded-full px-2 py-1 transition-colors ${
                     code === locale
-                      ? "bg-slate-900 text-white"
-                      : "text-[var(--brand-blue)] hover:bg-slate-100 hover:text-[var(--brand-purple)]"
+                      ? "bg-[linear-gradient(135deg,rgba(94,127,255,0.9),rgba(128,39,130,0.85))] text-white"
+                      : "text-[var(--ink-soft)] hover:bg-white/10 hover:text-white"
                   }`}
                   aria-current={code === locale ? "page" : undefined}
                 >
@@ -132,12 +123,12 @@ export default function LocalePage({ params }: LocalePageProps) {
             </div>
           </div>
         </div>
-        <div className="section-shell flex gap-4 overflow-x-auto pb-3 text-sm text-[var(--brand-blue)] lg:hidden">
+        <div className="section-shell flex gap-4 overflow-x-auto pb-3 text-sm text-[var(--ink-soft)] lg:hidden">
           {navLinks.map((link) => (
             <a
               key={link.id}
               href={`#${link.id}`}
-              className="whitespace-nowrap rounded-full px-1 py-1 transition hover:text-[var(--brand-purple)]"
+              className="whitespace-nowrap rounded-full px-1 py-1 transition-colors hover:text-white"
             >
               {link.label}
             </a>
@@ -148,35 +139,34 @@ export default function LocalePage({ params }: LocalePageProps) {
       <main>
         <section className="section-shell grid gap-12 pb-20 pt-20 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:pb-28 lg:pt-24">
           <div className="max-w-2xl space-y-7">
-            <div className="inline-flex items-center rounded-full border border-indigo-200/80 bg-indigo-50 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.14em] text-indigo-700">
+            <div className="inline-flex items-center rounded-full border border-white/20 bg-white/[0.03] px-4 py-1.5 text-xs font-medium uppercase tracking-[0.14em] text-[var(--ink-soft)]">
               Bike Me
             </div>
 
-            <h1 className="animate-fade-up max-w-[14ch] font-display text-4xl font-semibold leading-tight text-slate-950 [text-wrap:balance] md:max-w-[18ch] md:text-6xl lg:max-w-[22ch]">
+            <h1 className="animate-fade-up max-w-[14ch] font-display text-4xl font-semibold leading-tight text-[var(--ink)] [text-wrap:balance] md:max-w-[18ch] md:text-6xl lg:max-w-[22ch]">
               {t.hero.headline}
             </h1>
 
-            <p className="animate-fade-up text-lg leading-relaxed text-slate-600 [animation-delay:120ms] md:text-xl">
+            <p className="animate-fade-up text-lg leading-relaxed text-[var(--ink-soft)] [animation-delay:120ms] md:text-xl">
               {t.hero.subheadline}
             </p>
-
           </div>
 
           <div className="relative lg:pl-8">
-            <div className="pointer-events-none absolute -left-6 -top-8 h-24 w-24 rounded-full bg-indigo-400/20 blur-2xl" />
-            <div className="pointer-events-none absolute -bottom-8 right-2 h-24 w-24 rounded-full bg-sky-400/20 blur-2xl" />
+            <div className="pointer-events-none absolute -left-6 -top-8 h-24 w-24 rounded-full bg-blue-500/20 blur-2xl" />
+            <div className="pointer-events-none absolute -bottom-8 right-2 h-24 w-24 rounded-full bg-fuchsia-500/20 blur-2xl" />
 
-            <div className="animate-float gradient-outline glass-panel relative mx-auto max-w-sm rounded-[2.2rem] border border-white/60 p-4 shadow-[0_30px_70px_-30px_rgba(15,23,42,0.45)]">
-              <div className="overflow-hidden rounded-[1.7rem] border border-slate-200 bg-white">
-                <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 text-xs text-slate-500">
+            <div className="animate-float gradient-outline glass-panel relative mx-auto max-w-sm rounded-[2.2rem] border p-4 shadow-[0_40px_90px_-45px_rgba(0,0,0,0.85)]">
+              <div className="overflow-hidden rounded-[1.7rem] border border-white/10 bg-[#070d1b]">
+                <div className="flex items-center justify-between border-b border-white/10 px-4 py-3 text-xs text-[var(--ink-soft)]">
                   <span>{t.hero.previewLabel}</span>
-                  <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-700">
+                  <span className="rounded-full border border-emerald-300/35 bg-emerald-400/12 px-2 py-0.5 text-emerald-200">
                     Live
                   </span>
                 </div>
 
                 <div className="p-4">
-                  <div className="relative h-[260px] overflow-hidden rounded-[1.7rem] border border-slate-200 bg-slate-100 sm:h-[320px] lg:h-[420px]">
+                  <div className="relative h-[260px] overflow-hidden rounded-[1.7rem] border border-white/10 bg-[#0b1326] sm:h-[320px] lg:h-[420px]">
                     <Image
                       src="/hero/hero-photo.jpg"
                       alt="Bike ME app preview in the real world"
@@ -185,6 +175,7 @@ export default function LocalePage({ params }: LocalePageProps) {
                       sizes="(max-width: 1024px) 90vw, 520px"
                       className="object-cover"
                     />
+                    <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,rgba(4,8,18,0.45),rgba(4,8,18,0))]" />
                   </div>
                 </div>
               </div>
@@ -193,7 +184,7 @@ export default function LocalePage({ params }: LocalePageProps) {
         </section>
 
         <section className="section-shell pb-20 md:pb-24">
-          <div className="glass-panel rounded-3xl border border-slate-200/80 px-5 py-10 shadow-[0_24px_60px_-42px_rgba(15,23,42,0.6)] md:px-6 md:py-11 lg:px-7 lg:py-12">
+          <div className="glass-panel rounded-3xl border px-5 py-10 shadow-[0_32px_80px_-50px_rgba(0,0,0,0.9)] md:px-6 md:py-11 lg:px-7 lg:py-12">
             <div className="grid items-start gap-6 lg:grid-cols-[420px_minmax(0,1fr)] lg:gap-4">
               <div className="flex justify-center lg:-ml-2 lg:justify-start">
                 <Image
@@ -206,14 +197,14 @@ export default function LocalePage({ params }: LocalePageProps) {
                 />
               </div>
 
-              <div className="space-y-4 text-[var(--brand-blue)] lg:pr-2">
-                <p className="font-display text-2xl font-semibold leading-tight text-[var(--brand-blue)] md:text-3xl">
+              <div className="space-y-4 text-[var(--ink-soft)] lg:pr-2">
+                <p className="font-display text-2xl font-semibold leading-tight text-[var(--ink)] md:text-3xl">
                   {t.brand.intro}
                 </p>
-                <ul className="space-y-2.5 text-[var(--brand-blue)]">
+                <ul className="space-y-2.5 text-[var(--ink-soft)]">
                   {t.brand.bullets.map((bullet) => (
                     <li key={bullet} className="flex items-start gap-3">
-                      <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[var(--brand-blue)]" />
+                      <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[rgb(147,171,255)]" />
                       <span>{bullet}</span>
                     </li>
                   ))}
@@ -221,7 +212,7 @@ export default function LocalePage({ params }: LocalePageProps) {
                 <div className="flex flex-wrap items-center gap-3 pt-2">
                   <a
                     href="#how-it-works"
-                    className="rounded-full border-2 border-slate-500 bg-white/70 px-7 py-3 text-sm font-medium text-slate-800 transition hover:border-slate-700 hover:bg-slate-100"
+                    className="rounded-full border-2 border-[rgba(143,168,255,0.75)] bg-white/[0.02] px-7 py-3 text-sm font-medium text-[var(--ink)] transition-colors hover:border-[rgba(128,39,130,0.95)] hover:bg-[rgba(128,39,130,0.16)]"
                   >
                     {t.hero.secondaryCta}
                   </a>
@@ -233,10 +224,10 @@ export default function LocalePage({ params }: LocalePageProps) {
 
         <section id="features" className="section-shell pb-20 md:pb-28">
           <div className="mb-10 max-w-2xl space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-indigo-700">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(147,171,255)]">
               {t.features.eyebrow}
             </p>
-            <h2 className="font-display text-3xl font-semibold text-slate-950 md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold text-[var(--ink)] md:text-4xl">
               {t.features.title}
             </h2>
           </div>
@@ -245,16 +236,16 @@ export default function LocalePage({ params }: LocalePageProps) {
             {t.features.items.map((feature, index) => (
               <article
                 key={feature.title}
-                className="animate-fade-up glass-panel rounded-3xl border border-slate-200/70 p-6 shadow-[0_20px_50px_-38px_rgba(15,23,42,0.6)]"
+                className="animate-fade-up glass-panel rounded-3xl border p-6 shadow-[0_20px_60px_-40px_rgba(0,0,0,0.95)]"
                 style={{ animationDelay: `${index * 90}ms` }}
               >
-                <div className="mb-4 inline-flex h-8 min-w-8 items-center justify-center rounded-full bg-indigo-100 px-2 text-xs font-semibold text-indigo-700">
+                <div className="mb-4 inline-flex h-8 min-w-8 items-center justify-center rounded-full border border-white/15 bg-white/[0.05] px-2 text-xs font-semibold text-[rgb(178,197,255)]">
                   {String(index + 1).padStart(2, "0")}
                 </div>
-                <h3 className="mb-2 font-display text-xl font-semibold text-[var(--brand-purple)]">
+                <h3 className="mb-2 font-display text-xl font-semibold text-[rgb(209,161,255)]">
                   {feature.title}
                 </h3>
-                <p className="leading-relaxed text-slate-600">{feature.description}</p>
+                <p className="leading-relaxed text-[var(--ink-soft)]">{feature.description}</p>
               </article>
             ))}
           </div>
@@ -262,10 +253,10 @@ export default function LocalePage({ params }: LocalePageProps) {
 
         <section id="how-it-works" className="section-shell pb-20 md:pb-28">
           <div className="mb-10 max-w-2xl space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-indigo-700">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(147,171,255)]">
               {t.howItWorks.eyebrow}
             </p>
-            <h2 className="font-display text-3xl font-semibold text-slate-950 md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold text-[var(--ink)] md:text-4xl">
               {t.howItWorks.title}
             </h2>
           </div>
@@ -274,11 +265,13 @@ export default function LocalePage({ params }: LocalePageProps) {
             {t.howItWorks.steps.map((step, index) => (
               <article
                 key={step.title}
-                className="rounded-3xl border border-slate-200 bg-white/80 p-6 shadow-[0_20px_50px_-42px_rgba(15,23,42,0.6)]"
+                className="glass-panel rounded-3xl border p-6 shadow-[0_20px_60px_-40px_rgba(0,0,0,0.95)]"
               >
-                <p className="mb-4 text-sm font-semibold text-slate-400">0{index + 1}</p>
-                <h3 className="mb-2 font-display text-xl font-semibold text-[var(--brand-purple)]">{step.title}</h3>
-                <p className="leading-relaxed text-slate-600">{step.description}</p>
+                <p className="mb-4 text-sm font-semibold text-[rgb(147,171,255)]">0{index + 1}</p>
+                <h3 className="mb-2 font-display text-xl font-semibold text-[rgb(209,161,255)]">
+                  {step.title}
+                </h3>
+                <p className="leading-relaxed text-[var(--ink-soft)]">{step.description}</p>
               </article>
             ))}
           </div>
@@ -286,24 +279,24 @@ export default function LocalePage({ params }: LocalePageProps) {
 
         <section id="screenshots" className="section-shell pb-20 md:pb-28">
           <div className="mb-10 max-w-2xl space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-indigo-700">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(147,171,255)]">
               {t.screenshots.eyebrow}
             </p>
-            <h2 className="font-display text-3xl font-semibold text-slate-950 md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold text-[var(--ink)] md:text-4xl">
               {t.screenshots.title}
             </h2>
-            <p className="text-slate-600">{t.screenshots.subtitle}</p>
+            <p className="text-[var(--ink-soft)]">{t.screenshots.subtitle}</p>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {t.screenshots.items.map((title, index) => (
               <article
                 key={title}
-                className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-4 shadow-[0_20px_50px_-40px_rgba(15,23,42,0.65)]"
+                className="group relative overflow-hidden rounded-3xl border border-white/12 bg-[rgba(9,16,34,0.9)] p-4 shadow-[0_20px_50px_-35px_rgba(0,0,0,0.95)]"
               >
-                <div className="placeholder-shimmer animate-shimmer aspect-[10/16] rounded-2xl border border-slate-200 bg-gradient-to-b from-slate-50 to-slate-100 p-4">
-                  <p className="mb-2 text-sm font-semibold text-slate-700">{title}</p>
-                  <p className="text-xs text-slate-500">
+                <div className="placeholder-shimmer animate-shimmer aspect-[10/16] rounded-2xl border border-white/10 bg-[linear-gradient(to_bottom,rgba(16,27,52,0.95),rgba(10,18,37,0.95))] p-4">
+                  <p className="mb-2 text-sm font-semibold text-[var(--ink)]">{title}</p>
+                  <p className="text-xs text-[var(--ink-soft)]">
                     {t.screenshots.replaceHint.replace("{n}", String(index + 1))}
                   </p>
                 </div>
@@ -314,10 +307,10 @@ export default function LocalePage({ params }: LocalePageProps) {
 
         <section id="faq" className="section-shell pb-24 md:pb-28">
           <div className="mb-10 max-w-2xl space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-indigo-700">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(147,171,255)]">
               {t.faq.eyebrow}
             </p>
-            <h2 className="font-display text-3xl font-semibold text-slate-950 md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold text-[var(--ink)] md:text-4xl">
               {t.faq.title}
             </h2>
           </div>
@@ -326,29 +319,29 @@ export default function LocalePage({ params }: LocalePageProps) {
             {t.faq.items.map((item) => (
               <details
                 key={item.question}
-                className="group rounded-2xl border border-slate-200 bg-white/90 p-5 open:border-indigo-200"
+                className="group rounded-2xl border border-white/12 bg-[rgba(8,15,31,0.9)] p-5 open:border-[rgba(151,177,255,0.45)]"
               >
-                <summary className="cursor-pointer list-none pr-8 font-medium text-[var(--brand-purple)] marker:hidden">
+                <summary className="cursor-pointer list-none pr-8 font-medium text-[rgb(209,161,255)] marker:hidden">
                   {item.question}
                 </summary>
-                <p className="pt-3 leading-relaxed text-slate-600">{item.answer}</p>
+                <p className="pt-3 leading-relaxed text-[var(--ink-soft)]">{item.answer}</p>
               </details>
             ))}
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-slate-200/80 bg-white/70 py-8">
-        <div className="section-shell flex flex-col gap-4 text-sm text-slate-600 md:flex-row md:items-center md:justify-between">
+      <footer className="border-t border-white/10 bg-[#050a15]/75 py-8 backdrop-blur-sm">
+        <div className="section-shell flex flex-col gap-4 text-sm text-[var(--ink-soft)] md:flex-row md:items-center md:justify-between">
           <p>© {new Date().getFullYear()} {t.footer.tagline}</p>
           <div className="flex flex-wrap items-center gap-4">
-            <Link href={`/${locale}/privacy`} className="transition hover:text-slate-900">
+            <Link href={`/${locale}/privacy`} className="transition-colors hover:text-white">
               {t.footer.privacy}
             </Link>
-            <a href={TERMS_URL} className="transition hover:text-slate-900">
+            <a href={TERMS_URL} className="transition-colors hover:text-white">
               {t.footer.terms}
             </a>
-            <a href={`mailto:${CONTACT_EMAIL}`} className="transition hover:text-slate-900">
+            <a href={`mailto:${CONTACT_EMAIL}`} className="transition-colors hover:text-white">
               {t.footer.contact}
             </a>
           </div>
