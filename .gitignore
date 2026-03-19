@@ -19,4 +19,6 @@ pnpm-debug.log*
 
 # misc
 .DS_Store
-public/brand/
+public/brand/*
+!public/brand/bike-me-logo.png
+!public/brand/bike-me-logo-white.png
