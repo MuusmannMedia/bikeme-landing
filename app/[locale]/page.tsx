@@ -299,15 +299,27 @@ export default function LocalePage({ params }: LocalePageProps) {
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {t.screenshots.items.map((title, index) => (
+            {t.screenshots.items.map((item) => (
               <article
-                key={title}
+                key={item.image}
                 className="group relative overflow-hidden rounded-3xl border border-white/12 bg-[rgba(9,16,34,0.9)] p-4 shadow-[0_20px_50px_-35px_rgba(0,0,0,0.95)]"
               >
-                <div className="placeholder-shimmer animate-shimmer aspect-[10/16] rounded-2xl border border-white/10 bg-[linear-gradient(to_bottom,rgba(16,27,52,0.95),rgba(10,18,37,0.95))] p-4">
-                  <p className="mb-2 text-sm font-semibold text-[var(--ink)]">{title}</p>
-                  <p className="text-xs text-[var(--ink-soft)]">
-                    {t.screenshots.replaceHint.replace("{n}", String(index + 1))}
+                <div className="overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(to_bottom,rgba(16,27,52,0.95),rgba(10,18,37,0.95))]">
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    width={1125}
+                    height={2436}
+                    sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 340px"
+                    className="h-auto w-full"
+                  />
+                </div>
+                <div className="space-y-2 px-1 pt-4">
+                  <h3 className="font-display text-lg font-semibold text-[rgb(209,161,255)]">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-[var(--ink-soft)]">
+                    {item.description}
                   </p>
                 </div>
               </article>

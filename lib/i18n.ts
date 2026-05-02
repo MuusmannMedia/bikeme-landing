@@ -15,6 +15,12 @@ type FaqItem = {
   answer: string;
 };
 
+type ScreenshotItem = {
+  image: string;
+  title: string;
+  description: string;
+};
+
 type PricingPlan = {
   name: string;
   label: string;
@@ -62,8 +68,7 @@ export type Dictionary = {
     eyebrow: string;
     title: string;
     subtitle: string;
-    items: string[];
-    replaceHint: string;
+    items: ScreenshotItem[];
   };
   pricing: {
     eyebrow: string;
@@ -168,16 +173,39 @@ const dictionaries: Record<Locale, Dictionary> = {
     screenshots: {
       eyebrow: "Screenshots",
       title: "Built to stay clear before, during, and after every ride",
-      subtitle: "Drop your real app screenshots into the slots below when ready.",
+      subtitle: "From free RIDE NOW tools to deeper Pro insights when you want more.",
       items: [
-        "Map discovery",
-        "Ride details",
-        "Ride Now creation",
-        "Invite riders",
-        "Route link",
-        "Notifications"
-      ],
-      replaceHint: "Replace with /public/screenshots/shot-{n}.png"
+        {
+          image: "/screenshots/app-01.PNG",
+          title: "Map overview",
+          description: "Find riders near you and see who's ready for a ride right now."
+        },
+        {
+          image: "/screenshots/app-02.PNG",
+          title: "Create a RIDE NOW ride",
+          description: "Set a route, time, and meeting point in seconds."
+        },
+        {
+          image: "/screenshots/app-03.PNG",
+          title: "The community",
+          description: "Find riders at your level and invite them along."
+        },
+        {
+          image: "/screenshots/app-04.PNG",
+          title: "Ready to start",
+          description: "Gather the group and start live tracking directly from the map."
+        },
+        {
+          image: "/screenshots/app-05.PNG",
+          title: "Ride details (Pro)",
+          description: "Dive into your data. See watts, training zones, and climbs after the ride."
+        },
+        {
+          image: "/screenshots/app-06.PNG",
+          title: "Track your progress (Pro)",
+          description: "Follow your fitness over time with detailed charts and 12-month history."
+        }
+      ]
     },
     pricing: {
       eyebrow: "Free vs Pro",
@@ -329,16 +357,39 @@ const dictionaries: Record<Locale, Dictionary> = {
     screenshots: {
       eyebrow: "Skærmbilleder",
       title: "Designet til at være enkelt før, under og efter turen",
-      subtitle: "Udskift felterne herunder med rigtige app-skærmbilleder.",
+      subtitle: "Fra gratis KØR NU-værktøjer til dybere Pro-indsigter, når du vil mere.",
       items: [
-        "Kortoversigt",
-        "Turdetaljer",
-        "Ride Now-oprettelse",
-        "Invitationer",
-        "Rutelink",
-        "Notifikationer"
-      ],
-      replaceHint: "Udskift med /public/screenshots/shot-{n}.png"
+        {
+          image: "/screenshots/app-01.PNG",
+          title: "Kortoversigt",
+          description: "Find ryttere tæt på dig og se, hvem der er klar til en tur lige nu."
+        },
+        {
+          image: "/screenshots/app-02.PNG",
+          title: "Opret KØR NU tur",
+          description: "Sæt en rute, et tidspunkt og et mødested på få sekunder."
+        },
+        {
+          image: "/screenshots/app-03.PNG",
+          title: "Fællesskabet",
+          description: "Find ryttere på dit niveau og invitér dem med på turen."
+        },
+        {
+          image: "/screenshots/app-04.PNG",
+          title: "Klar til start",
+          description: "Saml gruppen og start live-tracking direkte fra kortet."
+        },
+        {
+          image: "/screenshots/app-05.PNG",
+          title: "Turdetaljer (Pro)",
+          description: "Dyk ned i dine data. Se watt, træningszoner og stigninger efter turen."
+        },
+        {
+          image: "/screenshots/app-06.PNG",
+          title: "Se din udvikling (Pro)",
+          description: "Følg din form over tid med dybdegående grafer og 12-måneders historik."
+        }
+      ]
     },
     pricing: {
       eyebrow: "Gratis vs Pro",
@@ -490,16 +541,41 @@ const dictionaries: Record<Locale, Dictionary> = {
     screenshots: {
       eyebrow: "Screenshots",
       title: "Klarer Ablauf vor, während und nach jeder Ausfahrt",
-      subtitle: "Ersetze die Platzhalter später durch echte App-Screenshots.",
+      subtitle: "Von kostenlosen RIDE NOW-Tools bis zu tieferen Pro-Einblicken, wenn du mehr willst.",
       items: [
-        "Kartenansicht",
-        "Fahrtdetails",
-        "Ride Now erstellen",
-        "Einladungen",
-        "Routenlink",
-        "Benachrichtigungen"
-      ],
-      replaceHint: "Ersetzen mit /public/screenshots/shot-{n}.png"
+        {
+          image: "/screenshots/app-01.PNG",
+          title: "Kartenübersicht",
+          description: "Finde Fahrer in deiner Nähe und sieh, wer jetzt für eine Tour bereit ist."
+        },
+        {
+          image: "/screenshots/app-02.PNG",
+          title: "RIDE NOW-Fahrt erstellen",
+          description: "Lege Route, Zeit und Treffpunkt in Sekunden fest."
+        },
+        {
+          image: "/screenshots/app-03.PNG",
+          title: "Die Community",
+          description: "Finde Fahrer auf deinem Niveau und lade sie zur Tour ein."
+        },
+        {
+          image: "/screenshots/app-04.PNG",
+          title: "Bereit zum Start",
+          description: "Sammle die Gruppe und starte Live-Tracking direkt von der Karte."
+        },
+        {
+          image: "/screenshots/app-05.PNG",
+          title: "Fahrtdetails (Pro)",
+          description:
+            "Tauche in deine Daten ein. Sieh Watt, Trainingszonen und Anstiege nach der Fahrt."
+        },
+        {
+          image: "/screenshots/app-06.PNG",
+          title: "Deine Entwicklung sehen (Pro)",
+          description:
+            "Verfolge deine Form über die Zeit mit detaillierten Diagrammen und 12-Monats-Historie."
+        }
+      ]
     },
     pricing: {
       eyebrow: "Free vs Pro",
@@ -651,16 +727,41 @@ const dictionaries: Record<Locale, Dictionary> = {
     screenshots: {
       eyebrow: "Capturas",
       title: "Diseñada para ser clara antes, durante y después de cada salida",
-      subtitle: "Sustituye estas tarjetas por capturas reales cuando quieras.",
+      subtitle: "De herramientas RIDE NOW gratis a información Pro más profunda cuando quieras más.",
       items: [
-        "Mapa",
-        "Detalles de salida",
-        "Crear Ride Now",
-        "Invitaciones",
-        "Enlace de ruta",
-        "Notificaciones"
-      ],
-      replaceHint: "Sustituir por /public/screenshots/shot-{n}.png"
+        {
+          image: "/screenshots/app-01.PNG",
+          title: "Vista del mapa",
+          description: "Encuentra ciclistas cerca de ti y mira quién está listo para salir ahora."
+        },
+        {
+          image: "/screenshots/app-02.PNG",
+          title: "Crear salida RIDE NOW",
+          description: "Define ruta, hora y punto de encuentro en segundos."
+        },
+        {
+          image: "/screenshots/app-03.PNG",
+          title: "La comunidad",
+          description: "Encuentra ciclistas de tu nivel e invítalos a la salida."
+        },
+        {
+          image: "/screenshots/app-04.PNG",
+          title: "Listos para salir",
+          description: "Reúne al grupo e inicia el seguimiento en vivo directamente desde el mapa."
+        },
+        {
+          image: "/screenshots/app-05.PNG",
+          title: "Detalles de la salida (Pro)",
+          description:
+            "Profundiza en tus datos. Consulta vatios, zonas de entrenamiento y subidas después de la salida."
+        },
+        {
+          image: "/screenshots/app-06.PNG",
+          title: "Ve tu evolución (Pro)",
+          description:
+            "Sigue tu forma a lo largo del tiempo con gráficos detallados e historial de 12 meses."
+        }
+      ]
     },
     pricing: {
       eyebrow: "Gratis vs Pro",
@@ -812,16 +913,41 @@ const dictionaries: Record<Locale, Dictionary> = {
     screenshots: {
       eyebrow: "Screenshot",
       title: "Progettata per restare chiara prima, durante e dopo l'uscita",
-      subtitle: "Sostituisci questi segnaposto con screenshot reali quando vuoi.",
+      subtitle: "Dagli strumenti RIDE NOW gratis agli insight Pro più profondi quando vuoi di più.",
       items: [
-        "Mappa",
-        "Dettagli uscita",
-        "Creazione Ride Now",
-        "Inviti",
-        "Link percorso",
-        "Notifiche"
-      ],
-      replaceHint: "Sostituisci con /public/screenshots/shot-{n}.png"
+        {
+          image: "/screenshots/app-01.PNG",
+          title: "Panoramica mappa",
+          description: "Trova ciclisti vicino a te e vedi chi è pronto per uscire ora."
+        },
+        {
+          image: "/screenshots/app-02.PNG",
+          title: "Crea uscita RIDE NOW",
+          description: "Imposta percorso, orario e punto di ritrovo in pochi secondi."
+        },
+        {
+          image: "/screenshots/app-03.PNG",
+          title: "La community",
+          description: "Trova ciclisti del tuo livello e invitali all'uscita."
+        },
+        {
+          image: "/screenshots/app-04.PNG",
+          title: "Pronti a partire",
+          description: "Riunisci il gruppo e avvia il live tracking direttamente dalla mappa."
+        },
+        {
+          image: "/screenshots/app-05.PNG",
+          title: "Dettagli uscita (Pro)",
+          description:
+            "Entra nei tuoi dati. Vedi watt, zone di allenamento e salite dopo l'uscita."
+        },
+        {
+          image: "/screenshots/app-06.PNG",
+          title: "Guarda i tuoi progressi (Pro)",
+          description:
+            "Segui la tua forma nel tempo con grafici dettagliati e storico di 12 mesi."
+        }
+      ]
     },
     pricing: {
       eyebrow: "Gratis vs Pro",
@@ -973,16 +1099,41 @@ const dictionaries: Record<Locale, Dictionary> = {
     screenshots: {
       eyebrow: "Captures",
       title: "Pensée pour rester claire avant, pendant et après chaque sortie",
-      subtitle: "Remplacez ces emplacements par vos captures réelles quand vous voulez.",
+      subtitle: "Des outils RIDE NOW gratuits aux analyses Pro plus poussées quand vous voulez aller plus loin.",
       items: [
-        "Carte",
-        "Détails sortie",
-        "Création Ride Now",
-        "Invitations",
-        "Lien itinéraire",
-        "Notifications"
-      ],
-      replaceHint: "Remplacer par /public/screenshots/shot-{n}.png"
+        {
+          image: "/screenshots/app-01.PNG",
+          title: "Vue carte",
+          description: "Trouvez des cyclistes près de vous et voyez qui est prêt à rouler maintenant."
+        },
+        {
+          image: "/screenshots/app-02.PNG",
+          title: "Créer une sortie RIDE NOW",
+          description: "Définissez un itinéraire, une heure et un lieu de rendez-vous en quelques secondes."
+        },
+        {
+          image: "/screenshots/app-03.PNG",
+          title: "La communauté",
+          description: "Trouvez des cyclistes à votre niveau et invitez-les à la sortie."
+        },
+        {
+          image: "/screenshots/app-04.PNG",
+          title: "Prêt à partir",
+          description: "Rassemblez le groupe et lancez le suivi en direct depuis la carte."
+        },
+        {
+          image: "/screenshots/app-05.PNG",
+          title: "Détails de sortie (Pro)",
+          description:
+            "Plongez dans vos données. Consultez watts, zones d'entraînement et ascensions après la sortie."
+        },
+        {
+          image: "/screenshots/app-06.PNG",
+          title: "Suivez votre progression (Pro)",
+          description:
+            "Suivez votre forme dans le temps avec des graphiques détaillés et un historique sur 12 mois."
+        }
+      ]
     },
     pricing: {
       eyebrow: "Gratuit vs Pro",
@@ -1134,16 +1285,40 @@ const dictionaries: Record<Locale, Dictionary> = {
     screenshots: {
       eyebrow: "Screenshots",
       title: "Ontworpen om helder te blijven voor, tijdens en na elke rit",
-      subtitle: "Vervang deze placeholders later met echte app-screenshots.",
+      subtitle: "Van gratis RIDE NOW-tools tot diepere Pro-inzichten wanneer je meer wilt.",
       items: [
-        "Kaart",
-        "Ritdetails",
-        "Ride Now maken",
-        "Uitnodigingen",
-        "Routelink",
-        "Meldingen"
-      ],
-      replaceHint: "Vervang door /public/screenshots/shot-{n}.png"
+        {
+          image: "/screenshots/app-01.PNG",
+          title: "Kaartoverzicht",
+          description: "Vind fietsers bij jou in de buurt en zie wie nu klaar is voor een rit."
+        },
+        {
+          image: "/screenshots/app-02.PNG",
+          title: "Maak RIDE NOW-rit",
+          description: "Stel route, tijd en ontmoetingsplek in binnen enkele seconden."
+        },
+        {
+          image: "/screenshots/app-03.PNG",
+          title: "De community",
+          description: "Vind fietsers op jouw niveau en nodig ze uit voor de rit."
+        },
+        {
+          image: "/screenshots/app-04.PNG",
+          title: "Klaar voor vertrek",
+          description: "Verzamel de groep en start live tracking direct vanaf de kaart."
+        },
+        {
+          image: "/screenshots/app-05.PNG",
+          title: "Ritdetails (Pro)",
+          description: "Duik in je data. Bekijk watt, trainingszones en beklimmingen na de rit."
+        },
+        {
+          image: "/screenshots/app-06.PNG",
+          title: "Bekijk je ontwikkeling (Pro)",
+          description:
+            "Volg je vorm in de tijd met gedetailleerde grafieken en 12 maanden historie."
+        }
+      ]
     },
     pricing: {
       eyebrow: "Gratis vs Pro",
