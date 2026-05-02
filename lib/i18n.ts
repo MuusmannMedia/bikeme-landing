@@ -15,6 +15,13 @@ type FaqItem = {
   answer: string;
 };
 
+type PricingPlan = {
+  name: string;
+  label: string;
+  description: string;
+  items: string[];
+};
+
 export type Dictionary = {
   meta: {
     title: string;
@@ -24,12 +31,15 @@ export type Dictionary = {
     features: string;
     howItWorks: string;
     screenshots: string;
+    pricing: string;
     faq: string;
     joinTestFlight: string;
   };
   hero: {
     headline: string;
     subheadline: string;
+    payoffTitle: string;
+    payoffText: string;
     primaryCta: string;
     secondaryCta: string;
     previewLabel: string;
@@ -55,6 +65,13 @@ export type Dictionary = {
     items: string[];
     replaceHint: string;
   };
+  pricing: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    plans: PricingPlan[];
+    cta: string;
+  };
   faq: {
     eyebrow: string;
     title: string;
@@ -79,6 +96,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       features: "Features",
       howItWorks: "How it works",
       screenshots: "Screenshots",
+      pricing: "Free vs Pro",
       faq: "FAQ",
       joinTestFlight: "Join TestFlight"
     },
@@ -86,6 +104,9 @@ const dictionaries: Record<Locale, Dictionary> = {
       headline: "Find someone to ride with right now with Bike ME",
       subheadline:
         "Bike ME makes it easy to find riders right now. Create a RIDE NOW ride in seconds, or plan a ride for later.",
+      payoffTitle: "Ride the route. Understand your form.",
+      payoffText:
+        "The free version gets you out on the route with RIDE NOW and maps. Bike ME Pro helps you understand your development.",
       primaryCta: "Join TestFlight",
       secondaryCta: "See how it works",
       previewLabel: "App preview"
@@ -158,13 +179,48 @@ const dictionaries: Record<Locale, Dictionary> = {
       ],
       replaceHint: "Replace with /public/screenshots/shot-{n}.png"
     },
+    pricing: {
+      eyebrow: "Free vs Pro",
+      title: "Get more from every ride with Bike ME Pro",
+      subtitle:
+        "Start free with the core social ride tools. Upgrade when you want deeper training insight and long-term progress data.",
+      plans: [
+        {
+          name: "Bike ME",
+          label: "Free",
+          description: "Map, RIDE NOW, find riders, basic route data, and simple history.",
+          items: [
+            "Map-based ride discovery",
+            "RIDE NOW and planned rides",
+            "Find nearby riders",
+            "Basic route data",
+            "Simple ride history"
+          ]
+        },
+        {
+          name: "Bike ME Pro",
+          label: "Pro",
+          description:
+            "See your development. Full watt estimation, training zones (heart rate/watts), advanced 12M history, and progress graphs.",
+          items: [
+            "Full watt estimation",
+            "Training zones for heart rate and watts",
+            "Advanced 12-month history",
+            "Progress and development graphs",
+            "Deeper ride insights"
+          ]
+        }
+      ],
+      cta: "Try Bike ME Pro free for 14 days"
+    },
     faq: {
       eyebrow: "FAQ",
       title: "Common questions",
       items: [
         {
           question: "Is Bike Me free?",
-          answer: "Bike Me is currently in testing. Pricing will be shared before public launch."
+          answer:
+            "Yes, Bike ME is free to use for finding riders, creating RIDE NOW rides, and tracking your basic data. If you want deeper statistics, watt estimates, and training zones, you can upgrade to Bike ME Pro. You can try Pro free for 14 days."
         },
         {
           question: "Is it available on iOS/Android?",
@@ -201,6 +257,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       features: "Funktioner",
       howItWorks: "Sådan virker det",
       screenshots: "Skærmbilleder",
+      pricing: "Gratis vs Pro",
       faq: "FAQ",
       joinTestFlight: "Join TestFlight"
     },
@@ -208,6 +265,9 @@ const dictionaries: Record<Locale, Dictionary> = {
       headline: "Find nogen at køre med her og nu med Bike ME",
       subheadline:
         "Bike ME gør det nemt at finde andre at køre med – her og nu. Opret en KØR NU-tur på få sekunder, eller planlæg en tur til senere.",
+      payoffTitle: "Kør turen. Forstå formen.",
+      payoffText:
+        "Gratisversionen får dig ud på ruten med KØR NU og kort. Pro-versionen lader dig forstå din udvikling.",
       primaryCta: "Join TestFlight",
       secondaryCta: "Se hvordan det virker",
       previewLabel: "App-preview"
@@ -280,13 +340,48 @@ const dictionaries: Record<Locale, Dictionary> = {
       ],
       replaceHint: "Udskift med /public/screenshots/shot-{n}.png"
     },
+    pricing: {
+      eyebrow: "Gratis vs Pro",
+      title: "Få mere ud af hver tur med Bike ME Pro",
+      subtitle:
+        "Start gratis med de vigtigste sociale turfunktioner. Opgradér, når du vil forstå din træning og udvikling i dybden.",
+      plans: [
+        {
+          name: "Bike ME",
+          label: "Gratis",
+          description: "Kort, KØR NU, find ryttere, basis rutedata og simpel historik.",
+          items: [
+            "Kortbaseret tur-overblik",
+            "KØR NU og planlagte ture",
+            "Find ryttere tæt på dig",
+            "Basis rutedata",
+            "Simpel historik"
+          ]
+        },
+        {
+          name: "Bike ME Pro",
+          label: "Pro",
+          description:
+            "Se din udvikling. Fuld watt-estimering, træningszoner (puls/watt), avanceret 12M historik og udviklingsgrafer.",
+          items: [
+            "Fuld watt-estimering",
+            "Træningszoner for puls og watt",
+            "Avanceret 12M historik",
+            "Udviklingsgrafer",
+            "Dybdegående tur-statistik"
+          ]
+        }
+      ],
+      cta: "Prøv Bike ME Pro gratis i 14 dage"
+    },
     faq: {
       eyebrow: "FAQ",
       title: "Ofte stillede spørgsmål",
       items: [
         {
           question: "Er Bike Me gratis?",
-          answer: "Bike Me er i testfasen. Pris bliver meldt ud inden offentlig lancering."
+          answer:
+            "Ja, det er helt gratis at bruge Bike ME til at finde ryttere, oprette KØR NU-ture og tracke din basis-data. Hvis du vil have dybdegående statistik, watt-estimater og træningszoner, kan du opgradere til Bike ME Pro. Du kan prøve Pro gratis i 14 dage."
         },
         {
           question: "Er den tilgængelig på iOS/Android?",
@@ -323,6 +418,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       features: "Funktionen",
       howItWorks: "So funktioniert's",
       screenshots: "Screenshots",
+      pricing: "Free vs Pro",
       faq: "FAQ",
       joinTestFlight: "Join TestFlight"
     },
@@ -330,6 +426,9 @@ const dictionaries: Record<Locale, Dictionary> = {
       headline: "Finde jemanden zum Fahren hier und jetzt mit Bike ME",
       subheadline:
         "Mit Bike ME findest du ganz einfach andere zum Fahren – hier und jetzt. Erstelle in Sekunden eine RIDE NOW-Fahrt oder plane eine Fahrt für später.",
+      payoffTitle: "Fahr die Route. Versteh deine Form.",
+      payoffText:
+        "Die kostenlose Version bringt dich mit RIDE NOW und Karte auf die Strecke. Bike ME Pro zeigt dir, wie du dich entwickelst.",
       primaryCta: "Join TestFlight",
       secondaryCta: "So funktioniert's",
       previewLabel: "App-Vorschau"
@@ -402,13 +501,48 @@ const dictionaries: Record<Locale, Dictionary> = {
       ],
       replaceHint: "Ersetzen mit /public/screenshots/shot-{n}.png"
     },
+    pricing: {
+      eyebrow: "Free vs Pro",
+      title: "Hol mehr aus jeder Fahrt mit Bike ME Pro",
+      subtitle:
+        "Starte kostenlos mit den wichtigsten sozialen Fahrfunktionen. Upgrade, wenn du Training und Entwicklung tiefer verstehen willst.",
+      plans: [
+        {
+          name: "Bike ME",
+          label: "Kostenlos",
+          description: "Karte, RIDE NOW, Fahrer finden, Basis-Routendaten und einfache Historie.",
+          items: [
+            "Fahrten auf der Karte entdecken",
+            "RIDE NOW und geplante Fahrten",
+            "Fahrer in deiner Nähe finden",
+            "Basis-Routendaten",
+            "Einfache Fahrtenhistorie"
+          ]
+        },
+        {
+          name: "Bike ME Pro",
+          label: "Pro",
+          description:
+            "Sieh deine Entwicklung. Volle Watt-Schätzung, Trainingszonen (Puls/Watt), erweiterte 12M-Historie und Fortschrittsgrafen.",
+          items: [
+            "Volle Watt-Schätzung",
+            "Trainingszonen für Puls und Watt",
+            "Erweiterte 12-Monats-Historie",
+            "Fortschritts- und Entwicklungsgrafen",
+            "Tiefere Fahrteinblicke"
+          ]
+        }
+      ],
+      cta: "Bike ME Pro 14 Tage kostenlos testen"
+    },
     faq: {
       eyebrow: "FAQ",
       title: "Häufige Fragen",
       items: [
         {
           question: "Ist Bike Me kostenlos?",
-          answer: "Bike Me befindet sich aktuell im Test. Preisdetails folgen vor dem öffentlichen Start."
+          answer:
+            "Ja, Bike ME ist kostenlos nutzbar, um Fahrer zu finden, RIDE NOW-Fahrten zu erstellen und Basisdaten zu tracken. Wenn du tiefere Statistiken, Watt-Schätzungen und Trainingszonen möchtest, kannst du auf Bike ME Pro upgraden. Pro kannst du 14 Tage kostenlos testen."
         },
         {
           question: "Gibt es Bike Me für iOS/Android?",
@@ -445,6 +579,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       features: "Funciones",
       howItWorks: "Cómo funciona",
       screenshots: "Capturas",
+      pricing: "Gratis vs Pro",
       faq: "FAQ",
       joinTestFlight: "Join TestFlight"
     },
@@ -452,6 +587,9 @@ const dictionaries: Record<Locale, Dictionary> = {
       headline: "Encuentra a alguien para rodar aquí y ahora con Bike ME",
       subheadline:
         "Bike ME te lo pone fácil para encontrar con quién rodar aquí y ahora. Crea una salida RIDE NOW en segundos o planifica una salida para más tarde.",
+      payoffTitle: "Haz la ruta. Entiende tu forma.",
+      payoffText:
+        "La versión gratuita te saca a la ruta con RIDE NOW y el mapa. Bike ME Pro te ayuda a entender tu evolución.",
       primaryCta: "Join TestFlight",
       secondaryCta: "Ver cómo funciona",
       previewLabel: "Vista de la app"
@@ -524,13 +662,48 @@ const dictionaries: Record<Locale, Dictionary> = {
       ],
       replaceHint: "Sustituir por /public/screenshots/shot-{n}.png"
     },
+    pricing: {
+      eyebrow: "Gratis vs Pro",
+      title: "Saca más de cada salida con Bike ME Pro",
+      subtitle:
+        "Empieza gratis con las funciones sociales esenciales. Pasa a Pro cuando quieras entender mejor tu entrenamiento y progreso.",
+      plans: [
+        {
+          name: "Bike ME",
+          label: "Gratis",
+          description: "Mapa, RIDE NOW, encontrar ciclistas, datos básicos de ruta e historial simple.",
+          items: [
+            "Descubre salidas en el mapa",
+            "RIDE NOW y salidas planificadas",
+            "Encuentra ciclistas cerca",
+            "Datos básicos de ruta",
+            "Historial simple"
+          ]
+        },
+        {
+          name: "Bike ME Pro",
+          label: "Pro",
+          description:
+            "Ve tu evolución. Estimación completa de vatios, zonas de entrenamiento (pulso/vatios), historial avanzado de 12M y gráficas de progreso.",
+          items: [
+            "Estimación completa de vatios",
+            "Zonas de pulso y vatios",
+            "Historial avanzado de 12 meses",
+            "Gráficas de progreso",
+            "Insights más profundos"
+          ]
+        }
+      ],
+      cta: "Prueba Bike ME Pro gratis 14 días"
+    },
     faq: {
       eyebrow: "FAQ",
       title: "Preguntas frecuentes",
       items: [
         {
           question: "¿Bike Me es gratis?",
-          answer: "Bike Me está en fase de pruebas. Compartiremos precios antes del lanzamiento público."
+          answer:
+            "Sí, Bike ME es gratis para encontrar ciclistas, crear salidas RIDE NOW y registrar tus datos básicos. Si quieres estadísticas más profundas, estimaciones de vatios y zonas de entrenamiento, puedes pasar a Bike ME Pro. Puedes probar Pro gratis durante 14 días."
         },
         {
           question: "¿Está disponible en iOS/Android?",
@@ -567,6 +740,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       features: "Funzionalità",
       howItWorks: "Come funziona",
       screenshots: "Screenshot",
+      pricing: "Gratis vs Pro",
       faq: "FAQ",
       joinTestFlight: "Join TestFlight"
     },
@@ -574,6 +748,9 @@ const dictionaries: Record<Locale, Dictionary> = {
       headline: "Trova qualcuno con cui pedalare qui e ora con Bike ME",
       subheadline:
         "Bike ME rende facile trovare altri ciclisti con cui uscire, qui e ora. Crea in pochi secondi un'uscita RIDE NOW oppure pianifica un'uscita per dopo.",
+      payoffTitle: "Fai il giro. Capisci la tua forma.",
+      payoffText:
+        "La versione gratuita ti porta in strada con RIDE NOW e mappa. Bike ME Pro ti aiuta a capire la tua crescita.",
       primaryCta: "Join TestFlight",
       secondaryCta: "Scopri come funziona",
       previewLabel: "Anteprima app"
@@ -646,13 +823,48 @@ const dictionaries: Record<Locale, Dictionary> = {
       ],
       replaceHint: "Sostituisci con /public/screenshots/shot-{n}.png"
     },
+    pricing: {
+      eyebrow: "Gratis vs Pro",
+      title: "Ottieni di più da ogni uscita con Bike ME Pro",
+      subtitle:
+        "Inizia gratis con le funzioni social essenziali. Passa a Pro quando vuoi capire meglio allenamento e progressi.",
+      plans: [
+        {
+          name: "Bike ME",
+          label: "Gratis",
+          description: "Mappa, RIDE NOW, trova ciclisti, dati base del percorso e storico semplice.",
+          items: [
+            "Scopri uscite sulla mappa",
+            "RIDE NOW e uscite pianificate",
+            "Trova ciclisti vicini",
+            "Dati base del percorso",
+            "Storico semplice"
+          ]
+        },
+        {
+          name: "Bike ME Pro",
+          label: "Pro",
+          description:
+            "Vedi la tua evoluzione. Stima completa dei watt, zone di allenamento (frequenza cardiaca/watt), storico avanzato 12M e grafici di progresso.",
+          items: [
+            "Stima completa dei watt",
+            "Zone cardio e watt",
+            "Storico avanzato di 12 mesi",
+            "Grafici di progresso",
+            "Insight più dettagliati"
+          ]
+        }
+      ],
+      cta: "Prova Bike ME Pro gratis per 14 giorni"
+    },
     faq: {
       eyebrow: "FAQ",
       title: "Domande frequenti",
       items: [
         {
           question: "Bike Me è gratuita?",
-          answer: "Bike Me è attualmente in test. I dettagli sui prezzi saranno condivisi prima del lancio pubblico."
+          answer:
+            "Sì, Bike ME è gratuita per trovare ciclisti, creare uscite RIDE NOW e tracciare i dati base. Se vuoi statistiche più profonde, stime dei watt e zone di allenamento, puoi passare a Bike ME Pro. Puoi provare Pro gratis per 14 giorni."
         },
         {
           question: "È disponibile su iOS/Android?",
@@ -689,6 +901,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       features: "Fonctionnalités",
       howItWorks: "Comment ça marche",
       screenshots: "Captures",
+      pricing: "Gratuit vs Pro",
       faq: "FAQ",
       joinTestFlight: "Join TestFlight"
     },
@@ -696,6 +909,9 @@ const dictionaries: Record<Locale, Dictionary> = {
       headline: "Trouvez quelqu'un avec qui rouler ici et maintenant avec Bike ME",
       subheadline:
         "Bike ME facilite la recherche de cyclistes avec qui rouler, ici et maintenant. Créez une sortie RIDE NOW en quelques secondes ou planifiez une sortie plus tard.",
+      payoffTitle: "Roulez la sortie. Comprenez votre forme.",
+      payoffText:
+        "La version gratuite vous met sur la route avec RIDE NOW et la carte. Bike ME Pro vous aide à comprendre votre progression.",
       primaryCta: "Join TestFlight",
       secondaryCta: "Voir le fonctionnement",
       previewLabel: "Aperçu de l'app"
@@ -768,13 +984,48 @@ const dictionaries: Record<Locale, Dictionary> = {
       ],
       replaceHint: "Remplacer par /public/screenshots/shot-{n}.png"
     },
+    pricing: {
+      eyebrow: "Gratuit vs Pro",
+      title: "Tirez plus de chaque sortie avec Bike ME Pro",
+      subtitle:
+        "Commencez gratuitement avec les outils sociaux essentiels. Passez à Pro quand vous voulez analyser votre entraînement et vos progrès.",
+      plans: [
+        {
+          name: "Bike ME",
+          label: "Gratuit",
+          description: "Carte, RIDE NOW, trouver des cyclistes, données de base et historique simple.",
+          items: [
+            "Découverte des sorties sur la carte",
+            "RIDE NOW et sorties planifiées",
+            "Trouver des cyclistes proches",
+            "Données de base",
+            "Historique simple"
+          ]
+        },
+        {
+          name: "Bike ME Pro",
+          label: "Pro",
+          description:
+            "Suivez votre progression. Estimation complète des watts, zones d'entraînement (fréquence cardiaque/watts), historique avancé 12M et graphiques de progression.",
+          items: [
+            "Estimation complète des watts",
+            "Zones cardio et watts",
+            "Historique avancé sur 12 mois",
+            "Graphiques de progression",
+            "Analyses plus détaillées"
+          ]
+        }
+      ],
+      cta: "Essayez Bike ME Pro gratuitement 14 jours"
+    },
     faq: {
       eyebrow: "FAQ",
       title: "Questions fréquentes",
       items: [
         {
           question: "Bike Me est-elle gratuite ?",
-          answer: "Bike Me est actuellement en phase de test. Les tarifs seront communiqués avant le lancement public."
+          answer:
+            "Oui, Bike ME est gratuite pour trouver des cyclistes, créer des sorties RIDE NOW et suivre vos données de base. Pour des statistiques approfondies, des estimations de watts et des zones d'entraînement, vous pouvez passer à Bike ME Pro. Vous pouvez essayer Pro gratuitement pendant 14 jours."
         },
         {
           question: "Disponible sur iOS/Android ?",
@@ -811,6 +1062,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       features: "Functies",
       howItWorks: "Hoe het werkt",
       screenshots: "Screenshots",
+      pricing: "Gratis vs Pro",
       faq: "FAQ",
       joinTestFlight: "Join TestFlight"
     },
@@ -818,6 +1070,9 @@ const dictionaries: Record<Locale, Dictionary> = {
       headline: "Vind iemand om mee te rijden hier en nu met Bike ME",
       subheadline:
         "Bike ME maakt het makkelijk om hier en nu iemand te vinden om mee te rijden. Maak in een paar seconden een RIDE NOW-rit of plan een rit voor later.",
+      payoffTitle: "Rijd de route. Begrijp je vorm.",
+      payoffText:
+        "De gratis versie brengt je op pad met RIDE NOW en de kaart. Bike ME Pro helpt je je ontwikkeling te begrijpen.",
       primaryCta: "Join TestFlight",
       secondaryCta: "Bekijk hoe het werkt",
       previewLabel: "App-preview"
@@ -890,13 +1145,48 @@ const dictionaries: Record<Locale, Dictionary> = {
       ],
       replaceHint: "Vervang door /public/screenshots/shot-{n}.png"
     },
+    pricing: {
+      eyebrow: "Gratis vs Pro",
+      title: "Haal meer uit elke rit met Bike ME Pro",
+      subtitle:
+        "Begin gratis met de belangrijkste sociale ritfuncties. Upgrade wanneer je training en ontwikkeling dieper wilt begrijpen.",
+      plans: [
+        {
+          name: "Bike ME",
+          label: "Gratis",
+          description: "Kaart, RIDE NOW, fietsers vinden, basis routegegevens en eenvoudige historie.",
+          items: [
+            "Ritten ontdekken op de kaart",
+            "RIDE NOW en geplande ritten",
+            "Fietsers in de buurt vinden",
+            "Basis routegegevens",
+            "Eenvoudige historie"
+          ]
+        },
+        {
+          name: "Bike ME Pro",
+          label: "Pro",
+          description:
+            "Zie je ontwikkeling. Volledige wattinschatting, trainingszones (hartslag/watt), geavanceerde 12M historie en voortgangsgrafieken.",
+          items: [
+            "Volledige wattinschatting",
+            "Hartslag- en wattzones",
+            "Geavanceerde 12-maandenhistorie",
+            "Voortgangsgrafieken",
+            "Diepere ritinzichten"
+          ]
+        }
+      ],
+      cta: "Probeer Bike ME Pro 14 dagen gratis"
+    },
     faq: {
       eyebrow: "FAQ",
       title: "Veelgestelde vragen",
       items: [
         {
           question: "Is Bike Me gratis?",
-          answer: "Bike Me zit momenteel in de testfase. Prijsinformatie volgt voor de publieke lancering."
+          answer:
+            "Ja, Bike ME is gratis te gebruiken om fietsers te vinden, RIDE NOW-ritten te maken en basisdata te tracken. Voor diepere statistieken, wattinschattingen en trainingszones kun je upgraden naar Bike ME Pro. Je kunt Pro 14 dagen gratis proberen."
         },
         {
           question: "Is het beschikbaar op iOS/Android?",
