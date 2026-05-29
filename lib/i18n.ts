@@ -262,7 +262,7 @@ const dictionaries: Record<Locale, Dictionary> = {
         {
           question: "Can I import a route?",
           answer:
-            "Yes. You can import a GPX file if you want a planned route to appear on the map. Strava links are not used as route imports in this version."
+            "Yes. You can import a GPX file if you want a planned route to appear on the map."
         },
         {
           question: "How do notifications work?",
@@ -448,7 +448,7 @@ const dictionaries: Record<Locale, Dictionary> = {
         {
           question: "Kan jeg importere en rute?",
           answer:
-            "Ja, du kan importere en GPX-fil, hvis du vil have en planlagt rute vist på kortet. Strava-links bruges ikke som ruteimport i denne version."
+            "Ja. Du kan importere en GPX-fil, hvis du vil have en planlagt rute vist på kortet."
         },
         {
           question: "Hvordan virker notifikationer?",
@@ -473,7 +473,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       features: "Funktionen",
       howItWorks: "So funktioniert's",
       screenshots: "Screenshots",
-      pricing: "Free vs Pro",
+      pricing: "Kostenlos vs Pro",
       faq: "FAQ",
       joinTestFlight: "Über TestFlight laden"
     },
@@ -582,7 +582,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       ]
     },
     pricing: {
-      eyebrow: "Free vs Pro",
+      eyebrow: "Kostenlos vs Pro",
       title: "Werde Betatester - erhalte 12 Monate Pro",
       subtitle:
         "Starte kostenlos mit den wichtigsten sozialen Fahrfunktionen. Als Betatester erhältst du 12 Monate Bike ME Pro, wenn die App offiziell startet.",
@@ -636,7 +636,7 @@ const dictionaries: Record<Locale, Dictionary> = {
         {
           question: "Kann ich eine Route importieren?",
           answer:
-            "Ja. Du kannst eine GPX-Datei importieren, wenn eine geplante Route auf der Karte erscheinen soll. Strava-Links werden in dieser Version nicht als Routenimport verwendet."
+            "Ja. Du kannst eine GPX-Datei importieren, wenn eine geplante Route auf der Karte angezeigt werden soll."
         },
         {
           question: "Wie funktionieren Benachrichtigungen?",
@@ -824,7 +824,7 @@ const dictionaries: Record<Locale, Dictionary> = {
         {
           question: "¿Puedo importar una ruta?",
           answer:
-            "Sí. Puedes importar un archivo GPX si quieres que una ruta planificada aparezca en el mapa. Los enlaces de Strava no se usan como importación de rutas en esta versión."
+            "Sí. Puedes importar un archivo GPX si quieres ver una ruta planificada en el mapa."
         },
         {
           question: "¿Cómo funcionan las notificaciones?",
@@ -1012,7 +1012,7 @@ const dictionaries: Record<Locale, Dictionary> = {
         {
           question: "Posso importare un percorso?",
           answer:
-            "Sì. Puoi importare un file GPX se vuoi che un percorso pianificato appaia sulla mappa. I link Strava non vengono usati come importazione percorso in questa versione."
+            "Sì. Puoi importare un file GPX se vuoi visualizzare un percorso pianificato sulla mappa."
         },
         {
           question: "Come funzionano le notifiche?",
@@ -1200,7 +1200,7 @@ const dictionaries: Record<Locale, Dictionary> = {
         {
           question: "Puis-je importer un itinéraire ?",
           answer:
-            "Oui. Vous pouvez importer un fichier GPX si vous voulez afficher un itinéraire planifié sur la carte. Les liens Strava ne sont pas utilisés comme import d'itinéraire dans cette version."
+            "Oui. Vous pouvez importer un fichier GPX si vous souhaitez afficher un itinéraire planifié sur la carte."
         },
         {
           question: "Comment fonctionnent les notifications ?",
@@ -1387,7 +1387,7 @@ const dictionaries: Record<Locale, Dictionary> = {
         {
           question: "Kan ik een route importeren?",
           answer:
-            "Ja. Je kunt een GPX-bestand importeren als je een geplande route op de kaart wilt tonen. Strava-links worden in deze versie niet gebruikt als route-import."
+            "Ja. Je kunt een GPX-bestand importeren als je een geplande route op de kaart wilt weergeven."
         },
         {
           question: "Hoe werken meldingen?",
