@@ -182,9 +182,9 @@ export default function PrivacyPage({ params }: LocalePageProps) {
                   Oplysninger om deltagelse (fx hvem der har tilmeldt sig en tur).
                 </li>
                 <li>
-                  <strong className="text-[var(--ink)]">Rute-link (valgfrit):</strong> hvis du
-                  indsætter et link til en Strava-rute (eller andet rutelink), gemmer vi linket
-                  sammen med turen, så andre kan åbne det fra turdetaljer.
+                  <strong className="text-[var(--ink)]">Rutedata (valgfrit):</strong> hvis du
+                  importerer en GPX-fil, gemmer vi rutedata sammen med turen, så ruten kan vises på
+                  kortet.
                 </li>
                 <li>
                   <strong className="text-[var(--ink)]">Lokationsdata:</strong> din lokation, når

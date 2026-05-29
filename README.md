@@ -101,11 +101,11 @@ npm run build
 
 Please provide these production values so placeholders can be replaced:
 
-1. TestFlight URL (currently `https://testflight.apple.com/join/REPLACE_ME`)
+1. TestFlight URL (currently `https://testflight.apple.com/join/gYrqA8P1`)
 2. Privacy policy URL (currently `https://bikeme.one/privacy`)
 3. Terms URL (currently `https://bikeme.one/terms`)
 4. Contact email (currently `hello@bikeme.one`)
-5. Real app screenshots (up to 6 images)
+5. Real app screenshots (currently `public/screenshots/app-01.PNG` through `app-06.PNG`)
 
 ## Notes
 

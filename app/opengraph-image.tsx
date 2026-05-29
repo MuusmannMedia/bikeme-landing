@@ -88,7 +88,7 @@ export default function OpengraphImage() {
               color: "#edf1ff"
             }}
           >
-            Find rides. Join fast. Ride together.
+            Bike Me beta is open on TestFlight
           </div>
         </div>
       </div>

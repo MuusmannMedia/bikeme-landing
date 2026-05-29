@@ -160,6 +160,21 @@ export default function LocalePage({ params }: LocalePageProps) {
                 {t.hero.payoffText}
               </p>
             </div>
+
+            <div className="animate-fade-up flex flex-wrap items-center gap-3 [animation-delay:220ms]">
+              <a
+                href={TESTFLIGHT_URL}
+                className="inline-flex rounded-full border-2 border-[rgba(143,168,255,0.75)] bg-[linear-gradient(135deg,rgba(94,127,255,0.9),rgba(128,39,130,0.85))] px-7 py-3 text-sm font-semibold text-white shadow-[0_18px_50px_-28px_rgba(128,39,130,0.9)] transition-transform hover:scale-[1.02]"
+              >
+                {t.hero.primaryCta}
+              </a>
+              <a
+                href="#how-it-works"
+                className="rounded-full border-2 border-[rgba(143,168,255,0.75)] bg-white/[0.02] px-7 py-3 text-sm font-medium text-[var(--ink)] transition-colors hover:border-[rgba(128,39,130,0.95)] hover:bg-[rgba(128,39,130,0.16)]"
+              >
+                {t.hero.secondaryCta}
+              </a>
+            </div>
           </div>
 
           <div className="relative lg:pl-8">

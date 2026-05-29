@@ -93,9 +93,9 @@ export type Dictionary = {
 const dictionaries: Record<Locale, Dictionary> = {
   en: {
     meta: {
-      title: "Bike Me | Find rides. Join fast. Ride together.",
+      title: "Bike Me | Beta on TestFlight",
       description:
-        "Bike Me helps cyclists discover nearby rides, create Ride Now meetups, and plan future rides - all from the map."
+        "Bike Me is open for iPhone beta testers via TestFlight. Beta testers get 12 months of free Bike Me Pro at official launch."
     },
     nav: {
       features: "Features",
@@ -103,16 +103,16 @@ const dictionaries: Record<Locale, Dictionary> = {
       screenshots: "Screenshots",
       pricing: "Free vs Pro",
       faq: "FAQ",
-      joinTestFlight: "Join TestFlight"
+      joinTestFlight: "Get via TestFlight"
     },
     hero: {
-      headline: "Find someone to ride with right now with Bike ME",
+      headline: "Bike Me is open for beta testers",
       subheadline:
-        "Bike ME makes it easy to find riders right now. Create a RIDE NOW ride in seconds, or plan a ride for later.",
-      payoffTitle: "Ride the route. Understand your form.",
+        "Find riders, create rides, invite cycling friends, and track your rides. Help us test Bike Me via TestFlight.",
+      payoffTitle: "12 months of free Pro for beta testers",
       payoffText:
-        "The free version gets you out on the route with RIDE NOW and maps. Bike ME Pro helps you understand your development.",
-      primaryCta: "Join TestFlight",
+        "As a thank you, all beta testers get 12 months of free Bike Me Pro when the app officially launches. Requires iPhone and Apple's TestFlight app.",
+      primaryCta: "Get via TestFlight",
       secondaryCta: "See how it works",
       previewLabel: "App preview"
     },
@@ -122,7 +122,7 @@ const dictionaries: Record<Locale, Dictionary> = {
         "Create a RIDE NOW ride in seconds",
         "Find nearby riders on the map",
         "Agree on meeting point and time",
-        "Add a Strava route (optional)",
+        "Import a GPX route (optional)",
         "Get push alerts for important changes"
       ]
     },
@@ -143,8 +143,8 @@ const dictionaries: Record<Locale, Dictionary> = {
           description: "Choose exactly who to invite and keep your group dialed in."
         },
         {
-          title: "Add Strava routes",
-          description: "Attach a route link and open it directly from ride details."
+          title: "Import GPX routes",
+          description: "Import a GPX file so the route can appear on the map."
         },
         {
           title: "Smart participant notifications",
@@ -209,9 +209,9 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     pricing: {
       eyebrow: "Free vs Pro",
-      title: "Get more from every ride with Bike ME Pro",
+      title: "Become a beta tester - get 12 months of Pro",
       subtitle:
-        "Start free with the core social ride tools. Upgrade when you want deeper training insight and long-term progress data.",
+        "Start free with the core social ride tools. As a beta tester, you get 12 months of Bike ME Pro when the app officially launches.",
       plans: [
         {
           name: "Bike ME",
@@ -239,7 +239,7 @@ const dictionaries: Record<Locale, Dictionary> = {
           ]
         }
       ],
-      cta: "Try Bike ME Pro free for 14 days"
+      cta: "Get via TestFlight"
     },
     faq: {
       eyebrow: "FAQ",
@@ -248,19 +248,21 @@ const dictionaries: Record<Locale, Dictionary> = {
         {
           question: "Is Bike Me free?",
           answer:
-            "Yes, Bike ME is free to use for finding riders, creating RIDE NOW rides, and tracking your basic data. If you want deeper statistics, watt estimates, and training zones, you can upgrade to Bike ME Pro. You can try Pro free for 14 days."
+            "Yes. The key social features are free: find riders, create rides, invite others, and track your rides. Bike ME Pro gives access to deeper history, status, watt estimation, training zones, and progress graphs. As a beta tester, you get 12 months of free Pro when the app officially launches."
         },
         {
-          question: "Is it available on iOS/Android?",
-          answer: "Bike Me is currently available via iOS TestFlight. Android availability will be announced later."
+          question: "Can I test Bike Me now?",
+          answer:
+            "Yes. Bike Me is currently open for iOS beta testers via TestFlight. All beta testers get 12 months of free Bike Me Pro when the app officially launches."
         },
         {
           question: "How does Ride Now work?",
           answer: "Ride Now lets you create a ride that starts soon so nearby cyclists can join quickly."
         },
         {
-          question: "Can I add a Strava route?",
-          answer: "Yes. Add a Strava route link when creating or editing a ride and open it from ride details."
+          question: "Can I import a route?",
+          answer:
+            "Yes. You can import a GPX file if you want a planned route to appear on the map. Strava links are not used as route imports in this version."
         },
         {
           question: "How do notifications work?",
@@ -277,9 +279,9 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   da: {
     meta: {
-      title: "Bike Me | Find ture. Kom hurtigt med. Kør sammen.",
+      title: "Bike Me | Beta via TestFlight",
       description:
-        "Bike Me hjælper cyklister med at finde ture i nærheden, oprette 'Ride Now'-ture og planlægge fremtidige ture - direkte fra kortet."
+        "Bike Me er åben for iPhone beta-testere via TestFlight. Beta-testere får 12 måneders gratis Bike Me Pro ved officiel lancering."
     },
     nav: {
       features: "Funktioner",
@@ -287,16 +289,16 @@ const dictionaries: Record<Locale, Dictionary> = {
       screenshots: "Skærmbilleder",
       pricing: "Gratis vs Pro",
       faq: "FAQ",
-      joinTestFlight: "Join TestFlight"
+      joinTestFlight: "Hent via TestFlight"
     },
     hero: {
-      headline: "Find nogen at køre med her og nu med Bike ME",
+      headline: "Bike Me er åben for beta-testere",
       subheadline:
-        "Bike ME gør det nemt at finde andre at køre med – her og nu. Opret en KØR NU-tur på få sekunder, eller planlæg en tur til senere.",
-      payoffTitle: "Kør turen. Forstå formen.",
+        "Find ryttere, opret ture, inviter cykelvenner og track dine cykelture. Hjælp os med at teste Bike Me via TestFlight.",
+      payoffTitle: "12 måneders gratis Pro til beta-testere",
       payoffText:
-        "Gratisversionen får dig ud på ruten med KØR NU og kort. Pro-versionen lader dig forstå din udvikling.",
-      primaryCta: "Join TestFlight",
+        "Som tak får alle beta-testere 12 måneders gratis Bike Me Pro, når appen lanceres officielt. Kræver iPhone og Apples TestFlight-app.",
+      primaryCta: "Hent via TestFlight",
       secondaryCta: "Se hvordan det virker",
       previewLabel: "App-preview"
     },
@@ -306,7 +308,7 @@ const dictionaries: Record<Locale, Dictionary> = {
         "Opret en KØR NU-tur på få sekunder",
         "Find deltagere tæt på dig på kortet",
         "Aftal mødested og tidspunkt",
-        "Tilføj Strava-rute (valgfrit)",
+        "Importér en GPX-rute (valgfrit)",
         "Få push-besked ved vigtige ændringer"
       ]
     },
@@ -327,8 +329,8 @@ const dictionaries: Record<Locale, Dictionary> = {
           description: "Vælg præcis hvem du vil køre med."
         },
         {
-          title: "Tilføj Strava-ruter",
-          description: "Vedhæft et rutelink og åbn det direkte fra turdetaljer."
+          title: "Importér GPX-ruter",
+          description: "Importér en GPX-fil, så ruten kan vises på kortet."
         },
         {
           title: "Smarte notifikationer",
@@ -393,9 +395,9 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     pricing: {
       eyebrow: "Gratis vs Pro",
-      title: "Få mere ud af hver tur med Bike ME Pro",
+      title: "Bliv beta-tester - få 12 måneder Pro",
       subtitle:
-        "Start gratis med de vigtigste sociale turfunktioner. Opgradér, når du vil forstå din træning og udvikling i dybden.",
+        "Start gratis med de vigtigste sociale turfunktioner. Som beta-tester får du 12 måneders Bike ME Pro, når appen lanceres officielt.",
       plans: [
         {
           name: "Bike ME",
@@ -423,7 +425,7 @@ const dictionaries: Record<Locale, Dictionary> = {
           ]
         }
       ],
-      cta: "Prøv Bike ME Pro gratis i 14 dage"
+      cta: "Hent via TestFlight"
     },
     faq: {
       eyebrow: "FAQ",
@@ -432,19 +434,21 @@ const dictionaries: Record<Locale, Dictionary> = {
         {
           question: "Er Bike Me gratis?",
           answer:
-            "Ja, det er helt gratis at bruge Bike ME til at finde ryttere, oprette KØR NU-ture og tracke din basis-data. Hvis du vil have dybdegående statistik, watt-estimater og træningszoner, kan du opgradere til Bike ME Pro. Du kan prøve Pro gratis i 14 dage."
+            "Ja. De vigtigste sociale funktioner er gratis: find ryttere, opret ture, inviter andre og track dine ture. Bike ME Pro giver adgang til dybere historik, status, watt-estimering, træningszoner og udviklingsgrafer. Som beta-tester får du 12 måneders gratis Pro, når appen lanceres officielt."
         },
         {
-          question: "Er den tilgængelig på iOS/Android?",
-          answer: "Bike Me er lige nu tilgængelig via iOS TestFlight. Android kommer senere."
+          question: "Kan jeg teste Bike Me nu?",
+          answer:
+            "Ja. Bike Me er lige nu åben for iOS beta-testere via TestFlight. Alle beta-testere får 12 måneders gratis Bike Me Pro, når appen lanceres officielt."
         },
         {
           question: "Hvordan virker Ride Now?",
           answer: "Ride Now lader dig oprette en tur, der starter snart, så ryttere i nærheden hurtigt kan deltage."
         },
         {
-          question: "Kan jeg tilføje en Strava-rute?",
-          answer: "Ja. Tilføj et Strava-link ved oprettelse eller redigering af turen, og åbn det fra turdetaljer."
+          question: "Kan jeg importere en rute?",
+          answer:
+            "Ja, du kan importere en GPX-fil, hvis du vil have en planlagt rute vist på kortet. Strava-links bruges ikke som ruteimport i denne version."
         },
         {
           question: "Hvordan virker notifikationer?",
@@ -461,9 +465,9 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   de: {
     meta: {
-      title: "Bike Me | Fahrten finden. Schnell beitreten. Gemeinsam fahren.",
+      title: "Bike Me | Beta über TestFlight",
       description:
-        "Bike Me hilft Radfahrern, Fahrten in der Nähe zu entdecken, 'Ride Now'-Treffen zu erstellen und zukünftige Fahrten direkt auf der Karte zu planen."
+        "Bike Me ist für iPhone-Betatester über TestFlight geöffnet. Betatester erhalten 12 Monate Bike Me Pro kostenlos zum offiziellen Launch."
     },
     nav: {
       features: "Funktionen",
@@ -471,16 +475,16 @@ const dictionaries: Record<Locale, Dictionary> = {
       screenshots: "Screenshots",
       pricing: "Free vs Pro",
       faq: "FAQ",
-      joinTestFlight: "Join TestFlight"
+      joinTestFlight: "Über TestFlight laden"
     },
     hero: {
-      headline: "Finde jemanden zum Fahren hier und jetzt mit Bike ME",
+      headline: "Bike Me ist offen für Betatester",
       subheadline:
-        "Mit Bike ME findest du ganz einfach andere zum Fahren – hier und jetzt. Erstelle in Sekunden eine RIDE NOW-Fahrt oder plane eine Fahrt für später.",
-      payoffTitle: "Fahr die Route. Versteh deine Form.",
+        "Finde Fahrer, erstelle Fahrten, lade Radfreunde ein und tracke deine Touren. Hilf uns, Bike Me über TestFlight zu testen.",
+      payoffTitle: "12 Monate Pro kostenlos für Betatester",
       payoffText:
-        "Die kostenlose Version bringt dich mit RIDE NOW und Karte auf die Strecke. Bike ME Pro zeigt dir, wie du dich entwickelst.",
-      primaryCta: "Join TestFlight",
+        "Als Dankeschön erhalten alle Betatester 12 Monate Bike Me Pro kostenlos, wenn die App offiziell startet. Erfordert ein iPhone und Apples TestFlight-App.",
+      primaryCta: "Über TestFlight laden",
       secondaryCta: "So funktioniert's",
       previewLabel: "App-Vorschau"
     },
@@ -490,7 +494,7 @@ const dictionaries: Record<Locale, Dictionary> = {
         "Erstelle in Sekunden eine RIDE NOW-Fahrt",
         "Finde Teilnehmende in deiner Nähe auf der Karte",
         "Lege Treffpunkt und Zeitpunkt fest",
-        "Füge eine Strava-Route hinzu (optional)",
+        "Importiere eine GPX-Route (optional)",
         "Erhalte Push-Benachrichtigungen bei wichtigen Änderungen"
       ]
     },
@@ -511,8 +515,8 @@ const dictionaries: Record<Locale, Dictionary> = {
           description: "Lade genau die Leute ein, mit denen du fahren willst."
         },
         {
-          title: "Strava-Routen hinzufügen",
-          description: "Hänge einen Strava-Link an und öffne ihn direkt aus den Fahrtdetails."
+          title: "GPX-Routen importieren",
+          description: "Importiere eine GPX-Datei, damit die Route auf der Karte angezeigt werden kann."
         },
         {
           title: "Intelligente Benachrichtigungen",
@@ -579,9 +583,9 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     pricing: {
       eyebrow: "Free vs Pro",
-      title: "Hol mehr aus jeder Fahrt mit Bike ME Pro",
+      title: "Werde Betatester - erhalte 12 Monate Pro",
       subtitle:
-        "Starte kostenlos mit den wichtigsten sozialen Fahrfunktionen. Upgrade, wenn du Training und Entwicklung tiefer verstehen willst.",
+        "Starte kostenlos mit den wichtigsten sozialen Fahrfunktionen. Als Betatester erhältst du 12 Monate Bike ME Pro, wenn die App offiziell startet.",
       plans: [
         {
           name: "Bike ME",
@@ -609,7 +613,7 @@ const dictionaries: Record<Locale, Dictionary> = {
           ]
         }
       ],
-      cta: "Bike ME Pro 14 Tage kostenlos testen"
+      cta: "Über TestFlight laden"
     },
     faq: {
       eyebrow: "FAQ",
@@ -618,19 +622,21 @@ const dictionaries: Record<Locale, Dictionary> = {
         {
           question: "Ist Bike Me kostenlos?",
           answer:
-            "Ja, Bike ME ist kostenlos nutzbar, um Fahrer zu finden, RIDE NOW-Fahrten zu erstellen und Basisdaten zu tracken. Wenn du tiefere Statistiken, Watt-Schätzungen und Trainingszonen möchtest, kannst du auf Bike ME Pro upgraden. Pro kannst du 14 Tage kostenlos testen."
+            "Ja. Die wichtigsten sozialen Funktionen sind kostenlos: Fahrer finden, Fahrten erstellen, andere einladen und deine Touren tracken. Bike ME Pro bietet Zugriff auf tiefere Historie, Status, Watt-Schätzung, Trainingszonen und Fortschrittsgrafen. Als Betatester erhältst du 12 Monate Pro kostenlos, wenn die App offiziell startet."
         },
         {
-          question: "Gibt es Bike Me für iOS/Android?",
-          answer: "Derzeit ist Bike Me über iOS TestFlight verfügbar. Android folgt später."
+          question: "Kann ich Bike Me jetzt testen?",
+          answer:
+            "Ja. Bike Me ist derzeit für iOS-Betatester über TestFlight geöffnet. Alle Betatester erhalten 12 Monate Bike Me Pro kostenlos, wenn die App offiziell startet."
         },
         {
           question: "Wie funktioniert Ride Now?",
           answer: "Mit Ride Now erstellst du eine Fahrt, die bald startet, damit Fahrer in der Nähe schnell beitreten können."
         },
         {
-          question: "Kann ich eine Strava-Route hinzufügen?",
-          answer: "Ja. Du kannst beim Erstellen oder Bearbeiten einen Strava-Link hinzufügen und in den Fahrtdetails öffnen."
+          question: "Kann ich eine Route importieren?",
+          answer:
+            "Ja. Du kannst eine GPX-Datei importieren, wenn eine geplante Route auf der Karte erscheinen soll. Strava-Links werden in dieser Version nicht als Routenimport verwendet."
         },
         {
           question: "Wie funktionieren Benachrichtigungen?",
@@ -647,9 +653,9 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   es: {
     meta: {
-      title: "Bike Me | Encuentra salidas. Únete rápido. Rodad juntos.",
+      title: "Bike Me | Beta en TestFlight",
       description:
-        "Bike Me ayuda a ciclistas a descubrir salidas cercanas, crear encuentros 'Ride Now' y planificar salidas futuras, todo desde el mapa."
+        "Bike Me está abierta para beta testers de iPhone vía TestFlight. Los beta testers reciben 12 meses gratis de Bike Me Pro en el lanzamiento oficial."
     },
     nav: {
       features: "Funciones",
@@ -657,16 +663,16 @@ const dictionaries: Record<Locale, Dictionary> = {
       screenshots: "Capturas",
       pricing: "Gratis vs Pro",
       faq: "FAQ",
-      joinTestFlight: "Join TestFlight"
+      joinTestFlight: "Obtener vía TestFlight"
     },
     hero: {
-      headline: "Encuentra a alguien para rodar aquí y ahora con Bike ME",
+      headline: "Bike Me está abierta para beta testers",
       subheadline:
-        "Bike ME te lo pone fácil para encontrar con quién rodar aquí y ahora. Crea una salida RIDE NOW en segundos o planifica una salida para más tarde.",
-      payoffTitle: "Haz la ruta. Entiende tu forma.",
+        "Encuentra ciclistas, crea salidas, invita a tus compañeros y registra tus rutas. Ayúdanos a probar Bike Me vía TestFlight.",
+      payoffTitle: "12 meses de Pro gratis para beta testers",
       payoffText:
-        "La versión gratuita te saca a la ruta con RIDE NOW y el mapa. Bike ME Pro te ayuda a entender tu evolución.",
-      primaryCta: "Join TestFlight",
+        "Como agradecimiento, todos los beta testers reciben 12 meses gratis de Bike Me Pro cuando la app se lance oficialmente. Requiere iPhone y la app TestFlight de Apple.",
+      primaryCta: "Obtener vía TestFlight",
       secondaryCta: "Ver cómo funciona",
       previewLabel: "Vista de la app"
     },
@@ -676,7 +682,7 @@ const dictionaries: Record<Locale, Dictionary> = {
         "Crea una salida RIDE NOW en segundos",
         "Encuentra participantes cerca de ti en el mapa",
         "Acordad punto de encuentro y hora",
-        "Añade una ruta de Strava (opcional)",
+        "Importa una ruta GPX (opcional)",
         "Recibe notificaciones push sobre cambios importantes"
       ]
     },
@@ -697,8 +703,8 @@ const dictionaries: Record<Locale, Dictionary> = {
           description: "Elige exactamente con quién quieres rodar."
         },
         {
-          title: "Añade rutas de Strava",
-          description: "Incluye un enlace y ábrelo directamente desde los detalles."
+          title: "Importa rutas GPX",
+          description: "Importa un archivo GPX para que la ruta se muestre en el mapa."
         },
         {
           title: "Notificaciones inteligentes",
@@ -765,9 +771,9 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     pricing: {
       eyebrow: "Gratis vs Pro",
-      title: "Saca más de cada salida con Bike ME Pro",
+      title: "Hazte beta tester - recibe 12 meses de Pro",
       subtitle:
-        "Empieza gratis con las funciones sociales esenciales. Pasa a Pro cuando quieras entender mejor tu entrenamiento y progreso.",
+        "Empieza gratis con las funciones sociales esenciales. Como beta tester, recibes 12 meses de Bike ME Pro cuando la app se lance oficialmente.",
       plans: [
         {
           name: "Bike ME",
@@ -795,7 +801,7 @@ const dictionaries: Record<Locale, Dictionary> = {
           ]
         }
       ],
-      cta: "Prueba Bike ME Pro gratis 14 días"
+      cta: "Obtener vía TestFlight"
     },
     faq: {
       eyebrow: "FAQ",
@@ -804,19 +810,21 @@ const dictionaries: Record<Locale, Dictionary> = {
         {
           question: "¿Bike Me es gratis?",
           answer:
-            "Sí, Bike ME es gratis para encontrar ciclistas, crear salidas RIDE NOW y registrar tus datos básicos. Si quieres estadísticas más profundas, estimaciones de vatios y zonas de entrenamiento, puedes pasar a Bike ME Pro. Puedes probar Pro gratis durante 14 días."
+            "Sí. Las funciones sociales clave son gratis: encuentra ciclistas, crea salidas, invita a otros y registra tus rutas. Bike ME Pro da acceso a más historial, estado, estimación de vatios, zonas de entrenamiento y gráficas de progreso. Como beta tester, recibes 12 meses gratis de Pro cuando la app se lance oficialmente."
         },
         {
-          question: "¿Está disponible en iOS/Android?",
-          answer: "Ahora mismo Bike Me está disponible en iOS mediante TestFlight. Android llegará más adelante."
+          question: "¿Puedo probar Bike Me ahora?",
+          answer:
+            "Sí. Bike Me está abierta ahora para beta testers de iOS vía TestFlight. Todos los beta testers reciben 12 meses gratis de Bike Me Pro cuando la app se lance oficialmente."
         },
         {
           question: "¿Cómo funciona Ride Now?",
           answer: "Ride Now te permite crear una salida que empieza pronto para que ciclistas cercanos se unan rápido."
         },
         {
-          question: "¿Puedo añadir una ruta de Strava?",
-          answer: "Sí. Puedes añadir un enlace de Strava al crear o editar la salida y abrirlo desde los detalles."
+          question: "¿Puedo importar una ruta?",
+          answer:
+            "Sí. Puedes importar un archivo GPX si quieres que una ruta planificada aparezca en el mapa. Los enlaces de Strava no se usan como importación de rutas en esta versión."
         },
         {
           question: "¿Cómo funcionan las notificaciones?",
@@ -833,9 +841,9 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   it: {
     meta: {
-      title: "Bike Me | Trova uscite. Unisciti subito. Pedala insieme.",
+      title: "Bike Me | Beta su TestFlight",
       description:
-        "Bike Me aiuta i ciclisti a trovare uscite vicine, creare incontri 'Ride Now' e pianificare uscite future direttamente dalla mappa."
+        "Bike Me è aperta ai beta tester iPhone tramite TestFlight. I beta tester ricevono 12 mesi gratuiti di Bike Me Pro al lancio ufficiale."
     },
     nav: {
       features: "Funzionalità",
@@ -843,16 +851,16 @@ const dictionaries: Record<Locale, Dictionary> = {
       screenshots: "Screenshot",
       pricing: "Gratis vs Pro",
       faq: "FAQ",
-      joinTestFlight: "Join TestFlight"
+      joinTestFlight: "Scarica via TestFlight"
     },
     hero: {
-      headline: "Trova qualcuno con cui pedalare qui e ora con Bike ME",
+      headline: "Bike Me è aperta ai beta tester",
       subheadline:
-        "Bike ME rende facile trovare altri ciclisti con cui uscire, qui e ora. Crea in pochi secondi un'uscita RIDE NOW oppure pianifica un'uscita per dopo.",
-      payoffTitle: "Fai il giro. Capisci la tua forma.",
+        "Trova ciclisti, crea uscite, invita amici e traccia le tue pedalate. Aiutaci a testare Bike Me tramite TestFlight.",
+      payoffTitle: "12 mesi di Pro gratis per i beta tester",
       payoffText:
-        "La versione gratuita ti porta in strada con RIDE NOW e mappa. Bike ME Pro ti aiuta a capire la tua crescita.",
-      primaryCta: "Join TestFlight",
+        "Come ringraziamento, tutti i beta tester ricevono 12 mesi gratuiti di Bike Me Pro quando l'app verrà lanciata ufficialmente. Richiede iPhone e l'app TestFlight di Apple.",
+      primaryCta: "Scarica via TestFlight",
       secondaryCta: "Scopri come funziona",
       previewLabel: "Anteprima app"
     },
@@ -862,7 +870,7 @@ const dictionaries: Record<Locale, Dictionary> = {
         "Crea un'uscita RIDE NOW in pochi secondi",
         "Trova partecipanti vicino a te sulla mappa",
         "Concorda punto di ritrovo e orario",
-        "Aggiungi un percorso Strava (opzionale)",
+        "Importa un percorso GPX (opzionale)",
         "Ricevi notifiche push per i cambiamenti importanti"
       ]
     },
@@ -883,8 +891,8 @@ const dictionaries: Record<Locale, Dictionary> = {
           description: "Scegli esattamente chi vuoi con te nel gruppo."
         },
         {
-          title: "Aggiungi percorsi Strava",
-          description: "Inserisci un link al percorso e aprilo direttamente dai dettagli."
+          title: "Importa percorsi GPX",
+          description: "Importa un file GPX per mostrare il percorso sulla mappa."
         },
         {
           title: "Notifiche intelligenti",
@@ -951,9 +959,9 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     pricing: {
       eyebrow: "Gratis vs Pro",
-      title: "Ottieni di più da ogni uscita con Bike ME Pro",
+      title: "Diventa beta tester - ricevi 12 mesi di Pro",
       subtitle:
-        "Inizia gratis con le funzioni social essenziali. Passa a Pro quando vuoi capire meglio allenamento e progressi.",
+        "Inizia gratis con le funzioni social essenziali. Come beta tester ricevi 12 mesi di Bike ME Pro quando l'app verrà lanciata ufficialmente.",
       plans: [
         {
           name: "Bike ME",
@@ -981,7 +989,7 @@ const dictionaries: Record<Locale, Dictionary> = {
           ]
         }
       ],
-      cta: "Prova Bike ME Pro gratis per 14 giorni"
+      cta: "Scarica via TestFlight"
     },
     faq: {
       eyebrow: "FAQ",
@@ -990,19 +998,21 @@ const dictionaries: Record<Locale, Dictionary> = {
         {
           question: "Bike Me è gratuita?",
           answer:
-            "Sì, Bike ME è gratuita per trovare ciclisti, creare uscite RIDE NOW e tracciare i dati base. Se vuoi statistiche più profonde, stime dei watt e zone di allenamento, puoi passare a Bike ME Pro. Puoi provare Pro gratis per 14 giorni."
+            "Sì. Le funzioni social principali sono gratuite: trova ciclisti, crea uscite, invita altri e traccia le tue pedalate. Bike ME Pro dà accesso a storico più profondo, stato, stima dei watt, zone di allenamento e grafici di progresso. Come beta tester ricevi 12 mesi gratuiti di Pro quando l'app verrà lanciata ufficialmente."
         },
         {
-          question: "È disponibile su iOS/Android?",
-          answer: "Al momento Bike Me è disponibile su iOS tramite TestFlight. Android arriverà più avanti."
+          question: "Posso testare Bike Me ora?",
+          answer:
+            "Sì. Bike Me è attualmente aperta ai beta tester iOS tramite TestFlight. Tutti i beta tester ricevono 12 mesi gratuiti di Bike Me Pro quando l'app verrà lanciata ufficialmente."
         },
         {
           question: "Come funziona Ride Now?",
           answer: "Ride Now ti permette di creare un'uscita che parte a breve, così i ciclisti vicini possono unirsi rapidamente."
         },
         {
-          question: "Posso aggiungere un percorso Strava?",
-          answer: "Sì. Aggiungi un link Strava quando crei o modifichi l'uscita e aprilo dai dettagli."
+          question: "Posso importare un percorso?",
+          answer:
+            "Sì. Puoi importare un file GPX se vuoi che un percorso pianificato appaia sulla mappa. I link Strava non vengono usati come importazione percorso in questa versione."
         },
         {
           question: "Come funzionano le notifiche?",
@@ -1019,9 +1029,9 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   fr: {
     meta: {
-      title: "Bike Me | Trouvez des sorties. Rejoignez vite. Roulez ensemble.",
+      title: "Bike Me | Bêta sur TestFlight",
       description:
-        "Bike Me aide les cyclistes à trouver des sorties proches, créer des sorties 'Ride Now' et planifier des sorties futures, directement depuis la carte."
+        "Bike Me est ouverte aux bêta-testeurs iPhone via TestFlight. Les bêta-testeurs reçoivent 12 mois gratuits de Bike Me Pro au lancement officiel."
     },
     nav: {
       features: "Fonctionnalités",
@@ -1029,16 +1039,16 @@ const dictionaries: Record<Locale, Dictionary> = {
       screenshots: "Captures",
       pricing: "Gratuit vs Pro",
       faq: "FAQ",
-      joinTestFlight: "Join TestFlight"
+      joinTestFlight: "Obtenir via TestFlight"
     },
     hero: {
-      headline: "Trouvez quelqu'un avec qui rouler ici et maintenant avec Bike ME",
+      headline: "Bike Me est ouverte aux bêta-testeurs",
       subheadline:
-        "Bike ME facilite la recherche de cyclistes avec qui rouler, ici et maintenant. Créez une sortie RIDE NOW en quelques secondes ou planifiez une sortie plus tard.",
-      payoffTitle: "Roulez la sortie. Comprenez votre forme.",
+        "Trouvez des cyclistes, créez des sorties, invitez vos amis et suivez vos parcours. Aidez-nous à tester Bike Me via TestFlight.",
+      payoffTitle: "12 mois de Pro gratuits pour les bêta-testeurs",
       payoffText:
-        "La version gratuite vous met sur la route avec RIDE NOW et la carte. Bike ME Pro vous aide à comprendre votre progression.",
-      primaryCta: "Join TestFlight",
+        "En remerciement, tous les bêta-testeurs reçoivent 12 mois gratuits de Bike Me Pro lorsque l'app sera lancée officiellement. Nécessite un iPhone et l'app TestFlight d'Apple.",
+      primaryCta: "Obtenir via TestFlight",
       secondaryCta: "Voir le fonctionnement",
       previewLabel: "Aperçu de l'app"
     },
@@ -1048,7 +1058,7 @@ const dictionaries: Record<Locale, Dictionary> = {
         "Créez une sortie RIDE NOW en quelques secondes",
         "Trouvez des participants proches de vous sur la carte",
         "Fixez le lieu et l'heure de rendez-vous",
-        "Ajoutez un itinéraire Strava (optionnel)",
+        "Importez un itinéraire GPX (optionnel)",
         "Recevez des notifications push en cas de changement important"
       ]
     },
@@ -1069,8 +1079,8 @@ const dictionaries: Record<Locale, Dictionary> = {
           description: "Choisissez précisément qui vous voulez inviter."
         },
         {
-          title: "Ajoutez des itinéraires Strava",
-          description: "Ajoutez un lien d'itinéraire et ouvrez-le depuis les détails de la sortie."
+          title: "Importez des itinéraires GPX",
+          description: "Importez un fichier GPX pour afficher l'itinéraire sur la carte."
         },
         {
           title: "Notifications intelligentes",
@@ -1137,9 +1147,9 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     pricing: {
       eyebrow: "Gratuit vs Pro",
-      title: "Tirez plus de chaque sortie avec Bike ME Pro",
+      title: "Devenez bêta-testeur - recevez 12 mois de Pro",
       subtitle:
-        "Commencez gratuitement avec les outils sociaux essentiels. Passez à Pro quand vous voulez analyser votre entraînement et vos progrès.",
+        "Commencez gratuitement avec les outils sociaux essentiels. En tant que bêta-testeur, vous recevez 12 mois de Bike ME Pro lorsque l'app sera lancée officiellement.",
       plans: [
         {
           name: "Bike ME",
@@ -1167,7 +1177,7 @@ const dictionaries: Record<Locale, Dictionary> = {
           ]
         }
       ],
-      cta: "Essayez Bike ME Pro gratuitement 14 jours"
+      cta: "Obtenir via TestFlight"
     },
     faq: {
       eyebrow: "FAQ",
@@ -1176,19 +1186,21 @@ const dictionaries: Record<Locale, Dictionary> = {
         {
           question: "Bike Me est-elle gratuite ?",
           answer:
-            "Oui, Bike ME est gratuite pour trouver des cyclistes, créer des sorties RIDE NOW et suivre vos données de base. Pour des statistiques approfondies, des estimations de watts et des zones d'entraînement, vous pouvez passer à Bike ME Pro. Vous pouvez essayer Pro gratuitement pendant 14 jours."
+            "Oui. Les fonctions sociales clés sont gratuites : trouver des cyclistes, créer des sorties, inviter d'autres personnes et suivre vos sorties. Bike ME Pro donne accès à un historique plus profond, au statut, à l'estimation des watts, aux zones d'entraînement et aux graphiques de progression. En tant que bêta-testeur, vous recevez 12 mois gratuits de Pro lorsque l'app sera lancée officiellement."
         },
         {
-          question: "Disponible sur iOS/Android ?",
-          answer: "Bike Me est disponible pour l'instant sur iOS via TestFlight. Android sera annoncé plus tard."
+          question: "Puis-je tester Bike Me maintenant ?",
+          answer:
+            "Oui. Bike Me est actuellement ouverte aux bêta-testeurs iOS via TestFlight. Tous les bêta-testeurs reçoivent 12 mois gratuits de Bike Me Pro lorsque l'app sera lancée officiellement."
         },
         {
           question: "Comment fonctionne Ride Now ?",
           answer: "Ride Now vous permet de créer une sortie qui démarre bientôt pour que les cyclistes proches puissent rejoindre rapidement."
         },
         {
-          question: "Puis-je ajouter un itinéraire Strava ?",
-          answer: "Oui. Ajoutez un lien Strava lors de la création ou modification d'une sortie et ouvrez-le depuis les détails."
+          question: "Puis-je importer un itinéraire ?",
+          answer:
+            "Oui. Vous pouvez importer un fichier GPX si vous voulez afficher un itinéraire planifié sur la carte. Les liens Strava ne sont pas utilisés comme import d'itinéraire dans cette version."
         },
         {
           question: "Comment fonctionnent les notifications ?",
@@ -1205,9 +1217,9 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   nl: {
     meta: {
-      title: "Bike Me | Vind ritten. Sluit snel aan. Rijd samen.",
+      title: "Bike Me | Beta via TestFlight",
       description:
-        "Bike Me helpt fietsers ritten in de buurt te vinden, 'Ride Now'-meetups te maken en toekomstige ritten te plannen, allemaal vanaf de kaart."
+        "Bike Me is open voor iPhone-betatesters via TestFlight. Betatesters krijgen 12 maanden gratis Bike Me Pro bij de officiële lancering."
     },
     nav: {
       features: "Functies",
@@ -1215,16 +1227,16 @@ const dictionaries: Record<Locale, Dictionary> = {
       screenshots: "Screenshots",
       pricing: "Gratis vs Pro",
       faq: "FAQ",
-      joinTestFlight: "Join TestFlight"
+      joinTestFlight: "Download via TestFlight"
     },
     hero: {
-      headline: "Vind iemand om mee te rijden hier en nu met Bike ME",
+      headline: "Bike Me is open voor betatesters",
       subheadline:
-        "Bike ME maakt het makkelijk om hier en nu iemand te vinden om mee te rijden. Maak in een paar seconden een RIDE NOW-rit of plan een rit voor later.",
-      payoffTitle: "Rijd de route. Begrijp je vorm.",
+        "Vind fietsers, maak ritten, nodig fietsvrienden uit en track je ritten. Help ons Bike Me te testen via TestFlight.",
+      payoffTitle: "12 maanden gratis Pro voor betatesters",
       payoffText:
-        "De gratis versie brengt je op pad met RIDE NOW en de kaart. Bike ME Pro helpt je je ontwikkeling te begrijpen.",
-      primaryCta: "Join TestFlight",
+        "Als bedankje krijgen alle betatesters 12 maanden gratis Bike Me Pro wanneer de app officieel wordt gelanceerd. Vereist iPhone en Apple's TestFlight-app.",
+      primaryCta: "Download via TestFlight",
       secondaryCta: "Bekijk hoe het werkt",
       previewLabel: "App-preview"
     },
@@ -1234,7 +1246,7 @@ const dictionaries: Record<Locale, Dictionary> = {
         "Maak in een paar seconden een RIDE NOW-rit",
         "Vind deelnemers bij jou in de buurt op de kaart",
         "Spreek af waar en wanneer jullie vertrekken",
-        "Voeg een Strava-route toe (optioneel)",
+        "Importeer een GPX-route (optioneel)",
         "Ontvang pushmeldingen bij belangrijke wijzigingen"
       ]
     },
@@ -1255,8 +1267,8 @@ const dictionaries: Record<Locale, Dictionary> = {
           description: "Kies precies wie je wilt uitnodigen voor de rit."
         },
         {
-          title: "Strava-routes toevoegen",
-          description: "Voeg een routelink toe en open die direct vanuit de ritdetails."
+          title: "Importeer GPX-routes",
+          description: "Importeer een GPX-bestand zodat de route op de kaart kan worden getoond."
         },
         {
           title: "Slimme meldingen",
@@ -1322,9 +1334,9 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     pricing: {
       eyebrow: "Gratis vs Pro",
-      title: "Haal meer uit elke rit met Bike ME Pro",
+      title: "Word betatester - krijg 12 maanden Pro",
       subtitle:
-        "Begin gratis met de belangrijkste sociale ritfuncties. Upgrade wanneer je training en ontwikkeling dieper wilt begrijpen.",
+        "Begin gratis met de belangrijkste sociale ritfuncties. Als betatester krijg je 12 maanden Bike ME Pro wanneer de app officieel wordt gelanceerd.",
       plans: [
         {
           name: "Bike ME",
@@ -1352,7 +1364,7 @@ const dictionaries: Record<Locale, Dictionary> = {
           ]
         }
       ],
-      cta: "Probeer Bike ME Pro 14 dagen gratis"
+      cta: "Download via TestFlight"
     },
     faq: {
       eyebrow: "FAQ",
@@ -1361,19 +1373,21 @@ const dictionaries: Record<Locale, Dictionary> = {
         {
           question: "Is Bike Me gratis?",
           answer:
-            "Ja, Bike ME is gratis te gebruiken om fietsers te vinden, RIDE NOW-ritten te maken en basisdata te tracken. Voor diepere statistieken, wattinschattingen en trainingszones kun je upgraden naar Bike ME Pro. Je kunt Pro 14 dagen gratis proberen."
+            "Ja. De belangrijkste sociale functies zijn gratis: vind fietsers, maak ritten, nodig anderen uit en track je ritten. Bike ME Pro geeft toegang tot diepere historie, status, wattinschatting, trainingszones en voortgangsgrafieken. Als betatester krijg je 12 maanden gratis Pro wanneer de app officieel wordt gelanceerd."
         },
         {
-          question: "Is het beschikbaar op iOS/Android?",
-          answer: "Bike Me is nu beschikbaar via iOS TestFlight. Android volgt later."
+          question: "Kan ik Bike Me nu testen?",
+          answer:
+            "Ja. Bike Me is momenteel open voor iOS-betatesters via TestFlight. Alle betatesters krijgen 12 maanden gratis Bike Me Pro wanneer de app officieel wordt gelanceerd."
         },
         {
           question: "Hoe werkt Ride Now?",
           answer: "Met Ride Now maak je een rit die snel start, zodat fietsers in de buurt direct kunnen aansluiten."
         },
         {
-          question: "Kan ik een Strava-route toevoegen?",
-          answer: "Ja. Voeg een Strava-link toe bij het maken of bewerken van een rit en open die vanuit de ritdetails."
+          question: "Kan ik een route importeren?",
+          answer:
+            "Ja. Je kunt een GPX-bestand importeren als je een geplande route op de kaart wilt tonen. Strava-links worden in deze versie niet gebruikt als route-import."
         },
         {
           question: "Hoe werken meldingen?",
