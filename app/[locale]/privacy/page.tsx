@@ -124,7 +124,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
           },
           {
             label: "Profile and app data",
-            text: 'information you fill in yourself in your profile (for example level, bike type, home region and "about me").'
+            text: 'information you fill in yourself in your profile (for example level, bike type, home region, "about me" and optional profile picture).'
           },
           {
             label: "Ride data (content you create)",
@@ -136,7 +136,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
           },
           {
             label: "Location data",
-            text: "your location when you actively give the app permission. Location is used for map features, for example showing nearby rides and selecting/showing the start location. You can turn location off at any time in your device settings."
+            text: "your location when you actively give the app permission. Location is used for map features (for example showing fixed meeting points and nearby rides) as well as live tracking and recording your route, speed and distance when you actively choose to start and record a bike ride in the app. You can turn location off at any time in your device settings."
           },
           {
             label: "Push notifications",
@@ -191,6 +191,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
         heading: "Retention period",
         paragraphs: [
           "We store personal data for as long as necessary for the purposes for which it was collected, or for as long as we are legally required to do so.",
+          "You can delete your account and related data at any time directly in the app under Profile -> Settings, or by contacting us at kontakt@bikeme.one.",
           "If you delete your account, we will delete or anonymize your personal data within 30 days unless we are legally required to store it longer."
         ]
       },
@@ -240,7 +241,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
           },
           {
             label: "Profil- og appdata",
-            text: 'oplysninger du selv udfylder i din profil (fx niveau, cykeltype, hjemmeregion og "lidt om mig").'
+            text: 'oplysninger du selv udfylder i din profil (fx niveau, cykeltype, hjemmeregion, "lidt om mig" og evt. profilbillede).'
           },
           {
             label: "Turdata (indhold du opretter)",
@@ -252,7 +253,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
           },
           {
             label: "Lokationsdata",
-            text: "din lokation, når du aktivt giver appen tilladelse. Lokation bruges til kortfunktioner, fx visning af ture i nærheden og valg/visning af startsted. Du kan til enhver tid slå lokation fra i dine enhedsindstillinger."
+            text: "din lokation, når du aktivt giver appen tilladelse. Lokation bruges til kortfunktioner (fx visning af faste mødesteder og ture i nærheden) samt til live-tracking og registrering af din rute, fart og distance, når du aktivt vælger at starte og registrere en cykeltur i appen. Du kan til enhver tid slå lokation fra i dine enhedsindstillinger."
           },
           {
             label: "Push-notifikationer",
@@ -311,6 +312,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
         heading: "Opbevaringsperiode",
         paragraphs: [
           "Vi opbevarer personoplysninger, så længe det er nødvendigt for de formål, de er indsamlet til, eller så længe vi er retligt forpligtet hertil.",
+          "Du kan til enhver tid slette din konto og dine tilhørende data direkte i appen under Profil -> Indstillinger, eller ved at kontakte os på kontakt@bikeme.one.",
           "Hvis du sletter din konto, vil vi slette eller anonymisere dine persondata inden for 30 dage, medmindre vi er retligt forpligtet til at gemme dem længere."
         ]
       },
@@ -360,7 +362,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
           },
           {
             label: "Profil- und App-Daten",
-            text: 'Informationen, die du selbst in deinem Profil einträgst (z. B. Niveau, Fahrradtyp, Heimatregion und "Über mich").'
+            text: 'Informationen, die du selbst in deinem Profil einträgst (z. B. Niveau, Fahrradtyp, Heimatregion, "Über mich" und ggf. Profilbild).'
           },
           {
             label: "Fahrtdaten (von dir erstellte Inhalte)",
@@ -372,7 +374,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
           },
           {
             label: "Standortdaten",
-            text: "dein Standort, wenn du der App aktiv die Berechtigung erteilst. Der Standort wird für Kartenfunktionen verwendet, z. B. zur Anzeige von Fahrten in der Nähe und zur Auswahl/Anzeige des Startorts. Du kannst den Standort jederzeit in den Geräteeinstellungen deaktivieren."
+            text: "dein Standort, wenn du der App aktiv die Berechtigung erteilst. Der Standort wird für Kartenfunktionen verwendet (z. B. zur Anzeige fester Treffpunkte und von Fahrten in der Nähe) sowie für Live-Tracking und die Aufzeichnung deiner Route, Geschwindigkeit und Distanz, wenn du aktiv wählst, eine Radfahrt in der App zu starten und aufzuzeichnen. Du kannst den Standort jederzeit in den Geräteeinstellungen deaktivieren."
           },
           {
             label: "Push-Benachrichtigungen",
@@ -427,6 +429,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
         heading: "Aufbewahrungsdauer",
         paragraphs: [
           "Wir speichern personenbezogene Daten so lange, wie es für die Zwecke erforderlich ist, für die sie erhoben wurden, oder so lange, wie wir rechtlich dazu verpflichtet sind.",
+          "Du kannst dein Konto und die zugehörigen Daten jederzeit direkt in der App unter Profil -> Einstellungen löschen oder uns unter kontakt@bikeme.one kontaktieren.",
           "Wenn du dein Konto löschst, löschen oder anonymisieren wir deine personenbezogenen Daten innerhalb von 30 Tagen, sofern wir nicht rechtlich verpflichtet sind, sie länger aufzubewahren."
         ]
       },
@@ -476,7 +479,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
           },
           {
             label: "Datos de perfil y app",
-            text: 'información que tú mismo completas en tu perfil (por ejemplo nivel, tipo de bicicleta, región de origen y "sobre mí").'
+            text: 'información que tú mismo completas en tu perfil (por ejemplo nivel, tipo de bicicleta, región de origen, "sobre mí" y posible foto de perfil).'
           },
           {
             label: "Datos de salidas (contenido que creas)",
@@ -488,7 +491,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
           },
           {
             label: "Datos de ubicación",
-            text: "tu ubicación cuando das permiso activamente a la app. La ubicación se usa para funciones de mapa, por ejemplo para mostrar salidas cercanas y seleccionar/mostrar el punto de inicio. Puedes desactivar la ubicación en cualquier momento en los ajustes de tu dispositivo."
+            text: "tu ubicación cuando das permiso activamente a la app. La ubicación se usa para funciones de mapa (por ejemplo mostrar puntos de encuentro fijos y salidas cercanas), así como para el seguimiento en vivo y el registro de tu ruta, velocidad y distancia cuando eliges activamente iniciar y registrar una salida en bicicleta en la app. Puedes desactivar la ubicación en cualquier momento en los ajustes de tu dispositivo."
           },
           {
             label: "Notificaciones push",
@@ -543,6 +546,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
         heading: "Periodo de conservación",
         paragraphs: [
           "Conservamos los datos personales durante el tiempo necesario para los fines para los que se recopilaron, o durante el tiempo que estemos legalmente obligados a conservarlos.",
+          "Puedes eliminar tu cuenta y los datos relacionados en cualquier momento directamente en la app en Perfil -> Ajustes, o contactándonos en kontakt@bikeme.one.",
           "Si eliminas tu cuenta, eliminaremos o anonimizaremos tus datos personales en un plazo de 30 días, salvo que estemos legalmente obligados a conservarlos durante más tiempo."
         ]
       },
@@ -592,7 +596,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
           },
           {
             label: "Dati di profilo e app",
-            text: 'informazioni che inserisci nel tuo profilo (ad esempio livello, tipo di bici, regione di riferimento e "qualcosa su di me").'
+            text: 'informazioni che inserisci nel tuo profilo (ad esempio livello, tipo di bici, regione di riferimento, "qualcosa su di me" ed eventuale immagine del profilo).'
           },
           {
             label: "Dati delle uscite (contenuti che crei)",
@@ -604,7 +608,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
           },
           {
             label: "Dati di localizzazione",
-            text: "la tua posizione quando concedi attivamente il permesso all'app. La posizione viene usata per le funzioni mappa, ad esempio per mostrare uscite nelle vicinanze e scegliere/mostrare il punto di partenza. Puoi disattivare la posizione in qualsiasi momento nelle impostazioni del dispositivo."
+            text: "la tua posizione quando concedi attivamente il permesso all'app. La posizione viene usata per le funzioni mappa (ad esempio per mostrare punti di ritrovo fissi e uscite nelle vicinanze), oltre che per il live tracking e la registrazione del tuo percorso, velocità e distanza quando scegli attivamente di avviare e registrare un'uscita in bici nell'app. Puoi disattivare la posizione in qualsiasi momento nelle impostazioni del dispositivo."
           },
           {
             label: "Notifiche push",
@@ -659,6 +663,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
         heading: "Periodo di conservazione",
         paragraphs: [
           "Conserviamo i dati personali per il tempo necessario agli scopi per cui sono stati raccolti, o per il tempo in cui siamo legalmente obbligati a conservarli.",
+          "Puoi eliminare il tuo account e i dati associati in qualsiasi momento direttamente nell'app in Profilo -> Impostazioni, oppure contattandoci a kontakt@bikeme.one.",
           "Se elimini il tuo account, elimineremo o anonimizzeremo i tuoi dati personali entro 30 giorni, salvo che siamo legalmente obbligati a conservarli più a lungo."
         ]
       },
@@ -708,7 +713,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
           },
           {
             label: "Données de profil et d'app",
-            text: 'informations que vous renseignez vous-même dans votre profil (par exemple niveau, type de vélo, région de rattachement et "à propos de moi").'
+            text: 'informations que vous renseignez vous-même dans votre profil (par exemple niveau, type de vélo, région de rattachement, "à propos de moi" et éventuelle photo de profil).'
           },
           {
             label: "Données de sortie (contenu que vous créez)",
@@ -720,7 +725,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
           },
           {
             label: "Données de localisation",
-            text: "votre localisation lorsque vous donnez activement l'autorisation à l'app. La localisation est utilisée pour les fonctions de carte, par exemple l'affichage des sorties proches et le choix/l'affichage du point de départ. Vous pouvez désactiver la localisation à tout moment dans les paramètres de votre appareil."
+            text: "votre localisation lorsque vous donnez activement l'autorisation à l'app. La localisation est utilisée pour les fonctions de carte (par exemple l'affichage de points de rendez-vous fixes et de sorties proches), ainsi que pour le suivi en direct et l'enregistrement de votre itinéraire, vitesse et distance lorsque vous choisissez activement de démarrer et d'enregistrer une sortie à vélo dans l'app. Vous pouvez désactiver la localisation à tout moment dans les paramètres de votre appareil."
           },
           {
             label: "Notifications push",
@@ -775,6 +780,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
         heading: "Durée de conservation",
         paragraphs: [
           "Nous conservons les données personnelles aussi longtemps que nécessaire aux finalités pour lesquelles elles ont été collectées, ou aussi longtemps que nous y sommes légalement tenus.",
+          "Vous pouvez supprimer votre compte et les données associées à tout moment directement dans l'app sous Profil -> Paramètres, ou en nous contactant à kontakt@bikeme.one.",
           "Si vous supprimez votre compte, nous supprimerons ou anonymiserons vos données personnelles dans un délai de 30 jours, sauf si nous sommes légalement tenus de les conserver plus longtemps."
         ]
       },
@@ -824,7 +830,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
           },
           {
             label: "Profiel- en appgegevens",
-            text: 'informatie die je zelf invult in je profiel (bijvoorbeeld niveau, fietstype, thuisregio en "over mij").'
+            text: 'informatie die je zelf invult in je profiel (bijvoorbeeld niveau, fietstype, thuisregio, "over mij" en eventuele profielfoto).'
           },
           {
             label: "Ritgegevens (content die je maakt)",
@@ -836,7 +842,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
           },
           {
             label: "Locatiegegevens",
-            text: "je locatie wanneer je de app actief toestemming geeft. Locatie wordt gebruikt voor kaartfuncties, bijvoorbeeld om ritten in de buurt te tonen en de startlocatie te kiezen/tonen. Je kunt locatie op elk moment uitschakelen in de instellingen van je apparaat."
+            text: "je locatie wanneer je de app actief toestemming geeft. Locatie wordt gebruikt voor kaartfuncties (bijvoorbeeld het tonen van vaste ontmoetingsplekken en ritten in de buurt), evenals voor live tracking en het registreren van je route, snelheid en afstand wanneer je er actief voor kiest om een fietsrit in de app te starten en te registreren. Je kunt locatie op elk moment uitschakelen in de instellingen van je apparaat."
           },
           {
             label: "Pushmeldingen",
@@ -891,6 +897,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
         heading: "Bewaartermijn",
         paragraphs: [
           "We bewaren persoonsgegevens zolang dat nodig is voor de doeleinden waarvoor ze zijn verzameld, of zolang we wettelijk verplicht zijn ze te bewaren.",
+          "Je kunt je account en bijbehorende gegevens op elk moment rechtstreeks in de app verwijderen onder Profiel -> Instellingen, of door contact met ons op te nemen via kontakt@bikeme.one.",
           "Als je je account verwijdert, verwijderen of anonimiseren we je persoonsgegevens binnen 30 dagen, tenzij we wettelijk verplicht zijn ze langer te bewaren."
         ]
       },
