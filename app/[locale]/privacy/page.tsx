@@ -63,37 +63,37 @@ const metadataByLocale: Partial<Record<Locale, { title: string; description: str
 const uiByLocale: Partial<Record<Locale, { pageTitle: string; lastUpdated: string; backToHome: string }>> = {
   en: {
     pageTitle: "Privacy Policy for Bike ME",
-    lastUpdated: "Last updated: February 28, 2026",
+    lastUpdated: "Last updated: June 3, 2026",
     backToHome: "Back to home"
   },
   da: {
     pageTitle: "Privatlivspolitik for Bike ME",
-    lastUpdated: "Senest opdateret: 28. februar 2026",
+    lastUpdated: "Senest opdateret: 3. juni 2026",
     backToHome: "Tilbage til forsiden"
   },
   de: {
     pageTitle: "Datenschutzerklärung für Bike ME",
-    lastUpdated: "Zuletzt aktualisiert: 28. Februar 2026",
+    lastUpdated: "Zuletzt aktualisiert: 3. Juni 2026",
     backToHome: "Zur Startseite"
   },
   es: {
     pageTitle: "Política de privacidad de Bike ME",
-    lastUpdated: "Última actualización: 28 de febrero de 2026",
+    lastUpdated: "Última actualización: 3 de junio de 2026",
     backToHome: "Volver al inicio"
   },
   it: {
     pageTitle: "Informativa sulla privacy di Bike ME",
-    lastUpdated: "Ultimo aggiornamento: 28 febbraio 2026",
+    lastUpdated: "Ultimo aggiornamento: 3 giugno 2026",
     backToHome: "Torna alla home"
   },
   fr: {
     pageTitle: "Politique de confidentialité de Bike ME",
-    lastUpdated: "Dernière mise à jour : 28 février 2026",
+    lastUpdated: "Dernière mise à jour : 3 juin 2026",
     backToHome: "Retour à l'accueil"
   },
   nl: {
     pageTitle: "Privacybeleid voor Bike ME",
-    lastUpdated: "Laatst bijgewerkt: 28 februari 2026",
+    lastUpdated: "Laatst bijgewerkt: 3 juni 2026",
     backToHome: "Terug naar home"
   }
 };
