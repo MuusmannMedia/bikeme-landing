@@ -226,7 +226,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
         heading: "Dataansvarlig",
         paragraphs: [
           "Dataansvarlig for behandlingen af dine personoplysninger er:",
-          "Bike ME (udvikler: Morten Muusmann)\nE-mail: kontakt@bikeme.one"
+          "Bike ME (udvikler: Morten Muusmann)\nE-mail: info@bikeme.one"
         ]
       },
       {
@@ -281,7 +281,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
             text: "c) Lokationsbaserede funktioner — GDPR art. 6, stk. 1, litra b og/eller f."
           },
           {
-            text: "d) Push-notifikationer om vigtige turændringer — GDPR art. 6, stk. 1, litra b og/eller f. (Notifikationstilladelse styres af enheden.)"
+            text: "d) Push-notifikationer om vigtige turændringer — GDPR art. 6, stk. 1, litra b og/eller f. (Notifikationstilladelse styres av enheden.)"
           },
           { text: "e) Drift, sikkerhed og forbedring — GDPR art. 6, stk. 1, litra f." },
           { text: "f) Kommunikation og support — GDPR art. 6, stk. 1, litra b og/eller f." }
@@ -309,10 +309,10 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
         ]
       },
       {
-        heading: "Opbevaringsperiode",
+        heading: "Opbevaringsperiode og sletning af data",
         paragraphs: [
           "Vi opbevarer personoplysninger, så længe det er nødvendigt for de formål, de er indsamlet til, eller så længe vi er retligt forpligtet hertil.",
-          "Du kan til enhver tid slette din konto og dine tilhørende data direkte i appen under Profil -> Indstillinger, eller ved at kontakte os på kontakt@bikeme.one.",
+          "Du sletter nemt din konto og dine tilknyttede data direkte i appen ved at gå til Profil -> Indstillinger og vælge slet konto. Alternativt, hvis du ikke længere har appen installeret eller ønsker at indsende en anmodning udenom appen, kan du anmode om sletning ved at skrive til info@bikeme.one.",
           "Hvis du sletter din konto, vil vi slette eller anonymisere dine persondata inden for 30 dage, medmindre vi er retligt forpligtet til at gemme dem længere."
         ]
       },
@@ -320,7 +320,7 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
         heading: "Dine rettigheder",
         paragraphs: [
           "Du har ret til: indsigt, berigtigelse, sletning, begrænsning, indsigelse, dataportabilitet.",
-          "Kontakt: kontakt@bikeme.one\nDu kan klage til Datatilsynet."
+          "Kontakt: info@bikeme.one\nDu kan klage til Datatilsynet."
         ]
       },
       {
