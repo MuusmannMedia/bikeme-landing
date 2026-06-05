@@ -95,7 +95,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     meta: {
       title: "Bike Me | Beta on TestFlight",
       description:
-        "Bike Me is open for iPhone beta testers via TestFlight. Beta testers get 12 months of free Bike Me Pro at official launch."
+        "Bike Me is open for iPhone beta testers via TestFlight. Beta testers get 6 months of free Bike Me Pro at official launch."
     },
     nav: {
       features: "Features",
@@ -109,9 +109,9 @@ const dictionaries: Record<Locale, Dictionary> = {
       headline: "Bike Me is open for beta testers",
       subheadline:
         "Find riders, create rides, invite cycling friends, and track your rides. Help us test Bike Me via TestFlight.",
-      payoffTitle: "12 months of free Pro for beta testers",
+      payoffTitle: "6 months of free Pro for beta testers",
       payoffText:
-        "As a thank you, all beta testers get 12 months of free Bike Me Pro when the app officially launches. Requires iPhone and Apple's TestFlight app.",
+        "As a thank you, all beta testers get 6 months of free Bike Me Pro when the app officially launches. Requires iPhone and Apple's TestFlight app.",
       primaryCta: "Get via TestFlight",
       secondaryCta: "See how it works",
       previewLabel: "App preview"
@@ -209,9 +209,9 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     pricing: {
       eyebrow: "Free vs Pro",
-      title: "Become a beta tester - get 12 months of Pro",
+      title: "Become a beta tester - get 6 months of Pro",
       subtitle:
-        "Start free with the core social ride tools. As a beta tester, you get 12 months of Bike ME Pro when the app officially launches.",
+        "Start free with the core social ride tools. As a beta tester, you get 6 months of Bike ME Pro when the app officially launches.",
       plans: [
         {
           name: "Bike ME",
@@ -248,12 +248,12 @@ const dictionaries: Record<Locale, Dictionary> = {
         {
           question: "Is Bike Me free?",
           answer:
-            "Yes. The key social features are free: find riders, create rides, invite others, and track your rides. Bike ME Pro gives access to deeper history, status, watt estimation, training zones, and progress graphs. As a beta tester, you get 12 months of free Pro when the app officially launches."
+            "Yes. The key social features are free: find riders, create rides, invite others, and track your rides. Bike ME Pro gives access to deeper history, status, watt estimation, training zones, and progress graphs. As a beta tester, you get 6 months of free Pro when the app officially launches."
         },
         {
           question: "Can I test Bike Me now?",
           answer:
-            "Yes. Bike Me is currently open for iOS beta testers via TestFlight. All beta testers get 12 months of free Bike Me Pro when the app officially launches."
+            "Yes. Bike Me is currently open for iOS beta testers via TestFlight. All beta testers get 6 months of free Bike Me Pro when the app officially launches."
         },
         {
           question: "How does Ride Now work?",
@@ -281,7 +281,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     meta: {
       title: "Bike Me | Beta via TestFlight",
       description:
-        "Bike Me er åben for iPhone beta-testere via TestFlight. Beta-testere får 12 måneders gratis Bike Me Pro ved officiel lancering."
+        "Bike Me er åben for iPhone beta-testere via TestFlight. Beta-testere får 6 måneders gratis Bike Me Pro ved officiel lancering."
     },
     nav: {
       features: "Funktioner",
@@ -295,9 +295,9 @@ const dictionaries: Record<Locale, Dictionary> = {
       headline: "Bike Me er åben for beta-testere",
       subheadline:
         "Find ryttere, opret ture, inviter cykelvenner og track dine cykelture. Hjælp os med at teste Bike Me via TestFlight.",
-      payoffTitle: "12 måneders gratis Pro til beta-testere",
+      payoffTitle: "6 måneders gratis Pro til beta-testere",
       payoffText:
-        "Som tak får alle beta-testere 12 måneders gratis Bike Me Pro, når appen lanceres officielt. Kræver iPhone og Apples TestFlight-app.",
+        "Som tak får alle beta-testere 6 måneders gratis Bike Me Pro, når appen lanceres officielt. Kræver iPhone og Apples TestFlight-app.",
       primaryCta: "Hent via TestFlight",
       secondaryCta: "Se hvordan det virker",
       previewLabel: "App-preview"
@@ -395,9 +395,9 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     pricing: {
       eyebrow: "Gratis vs Pro",
-      title: "Bliv beta-tester - få 12 måneder Pro",
+      title: "Bliv beta-tester - få 6 måneder Pro",
       subtitle:
-        "Start gratis med de vigtigste sociale turfunktioner. Som beta-tester får du 12 måneders Bike ME Pro, når appen lanceres officielt.",
+        "Start gratis med de vigtigste sociale turfunktioner. Som beta-tester får du 6 måneders Bike ME Pro, når appen lanceres officielt.",
       plans: [
         {
           name: "Bike ME",
@@ -434,12 +434,12 @@ const dictionaries: Record<Locale, Dictionary> = {
         {
           question: "Er Bike Me gratis?",
           answer:
-            "Ja. De vigtigste sociale funktioner er gratis: find ryttere, opret ture, inviter andre og track dine ture. Bike ME Pro giver adgang til dybere historik, status, watt-estimering, træningszoner og udviklingsgrafer. Som beta-tester får du 12 måneders gratis Pro, når appen lanceres officielt."
+            "Ja. De vigtigste sociale funktioner er gratis: find ryttere, opret ture, inviter andre og track dine ture. Bike ME Pro giver adgang til dybere historik, status, watt-estimering, træningszoner og udviklingsgrafer. Som beta-tester får du 6 måneders gratis Pro, når appen lanceres officielt."
         },
         {
           question: "Kan jeg teste Bike Me nu?",
           answer:
-            "Ja. Bike Me er lige nu åben for iOS beta-testere via TestFlight. Alle beta-testere får 12 måneders gratis Bike Me Pro, når appen lanceres officielt."
+            "Ja. Bike Me er lige nu åben for iOS beta-testere via TestFlight. Alle beta-testere får 6 måneders gratis Bike Me Pro, når appen lanceres officielt."
         },
         {
           question: "Hvordan virker Ride Now?",
@@ -467,7 +467,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     meta: {
       title: "Bike Me | Beta über TestFlight",
       description:
-        "Bike Me ist für iPhone-Betatester über TestFlight geöffnet. Betatester erhalten 12 Monate Bike Me Pro kostenlos zum offiziellen Launch."
+        "Bike Me ist für iPhone-Betatester über TestFlight geöffnet. Betatester erhalten 6 Monate Bike Me Pro kostenlos zum offiziellen Launch."
     },
     nav: {
       features: "Funktionen",
@@ -481,9 +481,9 @@ const dictionaries: Record<Locale, Dictionary> = {
       headline: "Bike Me ist offen für Betatester",
       subheadline:
         "Finde Fahrer, erstelle Fahrten, lade Radfreunde ein und tracke deine Touren. Hilf uns, Bike Me über TestFlight zu testen.",
-      payoffTitle: "12 Monate Pro kostenlos für Betatester",
+      payoffTitle: "6 Monate Pro kostenlos für Betatester",
       payoffText:
-        "Als Dankeschön erhalten alle Betatester 12 Monate Bike Me Pro kostenlos, wenn die App offiziell startet. Erfordert ein iPhone und Apples TestFlight-App.",
+        "Als Dankeschön erhalten alle Betatester 6 Monate Bike Me Pro kostenlos, wenn die App offiziell startet. Erfordert ein iPhone und Apples TestFlight-App.",
       primaryCta: "Über TestFlight laden",
       secondaryCta: "So funktioniert's",
       previewLabel: "App-Vorschau"
@@ -583,9 +583,9 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     pricing: {
       eyebrow: "Kostenlos vs Pro",
-      title: "Werde Betatester - erhalte 12 Monate Pro",
+      title: "Werde Betatester - erhalte 6 Monate Pro",
       subtitle:
-        "Starte kostenlos mit den wichtigsten sozialen Fahrfunktionen. Als Betatester erhältst du 12 Monate Bike ME Pro, wenn die App offiziell startet.",
+        "Starte kostenlos mit den wichtigsten sozialen Fahrfunktionen. Als Betatester erhältst du 6 Monate Bike ME Pro, wenn die App offiziell startet.",
       plans: [
         {
           name: "Bike ME",
@@ -622,12 +622,12 @@ const dictionaries: Record<Locale, Dictionary> = {
         {
           question: "Ist Bike Me kostenlos?",
           answer:
-            "Ja. Die wichtigsten sozialen Funktionen sind kostenlos: Fahrer finden, Fahrten erstellen, andere einladen und deine Touren tracken. Bike ME Pro bietet Zugriff auf tiefere Historie, Status, Watt-Schätzung, Trainingszonen und Fortschrittsgrafen. Als Betatester erhältst du 12 Monate Pro kostenlos, wenn die App offiziell startet."
+            "Ja. Die wichtigsten sozialen Funktionen sind kostenlos: Fahrer finden, Fahrten erstellen, andere einladen und deine Touren tracken. Bike ME Pro bietet Zugriff auf tiefere Historie, Status, Watt-Schätzung, Trainingszonen und Fortschrittsgrafen. Als Betatester erhältst du 6 Monate Pro kostenlos, wenn die App offiziell startet."
         },
         {
           question: "Kann ich Bike Me jetzt testen?",
           answer:
-            "Ja. Bike Me ist derzeit für iOS-Betatester über TestFlight geöffnet. Alle Betatester erhalten 12 Monate Bike Me Pro kostenlos, wenn die App offiziell startet."
+            "Ja. Bike Me ist derzeit für iOS-Betatester über TestFlight geöffnet. Alle Betatester erhalten 6 Monate Bike Me Pro kostenlos, wenn die App offiziell startet."
         },
         {
           question: "Wie funktioniert Ride Now?",
@@ -655,7 +655,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     meta: {
       title: "Bike Me | Beta en TestFlight",
       description:
-        "Bike Me está abierta para beta testers de iPhone vía TestFlight. Los beta testers reciben 12 meses gratis de Bike Me Pro en el lanzamiento oficial."
+        "Bike Me está abierta para beta testers de iPhone vía TestFlight. Los beta testers reciben 6 meses gratis de Bike Me Pro en el lanzamiento oficial."
     },
     nav: {
       features: "Funciones",
@@ -669,9 +669,9 @@ const dictionaries: Record<Locale, Dictionary> = {
       headline: "Bike Me está abierta para beta testers",
       subheadline:
         "Encuentra ciclistas, crea salidas, invita a tus compañeros y registra tus rutas. Ayúdanos a probar Bike Me vía TestFlight.",
-      payoffTitle: "12 meses de Pro gratis para beta testers",
+      payoffTitle: "6 meses de Pro gratis para beta testers",
       payoffText:
-        "Como agradecimiento, todos los beta testers reciben 12 meses gratis de Bike Me Pro cuando la app se lance oficialmente. Requiere iPhone y la app TestFlight de Apple.",
+        "Como agradecimiento, todos los beta testers reciben 6 meses gratis de Bike Me Pro cuando la app se lance oficialmente. Requiere iPhone y la app TestFlight de Apple.",
       primaryCta: "Obtener vía TestFlight",
       secondaryCta: "Ver cómo funciona",
       previewLabel: "Vista de la app"
@@ -771,9 +771,9 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     pricing: {
       eyebrow: "Gratis vs Pro",
-      title: "Hazte beta tester - recibe 12 meses de Pro",
+      title: "Hazte beta tester - recibe 6 meses de Pro",
       subtitle:
-        "Empieza gratis con las funciones sociales esenciales. Como beta tester, recibes 12 meses de Bike ME Pro cuando la app se lance oficialmente.",
+        "Empieza gratis con las funciones sociales esenciales. Como beta tester, recibes 6 meses de Bike ME Pro cuando la app se lance oficialmente.",
       plans: [
         {
           name: "Bike ME",
@@ -810,12 +810,12 @@ const dictionaries: Record<Locale, Dictionary> = {
         {
           question: "¿Bike Me es gratis?",
           answer:
-            "Sí. Las funciones sociales clave son gratis: encuentra ciclistas, crea salidas, invita a otros y registra tus rutas. Bike ME Pro da acceso a más historial, estado, estimación de vatios, zonas de entrenamiento y gráficas de progreso. Como beta tester, recibes 12 meses gratis de Pro cuando la app se lance oficialmente."
+            "Sí. Las funciones sociales clave son gratis: encuentra ciclistas, crea salidas, invita a otros y registra tus rutas. Bike ME Pro da acceso a más historial, estado, estimación de vatios, zonas de entrenamiento y gráficas de progreso. Como beta tester, recibes 6 meses gratis de Pro cuando la app se lance oficialmente."
         },
         {
           question: "¿Puedo probar Bike Me ahora?",
           answer:
-            "Sí. Bike Me está abierta ahora para beta testers de iOS vía TestFlight. Todos los beta testers reciben 12 meses gratis de Bike Me Pro cuando la app se lance oficialmente."
+            "Sí. Bike Me está abierta ahora para beta testers de iOS vía TestFlight. Todos los beta testers reciben 6 meses gratis de Bike Me Pro cuando la app se lance oficialmente."
         },
         {
           question: "¿Cómo funciona Ride Now?",
@@ -843,7 +843,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     meta: {
       title: "Bike Me | Beta su TestFlight",
       description:
-        "Bike Me è aperta ai beta tester iPhone tramite TestFlight. I beta tester ricevono 12 mesi gratuiti di Bike Me Pro al lancio ufficiale."
+        "Bike Me è aperta ai beta tester iPhone tramite TestFlight. I beta tester ricevono 6 mesi gratuiti di Bike Me Pro al lancio ufficiale."
     },
     nav: {
       features: "Funzionalità",
@@ -857,9 +857,9 @@ const dictionaries: Record<Locale, Dictionary> = {
       headline: "Bike Me è aperta ai beta tester",
       subheadline:
         "Trova ciclisti, crea uscite, invita amici e traccia le tue pedalate. Aiutaci a testare Bike Me tramite TestFlight.",
-      payoffTitle: "12 mesi di Pro gratis per i beta tester",
+      payoffTitle: "6 mesi di Pro gratis per i beta tester",
       payoffText:
-        "Come ringraziamento, tutti i beta tester ricevono 12 mesi gratuiti di Bike Me Pro quando l'app verrà lanciata ufficialmente. Richiede iPhone e l'app TestFlight di Apple.",
+        "Come ringraziamento, tutti i beta tester ricevono 6 mesi gratuiti di Bike Me Pro quando l'app verrà lanciata ufficialmente. Richiede iPhone e l'app TestFlight di Apple.",
       primaryCta: "Scarica via TestFlight",
       secondaryCta: "Scopri come funziona",
       previewLabel: "Anteprima app"
@@ -959,9 +959,9 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     pricing: {
       eyebrow: "Gratis vs Pro",
-      title: "Diventa beta tester - ricevi 12 mesi di Pro",
+      title: "Diventa beta tester - ricevi 6 mesi di Pro",
       subtitle:
-        "Inizia gratis con le funzioni social essenziali. Come beta tester ricevi 12 mesi di Bike ME Pro quando l'app verrà lanciata ufficialmente.",
+        "Inizia gratis con le funzioni social essenziali. Come beta tester ricevi 6 mesi di Bike ME Pro quando l'app verrà lanciata ufficialmente.",
       plans: [
         {
           name: "Bike ME",
@@ -998,12 +998,12 @@ const dictionaries: Record<Locale, Dictionary> = {
         {
           question: "Bike Me è gratuita?",
           answer:
-            "Sì. Le funzioni social principali sono gratuite: trova ciclisti, crea uscite, invita altri e traccia le tue pedalate. Bike ME Pro dà accesso a storico più profondo, stato, stima dei watt, zone di allenamento e grafici di progresso. Come beta tester ricevi 12 mesi gratuiti di Pro quando l'app verrà lanciata ufficialmente."
+            "Sì. Le funzioni social principali sono gratuite: trova ciclisti, crea uscite, invita altri e traccia le tue pedalate. Bike ME Pro dà accesso a storico più profondo, stato, stima dei watt, zone di allenamento e grafici di progresso. Come beta tester ricevi 6 mesi gratuiti di Pro quando l'app verrà lanciata ufficialmente."
         },
         {
           question: "Posso testare Bike Me ora?",
           answer:
-            "Sì. Bike Me è attualmente aperta ai beta tester iOS tramite TestFlight. Tutti i beta tester ricevono 12 mesi gratuiti di Bike Me Pro quando l'app verrà lanciata ufficialmente."
+            "Sì. Bike Me è attualmente aperta ai beta tester iOS tramite TestFlight. Tutti i beta tester ricevono 6 mesi gratuiti di Bike Me Pro quando l'app verrà lanciata ufficialmente."
         },
         {
           question: "Come funziona Ride Now?",
@@ -1031,7 +1031,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     meta: {
       title: "Bike Me | Bêta sur TestFlight",
       description:
-        "Bike Me est ouverte aux bêta-testeurs iPhone via TestFlight. Les bêta-testeurs reçoivent 12 mois gratuits de Bike Me Pro au lancement officiel."
+        "Bike Me est ouverte aux bêta-testeurs iPhone via TestFlight. Les bêta-testeurs reçoivent 6 mois gratuits de Bike Me Pro au lancement officiel."
     },
     nav: {
       features: "Fonctionnalités",
@@ -1045,9 +1045,9 @@ const dictionaries: Record<Locale, Dictionary> = {
       headline: "Bike Me est ouverte aux bêta-testeurs",
       subheadline:
         "Trouvez des cyclistes, créez des sorties, invitez vos amis et suivez vos parcours. Aidez-nous à tester Bike Me via TestFlight.",
-      payoffTitle: "12 mois de Pro gratuits pour les bêta-testeurs",
+      payoffTitle: "6 mois de Pro gratuits pour les bêta-testeurs",
       payoffText:
-        "En remerciement, tous les bêta-testeurs reçoivent 12 mois gratuits de Bike Me Pro lorsque l'app sera lancée officiellement. Nécessite un iPhone et l'app TestFlight d'Apple.",
+        "En remerciement, tous les bêta-testeurs reçoivent 6 mois gratuits de Bike Me Pro lorsque l'app sera lancée officiellement. Nécessite un iPhone et l'app TestFlight d'Apple.",
       primaryCta: "Obtenir via TestFlight",
       secondaryCta: "Voir le fonctionnement",
       previewLabel: "Aperçu de l'app"
@@ -1147,9 +1147,9 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     pricing: {
       eyebrow: "Gratuit vs Pro",
-      title: "Devenez bêta-testeur - recevez 12 mois de Pro",
+      title: "Devenez bêta-testeur - recevez 6 mois de Pro",
       subtitle:
-        "Commencez gratuitement avec les outils sociaux essentiels. En tant que bêta-testeur, vous recevez 12 mois de Bike ME Pro lorsque l'app sera lancée officiellement.",
+        "Commencez gratuitement avec les outils sociaux essentiels. En tant que bêta-testeur, vous recevez 6 mois de Bike ME Pro lorsque l'app sera lancée officiellement.",
       plans: [
         {
           name: "Bike ME",
@@ -1186,12 +1186,12 @@ const dictionaries: Record<Locale, Dictionary> = {
         {
           question: "Bike Me est-elle gratuite ?",
           answer:
-            "Oui. Les fonctions sociales clés sont gratuites : trouver des cyclistes, créer des sorties, inviter d'autres personnes et suivre vos sorties. Bike ME Pro donne accès à un historique plus profond, au statut, à l'estimation des watts, aux zones d'entraînement et aux graphiques de progression. En tant que bêta-testeur, vous recevez 12 mois gratuits de Pro lorsque l'app sera lancée officiellement."
+            "Oui. Les fonctions sociales clés sont gratuites : trouver des cyclistes, créer des sorties, inviter d'autres personnes et suivre vos sorties. Bike ME Pro donne accès à un historique plus profond, au statut, à l'estimation des watts, aux zones d'entraînement et aux graphiques de progression. En tant que bêta-testeur, vous recevez 6 mois gratuits de Pro lorsque l'app sera lancée officiellement."
         },
         {
           question: "Puis-je tester Bike Me maintenant ?",
           answer:
-            "Oui. Bike Me est actuellement ouverte aux bêta-testeurs iOS via TestFlight. Tous les bêta-testeurs reçoivent 12 mois gratuits de Bike Me Pro lorsque l'app sera lancée officiellement."
+            "Oui. Bike Me est actuellement ouverte aux bêta-testeurs iOS via TestFlight. Tous les bêta-testeurs reçoivent 6 mois gratuits de Bike Me Pro lorsque l'app sera lancée officiellement."
         },
         {
           question: "Comment fonctionne Ride Now ?",
@@ -1219,7 +1219,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     meta: {
       title: "Bike Me | Beta via TestFlight",
       description:
-        "Bike Me is open voor iPhone-betatesters via TestFlight. Betatesters krijgen 12 maanden gratis Bike Me Pro bij de officiële lancering."
+        "Bike Me is open voor iPhone-betatesters via TestFlight. Betatesters krijgen 6 maanden gratis Bike Me Pro bij de officiële lancering."
     },
     nav: {
       features: "Functies",
@@ -1233,9 +1233,9 @@ const dictionaries: Record<Locale, Dictionary> = {
       headline: "Bike Me is open voor betatesters",
       subheadline:
         "Vind fietsers, maak ritten, nodig fietsvrienden uit en track je ritten. Help ons Bike Me te testen via TestFlight.",
-      payoffTitle: "12 maanden gratis Pro voor betatesters",
+      payoffTitle: "6 maanden gratis Pro voor betatesters",
       payoffText:
-        "Als bedankje krijgen alle betatesters 12 maanden gratis Bike Me Pro wanneer de app officieel wordt gelanceerd. Vereist iPhone en Apple's TestFlight-app.",
+        "Als bedankje krijgen alle betatesters 6 maanden gratis Bike Me Pro wanneer de app officieel wordt gelanceerd. Vereist iPhone en Apple's TestFlight-app.",
       primaryCta: "Download via TestFlight",
       secondaryCta: "Bekijk hoe het werkt",
       previewLabel: "App-preview"
@@ -1334,9 +1334,9 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     pricing: {
       eyebrow: "Gratis vs Pro",
-      title: "Word betatester - krijg 12 maanden Pro",
+      title: "Word betatester - krijg 6 maanden Pro",
       subtitle:
-        "Begin gratis met de belangrijkste sociale ritfuncties. Als betatester krijg je 12 maanden Bike ME Pro wanneer de app officieel wordt gelanceerd.",
+        "Begin gratis met de belangrijkste sociale ritfuncties. Als betatester krijg je 6 maanden Bike ME Pro wanneer de app officieel wordt gelanceerd.",
       plans: [
         {
           name: "Bike ME",
@@ -1373,12 +1373,12 @@ const dictionaries: Record<Locale, Dictionary> = {
         {
           question: "Is Bike Me gratis?",
           answer:
-            "Ja. De belangrijkste sociale functies zijn gratis: vind fietsers, maak ritten, nodig anderen uit en track je ritten. Bike ME Pro geeft toegang tot diepere historie, status, wattinschatting, trainingszones en voortgangsgrafieken. Als betatester krijg je 12 maanden gratis Pro wanneer de app officieel wordt gelanceerd."
+            "Ja. De belangrijkste sociale functies zijn gratis: vind fietsers, maak ritten, nodig anderen uit en track je ritten. Bike ME Pro geeft toegang tot diepere historie, status, wattinschatting, trainingszones en voortgangsgrafieken. Als betatester krijg je 6 maanden gratis Pro wanneer de app officieel wordt gelanceerd."
         },
         {
           question: "Kan ik Bike Me nu testen?",
           answer:
-            "Ja. Bike Me is momenteel open voor iOS-betatesters via TestFlight. Alle betatesters krijgen 12 maanden gratis Bike Me Pro wanneer de app officieel wordt gelanceerd."
+            "Ja. Bike Me is momenteel open voor iOS-betatesters via TestFlight. Alle betatesters krijgen 6 maanden gratis Bike Me Pro wanneer de app officieel wordt gelanceerd."
         },
         {
           question: "Hoe werkt Ride Now?",

@@ -18,11 +18,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(CANONICAL_DOMAIN),
   title: "Bike Me | Beta on TestFlight",
   description:
-    "Bike Me is open for iPhone beta testers via TestFlight. Beta testers get 12 months of free Bike Me Pro at official launch.",
+    "Bike Me is open for iPhone beta testers via TestFlight. Beta testers get 6 months of free Bike Me Pro at official launch.",
   openGraph: {
     title: "Bike Me | Beta on TestFlight",
     description:
-      "Bike Me is open for iPhone beta testers via TestFlight. Beta testers get 12 months of free Bike Me Pro at official launch.",
+      "Bike Me is open for iPhone beta testers via TestFlight. Beta testers get 6 months of free Bike Me Pro at official launch.",
     url: `${CANONICAL_DOMAIN}/en`,
     siteName: "Bike Me",
     locale: "en_US",
