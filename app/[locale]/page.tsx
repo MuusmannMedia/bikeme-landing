@@ -178,32 +178,15 @@ export default function LocalePage({ params }: LocalePageProps) {
           </div>
 
           <div className="relative lg:pl-8">
-            <div className="pointer-events-none absolute -left-6 -top-8 h-24 w-24 rounded-full bg-blue-500/20 blur-2xl" />
-            <div className="pointer-events-none absolute -bottom-8 right-2 h-24 w-24 rounded-full bg-fuchsia-500/20 blur-2xl" />
-
-            <div className="animate-float gradient-outline glass-panel relative mx-auto max-w-sm rounded-[2.2rem] border p-4 shadow-[0_40px_90px_-45px_rgba(0,0,0,0.85)]">
-              <div className="overflow-hidden rounded-[1.7rem] border border-white/10 bg-[#070d1b]">
-                <div className="flex items-center justify-between border-b border-white/10 px-4 py-3 text-xs text-[var(--ink-soft)]">
-                  <span>{t.hero.previewLabel}</span>
-                  <span className="rounded-full border border-emerald-300/35 bg-emerald-400/12 px-2 py-0.5 text-emerald-200">
-                    Live
-                  </span>
-                </div>
-
-                <div className="p-4">
-                  <div className="relative h-[260px] overflow-hidden rounded-[1.7rem] border border-white/10 bg-[#0b1326] sm:h-[320px] lg:h-[420px]">
-                    <Image
-                      src="/screenshots/app-02.PNG"
-                      alt={`${t.hero.previewLabel}: ${t.hero.headline}`}
-                      fill
-                      priority
-                      sizes="(max-width: 1024px) 90vw, 520px"
-                      className="object-contain"
-                    />
-                    <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,rgba(4,8,18,0.45),rgba(4,8,18,0))]" />
-                  </div>
-                </div>
-              </div>
+            <div className="relative mx-auto h-[360px] max-w-xl overflow-hidden rounded-[2.2rem] border border-white/10 shadow-[0_40px_90px_-45px_rgba(0,0,0,0.85)] sm:h-[440px] lg:h-[520px]">
+              <Image
+                src="/hero/hero-photo.jpg"
+                alt="Bike Me cyclists riding together"
+                fill
+                priority
+                sizes="(max-width: 1024px) 90vw, 560px"
+                className="object-cover"
+              />
             </div>
           </div>
         </section>
