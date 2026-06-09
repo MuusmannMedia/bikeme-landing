@@ -193,12 +193,12 @@ export default function LocalePage({ params }: LocalePageProps) {
                 <div className="p-4">
                   <div className="relative h-[260px] overflow-hidden rounded-[1.7rem] border border-white/10 bg-[#0b1326] sm:h-[320px] lg:h-[420px]">
                     <Image
-                      src="/hero/hero-photo.jpg"
-                      alt="Bike ME app preview in the real world"
+                      src="/screenshots/app-02.PNG"
+                      alt={`${t.hero.previewLabel}: ${t.hero.headline}`}
                       fill
                       priority
                       sizes="(max-width: 1024px) 90vw, 520px"
-                      className="object-cover"
+                      className="object-contain"
                     />
                     <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,rgba(4,8,18,0.45),rgba(4,8,18,0))]" />
                   </div>
@@ -322,9 +322,9 @@ export default function LocalePage({ params }: LocalePageProps) {
                 <div className="overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(to_bottom,rgba(16,27,52,0.95),rgba(10,18,37,0.95))]">
                   <Image
                     src={item.image}
-                    alt={item.title}
-                    width={1125}
-                    height={2436}
+                    alt={`${item.title}: ${item.description}`}
+                    width={1320}
+                    height={2868}
                     sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 340px"
                     className="h-auto w-full"
                   />

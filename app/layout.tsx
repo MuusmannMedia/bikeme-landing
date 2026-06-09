@@ -16,13 +16,13 @@ const interHeading = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(CANONICAL_DOMAIN),
-  title: "Bike Me | Beta on TestFlight",
+  title: "Bike Me | Cycling community on TestFlight",
   description:
-    "Bike Me is open for iPhone beta testers via TestFlight. Beta testers get 6 months of free Bike Me Pro at official launch.",
+    "Bike Me helps cyclists keep in touch, invite friends, and create private or public rides. Beta testers get 6 months of free Bike Me Pro at official launch.",
   openGraph: {
-    title: "Bike Me | Beta on TestFlight",
+    title: "Bike Me | Cycling community on TestFlight",
     description:
-      "Bike Me is open for iPhone beta testers via TestFlight. Beta testers get 6 months of free Bike Me Pro at official launch.",
+      "Bike Me helps cyclists keep in touch, invite friends, and create private or public rides. Beta testers get 6 months of free Bike Me Pro at official launch.",
     url: `${CANONICAL_DOMAIN}/en`,
     siteName: "Bike Me",
     locale: "en_US",

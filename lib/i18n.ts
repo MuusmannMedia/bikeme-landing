@@ -93,9 +93,9 @@ export type Dictionary = {
 const dictionaries: Record<Locale, Dictionary> = {
   en: {
     meta: {
-      title: "Bike Me | Beta on TestFlight",
+      title: "Bike Me | Cycling community on TestFlight",
       description:
-        "Bike Me is open for iPhone beta testers via TestFlight. Beta testers get 6 months of free Bike Me Pro at official launch."
+        "Bike Me helps cyclists keep in touch, invite friends, and create private or public rides. Beta testers get 6 months of free Bike Me Pro at official launch."
     },
     nav: {
       features: "Features",
@@ -106,41 +106,45 @@ const dictionaries: Record<Locale, Dictionary> = {
       joinTestFlight: "Get via TestFlight"
     },
     hero: {
-      headline: "Bike Me is open for beta testers",
+      headline: "Keep your cycling friends close - and find new riders",
       subheadline:
-        "Find riders, create rides, invite cycling friends, and track your rides. Help us test Bike Me via TestFlight.",
+        "Bike Me brings your cycling contacts, rides, and invitations together. Create private rides for friends or public rides where new cyclists can join.",
       payoffTitle: "6 months of free Pro for beta testers",
       payoffText:
-        "As a thank you, all beta testers get 6 months of free Bike Me Pro when the app officially launches. Requires iPhone and Apple's TestFlight app.",
+        "Become a beta tester and help shape the future cycling community. All beta testers get 6 months of free Bike Me Pro when the app officially launches. Requires iPhone and Apple's TestFlight app.",
       primaryCta: "Get via TestFlight",
       secondaryCta: "See how it works",
       previewLabel: "App preview"
     },
     brand: {
-      intro: "Bike ME is built around spontaneous RIDE NOW rides",
+      intro: "Bike ME is built for cycling friends, familiar faces, and the next ride together",
       bullets: [
-        "Create a RIDE NOW ride in seconds",
-        "Find nearby riders on the map",
-        "Agree on meeting point and time",
+        "Keep track of the riders you want to see again",
+        "Create private rides for friends, clubs, and training partners",
+        "Open public rides when new cyclists should be able to join",
+        "Invite the right riders and keep everyone aligned",
         "Import a GPX route (optional)",
-        "Get push alerts for important changes"
+        "Get push alerts for important ride changes"
       ]
     },
     features: {
       eyebrow: "Features",
-      title: "Cycling plans without the chaos",
+      title: "A cycling community that actually gets people riding",
       items: [
         {
-          title: "See rides near you",
-          description: "Discover nearby rides instantly on a clean map-first view."
+          title: "Plan rides together",
+          description:
+            "Create a ride, choose a time, and share it with the people you want to ride with. Keep it private for your regular group or make it public so others can join."
         },
         {
-          title: "Ride Now or plan ahead",
-          description: "Start in minutes with Ride Now or schedule future rides in advance."
+          title: "Keep cycling contacts alive",
+          description:
+            "Cyclists meet good people all the time, but the connection often fades. Bike Me makes it easier to keep hold of the riders you want to ride with again."
         },
         {
-          title: "Invite the right riders",
-          description: "Choose exactly who to invite and keep your group dialed in."
+          title: "Private and public rides",
+          description:
+            "Invite close cycling friends to a closed ride, or open it up to new riders in the area. You decide how the group should work."
         },
         {
           title: "Import GPX routes",
@@ -154,56 +158,101 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     howItWorks: {
       eyebrow: "How it works",
-      title: "From map to meetup in three steps",
+      title: "From cycling friends to a shared ride in three steps",
       steps: [
         {
-          title: "Open the map and spot rides",
-          description: "See active and planned rides around you in seconds."
+          title: "Gather your riders",
+          description: "Keep friends, clubmates, and new cycling contacts close in one place."
         },
         {
-          title: "Create Ride Now or plan a ride",
-          description: "Host something immediate or set a date for later."
+          title: "Create a private or public ride",
+          description: "Choose the time, meeting point, and whether the ride is closed or open."
         },
         {
           title: "Invite riders and roll out",
-          description: "Confirm who is joining and head out together."
+          description: "Share the plan, see who joins, and head out together."
         }
       ]
     },
     screenshots: {
       eyebrow: "Screenshots",
-      title: "Built to stay clear before, during, and after every ride",
-      subtitle: "From free RIDE NOW tools to deeper Pro insights when you want more.",
+      title: "Everything around your rides, friends, and progress",
+      subtitle: "From meeting points and invitations to ride history and deeper Pro insights.",
       items: [
         {
           image: "/screenshots/app-01.PNG",
-          title: "Map overview",
-          description: "Find riders near you and see who's ready for a ride right now."
+          title: "Join the community",
+          description: "Create a profile and start building your cycling network."
         },
         {
           image: "/screenshots/app-02.PNG",
-          title: "Create a RIDE NOW ride",
-          description: "Set a route, time, and meeting point in seconds."
+          title: "Map and meeting points",
+          description: "See fixed meeting points, nearby rides, and where your next group can start."
         },
         {
           image: "/screenshots/app-03.PNG",
-          title: "The community",
-          description: "Find riders at your level and invite them along."
+          title: "Meeting point details",
+          description: "Check activity, upcoming rides, and create a ride from a known spot."
         },
         {
           image: "/screenshots/app-04.PNG",
-          title: "Ready to start",
-          description: "Gather the group and start live tracking directly from the map."
+          title: "Ride Now or plan ahead",
+          description: "Choose whether the ride starts soon or is planned for later."
         },
         {
           image: "/screenshots/app-05.PNG",
-          title: "Ride details (Pro)",
-          description: "Dive into your data. See watts, training zones, and climbs after the ride."
+          title: "Create and invite",
+          description: "Set the ride up and invite the riders you want with you."
         },
         {
           image: "/screenshots/app-06.PNG",
-          title: "Track your progress (Pro)",
-          description: "Follow your fitness over time with detailed charts and 12-month history."
+          title: "Ride title suggestions",
+          description: "Pick a clear ride title so the group knows what kind of ride it is."
+        },
+        {
+          image: "/screenshots/app-07.png",
+          title: "Ride details",
+          description: "See meeting point, participants, and start tracking when everyone is ready."
+        },
+        {
+          image: "/screenshots/app-08.png",
+          title: "Your rides and invitations",
+          description: "Keep your own rides, invites, and next actions in one simple view."
+        },
+        {
+          image: "/screenshots/app-09.png",
+          title: "Invite riders",
+          description: "Find cycling friends and invite the right people to the ride."
+        },
+        {
+          image: "/screenshots/app-10.png",
+          title: "Hotspots nearby",
+          description: "Discover popular cycling spots and create rides around them."
+        },
+        {
+          image: "/screenshots/app-11.png",
+          title: "Ride history",
+          description: "Look back at completed rides and keep track of what you rode."
+        },
+        {
+          image: "/screenshots/app-12.png",
+          title: "Status and distance",
+          description: "Follow your development over time with distance and progress charts."
+        },
+        {
+          image: "/screenshots/app-13.png",
+          title: "Weekly overview",
+          description: "See your weekly distance, elevation, and activity status."
+        },
+        {
+          image: "/screenshots/app-14.png",
+          title: "Watts and training zones (Pro)",
+          description: "Dive into estimated watts, zones, and performance after the ride."
+        },
+        {
+          image: "/screenshots/app-15.png",
+          title: "Top performances (Pro)",
+          description: "Track your best times, longest rides, top speed, and highest watt."
         }
       ]
     },
@@ -211,7 +260,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       eyebrow: "Free vs Pro",
       title: "Become a beta tester - get 6 months of Pro",
       subtitle:
-        "Start free with the core social ride tools. As a beta tester, you get 6 months of Bike ME Pro when the app officially launches.",
+        "Join the beta and help shape a cycling community built around friends, invites, and rides. As a beta tester, you get 6 months of Bike ME Pro when the app officially launches.",
       plans: [
         {
           name: "Bike ME",
@@ -279,9 +328,9 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   da: {
     meta: {
-      title: "Bike Me | Beta via TestFlight",
+      title: "Bike Me | Cykelfællesskab via TestFlight",
       description:
-        "Bike Me er åben for iPhone beta-testere via TestFlight. Beta-testere får 6 måneders gratis Bike Me Pro ved officiel lancering."
+        "Bike Me samler cykelvenner, invitationer og private eller offentlige ture. Beta-testere får 6 måneders gratis Bike Me Pro ved officiel lancering."
     },
     nav: {
       features: "Funktioner",
@@ -292,41 +341,45 @@ const dictionaries: Record<Locale, Dictionary> = {
       joinTestFlight: "Hent via TestFlight"
     },
     hero: {
-      headline: "Bike Me er åben for beta-testere",
+      headline: "Hold fast i dine cykelvenner - og find nye at køre med",
       subheadline:
-        "Find ryttere, opret ture, inviter cykelvenner og track dine cykelture. Hjælp os med at teste Bike Me via TestFlight.",
+        "Bike Me samler dine cykelbekendtskaber, ture og invitationer ét sted. Opret private ture for dine venner, eller lav offentlige ture, hvor nye ryttere kan hoppe med.",
       payoffTitle: "6 måneders gratis Pro til beta-testere",
       payoffText:
-        "Som tak får alle beta-testere 6 måneders gratis Bike Me Pro, når appen lanceres officielt. Kræver iPhone og Apples TestFlight-app.",
+        "Bliv beta-tester og vær med til at skabe fremtidens cykelfællesskab. Som tak får alle beta-testere 6 måneders gratis Bike Me Pro, når appen lanceres officielt. Kræver iPhone og Apples TestFlight-app.",
       primaryCta: "Hent via TestFlight",
       secondaryCta: "Se hvordan det virker",
       previewLabel: "App-preview"
     },
     brand: {
-      intro: "Bike ME er skabt til spontane KØR NU-ture",
+      intro: "Bike ME er dit cykelfællesskab til venner, bekendtskaber og næste tur",
       bullets: [
-        "Opret en KØR NU-tur på få sekunder",
-        "Find deltagere tæt på dig på kortet",
-        "Aftal mødested og tidspunkt",
+        "Hold styr på de ryttere, du gerne vil køre med igen",
+        "Opret private ture for venner, klubkammerater og træningsmakkere",
+        "Gør ture offentlige, når nye ryttere skal kunne hoppe med",
+        "Invitér de rigtige ryttere og hold gruppen samlet",
         "Importér en GPX-rute (valgfrit)",
-        "Få push-besked ved vigtige ændringer"
+        "Få push-besked ved vigtige turændringer"
       ]
     },
     features: {
       eyebrow: "Funktioner",
-      title: "Planlæg fællesture uden kaos",
+      title: "Et cykelfællesskab, der gør det lettere at komme afsted",
       items: [
         {
-          title: "Se ture tæt på dig",
-          description: "Find rides i nærheden med det samme i en kortbaseret visning."
+          title: "Planlæg ture sammen",
+          description:
+            "Opret en tur, vælg tidspunkt og del den med dem, du gerne vil køre med. Gør turen privat for din faste gruppe - eller offentlig, hvis andre ryttere skal kunne finde og deltage."
         },
         {
-          title: "Ride Now eller planlæg frem",
-          description: "Start om få minutter eller planlæg ture i god tid."
+          title: "Hold kontakten med dine cykelbekendtskaber",
+          description:
+            "De fleste cyklister møder mange gode mennesker på vejen, men kontakten forsvinder ofte igen. Bike Me gør det nemmere at holde fast i dem, du gerne vil køre med igen."
         },
         {
-          title: "Invitér de rigtige ryttere",
-          description: "Vælg præcis hvem du vil køre med."
+          title: "Private og offentlige ture",
+          description:
+            "Invitér dine nærmeste cykelvenner til en lukket tur, eller åbn turen for nye ryttere i området. Du bestemmer selv, hvordan fællesskabet skal fungere."
         },
         {
           title: "Importér GPX-ruter",
@@ -340,56 +393,101 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     howItWorks: {
       eyebrow: "Sådan virker det",
-      title: "Fra kort til afgang i tre trin",
+      title: "Fra cykelvenner til fælles tur i tre trin",
       steps: [
         {
-          title: "Åbn kortet og find ture",
-          description: "Se aktive og planlagte ture omkring dig på få sekunder."
+          title: "Saml dine ryttere",
+          description: "Hold venner, klubkammerater og nye cykelbekendtskaber samlet ét sted."
         },
         {
-          title: "Opret Ride Now eller planlæg en tur",
-          description: "Start nu eller vælg en dato senere."
+          title: "Opret en privat eller offentlig tur",
+          description: "Vælg tidspunkt, mødested og om turen kun er for inviterede eller åben."
         },
         {
           title: "Invitér ryttere og kør",
-          description: "Se hvem der er med, og rul ud sammen."
+          description: "Del planen, se hvem der er med, og rul ud sammen."
         }
       ]
     },
     screenshots: {
       eyebrow: "Skærmbilleder",
-      title: "Designet til at være enkelt før, under og efter turen",
-      subtitle: "Fra gratis KØR NU-værktøjer til dybere Pro-indsigter, når du vil mere.",
+      title: "Alt omkring dine ture, cykelvenner og udvikling",
+      subtitle: "Fra mødesteder og invitationer til turhistorik og dybere Pro-indsigter.",
       items: [
         {
           image: "/screenshots/app-01.PNG",
-          title: "Kortoversigt",
-          description: "Find ryttere tæt på dig og se, hvem der er klar til en tur lige nu."
+          title: "Bliv en del af fællesskabet",
+          description: "Opret din profil og begynd at samle dine cykelbekendtskaber."
         },
         {
           image: "/screenshots/app-02.PNG",
-          title: "Opret KØR NU tur",
-          description: "Sæt en rute, et tidspunkt og et mødested på få sekunder."
+          title: "Kort og faste mødesteder",
+          description: "Se faste mødesteder, ture i nærheden og hvor næste fællestur kan starte."
         },
         {
           image: "/screenshots/app-03.PNG",
-          title: "Fællesskabet",
-          description: "Find ryttere på dit niveau og invitér dem med på turen."
+          title: "Detaljer om mødested",
+          description: "Se aktivitet, kommende ture og opret en tur fra et kendt spot."
         },
         {
           image: "/screenshots/app-04.PNG",
-          title: "Klar til start",
-          description: "Saml gruppen og start live-tracking direkte fra kortet."
+          title: "Ride Now eller planlæg frem",
+          description: "Vælg om turen starter snart eller planlægges til senere."
         },
         {
           image: "/screenshots/app-05.PNG",
-          title: "Turdetaljer (Pro)",
-          description: "Dyk ned i dine data. Se watt, træningszoner og stigninger efter turen."
+          title: "Opret og invitér",
+          description: "Sæt turen op og invitér de ryttere, du gerne vil have med."
         },
         {
           image: "/screenshots/app-06.PNG",
-          title: "Se din udvikling (Pro)",
-          description: "Følg din form over tid med dybdegående grafer og 12-måneders historik."
+          title: "Forslag til turtitel",
+          description: "Vælg en tydelig titel, så gruppen ved, hvilken type tur det er."
+        },
+        {
+          image: "/screenshots/app-07.png",
+          title: "Turdetaljer",
+          description: "Se mødested, deltagere og start tracking, når alle er klar."
+        },
+        {
+          image: "/screenshots/app-08.png",
+          title: "Dine ture og invitationer",
+          description: "Hold styr på egne ture, invitationer og næste handlinger ét sted."
+        },
+        {
+          image: "/screenshots/app-09.png",
+          title: "Invitér ryttere",
+          description: "Find cykelvenner og invitér de rigtige personer til turen."
+        },
+        {
+          image: "/screenshots/app-10.png",
+          title: "Hotspots i området",
+          description: "Find populære cykelspots og opret ture omkring dem."
+        },
+        {
+          image: "/screenshots/app-11.png",
+          title: "Turhistorik",
+          description: "Se tidligere ture og hold overblik over det, du har kørt."
+        },
+        {
+          image: "/screenshots/app-12.png",
+          title: "Status og distance",
+          description: "Følg din udvikling med distance og grafer over tid."
+        },
+        {
+          image: "/screenshots/app-13.png",
+          title: "Ugeoverblik",
+          description: "Se ugens distance, højdemeter og aktivitetsstatus."
+        },
+        {
+          image: "/screenshots/app-14.png",
+          title: "Watt og træningszoner (Pro)",
+          description: "Dyk ned i estimerede watt, zoner og præstation efter turen."
+        },
+        {
+          image: "/screenshots/app-15.png",
+          title: "Toppræstationer (Pro)",
+          description: "Følg dine bedste tider, længste ture, topfart og højeste watt."
         }
       ]
     },
@@ -397,7 +495,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       eyebrow: "Gratis vs Pro",
       title: "Bliv beta-tester - få 6 måneder Pro",
       subtitle:
-        "Start gratis med de vigtigste sociale turfunktioner. Som beta-tester får du 6 måneders Bike ME Pro, når appen lanceres officielt.",
+        "Vær med til at forme et cykelfællesskab bygget omkring venner, invitationer og ture. Som beta-tester får du 6 måneders Bike ME Pro, når appen lanceres officielt.",
       plans: [
         {
           name: "Bike ME",
@@ -465,9 +563,9 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   de: {
     meta: {
-      title: "Bike Me | Beta über TestFlight",
+      title: "Bike Me | Radcommunity über TestFlight",
       description:
-        "Bike Me ist für iPhone-Betatester über TestFlight geöffnet. Betatester erhalten 6 Monate Bike Me Pro kostenlos zum offiziellen Launch."
+        "Bike Me verbindet Radfreunde, Einladungen und private oder öffentliche Fahrten. Betatester erhalten 6 Monate Bike Me Pro kostenlos zum offiziellen Launch."
     },
     nav: {
       features: "Funktionen",
@@ -478,41 +576,45 @@ const dictionaries: Record<Locale, Dictionary> = {
       joinTestFlight: "Über TestFlight laden"
     },
     hero: {
-      headline: "Bike Me ist offen für Betatester",
+      headline: "Bleib mit deinen Radfreunden verbunden - und finde neue",
       subheadline:
-        "Finde Fahrer, erstelle Fahrten, lade Radfreunde ein und tracke deine Touren. Hilf uns, Bike Me über TestFlight zu testen.",
+        "Bike Me bringt deine Radkontakte, Fahrten und Einladungen an einem Ort zusammen. Erstelle private Fahrten für Freunde oder öffentliche Fahrten, bei denen neue Fahrer dazukommen können.",
       payoffTitle: "6 Monate Pro kostenlos für Betatester",
       payoffText:
-        "Als Dankeschön erhalten alle Betatester 6 Monate Bike Me Pro kostenlos, wenn die App offiziell startet. Erfordert ein iPhone und Apples TestFlight-App.",
+        "Werde Betatester und hilf mit, die Radcommunity der Zukunft zu gestalten. Alle Betatester erhalten 6 Monate Bike Me Pro kostenlos, wenn die App offiziell startet. Erfordert ein iPhone und Apples TestFlight-App.",
       primaryCta: "Über TestFlight laden",
       secondaryCta: "So funktioniert's",
       previewLabel: "App-Vorschau"
     },
     brand: {
-      intro: "Bike ME ist auf spontane RIDE NOW-Fahrten ausgelegt",
+      intro: "Bike ME ist für Radfreunde, bekannte Gesichter und die nächste gemeinsame Fahrt gemacht",
       bullets: [
-        "Erstelle in Sekunden eine RIDE NOW-Fahrt",
-        "Finde Teilnehmende in deiner Nähe auf der Karte",
-        "Lege Treffpunkt und Zeitpunkt fest",
+        "Behalte die Fahrer im Blick, mit denen du wieder fahren willst",
+        "Erstelle private Fahrten für Freunde, Clubs und Trainingspartner",
+        "Öffne Fahrten öffentlich, wenn neue Fahrer mitkommen sollen",
+        "Lade die richtigen Fahrer ein und halte die Gruppe zusammen",
         "Importiere eine GPX-Route (optional)",
-        "Erhalte Push-Benachrichtigungen bei wichtigen Änderungen"
+        "Erhalte Push-Benachrichtigungen bei wichtigen Fahrtänderungen"
       ]
     },
     features: {
       eyebrow: "Funktionen",
-      title: "Gruppenfahrten ohne Abstimmungschaos",
+      title: "Eine Radcommunity, die Menschen wirklich aufs Rad bringt",
       items: [
         {
-          title: "Fahrten in deiner Nähe",
-          description: "Finde sofort passende Fahrten in einer klaren Kartenansicht."
+          title: "Gemeinsam Fahrten planen",
+          description:
+            "Erstelle eine Fahrt, wähle die Zeit und teile sie mit den Menschen, mit denen du fahren willst. Privat für deine feste Gruppe oder öffentlich, damit andere Fahrer teilnehmen können."
         },
         {
-          title: "Ride Now oder vorausplanen",
-          description: "Starte in wenigen Minuten oder plane Touren im Voraus."
+          title: "Radkontakte lebendig halten",
+          description:
+            "Viele Radfahrer treffen unterwegs tolle Menschen, verlieren aber wieder den Kontakt. Bike Me macht es leichter, die Fahrer wiederzufinden, mit denen du erneut fahren möchtest."
         },
         {
-          title: "Gezielt Fahrer einladen",
-          description: "Lade genau die Leute ein, mit denen du fahren willst."
+          title: "Private und öffentliche Fahrten",
+          description:
+            "Lade deine engsten Radfreunde zu einer geschlossenen Fahrt ein oder öffne sie für neue Fahrer in der Umgebung. Du bestimmst, wie die Gruppe funktioniert."
         },
         {
           title: "GPX-Routen importieren",
@@ -526,58 +628,101 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     howItWorks: {
       eyebrow: "So funktioniert's",
-      title: "In drei Schritten von der Karte zur Ausfahrt",
+      title: "In drei Schritten von Radfreunden zur gemeinsamen Fahrt",
       steps: [
         {
-          title: "Karte öffnen und Fahrten sehen",
-          description: "Aktive und geplante Fahrten in deiner Umgebung auf einen Blick."
+          title: "Sammle deine Fahrer",
+          description: "Halte Freunde, Clubkollegen und neue Radkontakte an einem Ort zusammen."
         },
         {
-          title: "Ride Now erstellen oder planen",
-          description: "Spontan starten oder Termin für später festlegen."
+          title: "Erstelle eine private oder öffentliche Fahrt",
+          description: "Wähle Zeit, Treffpunkt und ob die Fahrt geschlossen oder offen ist."
         },
         {
           title: "Fahrer einladen und losfahren",
-          description: "Teilnehmer bestätigen und gemeinsam starten."
+          description: "Teile den Plan, sieh wer dabei ist, und startet gemeinsam."
         }
       ]
     },
     screenshots: {
       eyebrow: "Screenshots",
-      title: "Klarer Ablauf vor, während und nach jeder Ausfahrt",
-      subtitle: "Von kostenlosen RIDE NOW-Tools bis zu tieferen Pro-Einblicken, wenn du mehr willst.",
+      title: "Alles rund um Fahrten, Radfreunde und Fortschritt",
+      subtitle: "Von Treffpunkten und Einladungen bis zu Fahrtenhistorie und tieferen Pro-Einblicken.",
       items: [
         {
           image: "/screenshots/app-01.PNG",
-          title: "Kartenübersicht",
-          description: "Finde Fahrer in deiner Nähe und sieh, wer jetzt für eine Tour bereit ist."
+          title: "Teil der Community werden",
+          description: "Erstelle dein Profil und baue dein Radnetzwerk auf."
         },
         {
           image: "/screenshots/app-02.PNG",
-          title: "RIDE NOW-Fahrt erstellen",
-          description: "Lege Route, Zeit und Treffpunkt in Sekunden fest."
+          title: "Karte und feste Treffpunkte",
+          description: "Sieh feste Treffpunkte, Fahrten in der Nähe und wo die nächste Gruppe starten kann."
         },
         {
           image: "/screenshots/app-03.PNG",
-          title: "Die Community",
-          description: "Finde Fahrer auf deinem Niveau und lade sie zur Tour ein."
+          title: "Treffpunktdetails",
+          description: "Sieh Aktivität, kommende Fahrten und erstelle eine Fahrt von einem bekannten Ort."
         },
         {
           image: "/screenshots/app-04.PNG",
-          title: "Bereit zum Start",
-          description: "Sammle die Gruppe und starte Live-Tracking direkt von der Karte."
+          title: "Ride Now oder vorausplanen",
+          description: "Wähle, ob die Fahrt bald startet oder für später geplant wird."
         },
         {
           image: "/screenshots/app-05.PNG",
-          title: "Fahrtdetails (Pro)",
-          description:
-            "Tauche in deine Daten ein. Sieh Watt, Trainingszonen und Anstiege nach der Fahrt."
+          title: "Erstellen und einladen",
+          description: "Richte die Fahrt ein und lade die Fahrer ein, die du dabeihaben möchtest."
         },
         {
           image: "/screenshots/app-06.PNG",
-          title: "Deine Entwicklung sehen (Pro)",
-          description:
-            "Verfolge deine Form über die Zeit mit detaillierten Diagrammen und 12-Monats-Historie."
+          title: "Vorschläge für Fahrttitel",
+          description: "Wähle einen klaren Titel, damit die Gruppe weiß, welche Art Fahrt geplant ist."
+        },
+        {
+          image: "/screenshots/app-07.png",
+          title: "Fahrtdetails",
+          description: "Sieh Treffpunkt, Teilnehmer und starte Tracking, wenn alle bereit sind."
+        },
+        {
+          image: "/screenshots/app-08.png",
+          title: "Deine Fahrten und Einladungen",
+          description: "Behalte eigene Fahrten, Einladungen und nächste Schritte an einem Ort."
+        },
+        {
+          image: "/screenshots/app-09.png",
+          title: "Fahrer einladen",
+          description: "Finde Radfreunde und lade die richtigen Menschen zur Fahrt ein."
+        },
+        {
+          image: "/screenshots/app-10.png",
+          title: "Hotspots in der Nähe",
+          description: "Entdecke beliebte Radspots und erstelle Fahrten rund um sie."
+        },
+        {
+          image: "/screenshots/app-11.png",
+          title: "Fahrtenhistorie",
+          description: "Blicke auf abgeschlossene Fahrten zurück und behalte deine Touren im Blick."
+        },
+        {
+          image: "/screenshots/app-12.png",
+          title: "Status und Distanz",
+          description: "Verfolge deine Entwicklung mit Distanz und Fortschrittsdiagrammen."
+        },
+        {
+          image: "/screenshots/app-13.png",
+          title: "Wochenübersicht",
+          description: "Sieh deine wöchentliche Distanz, Höhenmeter und Aktivität."
+        },
+        {
+          image: "/screenshots/app-14.png",
+          title: "Watt und Trainingszonen (Pro)",
+          description: "Tauche nach der Fahrt in geschätzte Watt, Zonen und Leistung ein."
+        },
+        {
+          image: "/screenshots/app-15.png",
+          title: "Top-Leistungen (Pro)",
+          description: "Verfolge Bestzeiten, längste Fahrten, Höchsttempo und höchste Wattwerte."
         }
       ]
     },
@@ -585,7 +730,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       eyebrow: "Kostenlos vs Pro",
       title: "Werde Betatester - erhalte 6 Monate Pro",
       subtitle:
-        "Starte kostenlos mit den wichtigsten sozialen Fahrfunktionen. Als Betatester erhältst du 6 Monate Bike ME Pro, wenn die App offiziell startet.",
+        "Hilf mit, eine Radcommunity rund um Freunde, Einladungen und Fahrten zu gestalten. Als Betatester erhältst du 6 Monate Bike ME Pro, wenn die App offiziell startet.",
       plans: [
         {
           name: "Bike ME",
@@ -653,9 +798,9 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   es: {
     meta: {
-      title: "Bike Me | Beta en TestFlight",
+      title: "Bike Me | Comunidad ciclista en TestFlight",
       description:
-        "Bike Me está abierta para beta testers de iPhone vía TestFlight. Los beta testers reciben 6 meses gratis de Bike Me Pro en el lanzamiento oficial."
+        "Bike Me reúne amigos ciclistas, invitaciones y salidas privadas o públicas. Los beta testers reciben 6 meses gratis de Bike Me Pro en el lanzamiento oficial."
     },
     nav: {
       features: "Funciones",
@@ -666,41 +811,45 @@ const dictionaries: Record<Locale, Dictionary> = {
       joinTestFlight: "Obtener vía TestFlight"
     },
     hero: {
-      headline: "Bike Me está abierta para beta testers",
+      headline: "Mantén cerca a tus amigos ciclistas - y encuentra nuevos",
       subheadline:
-        "Encuentra ciclistas, crea salidas, invita a tus compañeros y registra tus rutas. Ayúdanos a probar Bike Me vía TestFlight.",
+        "Bike Me reúne tus contactos ciclistas, salidas e invitaciones en un solo lugar. Crea salidas privadas para tus amigos o salidas públicas para que se unan nuevos ciclistas.",
       payoffTitle: "6 meses de Pro gratis para beta testers",
       payoffText:
-        "Como agradecimiento, todos los beta testers reciben 6 meses gratis de Bike Me Pro cuando la app se lance oficialmente. Requiere iPhone y la app TestFlight de Apple.",
+        "Hazte beta tester y ayuda a crear la comunidad ciclista del futuro. Todos los beta testers reciben 6 meses gratis de Bike Me Pro cuando la app se lance oficialmente. Requiere iPhone y la app TestFlight de Apple.",
       primaryCta: "Obtener vía TestFlight",
       secondaryCta: "Ver cómo funciona",
       previewLabel: "Vista de la app"
     },
     brand: {
-      intro: "Bike ME está pensado para salidas espontáneas RIDE NOW",
+      intro: "Bike ME está pensado para amigos ciclistas, contactos conocidos y la próxima salida juntos",
       bullets: [
-        "Crea una salida RIDE NOW en segundos",
-        "Encuentra participantes cerca de ti en el mapa",
-        "Acordad punto de encuentro y hora",
+        "Mantén cerca a los ciclistas con los que quieres volver a rodar",
+        "Crea salidas privadas para amigos, clubes y compañeros de entrenamiento",
+        "Haz salidas públicas cuando quieras que se unan nuevos ciclistas",
+        "Invita a las personas adecuadas y mantén el grupo organizado",
         "Importa una ruta GPX (opcional)",
-        "Recibe notificaciones push sobre cambios importantes"
+        "Recibe notificaciones push sobre cambios importantes de la salida"
       ]
     },
     features: {
       eyebrow: "Funciones",
-      title: "Salidas en grupo sin complicaciones",
+      title: "Una comunidad ciclista que hace más fácil salir a rodar",
       items: [
         {
-          title: "Ver salidas cerca de ti",
-          description: "Descubre rutas y quedadas cercanas al instante con vista de mapa."
+          title: "Planifica salidas juntos",
+          description:
+            "Crea una salida, elige la hora y compártela con quienes quieres rodar. Hazla privada para tu grupo habitual o pública para que otros ciclistas puedan encontrarla y unirse."
         },
         {
-          title: "Ride Now o planificar",
-          description: "Empieza en minutos o programa una salida para más tarde."
+          title: "Mantén vivos tus contactos ciclistas",
+          description:
+            "Muchos ciclistas conocen gente increíble en la carretera, pero el contacto se pierde. Bike Me te ayuda a mantener cerca a quienes quieres volver a ver."
         },
         {
-          title: "Invita a quien quieras",
-          description: "Elige exactamente con quién quieres rodar."
+          title: "Salidas privadas y públicas",
+          description:
+            "Invita a tus amigos ciclistas más cercanos a una salida cerrada o ábrela a nuevos ciclistas de la zona. Tú decides cómo funciona el grupo."
         },
         {
           title: "Importa rutas GPX",
@@ -714,58 +863,101 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     howItWorks: {
       eyebrow: "Cómo funciona",
-      title: "Del mapa a la salida en tres pasos",
+      title: "De amigos ciclistas a una salida juntos en tres pasos",
       steps: [
         {
-          title: "Abre el mapa y encuentra salidas",
-          description: "Ve salidas activas y planificadas cerca de ti en segundos."
+          title: "Reúne a tus ciclistas",
+          description: "Ten amigos, compañeros de club y nuevos contactos ciclistas en un solo lugar."
         },
         {
-          title: "Crea Ride Now o planifica",
-          description: "Lanza una salida inmediata o fija fecha para después."
+          title: "Crea una salida privada o pública",
+          description: "Elige hora, punto de encuentro y si la salida será cerrada o abierta."
         },
         {
           title: "Invita y salid a rodar",
-          description: "Confirma quién se une y arrancad juntos."
+          description: "Comparte el plan, mira quién se une y salid juntos."
         }
       ]
     },
     screenshots: {
       eyebrow: "Capturas",
-      title: "Diseñada para ser clara antes, durante y después de cada salida",
-      subtitle: "De herramientas RIDE NOW gratis a información Pro más profunda cuando quieras más.",
+      title: "Todo sobre tus salidas, amigos ciclistas y progreso",
+      subtitle: "De puntos de encuentro e invitaciones a historial de salidas e insights Pro.",
       items: [
         {
           image: "/screenshots/app-01.PNG",
-          title: "Vista del mapa",
-          description: "Encuentra ciclistas cerca de ti y mira quién está listo para salir ahora."
+          title: "Únete a la comunidad",
+          description: "Crea tu perfil y empieza a construir tu red ciclista."
         },
         {
           image: "/screenshots/app-02.PNG",
-          title: "Crear salida RIDE NOW",
-          description: "Define ruta, hora y punto de encuentro en segundos."
+          title: "Mapa y puntos de encuentro",
+          description: "Ve puntos fijos, salidas cercanas y dónde puede empezar el próximo grupo."
         },
         {
           image: "/screenshots/app-03.PNG",
-          title: "La comunidad",
-          description: "Encuentra ciclistas de tu nivel e invítalos a la salida."
+          title: "Detalles del punto de encuentro",
+          description: "Consulta actividad, próximas salidas y crea una salida desde un lugar conocido."
         },
         {
           image: "/screenshots/app-04.PNG",
-          title: "Listos para salir",
-          description: "Reúne al grupo e inicia el seguimiento en vivo directamente desde el mapa."
+          title: "Ride Now o planificar",
+          description: "Elige si la salida empieza pronto o se planifica para más tarde."
         },
         {
           image: "/screenshots/app-05.PNG",
-          title: "Detalles de la salida (Pro)",
-          description:
-            "Profundiza en tus datos. Consulta vatios, zonas de entrenamiento y subidas después de la salida."
+          title: "Crear e invitar",
+          description: "Configura la salida e invita a los ciclistas que quieres llevar contigo."
         },
         {
           image: "/screenshots/app-06.PNG",
-          title: "Ve tu evolución (Pro)",
-          description:
-            "Sigue tu forma a lo largo del tiempo con gráficos detallados e historial de 12 meses."
+          title: "Sugerencias de título",
+          description: "Elige un título claro para que el grupo sepa qué tipo de salida es."
+        },
+        {
+          image: "/screenshots/app-07.png",
+          title: "Detalles de la salida",
+          description: "Ve punto de encuentro, participantes e inicia el tracking cuando todo esté listo."
+        },
+        {
+          image: "/screenshots/app-08.png",
+          title: "Tus salidas e invitaciones",
+          description: "Ten tus salidas, invitaciones y próximas acciones en una vista sencilla."
+        },
+        {
+          image: "/screenshots/app-09.png",
+          title: "Invitar ciclistas",
+          description: "Encuentra amigos ciclistas e invita a las personas adecuadas a la salida."
+        },
+        {
+          image: "/screenshots/app-10.png",
+          title: "Hotspots cercanos",
+          description: "Descubre puntos ciclistas populares y crea salidas alrededor de ellos."
+        },
+        {
+          image: "/screenshots/app-11.png",
+          title: "Historial de salidas",
+          description: "Revisa salidas completadas y mantén el control de lo que has rodado."
+        },
+        {
+          image: "/screenshots/app-12.png",
+          title: "Estado y distancia",
+          description: "Sigue tu evolución con distancia y gráficas de progreso."
+        },
+        {
+          image: "/screenshots/app-13.png",
+          title: "Vista semanal",
+          description: "Consulta distancia semanal, desnivel y estado de actividad."
+        },
+        {
+          image: "/screenshots/app-14.png",
+          title: "Vatios y zonas (Pro)",
+          description: "Profundiza en vatios estimados, zonas y rendimiento después de la salida."
+        },
+        {
+          image: "/screenshots/app-15.png",
+          title: "Mejores marcas (Pro)",
+          description: "Sigue tus mejores tiempos, salidas más largas, velocidad máxima y watt más alto."
         }
       ]
     },
@@ -773,7 +965,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       eyebrow: "Gratis vs Pro",
       title: "Hazte beta tester - recibe 6 meses de Pro",
       subtitle:
-        "Empieza gratis con las funciones sociales esenciales. Como beta tester, recibes 6 meses de Bike ME Pro cuando la app se lance oficialmente.",
+        "Ayuda a crear una comunidad ciclista basada en amigos, invitaciones y salidas. Como beta tester, recibes 6 meses de Bike ME Pro cuando la app se lance oficialmente.",
       plans: [
         {
           name: "Bike ME",
@@ -841,9 +1033,9 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   it: {
     meta: {
-      title: "Bike Me | Beta su TestFlight",
+      title: "Bike Me | Community ciclistica su TestFlight",
       description:
-        "Bike Me è aperta ai beta tester iPhone tramite TestFlight. I beta tester ricevono 6 mesi gratuiti di Bike Me Pro al lancio ufficiale."
+        "Bike Me riunisce amici ciclisti, inviti e uscite private o pubbliche. I beta tester ricevono 6 mesi gratuiti di Bike Me Pro al lancio ufficiale."
     },
     nav: {
       features: "Funzionalità",
@@ -854,41 +1046,45 @@ const dictionaries: Record<Locale, Dictionary> = {
       joinTestFlight: "Scarica via TestFlight"
     },
     hero: {
-      headline: "Bike Me è aperta ai beta tester",
+      headline: "Resta vicino ai tuoi amici ciclisti - e trovane di nuovi",
       subheadline:
-        "Trova ciclisti, crea uscite, invita amici e traccia le tue pedalate. Aiutaci a testare Bike Me tramite TestFlight.",
+        "Bike Me riunisce contatti ciclistici, uscite e inviti in un unico posto. Crea uscite private per gli amici o uscite pubbliche dove nuovi ciclisti possono unirsi.",
       payoffTitle: "6 mesi di Pro gratis per i beta tester",
       payoffText:
-        "Come ringraziamento, tutti i beta tester ricevono 6 mesi gratuiti di Bike Me Pro quando l'app verrà lanciata ufficialmente. Richiede iPhone e l'app TestFlight di Apple.",
+        "Diventa beta tester e aiutaci a creare la community ciclistica del futuro. Tutti i beta tester ricevono 6 mesi gratuiti di Bike Me Pro quando l'app verrà lanciata ufficialmente. Richiede iPhone e l'app TestFlight di Apple.",
       primaryCta: "Scarica via TestFlight",
       secondaryCta: "Scopri come funziona",
       previewLabel: "Anteprima app"
     },
     brand: {
-      intro: "Bike ME nasce per le uscite spontanee RIDE NOW",
+      intro: "Bike ME nasce per amici ciclisti, contatti conosciuti e la prossima uscita insieme",
       bullets: [
-        "Crea un'uscita RIDE NOW in pochi secondi",
-        "Trova partecipanti vicino a te sulla mappa",
-        "Concorda punto di ritrovo e orario",
+        "Tieni vicini i ciclisti con cui vuoi pedalare ancora",
+        "Crea uscite private per amici, club e compagni di allenamento",
+        "Rendi pubbliche le uscite quando vuoi invitare nuovi ciclisti",
+        "Invita i ciclisti giusti e tieni il gruppo allineato",
         "Importa un percorso GPX (opzionale)",
-        "Ricevi notifiche push per i cambiamenti importanti"
+        "Ricevi notifiche push per i cambiamenti importanti dell'uscita"
       ]
     },
     features: {
       eyebrow: "Funzionalità",
-      title: "Uscite di gruppo senza confusione",
+      title: "Una community ciclistica che rende più facile uscire a pedalare",
       items: [
         {
-          title: "Vedi uscite vicino a te",
-          description: "Scopri subito le uscite in zona con una vista mappa chiara."
+          title: "Pianifica uscite insieme",
+          description:
+            "Crea un'uscita, scegli l'orario e condividila con chi vuoi avere con te. Rendila privata per il tuo gruppo fisso o pubblica se altri ciclisti devono poterla trovare e unirsi."
         },
         {
-          title: "Ride Now o pianifica",
-          description: "Parti in pochi minuti oppure programma un'uscita in anticipo."
+          title: "Mantieni vivi i contatti ciclistici",
+          description:
+            "I ciclisti incontrano tante persone interessanti, ma spesso il contatto si perde. Bike Me ti aiuta a ritrovare chi vorresti rivedere in sella."
         },
         {
-          title: "Invita i ciclisti giusti",
-          description: "Scegli esattamente chi vuoi con te nel gruppo."
+          title: "Uscite private e pubbliche",
+          description:
+            "Invita gli amici ciclisti più vicini a un'uscita chiusa, oppure aprila a nuovi ciclisti della zona. Decidi tu come deve funzionare il gruppo."
         },
         {
           title: "Importa percorsi GPX",
@@ -902,58 +1098,101 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     howItWorks: {
       eyebrow: "Come funziona",
-      title: "Dalla mappa alla partenza in tre passi",
+      title: "Dagli amici ciclisti a un'uscita insieme in tre passi",
       steps: [
         {
-          title: "Apri la mappa e trova uscite",
-          description: "Vedi in pochi secondi le uscite attive e quelle pianificate vicino a te."
+          title: "Riunisci i tuoi ciclisti",
+          description: "Tieni amici, compagni di club e nuovi contatti ciclistici in un unico posto."
         },
         {
-          title: "Crea Ride Now o pianifica",
-          description: "Organizza qualcosa di immediato o imposta una data futura."
+          title: "Crea un'uscita privata o pubblica",
+          description: "Scegli orario, punto di ritrovo e se l'uscita è chiusa o aperta."
         },
         {
           title: "Invita e parti",
-          description: "Conferma chi partecipa e uscite insieme."
+          description: "Condividi il piano, vedi chi partecipa e partite insieme."
         }
       ]
     },
     screenshots: {
       eyebrow: "Screenshot",
-      title: "Progettata per restare chiara prima, durante e dopo l'uscita",
-      subtitle: "Dagli strumenti RIDE NOW gratis agli insight Pro più profondi quando vuoi di più.",
+      title: "Tutto su uscite, amici ciclisti e progressi",
+      subtitle: "Da punti di ritrovo e inviti allo storico uscite e agli insight Pro.",
       items: [
         {
           image: "/screenshots/app-01.PNG",
-          title: "Panoramica mappa",
-          description: "Trova ciclisti vicino a te e vedi chi è pronto per uscire ora."
+          title: "Entra nella community",
+          description: "Crea il tuo profilo e inizia a costruire la tua rete ciclistica."
         },
         {
           image: "/screenshots/app-02.PNG",
-          title: "Crea uscita RIDE NOW",
-          description: "Imposta percorso, orario e punto di ritrovo in pochi secondi."
+          title: "Mappa e punti di ritrovo",
+          description: "Vedi punti fissi, uscite vicine e dove può partire il prossimo gruppo."
         },
         {
           image: "/screenshots/app-03.PNG",
-          title: "La community",
-          description: "Trova ciclisti del tuo livello e invitali all'uscita."
+          title: "Dettagli del punto di ritrovo",
+          description: "Controlla attività, uscite in arrivo e crea un'uscita da uno spot conosciuto."
         },
         {
           image: "/screenshots/app-04.PNG",
-          title: "Pronti a partire",
-          description: "Riunisci il gruppo e avvia il live tracking direttamente dalla mappa."
+          title: "Ride Now o pianifica",
+          description: "Scegli se l'uscita parte a breve o viene pianificata per dopo."
         },
         {
           image: "/screenshots/app-05.PNG",
-          title: "Dettagli uscita (Pro)",
-          description:
-            "Entra nei tuoi dati. Vedi watt, zone di allenamento e salite dopo l'uscita."
+          title: "Crea e invita",
+          description: "Imposta l'uscita e invita i ciclisti che vuoi con te."
         },
         {
           image: "/screenshots/app-06.PNG",
-          title: "Guarda i tuoi progressi (Pro)",
-          description:
-            "Segui la tua forma nel tempo con grafici dettagliati e storico di 12 mesi."
+          title: "Suggerimenti per il titolo",
+          description: "Scegli un titolo chiaro così il gruppo sa che tipo di uscita è."
+        },
+        {
+          image: "/screenshots/app-07.png",
+          title: "Dettagli uscita",
+          description: "Vedi punto di ritrovo, partecipanti e avvia il tracking quando siete pronti."
+        },
+        {
+          image: "/screenshots/app-08.png",
+          title: "Le tue uscite e inviti",
+          description: "Tieni uscite, inviti e prossime azioni in una vista semplice."
+        },
+        {
+          image: "/screenshots/app-09.png",
+          title: "Invita ciclisti",
+          description: "Trova amici ciclisti e invita le persone giuste all'uscita."
+        },
+        {
+          image: "/screenshots/app-10.png",
+          title: "Hotspot vicini",
+          description: "Scopri luoghi ciclistici popolari e crea uscite intorno a loro."
+        },
+        {
+          image: "/screenshots/app-11.png",
+          title: "Storico uscite",
+          description: "Rivedi le uscite completate e tieni traccia di ciò che hai pedalato."
+        },
+        {
+          image: "/screenshots/app-12.png",
+          title: "Status e distanza",
+          description: "Segui i tuoi progressi con distanza e grafici nel tempo."
+        },
+        {
+          image: "/screenshots/app-13.png",
+          title: "Panoramica settimanale",
+          description: "Vedi distanza settimanale, dislivello e stato attività."
+        },
+        {
+          image: "/screenshots/app-14.png",
+          title: "Watt e zone (Pro)",
+          description: "Approfondisci watt stimati, zone e prestazione dopo l'uscita."
+        },
+        {
+          image: "/screenshots/app-15.png",
+          title: "Migliori prestazioni (Pro)",
+          description: "Segui migliori tempi, uscite più lunghe, velocità massima e watt più alto."
         }
       ]
     },
@@ -961,7 +1200,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       eyebrow: "Gratis vs Pro",
       title: "Diventa beta tester - ricevi 6 mesi di Pro",
       subtitle:
-        "Inizia gratis con le funzioni social essenziali. Come beta tester ricevi 6 mesi di Bike ME Pro quando l'app verrà lanciata ufficialmente.",
+        "Aiuta a creare una community ciclistica basata su amici, inviti e uscite. Come beta tester ricevi 6 mesi di Bike ME Pro quando l'app verrà lanciata ufficialmente.",
       plans: [
         {
           name: "Bike ME",
@@ -1029,9 +1268,9 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   fr: {
     meta: {
-      title: "Bike Me | Bêta sur TestFlight",
+      title: "Bike Me | Communauté cycliste sur TestFlight",
       description:
-        "Bike Me est ouverte aux bêta-testeurs iPhone via TestFlight. Les bêta-testeurs reçoivent 6 mois gratuits de Bike Me Pro au lancement officiel."
+        "Bike Me rassemble amis cyclistes, invitations et sorties privées ou publiques. Les bêta-testeurs reçoivent 6 mois gratuits de Bike Me Pro au lancement officiel."
     },
     nav: {
       features: "Fonctionnalités",
@@ -1042,41 +1281,45 @@ const dictionaries: Record<Locale, Dictionary> = {
       joinTestFlight: "Obtenir via TestFlight"
     },
     hero: {
-      headline: "Bike Me est ouverte aux bêta-testeurs",
+      headline: "Gardez vos amis cyclistes près de vous - et trouvez-en de nouveaux",
       subheadline:
-        "Trouvez des cyclistes, créez des sorties, invitez vos amis et suivez vos parcours. Aidez-nous à tester Bike Me via TestFlight.",
+        "Bike Me réunit vos contacts cyclistes, sorties et invitations au même endroit. Créez des sorties privées pour vos amis ou des sorties publiques où de nouveaux cyclistes peuvent vous rejoindre.",
       payoffTitle: "6 mois de Pro gratuits pour les bêta-testeurs",
       payoffText:
-        "En remerciement, tous les bêta-testeurs reçoivent 6 mois gratuits de Bike Me Pro lorsque l'app sera lancée officiellement. Nécessite un iPhone et l'app TestFlight d'Apple.",
+        "Devenez bêta-testeur et contribuez à créer la communauté cycliste de demain. Tous les bêta-testeurs reçoivent 6 mois gratuits de Bike Me Pro lorsque l'app sera lancée officiellement. Nécessite un iPhone et l'app TestFlight d'Apple.",
       primaryCta: "Obtenir via TestFlight",
       secondaryCta: "Voir le fonctionnement",
       previewLabel: "Aperçu de l'app"
     },
     brand: {
-      intro: "Bike ME est conçu pour les sorties spontanées RIDE NOW",
+      intro: "Bike ME est conçu pour les amis cyclistes, les contacts retrouvés et la prochaine sortie ensemble",
       bullets: [
-        "Créez une sortie RIDE NOW en quelques secondes",
-        "Trouvez des participants proches de vous sur la carte",
-        "Fixez le lieu et l'heure de rendez-vous",
+        "Gardez le contact avec les cyclistes que vous voulez revoir",
+        "Créez des sorties privées pour amis, clubs et partenaires d'entraînement",
+        "Ouvrez des sorties publiques quand de nouveaux cyclistes peuvent rejoindre",
+        "Invitez les bons cyclistes et gardez le groupe aligné",
         "Importez un itinéraire GPX (optionnel)",
-        "Recevez des notifications push en cas de changement important"
+        "Recevez des notifications push en cas de changement important de sortie"
       ]
     },
     features: {
       eyebrow: "Fonctionnalités",
-      title: "Les sorties de groupe, sans friction",
+      title: "Une communauté cycliste qui donne envie de rouler",
       items: [
         {
-          title: "Voir les sorties près de vous",
-          description: "Repérez instantanément les sorties autour de vous avec une vue carte claire."
+          title: "Planifiez des sorties ensemble",
+          description:
+            "Créez une sortie, choisissez l'heure et partagez-la avec les personnes avec qui vous voulez rouler. Gardez-la privée pour votre groupe habituel ou rendez-la publique pour que d'autres cyclistes puissent la trouver et rejoindre."
         },
         {
-          title: "Ride Now ou planification",
-          description: "Lancez une sortie rapidement ou planifiez-la à l'avance."
+          title: "Gardez le lien avec vos contacts cyclistes",
+          description:
+            "Les cyclistes rencontrent souvent des personnes formidables sur la route, mais le contact disparaît. Bike Me aide à garder près de vous ceux avec qui vous voulez rouler à nouveau."
         },
         {
-          title: "Invitez les bons cyclistes",
-          description: "Choisissez précisément qui vous voulez inviter."
+          title: "Sorties privées et publiques",
+          description:
+            "Invitez vos amis cyclistes proches à une sortie fermée, ou ouvrez-la aux nouveaux cyclistes du secteur. Vous décidez comment le groupe fonctionne."
         },
         {
           title: "Importez des itinéraires GPX",
@@ -1090,58 +1333,101 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     howItWorks: {
       eyebrow: "Comment ça marche",
-      title: "De la carte au départ en trois étapes",
+      title: "Des amis cyclistes à une sortie ensemble en trois étapes",
       steps: [
         {
-          title: "Ouvrez la carte et repérez les sorties",
-          description: "Visualisez en quelques secondes les sorties en cours et à venir près de vous."
+          title: "Rassemblez vos cyclistes",
+          description: "Gardez amis, camarades de club et nouveaux contacts cyclistes au même endroit."
         },
         {
-          title: "Créez un Ride Now ou planifiez",
-          description: "Organisez une sortie immédiate ou fixez une date plus tard."
+          title: "Créez une sortie privée ou publique",
+          description: "Choisissez l'heure, le lieu de rendez-vous et si la sortie est fermée ou ouverte."
         },
         {
           title: "Invitez et partez rouler",
-          description: "Confirmez les participants et partez ensemble."
+          description: "Partagez le plan, voyez qui participe et partez ensemble."
         }
       ]
     },
     screenshots: {
       eyebrow: "Captures",
-      title: "Pensée pour rester claire avant, pendant et après chaque sortie",
-      subtitle: "Des outils RIDE NOW gratuits aux analyses Pro plus poussées quand vous voulez aller plus loin.",
+      title: "Tout autour de vos sorties, amis cyclistes et progrès",
+      subtitle: "Des lieux de rendez-vous et invitations à l'historique des sorties et aux insights Pro.",
       items: [
         {
           image: "/screenshots/app-01.PNG",
-          title: "Vue carte",
-          description: "Trouvez des cyclistes près de vous et voyez qui est prêt à rouler maintenant."
+          title: "Rejoindre la communauté",
+          description: "Créez votre profil et commencez à construire votre réseau cycliste."
         },
         {
           image: "/screenshots/app-02.PNG",
-          title: "Créer une sortie RIDE NOW",
-          description: "Définissez un itinéraire, une heure et un lieu de rendez-vous en quelques secondes."
+          title: "Carte et lieux de rendez-vous",
+          description: "Voyez les points fixes, les sorties proches et où le prochain groupe peut partir."
         },
         {
           image: "/screenshots/app-03.PNG",
-          title: "La communauté",
-          description: "Trouvez des cyclistes à votre niveau et invitez-les à la sortie."
+          title: "Détails du lieu de rendez-vous",
+          description: "Consultez l'activité, les sorties à venir et créez une sortie depuis un spot connu."
         },
         {
           image: "/screenshots/app-04.PNG",
-          title: "Prêt à partir",
-          description: "Rassemblez le groupe et lancez le suivi en direct depuis la carte."
+          title: "Ride Now ou planification",
+          description: "Choisissez si la sortie démarre bientôt ou si elle est prévue plus tard."
         },
         {
           image: "/screenshots/app-05.PNG",
-          title: "Détails de sortie (Pro)",
-          description:
-            "Plongez dans vos données. Consultez watts, zones d'entraînement et ascensions après la sortie."
+          title: "Créer et inviter",
+          description: "Configurez la sortie et invitez les cyclistes que vous voulez avec vous."
         },
         {
           image: "/screenshots/app-06.PNG",
-          title: "Suivez votre progression (Pro)",
-          description:
-            "Suivez votre forme dans le temps avec des graphiques détaillés et un historique sur 12 mois."
+          title: "Suggestions de titre",
+          description: "Choisissez un titre clair pour que le groupe sache quel type de sortie est prévu."
+        },
+        {
+          image: "/screenshots/app-07.png",
+          title: "Détails de sortie",
+          description: "Voyez le rendez-vous, les participants et lancez le suivi quand tout le monde est prêt."
+        },
+        {
+          image: "/screenshots/app-08.png",
+          title: "Vos sorties et invitations",
+          description: "Gardez vos sorties, invitations et prochaines actions dans une vue simple."
+        },
+        {
+          image: "/screenshots/app-09.png",
+          title: "Inviter des cyclistes",
+          description: "Trouvez vos amis cyclistes et invitez les bonnes personnes à la sortie."
+        },
+        {
+          image: "/screenshots/app-10.png",
+          title: "Hotspots proches",
+          description: "Découvrez les spots cyclistes populaires et créez des sorties autour d'eux."
+        },
+        {
+          image: "/screenshots/app-11.png",
+          title: "Historique de sorties",
+          description: "Revenez sur les sorties terminées et gardez une trace de ce que vous avez roulé."
+        },
+        {
+          image: "/screenshots/app-12.png",
+          title: "Statut et distance",
+          description: "Suivez votre progression avec distance et graphiques dans le temps."
+        },
+        {
+          image: "/screenshots/app-13.png",
+          title: "Vue hebdomadaire",
+          description: "Consultez distance hebdomadaire, dénivelé et statut d'activité."
+        },
+        {
+          image: "/screenshots/app-14.png",
+          title: "Watts et zones (Pro)",
+          description: "Explorez watts estimés, zones et performance après la sortie."
+        },
+        {
+          image: "/screenshots/app-15.png",
+          title: "Meilleures performances (Pro)",
+          description: "Suivez meilleurs temps, plus longues sorties, vitesse max et watts les plus élevés."
         }
       ]
     },
@@ -1149,7 +1435,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       eyebrow: "Gratuit vs Pro",
       title: "Devenez bêta-testeur - recevez 6 mois de Pro",
       subtitle:
-        "Commencez gratuitement avec les outils sociaux essentiels. En tant que bêta-testeur, vous recevez 6 mois de Bike ME Pro lorsque l'app sera lancée officiellement.",
+        "Aidez à créer une communauté cycliste autour des amis, invitations et sorties. En tant que bêta-testeur, vous recevez 6 mois de Bike ME Pro lorsque l'app sera lancée officiellement.",
       plans: [
         {
           name: "Bike ME",
@@ -1217,9 +1503,9 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   nl: {
     meta: {
-      title: "Bike Me | Beta via TestFlight",
+      title: "Bike Me | Fietscommunity via TestFlight",
       description:
-        "Bike Me is open voor iPhone-betatesters via TestFlight. Betatesters krijgen 6 maanden gratis Bike Me Pro bij de officiële lancering."
+        "Bike Me brengt fietsvrienden, uitnodigingen en private of openbare ritten samen. Betatesters krijgen 6 maanden gratis Bike Me Pro bij de officiële lancering."
     },
     nav: {
       features: "Functies",
@@ -1230,41 +1516,45 @@ const dictionaries: Record<Locale, Dictionary> = {
       joinTestFlight: "Download via TestFlight"
     },
     hero: {
-      headline: "Bike Me is open voor betatesters",
+      headline: "Houd je fietsvrienden dichtbij - en vind nieuwe",
       subheadline:
-        "Vind fietsers, maak ritten, nodig fietsvrienden uit en track je ritten. Help ons Bike Me te testen via TestFlight.",
+        "Bike Me brengt je fietscontacten, ritten en uitnodigingen op één plek samen. Maak private ritten voor vrienden of openbare ritten waar nieuwe fietsers kunnen aansluiten.",
       payoffTitle: "6 maanden gratis Pro voor betatesters",
       payoffText:
-        "Als bedankje krijgen alle betatesters 6 maanden gratis Bike Me Pro wanneer de app officieel wordt gelanceerd. Vereist iPhone en Apple's TestFlight-app.",
+        "Word betatester en help mee aan de fietscommunity van de toekomst. Alle betatesters krijgen 6 maanden gratis Bike Me Pro wanneer de app officieel wordt gelanceerd. Vereist iPhone en Apple's TestFlight-app.",
       primaryCta: "Download via TestFlight",
       secondaryCta: "Bekijk hoe het werkt",
       previewLabel: "App-preview"
     },
     brand: {
-      intro: "Bike ME is gebouwd voor spontane RIDE NOW-ritten",
+      intro: "Bike ME is gebouwd voor fietsvrienden, bekende gezichten en de volgende rit samen",
       bullets: [
-        "Maak in een paar seconden een RIDE NOW-rit",
-        "Vind deelnemers bij jou in de buurt op de kaart",
-        "Spreek af waar en wanneer jullie vertrekken",
+        "Houd de fietsers bij met wie je opnieuw wilt rijden",
+        "Maak private ritten voor vrienden, clubs en trainingsmaatjes",
+        "Zet ritten openbaar wanneer nieuwe fietsers mogen aansluiten",
+        "Nodig de juiste fietsers uit en houd de groep op één lijn",
         "Importeer een GPX-route (optioneel)",
-        "Ontvang pushmeldingen bij belangrijke wijzigingen"
+        "Ontvang pushmeldingen bij belangrijke ritwijzigingen"
       ]
     },
     features: {
       eyebrow: "Functies",
-      title: "Groepsritten zonder gedoe",
+      title: "Een fietscommunity die mensen echt laat rijden",
       items: [
         {
-          title: "Zie ritten bij jou in de buurt",
-          description: "Ontdek direct ritten in de buurt met een overzichtelijke kaartweergave."
+          title: "Plan ritten samen",
+          description:
+            "Maak een rit, kies een tijd en deel die met de mensen met wie je wilt rijden. Houd de rit privé voor je vaste groep of maak hem openbaar zodat andere fietsers kunnen aansluiten."
         },
         {
-          title: "Ride Now of vooruit plannen",
-          description: "Start binnen enkele minuten of plan een rit voor later."
+          title: "Houd fietscontacten levend",
+          description:
+            "Fietsers ontmoeten vaak goede mensen onderweg, maar het contact verdwijnt snel. Bike Me maakt het makkelijker om de mensen vast te houden met wie je opnieuw wilt rijden."
         },
         {
-          title: "Nodig de juiste fietsers uit",
-          description: "Kies precies wie je wilt uitnodigen voor de rit."
+          title: "Private en openbare ritten",
+          description:
+            "Nodig je dichtste fietsvrienden uit voor een gesloten rit, of open de rit voor nieuwe fietsers in de buurt. Jij bepaalt hoe de groep werkt."
         },
         {
           title: "Importeer GPX-routes",
@@ -1278,57 +1568,101 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     howItWorks: {
       eyebrow: "Hoe het werkt",
-      title: "Van kaart naar vertrek in drie stappen",
+      title: "Van fietsvrienden naar samen rijden in drie stappen",
       steps: [
         {
-          title: "Open de kaart en spot ritten",
-          description: "Bekijk actieve en geplande ritten in jouw omgeving in seconden."
+          title: "Verzamel je fietsers",
+          description: "Houd vrienden, clubgenoten en nieuwe fietscontacten bij elkaar op één plek."
         },
         {
-          title: "Maak Ride Now of plan een rit",
-          description: "Organiseer iets direct of prik een moment voor later."
+          title: "Maak een private of openbare rit",
+          description: "Kies tijd, ontmoetingsplek en of de rit gesloten of open is."
         },
         {
           title: "Nodig uit en vertrek",
-          description: "Bevestig wie meegaat en rijd samen weg."
+          description: "Deel het plan, zie wie meegaat en vertrek samen."
         }
       ]
     },
     screenshots: {
       eyebrow: "Screenshots",
-      title: "Ontworpen om helder te blijven voor, tijdens en na elke rit",
-      subtitle: "Van gratis RIDE NOW-tools tot diepere Pro-inzichten wanneer je meer wilt.",
+      title: "Alles rond je ritten, fietsvrienden en voortgang",
+      subtitle: "Van ontmoetingsplekken en uitnodigingen tot ritgeschiedenis en diepere Pro-inzichten.",
       items: [
         {
           image: "/screenshots/app-01.PNG",
-          title: "Kaartoverzicht",
-          description: "Vind fietsers bij jou in de buurt en zie wie nu klaar is voor een rit."
+          title: "Word deel van de community",
+          description: "Maak je profiel aan en begin met het opbouwen van je fietsnetwerk."
         },
         {
           image: "/screenshots/app-02.PNG",
-          title: "Maak RIDE NOW-rit",
-          description: "Stel route, tijd en ontmoetingsplek in binnen enkele seconden."
+          title: "Kaart en vaste ontmoetingsplekken",
+          description: "Zie vaste plekken, ritten in de buurt en waar je volgende groep kan starten."
         },
         {
           image: "/screenshots/app-03.PNG",
-          title: "De community",
-          description: "Vind fietsers op jouw niveau en nodig ze uit voor de rit."
+          title: "Details van ontmoetingsplek",
+          description: "Bekijk activiteit, komende ritten en maak een rit vanaf een bekende plek."
         },
         {
           image: "/screenshots/app-04.PNG",
-          title: "Klaar voor vertrek",
-          description: "Verzamel de groep en start live tracking direct vanaf de kaart."
+          title: "Ride Now of vooruit plannen",
+          description: "Kies of de rit binnenkort start of later wordt gepland."
         },
         {
           image: "/screenshots/app-05.PNG",
-          title: "Ritdetails (Pro)",
-          description: "Duik in je data. Bekijk watt, trainingszones en beklimmingen na de rit."
+          title: "Maak en nodig uit",
+          description: "Stel de rit in en nodig de fietsers uit die je erbij wilt hebben."
         },
         {
           image: "/screenshots/app-06.PNG",
-          title: "Bekijk je ontwikkeling (Pro)",
-          description:
-            "Volg je vorm in de tijd met gedetailleerde grafieken en 12 maanden historie."
+          title: "Suggesties voor rittitel",
+          description: "Kies een duidelijke titel zodat de groep weet wat voor rit het is."
+        },
+        {
+          image: "/screenshots/app-07.png",
+          title: "Ritdetails",
+          description: "Bekijk ontmoetingsplek, deelnemers en start tracking wanneer iedereen klaar is."
+        },
+        {
+          image: "/screenshots/app-08.png",
+          title: "Je ritten en uitnodigingen",
+          description: "Houd eigen ritten, uitnodigingen en volgende acties overzichtelijk bij."
+        },
+        {
+          image: "/screenshots/app-09.png",
+          title: "Nodig fietsers uit",
+          description: "Vind fietsvrienden en nodig de juiste mensen uit voor de rit."
+        },
+        {
+          image: "/screenshots/app-10.png",
+          title: "Hotspots in de buurt",
+          description: "Ontdek populaire fietsplekken en maak ritten daaromheen."
+        },
+        {
+          image: "/screenshots/app-11.png",
+          title: "Ritgeschiedenis",
+          description: "Kijk terug op voltooide ritten en houd bij wat je hebt gereden."
+        },
+        {
+          image: "/screenshots/app-12.png",
+          title: "Status en afstand",
+          description: "Volg je ontwikkeling met afstand en voortgangsgrafieken."
+        },
+        {
+          image: "/screenshots/app-13.png",
+          title: "Weekoverzicht",
+          description: "Bekijk je weekafstand, hoogtemeters en activiteitsstatus."
+        },
+        {
+          image: "/screenshots/app-14.png",
+          title: "Watt en trainingszones (Pro)",
+          description: "Duik in geschatte watt, zones en prestaties na de rit."
+        },
+        {
+          image: "/screenshots/app-15.png",
+          title: "Topprestaties (Pro)",
+          description: "Volg je beste tijden, langste ritten, topsnelheid en hoogste watt."
         }
       ]
     },
@@ -1336,7 +1670,7 @@ const dictionaries: Record<Locale, Dictionary> = {
       eyebrow: "Gratis vs Pro",
       title: "Word betatester - krijg 6 maanden Pro",
       subtitle:
-        "Begin gratis met de belangrijkste sociale ritfuncties. Als betatester krijg je 6 maanden Bike ME Pro wanneer de app officieel wordt gelanceerd.",
+        "Help mee aan een fietscommunity rond vrienden, uitnodigingen en ritten. Als betatester krijg je 6 maanden Bike ME Pro wanneer de app officieel wordt gelanceerd.",
       plans: [
         {
           name: "Bike ME",
