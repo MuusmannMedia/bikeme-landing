@@ -28,6 +28,28 @@ const languageAlternates = locales.reduce<Record<string, string>>((acc, locale) 
   return acc;
 }, {});
 
+function FounderRiderBadge({ title, text }: { title: string; text: string }) {
+  return (
+    <div className="mt-4 flex w-full max-w-md items-center gap-3 rounded-[1.6rem] border border-[#b8893c]/70 bg-[linear-gradient(135deg,rgba(45,27,78,0.92),rgba(26,18,51,0.96))] px-3 py-2.5 shadow-[0_18px_46px_-34px_rgba(248,208,130,0.85)] sm:w-fit">
+      <Image
+        src="/brand/Founder-Rider-badge.png"
+        alt="Founder Rider badge"
+        width={88}
+        height={88}
+        className="h-10 w-10 shrink-0 sm:h-11 sm:w-11"
+      />
+      <span className="min-w-0">
+        <span className="block font-display text-base font-semibold leading-tight text-white">
+          {title}
+        </span>
+        <span className="mt-0.5 block text-sm leading-snug text-[#f5dca6]">
+          {text}
+        </span>
+      </span>
+    </div>
+  );
+}
+
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
@@ -159,6 +181,10 @@ export default function LocalePage({ params }: LocalePageProps) {
               <p className="mt-2 leading-relaxed text-[var(--ink-soft)]">
                 {t.hero.payoffText}
               </p>
+              <FounderRiderBadge
+                title={t.hero.founderBadgeTitle}
+                text={t.hero.founderBadgeText}
+              />
             </div>
 
             <div className="animate-fade-up flex flex-wrap items-center gap-3 [animation-delay:220ms]">

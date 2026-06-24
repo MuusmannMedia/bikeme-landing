@@ -46,6 +46,8 @@ export type Dictionary = {
     subheadline: string;
     payoffTitle: string;
     payoffText: string;
+    founderBadgeTitle: string;
+    founderBadgeText: string;
     primaryCta: string;
     secondaryCta: string;
     previewLabel: string;
@@ -112,6 +114,8 @@ const dictionaries: Record<Locale, Dictionary> = {
       payoffTitle: "6 months of free Pro for beta testers",
       payoffText:
         "Become a beta tester and help shape the future cycling community. All beta testers get 6 months of free Bike Me Pro when the app officially launches. The first beta testers also receive a permanent Founder Rider badge in the app as a thank you for being there from the start. Requires iPhone and Apple's TestFlight app.",
+      founderBadgeTitle: "Founder Rider",
+      founderBadgeText: "Permanent badge for the first beta testers",
       primaryCta: "Get via TestFlight",
       secondaryCta: "See how it works",
       previewLabel: "App preview"
@@ -347,6 +351,8 @@ const dictionaries: Record<Locale, Dictionary> = {
       payoffTitle: "6 måneders gratis Pro til beta-testere",
       payoffText:
         "Bliv beta-tester og vær med til at skabe fremtidens cykelfællesskab. Som tak får alle beta-testere 6 måneders gratis Bike Me Pro, når appen lanceres officielt. De første beta-testere får også et permanent Founder Rider-badge i appen som tak for at være med fra starten. Kræver iPhone og Apples TestFlight-app.",
+      founderBadgeTitle: "Founder Rider",
+      founderBadgeText: "Permanent badge til de første beta-testere",
       primaryCta: "Hent via TestFlight",
       secondaryCta: "Se hvordan det virker",
       previewLabel: "App-preview"
@@ -582,6 +588,8 @@ const dictionaries: Record<Locale, Dictionary> = {
       payoffTitle: "6 Monate Pro kostenlos für Betatester",
       payoffText:
         "Werde Betatester und hilf mit, die Radcommunity der Zukunft zu gestalten. Alle Betatester erhalten 6 Monate kostenlos Bike Me Pro, wenn die App offiziell startet. Die ersten Betatester erhalten außerdem ein dauerhaftes Founder Rider-Badge in der App - als Dank dafür, von Anfang an dabei zu sein. Erfordert ein iPhone und Apples TestFlight-App.",
+      founderBadgeTitle: "Founder Rider",
+      founderBadgeText: "Permanentes Badge für die ersten Beta-Tester",
       primaryCta: "Über TestFlight laden",
       secondaryCta: "So funktioniert's",
       previewLabel: "App-Vorschau"
@@ -817,6 +825,8 @@ const dictionaries: Record<Locale, Dictionary> = {
       payoffTitle: "6 meses de Pro gratis para beta testers",
       payoffText:
         "Hazte beta tester y ayuda a crear la comunidad ciclista del futuro. Todos los beta testers reciben 6 meses gratis de Bike Me Pro cuando la app se lance oficialmente. Los primeros beta testers también reciben una insignia permanente Founder Rider en la app como agradecimiento por estar desde el inicio. Requiere iPhone y la app TestFlight de Apple.",
+      founderBadgeTitle: "Founder Rider",
+      founderBadgeText: "Insignia permanente para los primeros beta testers",
       primaryCta: "Obtener vía TestFlight",
       secondaryCta: "Ver cómo funciona",
       previewLabel: "Vista de la app"
@@ -1052,6 +1062,8 @@ const dictionaries: Record<Locale, Dictionary> = {
       payoffTitle: "6 mesi di Pro gratis per i beta tester",
       payoffText:
         "Diventa beta tester e aiutaci a creare la community ciclistica del futuro. Tutti i beta tester ricevono 6 mesi gratuiti di Bike Me Pro quando l'app verrà lanciata ufficialmente. I primi beta tester ricevono anche un badge permanente Founder Rider nell'app come ringraziamento per esserci stati fin dall'inizio. Richiede iPhone e l'app TestFlight di Apple.",
+      founderBadgeTitle: "Founder Rider",
+      founderBadgeText: "Badge permanente per i primi beta tester",
       primaryCta: "Scarica via TestFlight",
       secondaryCta: "Scopri come funziona",
       previewLabel: "Anteprima app"
@@ -1287,6 +1299,8 @@ const dictionaries: Record<Locale, Dictionary> = {
       payoffTitle: "6 mois de Pro gratuits pour les bêta-testeurs",
       payoffText:
         "Devenez bêta-testeur et contribuez à créer la communauté cycliste de demain. Tous les bêta-testeurs reçoivent 6 mois gratuits de Bike Me Pro lorsque l'app sera lancée officiellement. Les premiers bêta-testeurs reçoivent aussi un badge permanent Founder Rider dans l'app, en remerciement d'avoir été là dès le début. Nécessite un iPhone et l'app TestFlight d'Apple.",
+      founderBadgeTitle: "Founder Rider",
+      founderBadgeText: "Badge permanent pour les premiers bêta-testeurs",
       primaryCta: "Obtenir via TestFlight",
       secondaryCta: "Voir le fonctionnement",
       previewLabel: "Aperçu de l'app"
@@ -1522,6 +1536,8 @@ const dictionaries: Record<Locale, Dictionary> = {
       payoffTitle: "6 maanden gratis Pro voor betatesters",
       payoffText:
         "Word betatester en help mee aan de fietscommunity van de toekomst. Alle betatesters krijgen 6 maanden gratis Bike Me Pro wanneer de app officieel wordt gelanceerd. De eerste betatesters krijgen ook een permanente Founder Rider-badge in de app als dank dat ze er vanaf het begin bij zijn. Vereist iPhone en Apple's TestFlight-app.",
+      founderBadgeTitle: "Founder Rider",
+      founderBadgeText: "Permanente badge voor de eerste bètatesters",
       primaryCta: "Download via TestFlight",
       secondaryCta: "Bekijk hoe het werkt",
       previewLabel: "App-preview"
