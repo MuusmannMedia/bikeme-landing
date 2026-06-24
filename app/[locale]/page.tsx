@@ -32,7 +32,7 @@ function FounderRiderBadge({ title, text }: { title: string; text: string }) {
   return (
     <div className="mt-4 flex w-full max-w-md items-center gap-3 rounded-[1.6rem] border border-[#b8893c]/70 bg-[linear-gradient(135deg,rgba(45,27,78,0.92),rgba(26,18,51,0.96))] px-3 py-2.5 shadow-[0_18px_46px_-34px_rgba(248,208,130,0.85)] sm:w-fit">
       <Image
-        src="/brand/Founder-Rider-badge.png"
+        src="/brand/founder-rider-badge.png"
         alt="Founder Rider badge"
         width={88}
         height={88}
