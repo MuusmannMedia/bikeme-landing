@@ -52,6 +52,13 @@ export type Dictionary = {
     secondaryCta: string;
     previewLabel: string;
   };
+  androidBeta: {
+    eyebrow: string;
+    title: string;
+    body: string;
+    primaryCta: string;
+    secondaryCta: string;
+  };
   brand: {
     intro: string;
     bullets: string[];
@@ -119,6 +126,14 @@ const dictionaries: Record<Locale, Dictionary> = {
       primaryCta: "Get via TestFlight",
       secondaryCta: "See how it works",
       previewLabel: "App preview"
+    },
+    androidBeta: {
+      eyebrow: "Google Play beta",
+      title: "Android beta is ready",
+      body:
+        "Using Android? You can now join the Bike Me beta on Google Play and help make the app even better.",
+      primaryCta: "Become a Google Play beta tester",
+      secondaryCta: "View on Google Play"
     },
     brand: {
       intro: "Bike Me is built for cycling friends, familiar faces, and the next ride together",
@@ -357,6 +372,14 @@ const dictionaries: Record<Locale, Dictionary> = {
       secondaryCta: "Se hvordan det virker",
       previewLabel: "App-preview"
     },
+    androidBeta: {
+      eyebrow: "Google Play beta",
+      title: "Android beta er klar",
+      body:
+        "Bruger du Android? Du kan nu være med til at teste Bike Me via Google Play og hjælpe med at gøre appen endnu bedre.",
+      primaryCta: "Bliv beta-tester på Google Play",
+      secondaryCta: "Se appen i Google Play"
+    },
     brand: {
       intro: "Bike Me er dit cykelfællesskab til venner, bekendtskaber og næste tur",
       bullets: [
@@ -593,6 +616,14 @@ const dictionaries: Record<Locale, Dictionary> = {
       primaryCta: "Über TestFlight laden",
       secondaryCta: "So funktioniert's",
       previewLabel: "App-Vorschau"
+    },
+    androidBeta: {
+      eyebrow: "Google Play Beta",
+      title: "Die Android-Beta ist bereit",
+      body:
+        "Nutzt du Android? Du kannst jetzt über Google Play an der Bike Me Beta teilnehmen und helfen, die App noch besser zu machen.",
+      primaryCta: "Beta-Tester bei Google Play werden",
+      secondaryCta: "App in Google Play ansehen"
     },
     brand: {
       intro: "Bike Me ist für Radfreunde, bekannte Gesichter und die nächste gemeinsame Fahrt gemacht",
@@ -831,6 +862,14 @@ const dictionaries: Record<Locale, Dictionary> = {
       secondaryCta: "Ver cómo funciona",
       previewLabel: "Vista de la app"
     },
+    androidBeta: {
+      eyebrow: "Beta en Google Play",
+      title: "La beta de Android está lista",
+      body:
+        "¿Usas Android? Ahora puedes unirte a la beta de Bike Me en Google Play y ayudar a mejorar la app.",
+      primaryCta: "Hazte beta tester en Google Play",
+      secondaryCta: "Ver en Google Play"
+    },
     brand: {
       intro: "Bike Me está pensado para amigos ciclistas, contactos conocidos y la próxima salida juntos",
       bullets: [
@@ -1067,6 +1106,14 @@ const dictionaries: Record<Locale, Dictionary> = {
       primaryCta: "Scarica via TestFlight",
       secondaryCta: "Scopri come funziona",
       previewLabel: "Anteprima app"
+    },
+    androidBeta: {
+      eyebrow: "Beta su Google Play",
+      title: "La beta Android è pronta",
+      body:
+        "Usi Android? Ora puoi partecipare alla beta di Bike Me su Google Play e aiutarci a migliorare l'app.",
+      primaryCta: "Diventa beta tester su Google Play",
+      secondaryCta: "Vedi su Google Play"
     },
     brand: {
       intro: "Bike Me nasce per amici ciclisti, contatti conosciuti e la prossima uscita insieme",
@@ -1305,6 +1352,14 @@ const dictionaries: Record<Locale, Dictionary> = {
       secondaryCta: "Voir le fonctionnement",
       previewLabel: "Aperçu de l'app"
     },
+    androidBeta: {
+      eyebrow: "Bêta Google Play",
+      title: "La bêta Android est prête",
+      body:
+        "Vous utilisez Android ? Vous pouvez maintenant rejoindre la bêta Bike Me sur Google Play et aider à améliorer l'app.",
+      primaryCta: "Devenir bêta-testeur sur Google Play",
+      secondaryCta: "Voir sur Google Play"
+    },
     brand: {
       intro: "Bike Me est conçu pour les amis cyclistes, les contacts retrouvés et la prochaine sortie ensemble",
       bullets: [
@@ -1541,6 +1596,14 @@ const dictionaries: Record<Locale, Dictionary> = {
       primaryCta: "Download via TestFlight",
       secondaryCta: "Bekijk hoe het werkt",
       previewLabel: "App-preview"
+    },
+    androidBeta: {
+      eyebrow: "Google Play-bèta",
+      title: "Android-bèta is klaar",
+      body:
+        "Gebruik je Android? Je kunt nu meedoen aan de Bike Me-bèta via Google Play en helpen de app nog beter te maken.",
+      primaryCta: "Word betatester via Google Play",
+      secondaryCta: "Bekijk in Google Play"
     },
     brand: {
       intro: "Bike Me is gebouwd voor fietsvrienden, bekende gezichten en de volgende rit samen",

@@ -5,7 +5,14 @@ import { notFound } from "next/navigation";
 
 import { getDictionary } from "@/lib/i18n";
 import { isLocale, localeLabels, locales, type Locale } from "@/lib/locales";
-import { CANONICAL_DOMAIN, CONTACT_EMAIL, TERMS_URL, TESTFLIGHT_URL } from "@/lib/site-config";
+import {
+  CANONICAL_DOMAIN,
+  CONTACT_EMAIL,
+  GOOGLE_PLAY_BETA_URL,
+  GOOGLE_PLAY_STORE_URL,
+  TERMS_URL,
+  TESTFLIGHT_URL
+} from "@/lib/site-config";
 
 type LocalePageProps = {
   params: {
@@ -213,6 +220,43 @@ export default function LocalePage({ params }: LocalePageProps) {
                 sizes="(max-width: 1024px) 90vw, 560px"
                 className="object-cover"
               />
+            </div>
+          </div>
+        </section>
+
+        <section className="section-shell pb-20 md:pb-24">
+          <div className="glass-panel rounded-3xl border p-5 shadow-[0_28px_75px_-48px_rgba(0,0,0,0.9)] md:p-6 lg:p-7">
+            <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+              <div className="max-w-2xl space-y-2">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(147,171,255)]">
+                  {t.androidBeta.eyebrow}
+                </p>
+                <h2 className="font-display text-2xl font-semibold text-[var(--ink)] md:text-3xl">
+                  {t.androidBeta.title}
+                </h2>
+                <p className="leading-relaxed text-[var(--ink-soft)]">
+                  {t.androidBeta.body}
+                </p>
+              </div>
+
+              <div className="flex shrink-0 flex-wrap items-center gap-3">
+                <a
+                  href={GOOGLE_PLAY_BETA_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex rounded-full border-2 border-[rgba(143,168,255,0.75)] bg-[linear-gradient(135deg,rgba(94,127,255,0.9),rgba(128,39,130,0.85))] px-6 py-3 text-sm font-semibold text-white shadow-[0_18px_50px_-28px_rgba(128,39,130,0.9)] transition-transform hover:scale-[1.02]"
+                >
+                  {t.androidBeta.primaryCta}
+                </a>
+                <a
+                  href={GOOGLE_PLAY_STORE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full border-2 border-[rgba(143,168,255,0.75)] bg-white/[0.02] px-6 py-3 text-sm font-medium text-[var(--ink)] transition-colors hover:border-[rgba(128,39,130,0.95)] hover:bg-[rgba(128,39,130,0.16)]"
+                >
+                  {t.androidBeta.secondaryCta}
+                </a>
+              </div>
             </div>
           </div>
         </section>
