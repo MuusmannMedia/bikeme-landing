@@ -10,7 +10,6 @@ import {
   CONTACT_EMAIL,
   GOOGLE_PLAY_BETA_URL,
   GOOGLE_PLAY_STORE_URL,
-  TERMS_URL,
   TESTFLIGHT_URL
 } from "@/lib/site-config";
 
@@ -493,9 +492,9 @@ export default function LocalePage({ params }: LocalePageProps) {
             <Link href={`/${locale}/privacy`} className="transition-colors hover:text-white">
               {t.footer.privacy}
             </Link>
-            <a href={TERMS_URL} className="transition-colors hover:text-white">
+            <Link href={`/${locale}/terms`} className="transition-colors hover:text-white">
               {t.footer.terms}
-            </a>
+            </Link>
             <a href={`mailto:${CONTACT_EMAIL}`} className="transition-colors hover:text-white">
               {t.footer.contact}
             </a>
