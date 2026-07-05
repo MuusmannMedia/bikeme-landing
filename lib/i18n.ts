@@ -21,13 +21,6 @@ type ScreenshotItem = {
   description: string;
 };
 
-type PricingPlan = {
-  name: string;
-  label: string;
-  description: string;
-  items: string[];
-};
-
 export type Dictionary = {
   meta: {
     title: string;
@@ -37,27 +30,16 @@ export type Dictionary = {
     features: string;
     howItWorks: string;
     screenshots: string;
-    pricing: string;
     faq: string;
-    joinTestFlight: string;
   };
   hero: {
     headline: string;
     subheadline: string;
     payoffTitle: string;
     payoffText: string;
-    founderBadgeTitle: string;
-    founderBadgeText: string;
     primaryCta: string;
     secondaryCta: string;
     previewLabel: string;
-  };
-  androidBeta: {
-    eyebrow: string;
-    title: string;
-    body: string;
-    primaryCta: string;
-    secondaryCta: string;
   };
   brand: {
     intro: string;
@@ -79,13 +61,6 @@ export type Dictionary = {
     subtitle: string;
     items: ScreenshotItem[];
   };
-  pricing: {
-    eyebrow: string;
-    title: string;
-    subtitle: string;
-    plans: PricingPlan[];
-    cta: string;
-  };
   faq: {
     eyebrow: string;
     title: string;
@@ -102,38 +77,26 @@ export type Dictionary = {
 const dictionaries: Record<Locale, Dictionary> = {
   en: {
     meta: {
-      title: "Bike Me | Cycling community on TestFlight",
+      title: "Bike Me | Cycling community coming soon",
       description:
-        "Bike Me helps cyclists keep in touch, invite friends, and create private or public rides. Beta testers get 6 months of free Bike Me Pro at official launch."
+        "Bike Me helps cyclists keep in touch, invite friends, and create private or public rides."
     },
     nav: {
       features: "Features",
       howItWorks: "How it works",
       screenshots: "Screenshots",
-      pricing: "Free vs Pro",
-      faq: "FAQ",
-      joinTestFlight: "Get via TestFlight"
+      faq: "FAQ"
     },
     hero: {
       headline: "Keep your cycling friends close - and find new riders",
       subheadline:
         "Bike Me brings your cycling contacts, rides, and invitations together. Create private rides for friends or public rides where new cyclists can join.",
-      payoffTitle: "6 months of free Pro for beta testers",
+      payoffTitle: "Bike Me is coming soon",
       payoffText:
-        "Become a beta tester and help shape the future cycling community. All beta testers get 6 months of free Bike Me Pro when the app officially launches. The first beta testers also receive a permanent Founder Rider badge in the app as a thank you for being there from the start. Requires iPhone and Apple's TestFlight app.",
-      founderBadgeTitle: "Founder Rider",
-      founderBadgeText: "Permanent badge for the first beta testers",
-      primaryCta: "Get via TestFlight",
+        "We are preparing Bike Me for launch. Until then, explore how the app will bring cycling friends, rides, and invitations together.",
+      primaryCta: "Learn more",
       secondaryCta: "See how it works",
       previewLabel: "App preview"
-    },
-    androidBeta: {
-      eyebrow: "Google Play beta",
-      title: "Android beta is ready",
-      body:
-        "Using Android? You can now join the Bike Me beta on Google Play and help make the app even better.",
-      primaryCta: "Become a Google Play beta tester",
-      secondaryCta: "View on Google Play"
     },
     brand: {
       intro: "Bike Me is built for cycling friends, familiar faces, and the next ride together",
@@ -196,7 +159,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     screenshots: {
       eyebrow: "Screenshots",
       title: "Everything around your rides, friends, and progress",
-      subtitle: "From meeting points and invitations to ride history and deeper Pro insights.",
+      subtitle: "From meeting points and invitations to ride history and deeper ride insights.",
       items: [
         {
           image: "/screenshots/app-01.PNG",
@@ -265,63 +228,29 @@ const dictionaries: Record<Locale, Dictionary> = {
         },
         {
           image: "/screenshots/app-14.png",
-          title: "Watts and training zones (Pro)",
+          title: "Watts and training zones",
           description: "Dive into estimated watts, zones, and performance after the ride."
         },
         {
           image: "/screenshots/app-15.png",
-          title: "Top performances (Pro)",
+          title: "Top performances",
           description: "Track your best times, longest rides, top speed, and highest watt."
         }
       ]
-    },
-    pricing: {
-      eyebrow: "Free vs Pro",
-      title: "Become a beta tester - get 6 months of Pro",
-      subtitle:
-        "Join the beta and help shape a cycling community built around friends, invites, and rides. As a beta tester, you get 6 months of Bike Me Pro when the app officially launches. The first beta testers also receive a permanent Founder Rider badge in the app.",
-      plans: [
-        {
-          name: "Bike Me",
-          label: "Free",
-          description: "Map, RIDE NOW, find riders, basic route data, and simple history.",
-          items: [
-            "Map-based ride discovery",
-            "RIDE NOW and planned rides",
-            "Find nearby riders",
-            "Basic route data",
-            "Simple ride history"
-          ]
-        },
-        {
-          name: "Bike Me Pro",
-          label: "Pro",
-          description:
-            "See your development. Full watt estimation, training zones (heart rate/watts), advanced ride history, and progress graphs.",
-          items: [
-            "Full watt estimation",
-            "Training zones for heart rate and watts",
-            "Advanced ride history",
-            "Progress and development graphs",
-            "Deeper ride insights"
-          ]
-        }
-      ],
-      cta: "Get via TestFlight"
     },
     faq: {
       eyebrow: "FAQ",
       title: "Common questions",
       items: [
         {
-          question: "Is Bike Me free?",
+          question: "What is Bike Me?",
           answer:
-            "Yes. The key social features are free: find riders, create rides, invite others, and track your rides. Bike Me Pro gives access to deeper history, status, watt estimation, training zones, and progress graphs. As a beta tester, you get 6 months of free Pro when the app officially launches."
+            "Bike Me is a cycling app for finding riders, creating rides, inviting others, and keeping track of your rides."
         },
         {
-          question: "Can I test Bike Me now?",
+          question: "When will Bike Me be available?",
           answer:
-            "Yes. Bike Me is currently open for iOS beta testers via TestFlight. Android testing is also available via Google Play: https://play.google.com/apps/testing/dk.muusmann.bikeme. If you have trouble accessing the test, please send me the email address connected to your Google account. All beta testers get 6 months of free Bike Me Pro when the app officially launches. The first beta testers also receive a permanent Founder Rider badge in the app as a thank you for being there from the start."
+            "Bike Me is being prepared for launch. Availability will be shared on this website when the app is ready."
         },
         {
           question: "How does Ride Now work?",
@@ -347,38 +276,26 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   da: {
     meta: {
-      title: "Bike Me | Cykelfællesskab via TestFlight",
+      title: "Bike Me | Cykelfællesskab på vej",
       description:
-        "Bike Me samler cykelvenner, invitationer og private eller offentlige ture. Beta-testere får 6 måneders gratis Bike Me Pro ved officiel lancering."
+        "Bike Me samler cykelvenner, invitationer og private eller offentlige ture."
     },
     nav: {
       features: "Funktioner",
       howItWorks: "Sådan virker det",
       screenshots: "Skærmbilleder",
-      pricing: "Gratis vs Pro",
-      faq: "FAQ",
-      joinTestFlight: "Hent via TestFlight"
+      faq: "FAQ"
     },
     hero: {
       headline: "Hold fast i dine cykelvenner - og find nye at køre med",
       subheadline:
         "Bike Me samler dine cykelbekendtskaber, ture og invitationer ét sted. Opret private ture for dine venner, eller lav offentlige ture, hvor nye ryttere kan hoppe med.",
-      payoffTitle: "6 måneders gratis Pro til beta-testere",
+      payoffTitle: "Bike Me er på vej",
       payoffText:
-        "Bliv beta-tester og vær med til at skabe fremtidens cykelfællesskab. Som tak får alle beta-testere 6 måneders gratis Bike Me Pro, når appen lanceres officielt. De første beta-testere får også et permanent Founder Rider-badge i appen som tak for at være med fra starten. Kræver iPhone og Apples TestFlight-app.",
-      founderBadgeTitle: "Founder Rider",
-      founderBadgeText: "Permanent badge til de første beta-testere",
-      primaryCta: "Hent via TestFlight",
+        "Vi gør Bike Me klar til lancering. Indtil da kan du se, hvordan appen samler cykelvenner, ture og invitationer ét sted.",
+      primaryCta: "Læs mere",
       secondaryCta: "Se hvordan det virker",
       previewLabel: "App-preview"
-    },
-    androidBeta: {
-      eyebrow: "Google Play beta",
-      title: "Android beta er klar",
-      body:
-        "Bruger du Android? Du kan nu være med til at teste Bike Me via Google Play og hjælpe med at gøre appen endnu bedre.",
-      primaryCta: "Bliv beta-tester på Google Play",
-      secondaryCta: "Se appen i Google Play"
     },
     brand: {
       intro: "Bike Me er dit cykelfællesskab til venner, bekendtskaber og næste tur",
@@ -441,7 +358,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     screenshots: {
       eyebrow: "Skærmbilleder",
       title: "Alt omkring dine ture, cykelvenner og udvikling",
-      subtitle: "Fra mødesteder og invitationer til turhistorik og dybere Pro-indsigter.",
+      subtitle: "Fra mødesteder og invitationer til turhistorik og dybere indsigt.",
       items: [
         {
           image: "/screenshots/app-01.PNG",
@@ -510,63 +427,29 @@ const dictionaries: Record<Locale, Dictionary> = {
         },
         {
           image: "/screenshots/app-14.png",
-          title: "Watt og træningszoner (Pro)",
+          title: "Watt og træningszoner",
           description: "Dyk ned i estimerede watt, zoner og præstation efter turen."
         },
         {
           image: "/screenshots/app-15.png",
-          title: "Toppræstationer (Pro)",
+          title: "Toppræstationer",
           description: "Følg dine bedste tider, længste ture, topfart og højeste watt."
         }
       ]
-    },
-    pricing: {
-      eyebrow: "Gratis vs Pro",
-      title: "Bliv beta-tester - få 6 måneder Pro",
-      subtitle:
-        "Vær med til at forme et cykelfællesskab bygget omkring venner, invitationer og ture. Som beta-tester får du 6 måneders Bike Me Pro, når appen lanceres officielt. De første beta-testere får også et permanent Founder Rider-badge i appen.",
-      plans: [
-        {
-          name: "Bike Me",
-          label: "Gratis",
-          description: "Kort, KØR NU, find ryttere, basis rutedata og simpel historik.",
-          items: [
-            "Kortbaseret tur-overblik",
-            "KØR NU og planlagte ture",
-            "Find ryttere tæt på dig",
-            "Basis rutedata",
-            "Simpel historik"
-          ]
-        },
-        {
-          name: "Bike Me Pro",
-          label: "Pro",
-          description:
-            "Se din udvikling. Fuld watt-estimering, træningszoner (puls/watt), avanceret historik og udviklingsgrafer.",
-          items: [
-            "Fuld watt-estimering",
-            "Træningszoner for puls og watt",
-            "Avanceret historik",
-            "Udviklingsgrafer",
-            "Dybdegående tur-statistik"
-          ]
-        }
-      ],
-      cta: "Hent via TestFlight"
     },
     faq: {
       eyebrow: "FAQ",
       title: "Ofte stillede spørgsmål",
       items: [
         {
-          question: "Er Bike Me gratis?",
+          question: "Hvad er Bike Me?",
           answer:
-            "Ja. De vigtigste sociale funktioner er gratis: find ryttere, opret ture, inviter andre og track dine ture. Bike Me Pro giver adgang til dybere historik, status, watt-estimering, træningszoner og udviklingsgrafer. Som beta-tester får du 6 måneders gratis Pro, når appen lanceres officielt."
+            "Bike Me er en cykelapp til at finde ryttere, oprette ture, invitere andre og holde styr på dine cykelture."
         },
         {
-          question: "Kan jeg teste Bike Me nu?",
+          question: "Hvornår bliver Bike Me tilgængelig?",
           answer:
-            "Ja. Bike Me er lige nu åben for iOS beta-testere via TestFlight. Android-test er også tilgængelig via Google Play: https://play.google.com/apps/testing/dk.muusmann.bikeme. Hvis du har problemer med adgang, så send mig den e-mailadresse, der er tilknyttet din Google-konto. Alle beta-testere får 6 måneders gratis Bike Me Pro, når appen lanceres officielt. De første beta-testere får også et permanent Founder Rider-badge i appen som tak for at være med fra starten."
+            "Bike Me er ved at blive gjort klar til lancering. Tilgængelighed bliver delt her på hjemmesiden, når appen er klar."
         },
         {
           question: "Hvordan virker KØR NU?",
@@ -592,38 +475,26 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   de: {
     meta: {
-      title: "Bike Me | Radcommunity über TestFlight",
+      title: "Bike Me | Radcommunity bald verfügbar",
       description:
-        "Bike Me verbindet Radfreunde, Einladungen und private oder öffentliche Fahrten. Betatester erhalten 6 Monate Bike Me Pro kostenlos zum offiziellen Launch."
+        "Bike Me verbindet Radfreunde, Einladungen und private oder öffentliche Fahrten."
     },
     nav: {
       features: "Funktionen",
       howItWorks: "So funktioniert's",
       screenshots: "Screenshots",
-      pricing: "Kostenlos vs Pro",
-      faq: "FAQ",
-      joinTestFlight: "Über TestFlight laden"
+      faq: "FAQ"
     },
     hero: {
       headline: "Bleib mit deinen Radfreunden verbunden - und finde neue",
       subheadline:
         "Bike Me bringt deine Radkontakte, Fahrten und Einladungen an einem Ort zusammen. Erstelle private Fahrten für Freunde oder öffentliche Fahrten, bei denen neue Fahrer dazukommen können.",
-      payoffTitle: "6 Monate Pro kostenlos für Betatester",
+      payoffTitle: "Bike Me kommt bald",
       payoffText:
-        "Werde Betatester und hilf mit, die Radcommunity der Zukunft zu gestalten. Alle Betatester erhalten 6 Monate kostenlos Bike Me Pro, wenn die App offiziell startet. Die ersten Betatester erhalten außerdem ein dauerhaftes Founder Rider-Badge in der App - als Dank dafür, von Anfang an dabei zu sein. Erfordert ein iPhone und Apples TestFlight-App.",
-      founderBadgeTitle: "Founder Rider",
-      founderBadgeText: "Permanentes Badge für die ersten Beta-Tester",
-      primaryCta: "Über TestFlight laden",
+        "Wir bereiten Bike Me für den Start vor. Bis dahin kannst du sehen, wie die App Radfreunde, Fahrten und Einladungen zusammenbringt.",
+      primaryCta: "Mehr erfahren",
       secondaryCta: "So funktioniert's",
       previewLabel: "App-Vorschau"
-    },
-    androidBeta: {
-      eyebrow: "Google Play Beta",
-      title: "Die Android-Beta ist bereit",
-      body:
-        "Nutzt du Android? Du kannst jetzt über Google Play an der Bike Me Beta teilnehmen und helfen, die App noch besser zu machen.",
-      primaryCta: "Beta-Tester bei Google Play werden",
-      secondaryCta: "App in Google Play ansehen"
     },
     brand: {
       intro: "Bike Me ist für Radfreunde, bekannte Gesichter und die nächste gemeinsame Fahrt gemacht",
@@ -686,7 +557,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     screenshots: {
       eyebrow: "Screenshots",
       title: "Alles rund um Fahrten, Radfreunde und Fortschritt",
-      subtitle: "Von Treffpunkten und Einladungen bis zu Fahrtenhistorie und tieferen Pro-Einblicken.",
+      subtitle: "Von Treffpunkten und Einladungen bis zu Fahrtenhistorie und tieferen Einblicken.",
       items: [
         {
           image: "/screenshots/app-01.PNG",
@@ -755,63 +626,29 @@ const dictionaries: Record<Locale, Dictionary> = {
         },
         {
           image: "/screenshots/app-14.png",
-          title: "Watt und Trainingszonen (Pro)",
+          title: "Watt und Trainingszonen",
           description: "Tauche nach der Fahrt in geschätzte Watt, Zonen und Leistung ein."
         },
         {
           image: "/screenshots/app-15.png",
-          title: "Top-Leistungen (Pro)",
+          title: "Top-Leistungen",
           description: "Verfolge Bestzeiten, längste Fahrten, Höchsttempo und höchste Wattwerte."
         }
       ]
-    },
-    pricing: {
-      eyebrow: "Kostenlos vs Pro",
-      title: "Werde Betatester - erhalte 6 Monate Pro",
-      subtitle:
-        "Hilf mit, eine Radcommunity rund um Freunde, Einladungen und Fahrten zu gestalten. Als Betatester erhältst du 6 Monate kostenlos Bike Me Pro, wenn die App offiziell startet. Die ersten Betatester erhalten außerdem ein dauerhaftes Founder Rider-Badge in der App.",
-      plans: [
-        {
-          name: "Bike Me",
-          label: "Kostenlos",
-          description: "Karte, RIDE NOW, Fahrer finden, Basis-Routendaten und einfache Historie.",
-          items: [
-            "Fahrten auf der Karte entdecken",
-            "RIDE NOW und geplante Fahrten",
-            "Fahrer in deiner Nähe finden",
-            "Basis-Routendaten",
-            "Einfache Fahrtenhistorie"
-          ]
-        },
-        {
-          name: "Bike Me Pro",
-          label: "Pro",
-          description:
-            "Sieh deine Entwicklung. Volle Watt-Schätzung, Trainingszonen (Puls/Watt), erweiterte Fahrtenhistorie und Fortschrittsgrafen.",
-          items: [
-            "Volle Watt-Schätzung",
-            "Trainingszonen für Puls und Watt",
-            "Erweiterte 12-Monats-Historie",
-            "Fortschritts- und Entwicklungsgrafen",
-            "Tiefere Fahrteinblicke"
-          ]
-        }
-      ],
-      cta: "Über TestFlight laden"
     },
     faq: {
       eyebrow: "FAQ",
       title: "Häufige Fragen",
       items: [
         {
-          question: "Ist Bike Me kostenlos?",
+          question: "Was ist Bike Me?",
           answer:
-            "Ja. Die wichtigsten sozialen Funktionen sind kostenlos: Fahrer finden, Fahrten erstellen, andere einladen und deine Touren tracken. Bike Me Pro bietet Zugriff auf tiefere Historie, Status, Watt-Schätzung, Trainingszonen und Fortschrittsgrafen. Als Betatester erhältst du 6 Monate kostenlos Bike Me Pro, wenn die App offiziell startet."
+            "Bike Me ist eine Fahrrad-App, mit der du Fahrer finden, Fahrten erstellen, andere einladen und deine Touren im Blick behalten kannst."
         },
         {
-          question: "Kann ich Bike Me jetzt testen?",
+          question: "Wann wird Bike Me verfügbar sein?",
           answer:
-            "Ja. Bike Me ist derzeit für iOS-Betatester über TestFlight geöffnet. Android-Tests sind ebenfalls über Google Play verfügbar: https://play.google.com/apps/testing/dk.muusmann.bikeme. Wenn du Probleme mit dem Zugriff auf den Test hast, sende mir bitte die E-Mail-Adresse, die mit deinem Google-Konto verbunden ist. Alle Betatester erhalten 6 Monate kostenlos Bike Me Pro, wenn die App offiziell startet. Die ersten Betatester erhalten außerdem ein dauerhaftes Founder Rider-Badge in der App - als Dank dafür, von Anfang an dabei zu sein."
+            "Bike Me wird gerade für den Start vorbereitet. Die Verfügbarkeit wird auf dieser Website geteilt, sobald die App bereit ist."
         },
         {
           question: "Wie funktioniert Ride Now?",
@@ -837,38 +674,26 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   es: {
     meta: {
-      title: "Bike Me | Comunidad ciclista en TestFlight",
+      title: "Bike Me | Comunidad ciclista próximamente",
       description:
-        "Bike Me reúne amigos ciclistas, invitaciones y salidas privadas o públicas. Los beta testers reciben 6 meses gratis de Bike Me Pro en el lanzamiento oficial."
+        "Bike Me reúne amigos ciclistas, invitaciones y salidas privadas o públicas."
     },
     nav: {
       features: "Funciones",
       howItWorks: "Cómo funciona",
       screenshots: "Capturas",
-      pricing: "Gratis vs Pro",
-      faq: "FAQ",
-      joinTestFlight: "Obtener vía TestFlight"
+      faq: "FAQ"
     },
     hero: {
       headline: "Mantén cerca a tus amigos ciclistas - y encuentra nuevos",
       subheadline:
         "Bike Me reúne tus contactos ciclistas, salidas e invitaciones en un solo lugar. Crea salidas privadas para tus amigos o salidas públicas para que se unan nuevos ciclistas.",
-      payoffTitle: "6 meses de Pro gratis para beta testers",
+      payoffTitle: "Bike Me llegará pronto",
       payoffText:
-        "Hazte beta tester y ayuda a crear la comunidad ciclista del futuro. Todos los beta testers reciben 6 meses gratis de Bike Me Pro cuando la app se lance oficialmente. Los primeros beta testers también reciben una insignia permanente Founder Rider en la app como agradecimiento por estar desde el inicio. Requiere iPhone y la app TestFlight de Apple.",
-      founderBadgeTitle: "Founder Rider",
-      founderBadgeText: "Insignia permanente para los primeros beta testers",
-      primaryCta: "Obtener vía TestFlight",
+        "Estamos preparando Bike Me para su lanzamiento. Mientras tanto, descubre cómo la app reunirá amigos ciclistas, salidas e invitaciones.",
+      primaryCta: "Más información",
       secondaryCta: "Ver cómo funciona",
       previewLabel: "Vista de la app"
-    },
-    androidBeta: {
-      eyebrow: "Beta en Google Play",
-      title: "La beta de Android está lista",
-      body:
-        "¿Usas Android? Ahora puedes unirte a la beta de Bike Me en Google Play y ayudar a mejorar la app.",
-      primaryCta: "Hazte beta tester en Google Play",
-      secondaryCta: "Ver en Google Play"
     },
     brand: {
       intro: "Bike Me está pensado para amigos ciclistas, contactos conocidos y la próxima salida juntos",
@@ -931,7 +756,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     screenshots: {
       eyebrow: "Capturas",
       title: "Todo sobre tus salidas, amigos ciclistas y progreso",
-      subtitle: "De puntos de encuentro e invitaciones a historial de salidas e insights Pro.",
+      subtitle: "De puntos de encuentro e invitaciones a historial de salidas e insights más profundos.",
       items: [
         {
           image: "/screenshots/app-01.PNG",
@@ -1000,63 +825,29 @@ const dictionaries: Record<Locale, Dictionary> = {
         },
         {
           image: "/screenshots/app-14.png",
-          title: "Vatios y zonas (Pro)",
+          title: "Vatios y zonas",
           description: "Profundiza en vatios estimados, zonas y rendimiento después de la salida."
         },
         {
           image: "/screenshots/app-15.png",
-          title: "Mejores marcas (Pro)",
+          title: "Mejores marcas",
           description: "Sigue tus mejores tiempos, salidas más largas, velocidad máxima y watt más alto."
         }
       ]
-    },
-    pricing: {
-      eyebrow: "Gratis vs Pro",
-      title: "Hazte beta tester - recibe 6 meses de Pro",
-      subtitle:
-        "Ayuda a crear una comunidad ciclista basada en amigos, invitaciones y salidas. Como beta tester, recibes 6 meses gratis de Bike Me Pro cuando la app se lance oficialmente. Los primeros beta testers también reciben una insignia permanente Founder Rider en la app.",
-      plans: [
-        {
-          name: "Bike Me",
-          label: "Gratis",
-          description: "Mapa, RIDE NOW, encontrar ciclistas, datos básicos de ruta e historial simple.",
-          items: [
-            "Descubre salidas en el mapa",
-            "RIDE NOW y salidas planificadas",
-            "Encuentra ciclistas cerca",
-            "Datos básicos de ruta",
-            "Historial simple"
-          ]
-        },
-        {
-          name: "Bike Me Pro",
-          label: "Pro",
-          description:
-            "Ve tu evolución. Estimación completa de vatios, zonas de entrenamiento (pulso/vatios), historial avanzado y gráficas de progreso.",
-          items: [
-            "Estimación completa de vatios",
-            "Zonas de pulso y vatios",
-            "Historial avanzado",
-            "Gráficas de progreso",
-            "Insights más profundos"
-          ]
-        }
-      ],
-      cta: "Obtener vía TestFlight"
     },
     faq: {
       eyebrow: "FAQ",
       title: "Preguntas frecuentes",
       items: [
         {
-          question: "¿Bike Me es gratis?",
+          question: "¿Qué es Bike Me?",
           answer:
-            "Sí. Las funciones sociales clave son gratis: encuentra ciclistas, crea salidas, invita a otros y registra tus rutas. Bike Me Pro da acceso a más historial, estado, estimación de vatios, zonas de entrenamiento y gráficas de progreso. Como beta tester, recibes 6 meses gratis de Bike Me Pro cuando la app se lance oficialmente."
+            "Bike Me es una app ciclista para encontrar ciclistas, crear salidas, invitar a otros y seguir tus rutas."
         },
         {
-          question: "¿Puedo probar Bike Me ahora?",
+          question: "¿Cuándo estará disponible Bike Me?",
           answer:
-            "Sí. Bike Me está abierta ahora para beta testers de iOS vía TestFlight. Las pruebas de Android también están disponibles en Google Play: https://play.google.com/apps/testing/dk.muusmann.bikeme. Si tienes problemas para acceder a la prueba, envíame la dirección de correo asociada a tu cuenta de Google. Todos los beta testers reciben 6 meses gratis de Bike Me Pro cuando la app se lance oficialmente. Los primeros beta testers también reciben una insignia permanente Founder Rider en la app como agradecimiento por estar desde el inicio."
+            "Bike Me se está preparando para su lanzamiento. La disponibilidad se compartirá en esta web cuando la app esté lista."
         },
         {
           question: "¿Cómo funciona Ride Now?",
@@ -1082,38 +873,26 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   it: {
     meta: {
-      title: "Bike Me | Community ciclistica su TestFlight",
+      title: "Bike Me | Community ciclistica in arrivo",
       description:
-        "Bike Me riunisce amici ciclisti, inviti e uscite private o pubbliche. I beta tester ricevono 6 mesi gratuiti di Bike Me Pro al lancio ufficiale."
+        "Bike Me riunisce amici ciclisti, inviti e uscite private o pubbliche."
     },
     nav: {
       features: "Funzionalità",
       howItWorks: "Come funziona",
       screenshots: "Screenshot",
-      pricing: "Gratis vs Pro",
-      faq: "FAQ",
-      joinTestFlight: "Scarica via TestFlight"
+      faq: "FAQ"
     },
     hero: {
       headline: "Resta vicino ai tuoi amici ciclisti - e trovane di nuovi",
       subheadline:
         "Bike Me riunisce contatti ciclistici, uscite e inviti in un unico posto. Crea uscite private per gli amici o uscite pubbliche dove nuovi ciclisti possono unirsi.",
-      payoffTitle: "6 mesi di Pro gratis per i beta tester",
+      payoffTitle: "Bike Me arriverà presto",
       payoffText:
-        "Diventa beta tester e aiutaci a creare la community ciclistica del futuro. Tutti i beta tester ricevono 6 mesi gratuiti di Bike Me Pro quando l'app verrà lanciata ufficialmente. I primi beta tester ricevono anche un badge permanente Founder Rider nell'app come ringraziamento per esserci stati fin dall'inizio. Richiede iPhone e l'app TestFlight di Apple.",
-      founderBadgeTitle: "Founder Rider",
-      founderBadgeText: "Badge permanente per i primi beta tester",
-      primaryCta: "Scarica via TestFlight",
+        "Stiamo preparando Bike Me per il lancio. Nel frattempo puoi scoprire come l'app riunirà amici ciclisti, uscite e inviti.",
+      primaryCta: "Scopri di più",
       secondaryCta: "Scopri come funziona",
       previewLabel: "Anteprima app"
-    },
-    androidBeta: {
-      eyebrow: "Beta su Google Play",
-      title: "La beta Android è pronta",
-      body:
-        "Usi Android? Ora puoi partecipare alla beta di Bike Me su Google Play e aiutarci a migliorare l'app.",
-      primaryCta: "Diventa beta tester su Google Play",
-      secondaryCta: "Vedi su Google Play"
     },
     brand: {
       intro: "Bike Me nasce per amici ciclisti, contatti conosciuti e la prossima uscita insieme",
@@ -1176,7 +955,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     screenshots: {
       eyebrow: "Screenshot",
       title: "Tutto su uscite, amici ciclisti e progressi",
-      subtitle: "Da punti di ritrovo e inviti allo storico uscite e agli insight Pro.",
+      subtitle: "Da punti di ritrovo e inviti allo storico uscite e agli insight più dettagliati.",
       items: [
         {
           image: "/screenshots/app-01.PNG",
@@ -1245,63 +1024,29 @@ const dictionaries: Record<Locale, Dictionary> = {
         },
         {
           image: "/screenshots/app-14.png",
-          title: "Watt e zone (Pro)",
+          title: "Watt e zone",
           description: "Approfondisci watt stimati, zone e prestazione dopo l'uscita."
         },
         {
           image: "/screenshots/app-15.png",
-          title: "Migliori prestazioni (Pro)",
+          title: "Migliori prestazioni",
           description: "Segui migliori tempi, uscite più lunghe, velocità massima e watt più alto."
         }
       ]
-    },
-    pricing: {
-      eyebrow: "Gratis vs Pro",
-      title: "Diventa beta tester - ricevi 6 mesi di Pro",
-      subtitle:
-        "Aiuta a creare una community ciclistica basata su amici, inviti e uscite. Come beta tester ricevi 6 mesi gratuiti di Bike Me Pro quando l'app verrà lanciata ufficialmente. I primi beta tester ricevono anche un badge permanente Founder Rider nell'app.",
-      plans: [
-        {
-          name: "Bike Me",
-          label: "Gratis",
-          description: "Mappa, RIDE NOW, trova ciclisti, dati base del percorso e storico semplice.",
-          items: [
-            "Scopri uscite sulla mappa",
-            "RIDE NOW e uscite pianificate",
-            "Trova ciclisti vicini",
-            "Dati base del percorso",
-            "Storico semplice"
-          ]
-        },
-        {
-          name: "Bike Me Pro",
-          label: "Pro",
-          description:
-            "Vedi la tua evoluzione. Stima completa dei watt, zone di allenamento (frequenza cardiaca/watt), storico avanzato e grafici di progresso.",
-          items: [
-            "Stima completa dei watt",
-            "Zone cardio e watt",
-            "Storico avanzato",
-            "Grafici di progresso",
-            "Insight più dettagliati"
-          ]
-        }
-      ],
-      cta: "Scarica via TestFlight"
     },
     faq: {
       eyebrow: "FAQ",
       title: "Domande frequenti",
       items: [
         {
-          question: "Bike Me è gratuita?",
+          question: "Che cos'è Bike Me?",
           answer:
-            "Sì. Le funzioni social principali sono gratuite: trova ciclisti, crea uscite, invita altri e traccia le tue pedalate. Bike Me Pro dà accesso a storico più profondo, stato, stima dei watt, zone di allenamento e grafici di progresso. Come beta tester ricevi 6 mesi gratuiti di Bike Me Pro quando l'app verrà lanciata ufficialmente."
+            "Bike Me è un'app per ciclisti per trovare altri ciclisti, creare uscite, invitare persone e tenere traccia delle tue pedalate."
         },
         {
-          question: "Posso testare Bike Me ora?",
+          question: "Quando sarà disponibile Bike Me?",
           answer:
-            "Sì. Bike Me è attualmente aperta ai beta tester iOS tramite TestFlight. Il test per Android è disponibile anche tramite Google Play: https://play.google.com/apps/testing/dk.muusmann.bikeme. Se hai problemi ad accedere al test, inviami l'indirizzo e-mail collegato al tuo account Google. Tutti i beta tester ricevono 6 mesi gratuiti di Bike Me Pro quando l'app verrà lanciata ufficialmente. I primi beta tester ricevono anche un badge permanente Founder Rider nell'app come ringraziamento per esserci stati fin dall'inizio."
+            "Bike Me è in preparazione per il lancio. La disponibilità verrà condivisa su questo sito quando l'app sarà pronta."
         },
         {
           question: "Come funziona Ride Now?",
@@ -1327,38 +1072,26 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   fr: {
     meta: {
-      title: "Bike Me | Communauté cycliste sur TestFlight",
+      title: "Bike Me | Communauté cycliste bientôt disponible",
       description:
-        "Bike Me rassemble amis cyclistes, invitations et sorties privées ou publiques. Les bêta-testeurs reçoivent 6 mois gratuits de Bike Me Pro au lancement officiel."
+        "Bike Me rassemble amis cyclistes, invitations et sorties privées ou publiques."
     },
     nav: {
       features: "Fonctionnalités",
       howItWorks: "Comment ça marche",
       screenshots: "Captures",
-      pricing: "Gratuit vs Pro",
-      faq: "FAQ",
-      joinTestFlight: "Obtenir via TestFlight"
+      faq: "FAQ"
     },
     hero: {
       headline: "Gardez vos amis cyclistes près de vous - et trouvez-en de nouveaux",
       subheadline:
         "Bike Me réunit vos contacts cyclistes, sorties et invitations au même endroit. Créez des sorties privées pour vos amis ou des sorties publiques où de nouveaux cyclistes peuvent vous rejoindre.",
-      payoffTitle: "6 mois de Pro gratuits pour les bêta-testeurs",
+      payoffTitle: "Bike Me arrive bientôt",
       payoffText:
-        "Devenez bêta-testeur et contribuez à créer la communauté cycliste de demain. Tous les bêta-testeurs reçoivent 6 mois gratuits de Bike Me Pro lorsque l'app sera lancée officiellement. Les premiers bêta-testeurs reçoivent aussi un badge permanent Founder Rider dans l'app, en remerciement d'avoir été là dès le début. Nécessite un iPhone et l'app TestFlight d'Apple.",
-      founderBadgeTitle: "Founder Rider",
-      founderBadgeText: "Badge permanent pour les premiers bêta-testeurs",
-      primaryCta: "Obtenir via TestFlight",
+        "Nous préparons Bike Me pour son lancement. En attendant, découvrez comment l'app réunira amis cyclistes, sorties et invitations.",
+      primaryCta: "En savoir plus",
       secondaryCta: "Voir le fonctionnement",
       previewLabel: "Aperçu de l'app"
-    },
-    androidBeta: {
-      eyebrow: "Bêta Google Play",
-      title: "La bêta Android est prête",
-      body:
-        "Vous utilisez Android ? Vous pouvez maintenant rejoindre la bêta Bike Me sur Google Play et aider à améliorer l'app.",
-      primaryCta: "Devenir bêta-testeur sur Google Play",
-      secondaryCta: "Voir sur Google Play"
     },
     brand: {
       intro: "Bike Me est conçu pour les amis cyclistes, les contacts retrouvés et la prochaine sortie ensemble",
@@ -1421,7 +1154,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     screenshots: {
       eyebrow: "Captures",
       title: "Tout autour de vos sorties, amis cyclistes et progrès",
-      subtitle: "Des lieux de rendez-vous et invitations à l'historique des sorties et aux insights Pro.",
+      subtitle: "Des lieux de rendez-vous et invitations à l'historique des sorties et aux analyses plus détaillées.",
       items: [
         {
           image: "/screenshots/app-01.PNG",
@@ -1490,63 +1223,29 @@ const dictionaries: Record<Locale, Dictionary> = {
         },
         {
           image: "/screenshots/app-14.png",
-          title: "Watts et zones (Pro)",
+          title: "Watts et zones",
           description: "Explorez watts estimés, zones et performance après la sortie."
         },
         {
           image: "/screenshots/app-15.png",
-          title: "Meilleures performances (Pro)",
+          title: "Meilleures performances",
           description: "Suivez meilleurs temps, plus longues sorties, vitesse max et watts les plus élevés."
         }
       ]
-    },
-    pricing: {
-      eyebrow: "Gratuit vs Pro",
-      title: "Devenez bêta-testeur - recevez 6 mois de Pro",
-      subtitle:
-        "Aidez à créer une communauté cycliste autour des amis, invitations et sorties. En tant que bêta-testeur, vous recevez 6 mois gratuits de Bike Me Pro lorsque l'app sera lancée officiellement. Les premiers bêta-testeurs reçoivent aussi un badge permanent Founder Rider dans l'app.",
-      plans: [
-        {
-          name: "Bike Me",
-          label: "Gratuit",
-          description: "Carte, RIDE NOW, trouver des cyclistes, données de base et historique simple.",
-          items: [
-            "Découverte des sorties sur la carte",
-            "RIDE NOW et sorties planifiées",
-            "Trouver des cyclistes proches",
-            "Données de base",
-            "Historique simple"
-          ]
-        },
-        {
-          name: "Bike Me Pro",
-          label: "Pro",
-          description:
-            "Suivez votre progression. Estimation complète des watts, zones d'entraînement (fréquence cardiaque/watts), historique avancé et graphiques de progression.",
-          items: [
-            "Estimation complète des watts",
-            "Zones cardio et watts",
-            "Historique avancé",
-            "Graphiques de progression",
-            "Analyses plus détaillées"
-          ]
-        }
-      ],
-      cta: "Obtenir via TestFlight"
     },
     faq: {
       eyebrow: "FAQ",
       title: "Questions fréquentes",
       items: [
         {
-          question: "Bike Me est-elle gratuite ?",
+          question: "Qu'est-ce que Bike Me ?",
           answer:
-            "Oui. Les fonctions sociales clés sont gratuites : trouver des cyclistes, créer des sorties, inviter d'autres personnes et suivre vos sorties. Bike Me Pro donne accès à un historique plus profond, au statut, à l'estimation des watts, aux zones d'entraînement et aux graphiques de progression. En tant que bêta-testeur, vous recevez 6 mois gratuits de Bike Me Pro lorsque l'app sera lancée officiellement."
+            "Bike Me est une app cycliste pour trouver des cyclistes, créer des sorties, inviter d'autres personnes et suivre vos sorties."
         },
         {
-          question: "Puis-je tester Bike Me maintenant ?",
+          question: "Quand Bike Me sera-t-elle disponible ?",
           answer:
-            "Oui. Bike Me est actuellement ouverte aux bêta-testeurs iOS via TestFlight. Le test Android est aussi disponible via Google Play : https://play.google.com/apps/testing/dk.muusmann.bikeme. Si vous avez des difficultés à accéder au test, envoyez-moi l'adresse e-mail associée à votre compte Google. Tous les bêta-testeurs reçoivent 6 mois gratuits de Bike Me Pro lorsque l'app sera lancée officiellement. Les premiers bêta-testeurs reçoivent aussi un badge permanent Founder Rider dans l'app, en remerciement d'avoir été là dès le début."
+            "Bike Me est en préparation pour son lancement. La disponibilité sera partagée sur ce site lorsque l'app sera prête."
         },
         {
           question: "Comment fonctionne Ride Now ?",
@@ -1572,38 +1271,26 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   nl: {
     meta: {
-      title: "Bike Me | Fietscommunity via TestFlight",
+      title: "Bike Me | Fietscommunity binnenkort",
       description:
-        "Bike Me brengt fietsvrienden, uitnodigingen en private of openbare ritten samen. Betatesters krijgen 6 maanden gratis Bike Me Pro bij de officiële lancering."
+        "Bike Me brengt fietsvrienden, uitnodigingen en private of openbare ritten samen."
     },
     nav: {
       features: "Functies",
       howItWorks: "Hoe het werkt",
       screenshots: "Screenshots",
-      pricing: "Gratis vs Pro",
-      faq: "FAQ",
-      joinTestFlight: "Download via TestFlight"
+      faq: "FAQ"
     },
     hero: {
       headline: "Houd je fietsvrienden dichtbij - en vind nieuwe",
       subheadline:
         "Bike Me brengt je fietscontacten, ritten en uitnodigingen op één plek samen. Maak private ritten voor vrienden of openbare ritten waar nieuwe fietsers kunnen aansluiten.",
-      payoffTitle: "6 maanden gratis Pro voor betatesters",
+      payoffTitle: "Bike Me komt binnenkort",
       payoffText:
-        "Word betatester en help mee aan de fietscommunity van de toekomst. Alle betatesters krijgen 6 maanden gratis Bike Me Pro wanneer de app officieel wordt gelanceerd. De eerste betatesters krijgen ook een permanente Founder Rider-badge in de app als dank dat ze er vanaf het begin bij zijn. Vereist iPhone en Apple's TestFlight-app.",
-      founderBadgeTitle: "Founder Rider",
-      founderBadgeText: "Permanente badge voor de eerste bètatesters",
-      primaryCta: "Download via TestFlight",
+        "We maken Bike Me klaar voor lancering. Tot die tijd kun je zien hoe de app fietsvrienden, ritten en uitnodigingen samenbrengt.",
+      primaryCta: "Lees meer",
       secondaryCta: "Bekijk hoe het werkt",
       previewLabel: "App-preview"
-    },
-    androidBeta: {
-      eyebrow: "Google Play-bèta",
-      title: "Android-bèta is klaar",
-      body:
-        "Gebruik je Android? Je kunt nu meedoen aan de Bike Me-bèta via Google Play en helpen de app nog beter te maken.",
-      primaryCta: "Word betatester via Google Play",
-      secondaryCta: "Bekijk in Google Play"
     },
     brand: {
       intro: "Bike Me is gebouwd voor fietsvrienden, bekende gezichten en de volgende rit samen",
@@ -1666,7 +1353,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     screenshots: {
       eyebrow: "Screenshots",
       title: "Alles rond je ritten, fietsvrienden en voortgang",
-      subtitle: "Van ontmoetingsplekken en uitnodigingen tot ritgeschiedenis en diepere Pro-inzichten.",
+      subtitle: "Van ontmoetingsplekken en uitnodigingen tot ritgeschiedenis en diepere inzichten.",
       items: [
         {
           image: "/screenshots/app-01.PNG",
@@ -1735,63 +1422,29 @@ const dictionaries: Record<Locale, Dictionary> = {
         },
         {
           image: "/screenshots/app-14.png",
-          title: "Watt en trainingszones (Pro)",
+          title: "Watt en trainingszones",
           description: "Duik in geschatte watt, zones en prestaties na de rit."
         },
         {
           image: "/screenshots/app-15.png",
-          title: "Topprestaties (Pro)",
+          title: "Topprestaties",
           description: "Volg je beste tijden, langste ritten, topsnelheid en hoogste watt."
         }
       ]
-    },
-    pricing: {
-      eyebrow: "Gratis vs Pro",
-      title: "Word betatester - krijg 6 maanden Pro",
-      subtitle:
-        "Help mee aan een fietscommunity rond vrienden, uitnodigingen en ritten. Als betatester krijg je 6 maanden gratis Bike Me Pro wanneer de app officieel wordt gelanceerd. De eerste betatesters krijgen ook een permanente Founder Rider-badge in de app.",
-      plans: [
-        {
-          name: "Bike Me",
-          label: "Gratis",
-          description: "Kaart, RIDE NOW, fietsers vinden, basis routegegevens en eenvoudige historie.",
-          items: [
-            "Ritten ontdekken op de kaart",
-            "RIDE NOW en geplande ritten",
-            "Fietsers in de buurt vinden",
-            "Basis routegegevens",
-            "Eenvoudige historie"
-          ]
-        },
-        {
-          name: "Bike Me Pro",
-          label: "Pro",
-          description:
-            "Zie je ontwikkeling. Volledige wattinschatting, trainingszones (hartslag/watt), geavanceerde historie en voortgangsgrafieken.",
-          items: [
-            "Volledige wattinschatting",
-            "Hartslag- en wattzones",
-            "Geavanceerde historie",
-            "Voortgangsgrafieken",
-            "Diepere ritinzichten"
-          ]
-        }
-      ],
-      cta: "Download via TestFlight"
     },
     faq: {
       eyebrow: "FAQ",
       title: "Veelgestelde vragen",
       items: [
         {
-          question: "Is Bike Me gratis?",
+          question: "Wat is Bike Me?",
           answer:
-            "Ja. De belangrijkste sociale functies zijn gratis: vind fietsers, maak ritten, nodig anderen uit en track je ritten. Bike Me Pro geeft toegang tot diepere historie, status, wattinschatting, trainingszones en voortgangsgrafieken. Als betatester krijg je 6 maanden gratis Bike Me Pro wanneer de app officieel wordt gelanceerd."
+            "Bike Me is een fietsapp om fietsers te vinden, ritten te maken, anderen uit te nodigen en je ritten bij te houden."
         },
         {
-          question: "Kan ik Bike Me nu testen?",
+          question: "Wanneer is Bike Me beschikbaar?",
           answer:
-            "Ja. Bike Me is momenteel open voor iOS-betatesters via TestFlight. Android-testen is ook beschikbaar via Google Play: https://play.google.com/apps/testing/dk.muusmann.bikeme. Als je problemen hebt met toegang tot de test, stuur me dan het e-mailadres dat aan je Google-account is gekoppeld. Alle betatesters krijgen 6 maanden gratis Bike Me Pro wanneer de app officieel wordt gelanceerd. De eerste betatesters krijgen ook een permanente Founder Rider-badge in de app als dank dat ze er vanaf het begin bij zijn."
+            "Bike Me wordt klaargemaakt voor lancering. Beschikbaarheid wordt op deze website gedeeld zodra de app klaar is."
         },
         {
           question: "Hoe werkt Ride Now?",

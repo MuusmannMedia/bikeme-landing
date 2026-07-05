@@ -5,13 +5,7 @@ import { notFound } from "next/navigation";
 
 import { getDictionary } from "@/lib/i18n";
 import { isLocale, localeLabels, locales, type Locale } from "@/lib/locales";
-import {
-  CANONICAL_DOMAIN,
-  CONTACT_EMAIL,
-  GOOGLE_PLAY_BETA_URL,
-  GOOGLE_PLAY_STORE_URL,
-  TESTFLIGHT_URL
-} from "@/lib/site-config";
+import { CANONICAL_DOMAIN, CONTACT_EMAIL } from "@/lib/site-config";
 
 type LocalePageProps = {
   params: {
@@ -33,28 +27,6 @@ const languageAlternates = locales.reduce<Record<string, string>>((acc, locale) 
   acc[locale] = `/${locale}`;
   return acc;
 }, {});
-
-function FounderRiderBadge({ title, text }: { title: string; text: string }) {
-  return (
-    <div className="mt-4 flex w-full max-w-md items-center gap-3 rounded-[1.6rem] border border-[#b8893c]/70 bg-[linear-gradient(135deg,rgba(45,27,78,0.92),rgba(26,18,51,0.96))] px-3 py-2.5 shadow-[0_18px_46px_-34px_rgba(248,208,130,0.85)] sm:w-fit">
-      <Image
-        src="/brand/founder-rider-badge.png"
-        alt="Founder Rider badge"
-        width={88}
-        height={88}
-        className="h-10 w-10 shrink-0 sm:h-11 sm:w-11"
-      />
-      <span className="min-w-0">
-        <span className="block font-display text-base font-semibold leading-tight text-white">
-          {title}
-        </span>
-        <span className="mt-0.5 block text-sm leading-snug text-[#f5dca6]">
-          {text}
-        </span>
-      </span>
-    </div>
-  );
-}
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -102,7 +74,6 @@ export default function LocalePage({ params }: LocalePageProps) {
     { id: "features", label: t.nav.features },
     { id: "how-it-works", label: t.nav.howItWorks },
     { id: "screenshots", label: t.nav.screenshots },
-    { id: "pricing", label: t.nav.pricing },
     { id: "faq", label: t.nav.faq }
   ];
 
@@ -187,15 +158,11 @@ export default function LocalePage({ params }: LocalePageProps) {
               <p className="mt-2 leading-relaxed text-[var(--ink-soft)]">
                 {t.hero.payoffText}
               </p>
-              <FounderRiderBadge
-                title={t.hero.founderBadgeTitle}
-                text={t.hero.founderBadgeText}
-              />
             </div>
 
             <div className="animate-fade-up flex flex-wrap items-center gap-3 [animation-delay:220ms]">
               <a
-                href={TESTFLIGHT_URL}
+                href="#features"
                 className="inline-flex rounded-full border-2 border-[rgba(143,168,255,0.75)] bg-[linear-gradient(135deg,rgba(94,127,255,0.9),rgba(128,39,130,0.85))] px-7 py-3 text-sm font-semibold text-white shadow-[0_18px_50px_-28px_rgba(128,39,130,0.9)] transition-transform hover:scale-[1.02]"
               >
                 {t.hero.primaryCta}
@@ -219,43 +186,6 @@ export default function LocalePage({ params }: LocalePageProps) {
                 sizes="(max-width: 1024px) 90vw, 560px"
                 className="object-cover"
               />
-            </div>
-          </div>
-        </section>
-
-        <section className="section-shell pb-20 md:pb-24">
-          <div className="glass-panel rounded-3xl border p-5 shadow-[0_28px_75px_-48px_rgba(0,0,0,0.9)] md:p-6 lg:p-7">
-            <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-              <div className="max-w-2xl space-y-2">
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(147,171,255)]">
-                  {t.androidBeta.eyebrow}
-                </p>
-                <h2 className="font-display text-2xl font-semibold text-[var(--ink)] md:text-3xl">
-                  {t.androidBeta.title}
-                </h2>
-                <p className="leading-relaxed text-[var(--ink-soft)]">
-                  {t.androidBeta.body}
-                </p>
-              </div>
-
-              <div className="flex shrink-0 flex-wrap items-center gap-3">
-                <a
-                  href={GOOGLE_PLAY_BETA_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex rounded-full border-2 border-[rgba(143,168,255,0.75)] bg-[linear-gradient(135deg,rgba(94,127,255,0.9),rgba(128,39,130,0.85))] px-6 py-3 text-sm font-semibold text-white shadow-[0_18px_50px_-28px_rgba(128,39,130,0.9)] transition-transform hover:scale-[1.02]"
-                >
-                  {t.androidBeta.primaryCta}
-                </a>
-                <a
-                  href={GOOGLE_PLAY_STORE_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-full border-2 border-[rgba(143,168,255,0.75)] bg-white/[0.02] px-6 py-3 text-sm font-medium text-[var(--ink)] transition-colors hover:border-[rgba(128,39,130,0.95)] hover:bg-[rgba(128,39,130,0.16)]"
-                >
-                  {t.androidBeta.secondaryCta}
-                </a>
-              </div>
             </div>
           </div>
         </section>
@@ -391,71 +321,6 @@ export default function LocalePage({ params }: LocalePageProps) {
                 </div>
               </article>
             ))}
-          </div>
-        </section>
-
-        <section id="pricing" className="section-shell pb-20 md:pb-28">
-          <div className="mb-10 max-w-2xl space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(147,171,255)]">
-              {t.pricing.eyebrow}
-            </p>
-            <h2 className="font-display text-3xl font-semibold text-[var(--ink)] md:text-4xl">
-              {t.pricing.title}
-            </h2>
-            <p className="leading-relaxed text-[var(--ink-soft)]">{t.pricing.subtitle}</p>
-          </div>
-
-          <div className="grid gap-4 lg:grid-cols-2">
-            {t.pricing.plans.map((plan, index) => {
-              const isPro = index === 1;
-
-              return (
-                <article
-                  key={plan.name}
-                  className={`glass-panel rounded-3xl border p-6 shadow-[0_24px_70px_-45px_rgba(0,0,0,0.95)] ${
-                    isPro ? "border-[rgba(209,161,255,0.55)] bg-white/[0.055]" : ""
-                  }`}
-                >
-                  <div className="mb-5 flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[rgb(147,171,255)]">
-                        {plan.label}
-                      </p>
-                      <h3 className="mt-2 font-display text-2xl font-semibold text-[rgb(209,161,255)]">
-                        {plan.name}
-                      </h3>
-                    </div>
-                    {isPro ? (
-                      <span className="rounded-full border border-[rgba(209,161,255,0.45)] bg-[rgba(128,39,130,0.2)] px-3 py-1 text-xs font-semibold text-[rgb(235,213,255)]">
-                        Pro
-                      </span>
-                    ) : null}
-                  </div>
-
-                  <p className="min-h-[4rem] leading-relaxed text-[var(--ink-soft)]">
-                    {plan.description}
-                  </p>
-
-                  <ul className="mt-6 space-y-3">
-                    {plan.items.map((item) => (
-                      <li key={item} className="flex gap-3 text-[var(--ink-soft)]">
-                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[rgb(147,171,255)]" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </article>
-              );
-            })}
-          </div>
-
-          <div className="mt-8">
-            <a
-              href={TESTFLIGHT_URL}
-              className="inline-flex rounded-full border-2 border-[rgba(143,168,255,0.75)] bg-[linear-gradient(135deg,rgba(94,127,255,0.9),rgba(128,39,130,0.85))] px-7 py-3 text-sm font-semibold text-white shadow-[0_18px_50px_-28px_rgba(128,39,130,0.9)] transition-transform hover:scale-[1.02]"
-            >
-              {t.pricing.cta}
-            </a>
           </div>
         </section>
 

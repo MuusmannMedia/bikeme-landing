@@ -88,7 +88,7 @@ export default function OpengraphImage() {
               color: "#edf1ff"
             }}
           >
-            Bike Me beta is open on TestFlight
+            Bike Me is coming soon
           </div>
         </div>
       </div>
