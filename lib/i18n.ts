@@ -21,12 +21,22 @@ type ScreenshotItem = {
   description: string;
 };
 
+type LaunchSection = {
+  eyebrow: string;
+  title: string;
+  text: string;
+  note: string;
+  cta: string;
+  imageAlt: string;
+};
+
 export type Dictionary = {
   meta: {
     title: string;
     description: string;
   };
   nav: {
+    download: string;
     features: string;
     howItWorks: string;
     screenshots: string;
@@ -45,6 +55,7 @@ export type Dictionary = {
     intro: string;
     bullets: string[];
   };
+  launch: LaunchSection;
   features: {
     eyebrow: string;
     title: string;
@@ -77,11 +88,12 @@ export type Dictionary = {
 const dictionaries: Record<Locale, Dictionary> = {
   en: {
     meta: {
-      title: "Bike Me | Cycling community coming soon",
+      title: "Bike Me | Now on the App Store",
       description:
-        "Bike Me helps cyclists keep in touch, invite friends, and create private or public rides."
+        "Download Bike Me for iPhone and start creating rides, inviting riders, and finding cycling routes near you."
     },
     nav: {
+      download: "Download",
       features: "Features",
       howItWorks: "How it works",
       screenshots: "Screenshots",
@@ -91,10 +103,10 @@ const dictionaries: Record<Locale, Dictionary> = {
       headline: "Keep your cycling friends close - and find new riders",
       subheadline:
         "Bike Me brings your cycling contacts, rides, and invitations together. Create private rides for friends or public rides where new cyclists can join.",
-      payoffTitle: "Bike Me is coming soon",
+      payoffTitle: "Bike Me is now on the App Store",
       payoffText:
-        "We are preparing Bike Me for launch. Until then, explore how the app will bring cycling friends, rides, and invitations together.",
-      primaryCta: "Learn more",
+        "Download Bike Me for iPhone and start creating rides, inviting riders, and finding cycling routes near you.",
+      primaryCta: "Download on the App Store",
       secondaryCta: "See how it works",
       previewLabel: "App preview"
     },
@@ -108,6 +120,15 @@ const dictionaries: Record<Locale, Dictionary> = {
         "Import a GPX route (optional)",
         "Get push alerts for important ride changes"
       ]
+    },
+    launch: {
+      eyebrow: "Available for iPhone",
+      title: "Download Bike Me for iPhone",
+      text:
+        "Bike Me brings your cycling friends, rides, and invitations together. Create private rides for friends or public rides where new riders can join.",
+      note: "Available now on the App Store",
+      cta: "Open in the App Store",
+      imageAlt: "Bike Me app launch preview"
     },
     features: {
       eyebrow: "Features",
@@ -248,9 +269,8 @@ const dictionaries: Record<Locale, Dictionary> = {
             "Bike Me is a cycling app for finding riders, creating rides, inviting others, and keeping track of your rides."
         },
         {
-          question: "When will Bike Me be available?",
-          answer:
-            "Bike Me is being prepared for launch. Availability will be shared on this website when the app is ready."
+          question: "Where can I download Bike Me?",
+          answer: "You can download Bike Me for iPhone from the App Store."
         },
         {
           question: "How does Ride Now work?",
@@ -276,11 +296,12 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   da: {
     meta: {
-      title: "Bike Me | Cykelfællesskab på vej",
+      title: "Bike Me | Nu på App Store",
       description:
-        "Bike Me samler cykelvenner, invitationer og private eller offentlige ture."
+        "Hent Bike Me til iPhone og kom i gang med at arrangere cykelture, invitere ryttere og finde ture i dit område."
     },
     nav: {
+      download: "Hent appen",
       features: "Funktioner",
       howItWorks: "Sådan virker det",
       screenshots: "Skærmbilleder",
@@ -290,10 +311,10 @@ const dictionaries: Record<Locale, Dictionary> = {
       headline: "Hold fast i dine cykelvenner - og find nye at køre med",
       subheadline:
         "Bike Me samler dine cykelbekendtskaber, ture og invitationer ét sted. Opret private ture for dine venner, eller lav offentlige ture, hvor nye ryttere kan hoppe med.",
-      payoffTitle: "Bike Me er på vej",
+      payoffTitle: "Bike Me er nu på App Store",
       payoffText:
-        "Vi gør Bike Me klar til lancering. Indtil da kan du se, hvordan appen samler cykelvenner, ture og invitationer ét sted.",
-      primaryCta: "Læs mere",
+        "Hent Bike Me til iPhone og kom i gang med at arrangere cykelture, invitere ryttere og finde ture i dit område.",
+      primaryCta: "Hent i App Store",
       secondaryCta: "Se hvordan det virker",
       previewLabel: "App-preview"
     },
@@ -307,6 +328,15 @@ const dictionaries: Record<Locale, Dictionary> = {
         "Importér en GPX-rute (valgfrit)",
         "Få push-besked ved vigtige turændringer"
       ]
+    },
+    launch: {
+      eyebrow: "Tilgængelig til iPhone",
+      title: "Download Bike Me til iPhone",
+      text:
+        "Bike Me samler dine cykelvenner, ture og invitationer ét sted. Opret private ture for venner eller offentlige ture, hvor nye ryttere kan melde sig til.",
+      note: "Tilgængelig nu i App Store",
+      cta: "Åbn i App Store",
+      imageAlt: "Bike Me app launch preview"
     },
     features: {
       eyebrow: "Funktioner",
@@ -447,9 +477,8 @@ const dictionaries: Record<Locale, Dictionary> = {
             "Bike Me er en cykelapp til at finde ryttere, oprette ture, invitere andre og holde styr på dine cykelture."
         },
         {
-          question: "Hvornår bliver Bike Me tilgængelig?",
-          answer:
-            "Bike Me er ved at blive gjort klar til lancering. Tilgængelighed bliver delt her på hjemmesiden, når appen er klar."
+          question: "Hvor kan jeg hente Bike Me?",
+          answer: "Du kan hente Bike Me til iPhone i App Store."
         },
         {
           question: "Hvordan virker KØR NU?",
@@ -475,11 +504,12 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   de: {
     meta: {
-      title: "Bike Me | Radcommunity bald verfügbar",
+      title: "Bike Me | Jetzt im App Store",
       description:
-        "Bike Me verbindet Radfreunde, Einladungen und private oder öffentliche Fahrten."
+        "Lade Bike Me für iPhone und erstelle Fahrten, lade Fahrer ein und finde Routen in deiner Nähe."
     },
     nav: {
+      download: "Download",
       features: "Funktionen",
       howItWorks: "So funktioniert's",
       screenshots: "Screenshots",
@@ -489,10 +519,10 @@ const dictionaries: Record<Locale, Dictionary> = {
       headline: "Bleib mit deinen Radfreunden verbunden - und finde neue",
       subheadline:
         "Bike Me bringt deine Radkontakte, Fahrten und Einladungen an einem Ort zusammen. Erstelle private Fahrten für Freunde oder öffentliche Fahrten, bei denen neue Fahrer dazukommen können.",
-      payoffTitle: "Bike Me kommt bald",
+      payoffTitle: "Bike Me ist jetzt im App Store",
       payoffText:
-        "Wir bereiten Bike Me für den Start vor. Bis dahin kannst du sehen, wie die App Radfreunde, Fahrten und Einladungen zusammenbringt.",
-      primaryCta: "Mehr erfahren",
+        "Lade Bike Me für iPhone und erstelle Fahrten, lade Fahrer ein und finde Routen in deiner Nähe.",
+      primaryCta: "Im App Store laden",
       secondaryCta: "So funktioniert's",
       previewLabel: "App-Vorschau"
     },
@@ -506,6 +536,15 @@ const dictionaries: Record<Locale, Dictionary> = {
         "Importiere eine GPX-Route (optional)",
         "Erhalte Push-Benachrichtigungen bei wichtigen Fahrtänderungen"
       ]
+    },
+    launch: {
+      eyebrow: "Für iPhone verfügbar",
+      title: "Bike Me für iPhone herunterladen",
+      text:
+        "Bike Me bringt Radfreunde, Fahrten und Einladungen an einem Ort zusammen. Erstelle private Fahrten für Freunde oder öffentliche Fahrten, bei denen neue Fahrer dazukommen können.",
+      note: "Jetzt im App Store verfügbar",
+      cta: "Im App Store öffnen",
+      imageAlt: "Bike Me App-Launch-Vorschau"
     },
     features: {
       eyebrow: "Funktionen",
@@ -646,9 +685,8 @@ const dictionaries: Record<Locale, Dictionary> = {
             "Bike Me ist eine Fahrrad-App, mit der du Fahrer finden, Fahrten erstellen, andere einladen und deine Touren im Blick behalten kannst."
         },
         {
-          question: "Wann wird Bike Me verfügbar sein?",
-          answer:
-            "Bike Me wird gerade für den Start vorbereitet. Die Verfügbarkeit wird auf dieser Website geteilt, sobald die App bereit ist."
+          question: "Wo kann ich Bike Me herunterladen?",
+          answer: "Du kannst Bike Me für iPhone im App Store herunterladen."
         },
         {
           question: "Wie funktioniert Ride Now?",
@@ -674,11 +712,12 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   es: {
     meta: {
-      title: "Bike Me | Comunidad ciclista próximamente",
+      title: "Bike Me | Ya en App Store",
       description:
-        "Bike Me reúne amigos ciclistas, invitaciones y salidas privadas o públicas."
+        "Descarga Bike Me para iPhone y empieza a crear salidas, invitar ciclistas y encontrar rutas cerca de ti."
     },
     nav: {
+      download: "Descargar",
       features: "Funciones",
       howItWorks: "Cómo funciona",
       screenshots: "Capturas",
@@ -688,10 +727,10 @@ const dictionaries: Record<Locale, Dictionary> = {
       headline: "Mantén cerca a tus amigos ciclistas - y encuentra nuevos",
       subheadline:
         "Bike Me reúne tus contactos ciclistas, salidas e invitaciones en un solo lugar. Crea salidas privadas para tus amigos o salidas públicas para que se unan nuevos ciclistas.",
-      payoffTitle: "Bike Me llegará pronto",
+      payoffTitle: "Bike Me ya está en App Store",
       payoffText:
-        "Estamos preparando Bike Me para su lanzamiento. Mientras tanto, descubre cómo la app reunirá amigos ciclistas, salidas e invitaciones.",
-      primaryCta: "Más información",
+        "Descarga Bike Me para iPhone y empieza a crear salidas, invitar ciclistas y encontrar rutas cerca de ti.",
+      primaryCta: "Descargar en App Store",
       secondaryCta: "Ver cómo funciona",
       previewLabel: "Vista de la app"
     },
@@ -705,6 +744,15 @@ const dictionaries: Record<Locale, Dictionary> = {
         "Importa una ruta GPX (opcional)",
         "Recibe notificaciones push sobre cambios importantes de la salida"
       ]
+    },
+    launch: {
+      eyebrow: "Disponible para iPhone",
+      title: "Descarga Bike Me para iPhone",
+      text:
+        "Bike Me reúne tus amigos ciclistas, salidas e invitaciones en un solo lugar. Crea salidas privadas para amigos o salidas públicas donde nuevos ciclistas puedan unirse.",
+      note: "Disponible ahora en App Store",
+      cta: "Abrir en App Store",
+      imageAlt: "Vista de lanzamiento de la app Bike Me"
     },
     features: {
       eyebrow: "Funciones",
@@ -845,9 +893,8 @@ const dictionaries: Record<Locale, Dictionary> = {
             "Bike Me es una app ciclista para encontrar ciclistas, crear salidas, invitar a otros y seguir tus rutas."
         },
         {
-          question: "¿Cuándo estará disponible Bike Me?",
-          answer:
-            "Bike Me se está preparando para su lanzamiento. La disponibilidad se compartirá en esta web cuando la app esté lista."
+          question: "¿Dónde puedo descargar Bike Me?",
+          answer: "Puedes descargar Bike Me para iPhone desde App Store."
         },
         {
           question: "¿Cómo funciona Ride Now?",
@@ -873,11 +920,12 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   it: {
     meta: {
-      title: "Bike Me | Community ciclistica in arrivo",
+      title: "Bike Me | Ora su App Store",
       description:
-        "Bike Me riunisce amici ciclisti, inviti e uscite private o pubbliche."
+        "Scarica Bike Me per iPhone e inizia a creare uscite, invitare ciclisti e trovare percorsi vicino a te."
     },
     nav: {
+      download: "Scarica",
       features: "Funzionalità",
       howItWorks: "Come funziona",
       screenshots: "Screenshot",
@@ -887,10 +935,10 @@ const dictionaries: Record<Locale, Dictionary> = {
       headline: "Resta vicino ai tuoi amici ciclisti - e trovane di nuovi",
       subheadline:
         "Bike Me riunisce contatti ciclistici, uscite e inviti in un unico posto. Crea uscite private per gli amici o uscite pubbliche dove nuovi ciclisti possono unirsi.",
-      payoffTitle: "Bike Me arriverà presto",
+      payoffTitle: "Bike Me è ora su App Store",
       payoffText:
-        "Stiamo preparando Bike Me per il lancio. Nel frattempo puoi scoprire come l'app riunirà amici ciclisti, uscite e inviti.",
-      primaryCta: "Scopri di più",
+        "Scarica Bike Me per iPhone e inizia a creare uscite, invitare ciclisti e trovare percorsi vicino a te.",
+      primaryCta: "Scarica su App Store",
       secondaryCta: "Scopri come funziona",
       previewLabel: "Anteprima app"
     },
@@ -904,6 +952,15 @@ const dictionaries: Record<Locale, Dictionary> = {
         "Importa un percorso GPX (opzionale)",
         "Ricevi notifiche push per i cambiamenti importanti dell'uscita"
       ]
+    },
+    launch: {
+      eyebrow: "Disponibile per iPhone",
+      title: "Scarica Bike Me per iPhone",
+      text:
+        "Bike Me riunisce amici ciclisti, uscite e inviti in un unico posto. Crea uscite private per gli amici o uscite pubbliche a cui nuovi ciclisti possono unirsi.",
+      note: "Disponibile ora su App Store",
+      cta: "Apri su App Store",
+      imageAlt: "Anteprima del lancio dell'app Bike Me"
     },
     features: {
       eyebrow: "Funzionalità",
@@ -1044,9 +1101,8 @@ const dictionaries: Record<Locale, Dictionary> = {
             "Bike Me è un'app per ciclisti per trovare altri ciclisti, creare uscite, invitare persone e tenere traccia delle tue pedalate."
         },
         {
-          question: "Quando sarà disponibile Bike Me?",
-          answer:
-            "Bike Me è in preparazione per il lancio. La disponibilità verrà condivisa su questo sito quando l'app sarà pronta."
+          question: "Dove posso scaricare Bike Me?",
+          answer: "Puoi scaricare Bike Me per iPhone da App Store."
         },
         {
           question: "Come funziona Ride Now?",
@@ -1072,11 +1128,12 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   fr: {
     meta: {
-      title: "Bike Me | Communauté cycliste bientôt disponible",
+      title: "Bike Me | Maintenant sur l'App Store",
       description:
-        "Bike Me rassemble amis cyclistes, invitations et sorties privées ou publiques."
+        "Téléchargez Bike Me pour iPhone et commencez à créer des sorties, inviter des cyclistes et trouver des itinéraires près de vous."
     },
     nav: {
+      download: "Télécharger",
       features: "Fonctionnalités",
       howItWorks: "Comment ça marche",
       screenshots: "Captures",
@@ -1086,10 +1143,10 @@ const dictionaries: Record<Locale, Dictionary> = {
       headline: "Gardez vos amis cyclistes près de vous - et trouvez-en de nouveaux",
       subheadline:
         "Bike Me réunit vos contacts cyclistes, sorties et invitations au même endroit. Créez des sorties privées pour vos amis ou des sorties publiques où de nouveaux cyclistes peuvent vous rejoindre.",
-      payoffTitle: "Bike Me arrive bientôt",
+      payoffTitle: "Bike Me est maintenant sur l'App Store",
       payoffText:
-        "Nous préparons Bike Me pour son lancement. En attendant, découvrez comment l'app réunira amis cyclistes, sorties et invitations.",
-      primaryCta: "En savoir plus",
+        "Téléchargez Bike Me pour iPhone et commencez à créer des sorties, inviter des cyclistes et trouver des itinéraires près de vous.",
+      primaryCta: "Télécharger sur l'App Store",
       secondaryCta: "Voir le fonctionnement",
       previewLabel: "Aperçu de l'app"
     },
@@ -1103,6 +1160,15 @@ const dictionaries: Record<Locale, Dictionary> = {
         "Importez un itinéraire GPX (optionnel)",
         "Recevez des notifications push en cas de changement important de sortie"
       ]
+    },
+    launch: {
+      eyebrow: "Disponible pour iPhone",
+      title: "Télécharger Bike Me pour iPhone",
+      text:
+        "Bike Me rassemble vos amis cyclistes, sorties et invitations au même endroit. Créez des sorties privées pour vos amis ou des sorties publiques où de nouveaux cyclistes peuvent vous rejoindre.",
+      note: "Disponible maintenant sur l'App Store",
+      cta: "Ouvrir dans l'App Store",
+      imageAlt: "Aperçu du lancement de l'app Bike Me"
     },
     features: {
       eyebrow: "Fonctionnalités",
@@ -1243,9 +1309,8 @@ const dictionaries: Record<Locale, Dictionary> = {
             "Bike Me est une app cycliste pour trouver des cyclistes, créer des sorties, inviter d'autres personnes et suivre vos sorties."
         },
         {
-          question: "Quand Bike Me sera-t-elle disponible ?",
-          answer:
-            "Bike Me est en préparation pour son lancement. La disponibilité sera partagée sur ce site lorsque l'app sera prête."
+          question: "Où télécharger Bike Me ?",
+          answer: "Vous pouvez télécharger Bike Me pour iPhone sur l'App Store."
         },
         {
           question: "Comment fonctionne Ride Now ?",
@@ -1271,11 +1336,12 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
   nl: {
     meta: {
-      title: "Bike Me | Fietscommunity binnenkort",
+      title: "Bike Me | Nu in de App Store",
       description:
-        "Bike Me brengt fietsvrienden, uitnodigingen en private of openbare ritten samen."
+        "Download Bike Me voor iPhone en begin met ritten maken, fietsers uitnodigen en routes in je buurt vinden."
     },
     nav: {
+      download: "Download",
       features: "Functies",
       howItWorks: "Hoe het werkt",
       screenshots: "Screenshots",
@@ -1285,10 +1351,10 @@ const dictionaries: Record<Locale, Dictionary> = {
       headline: "Houd je fietsvrienden dichtbij - en vind nieuwe",
       subheadline:
         "Bike Me brengt je fietscontacten, ritten en uitnodigingen op één plek samen. Maak private ritten voor vrienden of openbare ritten waar nieuwe fietsers kunnen aansluiten.",
-      payoffTitle: "Bike Me komt binnenkort",
+      payoffTitle: "Bike Me staat nu in de App Store",
       payoffText:
-        "We maken Bike Me klaar voor lancering. Tot die tijd kun je zien hoe de app fietsvrienden, ritten en uitnodigingen samenbrengt.",
-      primaryCta: "Lees meer",
+        "Download Bike Me voor iPhone en begin met ritten maken, fietsers uitnodigen en routes in je buurt vinden.",
+      primaryCta: "Download in de App Store",
       secondaryCta: "Bekijk hoe het werkt",
       previewLabel: "App-preview"
     },
@@ -1302,6 +1368,15 @@ const dictionaries: Record<Locale, Dictionary> = {
         "Importeer een GPX-route (optioneel)",
         "Ontvang pushmeldingen bij belangrijke ritwijzigingen"
       ]
+    },
+    launch: {
+      eyebrow: "Beschikbaar voor iPhone",
+      title: "Download Bike Me voor iPhone",
+      text:
+        "Bike Me brengt je fietsvrienden, ritten en uitnodigingen op één plek samen. Maak private ritten voor vrienden of openbare ritten waar nieuwe fietsers kunnen aansluiten.",
+      note: "Nu beschikbaar in de App Store",
+      cta: "Open in de App Store",
+      imageAlt: "Bike Me app-lanceringspreview"
     },
     features: {
       eyebrow: "Functies",
@@ -1442,9 +1517,8 @@ const dictionaries: Record<Locale, Dictionary> = {
             "Bike Me is een fietsapp om fietsers te vinden, ritten te maken, anderen uit te nodigen en je ritten bij te houden."
         },
         {
-          question: "Wanneer is Bike Me beschikbaar?",
-          answer:
-            "Bike Me wordt klaargemaakt voor lancering. Beschikbaarheid wordt op deze website gedeeld zodra de app klaar is."
+          question: "Waar kan ik Bike Me downloaden?",
+          answer: "Je kunt Bike Me voor iPhone downloaden in de App Store."
         },
         {
           question: "Hoe werkt Ride Now?",

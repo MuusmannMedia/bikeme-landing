@@ -88,7 +88,7 @@ export default function OpengraphImage() {
               color: "#edf1ff"
             }}
           >
-            Bike Me is coming soon
+            Bike Me is now on the App Store
           </div>
         </div>
       </div>

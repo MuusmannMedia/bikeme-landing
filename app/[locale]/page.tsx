@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 
 import { getDictionary } from "@/lib/i18n";
 import { isLocale, localeLabels, locales, type Locale } from "@/lib/locales";
-import { CANONICAL_DOMAIN, CONTACT_EMAIL } from "@/lib/site-config";
+import { APP_STORE_URL, CANONICAL_DOMAIN, CONTACT_EMAIL } from "@/lib/site-config";
 
 type LocalePageProps = {
   params: {
@@ -71,6 +71,7 @@ export default function LocalePage({ params }: LocalePageProps) {
   const t = getDictionary(locale);
 
   const navLinks = [
+    { id: "download", label: t.nav.download },
     { id: "features", label: t.nav.features },
     { id: "how-it-works", label: t.nav.howItWorks },
     { id: "screenshots", label: t.nav.screenshots },
@@ -162,7 +163,9 @@ export default function LocalePage({ params }: LocalePageProps) {
 
             <div className="animate-fade-up flex flex-wrap items-center gap-3 [animation-delay:220ms]">
               <a
-                href="#features"
+                href={APP_STORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex rounded-full border-2 border-[rgba(143,168,255,0.75)] bg-[linear-gradient(135deg,rgba(94,127,255,0.9),rgba(128,39,130,0.85))] px-7 py-3 text-sm font-semibold text-white shadow-[0_18px_50px_-28px_rgba(128,39,130,0.9)] transition-transform hover:scale-[1.02]"
               >
                 {t.hero.primaryCta}
@@ -179,13 +182,41 @@ export default function LocalePage({ params }: LocalePageProps) {
           <div className="relative lg:pl-8">
             <div className="relative mx-auto h-[360px] max-w-xl overflow-hidden rounded-[2.2rem] border border-white/10 shadow-[0_40px_90px_-45px_rgba(0,0,0,0.85)] sm:h-[440px] lg:h-[520px]">
               <Image
-                src="/hero/hero-photo.jpg"
-                alt="Bike Me cyclists riding together"
+                src="/hero/hero-app-launch.jpg"
+                alt={t.launch.imageAlt}
                 fill
                 priority
                 sizes="(max-width: 1024px) 90vw, 560px"
                 className="object-cover"
               />
+            </div>
+          </div>
+        </section>
+
+        <section id="download" className="section-shell pb-20 md:pb-24">
+          <div className="glass-panel overflow-hidden rounded-3xl border shadow-[0_32px_80px_-50px_rgba(0,0,0,0.9)]">
+            <div className="grid gap-8 px-5 py-10 md:px-8 md:py-12 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:px-10">
+              <div className="max-w-3xl space-y-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(147,171,255)]">
+                  {t.launch.eyebrow}
+                </p>
+                <h2 className="font-display text-3xl font-semibold leading-tight text-[var(--ink)] md:text-4xl">
+                  {t.launch.title}
+                </h2>
+                <p className="text-lg leading-relaxed text-[var(--ink-soft)]">
+                  {t.launch.text}
+                </p>
+                <p className="text-sm font-medium text-[rgb(209,161,255)]">{t.launch.note}</p>
+              </div>
+
+              <a
+                href={APP_STORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex w-fit rounded-full border-2 border-[rgba(143,168,255,0.75)] bg-[linear-gradient(135deg,rgba(94,127,255,0.9),rgba(128,39,130,0.85))] px-7 py-3 text-sm font-semibold text-white shadow-[0_18px_50px_-28px_rgba(128,39,130,0.9)] transition-transform hover:scale-[1.02]"
+              >
+                {t.launch.cta}
+              </a>
             </div>
           </div>
         </section>
