@@ -38,7 +38,7 @@ function detectLocale(acceptLanguageHeader: string | null): string {
   return defaultLocale;
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isMetadataRoute = metadataRoutePrefixes.some((prefix) =>
     pathname === prefix || pathname.startsWith(`${prefix}/`)

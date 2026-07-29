@@ -8,9 +8,9 @@ import { isLocale, localeLabels, locales, type Locale } from "@/lib/locales";
 import { APP_STORE_URL, CANONICAL_DOMAIN, CONTACT_EMAIL } from "@/lib/site-config";
 
 type LocalePageProps = {
-  params: {
+  params: Promise<{
     locale: string;
-  };
+  }>;
 };
 
 const openGraphLocales: Record<Locale, string> = {
@@ -32,8 +32,9 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
-export function generateMetadata({ params }: LocalePageProps): Metadata {
-  const locale: Locale = isLocale(params.locale) ? params.locale : "en";
+export async function generateMetadata({ params }: LocalePageProps): Promise<Metadata> {
+  const { locale: localeParam } = await params;
+  const locale: Locale = isLocale(localeParam) ? localeParam : "en";
   const dictionary = getDictionary(locale);
 
   return {
@@ -62,12 +63,14 @@ export function generateMetadata({ params }: LocalePageProps): Metadata {
   };
 }
 
-export default function LocalePage({ params }: LocalePageProps) {
-  if (!isLocale(params.locale)) {
+export default async function LocalePage({ params }: LocalePageProps) {
+  const { locale: localeParam } = await params;
+
+  if (!isLocale(localeParam)) {
     notFound();
   }
 
-  const locale = params.locale as Locale;
+  const locale = localeParam as Locale;
   const t = getDictionary(locale);
 
   const navLinks = [
