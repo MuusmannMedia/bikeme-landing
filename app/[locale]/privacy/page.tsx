@@ -7,9 +7,9 @@ import { Fragment } from "react";
 import { isLocale, locales, type Locale } from "@/lib/locales";
 
 type LocalePageProps = {
-  params: {
+  params: Promise<{
     locale: string;
-  };
+  }>;
 };
 
 type PrivacyListItem = {
@@ -928,8 +928,9 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
-export function generateMetadata({ params }: LocalePageProps): Metadata {
-  const locale: Locale = isLocale(params.locale) ? params.locale : "en";
+export async function generateMetadata({ params }: LocalePageProps): Promise<Metadata> {
+  const { locale: localeParam } = await params;
+  const locale: Locale = isLocale(localeParam) ? localeParam : "en";
   const fallback = metadataByLocale.en!;
   const meta = metadataByLocale[locale] ?? fallback;
 
@@ -948,12 +949,14 @@ function renderWithLineBreaks(text: string) {
   ));
 }
 
-export default function PrivacyPage({ params }: LocalePageProps) {
-  if (!isLocale(params.locale)) {
+export default async function PrivacyPage({ params }: LocalePageProps) {
+  const { locale: localeParam } = await params;
+
+  if (!isLocale(localeParam)) {
     notFound();
   }
 
-  const locale = params.locale as Locale;
+  const locale = localeParam as Locale;
   const fallback = uiByLocale.en!;
   const ui = uiByLocale[locale] ?? fallback;
   const privacy = privacyContentByLocale[locale] ?? privacyContentByLocale.en;

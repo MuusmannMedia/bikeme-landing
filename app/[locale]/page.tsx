@@ -3,14 +3,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { getAuthDictionary } from "@/lib/auth-i18n";
 import { getDictionary } from "@/lib/i18n";
 import { isLocale, localeLabels, locales, type Locale } from "@/lib/locales";
 import { APP_STORE_URL, CANONICAL_DOMAIN, CONTACT_EMAIL } from "@/lib/site-config";
 
 type LocalePageProps = {
-  params: {
+  params: Promise<{
     locale: string;
-  };
+  }>;
 };
 
 const openGraphLocales: Record<Locale, string> = {
@@ -32,8 +33,9 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
-export function generateMetadata({ params }: LocalePageProps): Metadata {
-  const locale: Locale = isLocale(params.locale) ? params.locale : "en";
+export async function generateMetadata({ params }: LocalePageProps): Promise<Metadata> {
+  const { locale: localeParam } = await params;
+  const locale: Locale = isLocale(localeParam) ? localeParam : "en";
   const dictionary = getDictionary(locale);
 
   return {
@@ -62,13 +64,16 @@ export function generateMetadata({ params }: LocalePageProps): Metadata {
   };
 }
 
-export default function LocalePage({ params }: LocalePageProps) {
-  if (!isLocale(params.locale)) {
+export default async function LocalePage({ params }: LocalePageProps) {
+  const { locale: localeParam } = await params;
+
+  if (!isLocale(localeParam)) {
     notFound();
   }
 
-  const locale = params.locale as Locale;
+  const locale = localeParam as Locale;
   const t = getDictionary(locale);
+  const auth = getAuthDictionary(locale);
 
   const navLinks = [
     { id: "download", label: t.nav.download },
@@ -81,7 +86,7 @@ export default function LocalePage({ params }: LocalePageProps) {
   return (
     <div className="pb-10">
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#060b16]/80 backdrop-blur-xl supports-[backdrop-filter]:bg-[#060b16]/70">
-        <div className="section-shell flex h-20 items-center justify-between gap-4">
+        <div className="section-shell flex h-20 items-center justify-between gap-2 xl:gap-4">
           <Link href={`/${locale}`} aria-label="Bike Me" className="flex items-center">
             <Image
               src="/brand/bike-me-logo-white.png"
@@ -98,14 +103,21 @@ export default function LocalePage({ params }: LocalePageProps) {
               <a
                 key={link.id}
                 href={`#${link.id}`}
-                className="transition-colors hover:text-white"
+                className="whitespace-nowrap transition-colors hover:text-white"
               >
                 {link.label}
               </a>
             ))}
           </nav>
 
-          <div className="flex min-w-0 items-center">
+          <div className="relative flex min-w-0 items-center gap-2">
+            <Link
+              href={`/${locale}/login`}
+              prefetch={false}
+              className="hidden min-h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-full border border-white/20 bg-white/[0.04] px-2 text-xs font-semibold text-white transition-colors hover:border-[rgba(128,39,130,0.82)] hover:bg-[rgba(128,39,130,0.16)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(209,161,255)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060b16] sm:inline-flex min-[1430px]:absolute min-[1430px]:right-[calc(100%+0.5rem)]"
+            >
+              {auth.navLogin}
+            </Link>
             <div className="flex max-w-[64vw] items-center gap-1 overflow-x-auto rounded-full border border-white/15 bg-white/[0.04] px-2 py-1 text-xs [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:max-w-none">
               {locales.map((code) => (
                 <Link
@@ -125,6 +137,13 @@ export default function LocalePage({ params }: LocalePageProps) {
           </div>
         </div>
         <div className="section-shell flex gap-4 overflow-x-auto pb-3 text-sm text-[var(--ink-soft)] lg:hidden">
+          <Link
+            href={`/${locale}/login`}
+            prefetch={false}
+            className="-my-2 inline-flex min-h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-full border border-white/20 bg-white/[0.04] px-3 text-sm font-semibold text-white transition-colors hover:border-[rgba(128,39,130,0.82)] hover:bg-[rgba(128,39,130,0.16)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(209,161,255)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060b16] sm:hidden"
+          >
+            {auth.navLogin}
+          </Link>
           {navLinks.map((link) => (
             <a
               key={link.id}
