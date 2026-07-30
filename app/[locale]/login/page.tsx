@@ -8,6 +8,7 @@ import { getAuthDictionary } from "@/lib/auth-i18n";
 import { isLocale, type Locale } from "@/lib/locales";
 
 import { loginAction } from "./actions";
+import { AppleLoginButton } from "./apple-login-button";
 import { LoginForm } from "./login-form";
 
 export const dynamic = "force-dynamic";
@@ -62,9 +63,11 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
       ? translations.invalidCredentials
       : errorCode === "expired"
         ? translations.sessionExpired
-        : errorCode === "generic"
-          ? translations.genericError
-          : null;
+        : errorCode === "apple"
+          ? translations.appleLoginError
+          : errorCode === "generic"
+            ? translations.genericError
+            : null;
 
   return (
     <main className="section-shell flex min-h-screen items-center justify-center py-10 md:py-16">
@@ -93,6 +96,12 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
           <LoginForm
             action={loginAction}
             errorMessage={errorMessage}
+            locale={locale}
+            returnTo={returnTo}
+            translations={translations}
+          />
+
+          <AppleLoginButton
             locale={locale}
             returnTo={returnTo}
             translations={translations}
