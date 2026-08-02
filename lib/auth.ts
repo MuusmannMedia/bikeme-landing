@@ -1,6 +1,6 @@
 import { isLocale, type Locale } from "./locales";
 
-export const authErrorCodes = ["invalid", "generic", "expired"] as const;
+export const authErrorCodes = ["invalid", "generic", "expired", "apple"] as const;
 
 export type AuthErrorCode = (typeof authErrorCodes)[number];
 

@@ -5,6 +5,7 @@ import {
   getSafeReturnPath,
   isProtectedRoutePath
 } from "@/lib/auth";
+import { isAppleAuthCallbackPath } from "@/lib/apple-auth";
 import { defaultLocale, isLocale } from "@/lib/locales";
 import {
   copyAuthResponseState,
@@ -56,6 +57,7 @@ export async function proxy(request: NextRequest) {
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
+    isAppleAuthCallbackPath(pathname) ||
     exactBypassPaths.has(pathname) ||
     isMetadataRoute ||
     pathname.includes(".")
