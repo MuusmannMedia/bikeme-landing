@@ -359,14 +359,17 @@ test("the Apple button uses the verified official white-style artwork accessibly
 test("auth routes stay private and noindex while public landing stays static", () => {
   const loginPageSource = projectFile("app/[locale]/login/page.tsx");
   const protectedPageSource = projectFile("app/[locale]/app/page.tsx");
+  const protectedLayoutSource = projectFile("app/[locale]/app/layout.tsx");
   const callbackSource = projectFile("app/auth/callback/route.ts");
   const publicPageSource = projectFile("app/[locale]/page.tsx");
 
   [loginPageSource, protectedPageSource].forEach((source) => {
     assert.ok(source.includes('dynamic = "force-dynamic"'));
     assert.ok(source.includes("revalidate = 0"));
-    assert.ok(source.includes("index: false"));
   });
+  assert.ok(protectedLayoutSource.includes('dynamic = "force-dynamic"'));
+  assert.ok(protectedLayoutSource.includes("revalidate = 0"));
+  assert.ok(protectedLayoutSource.includes("index: false"));
   assert.ok(callbackSource.includes("preventAuthCaching"));
   assert.ok(callbackSource.includes("X-Robots-Tag"));
   assert.ok(publicPageSource.includes("generateStaticParams"));
