@@ -136,3 +136,28 @@ test("authenticated routes remain dynamic, private and noindex while GPX is no-s
   assert.ok(gpx.includes('"Cache-Control": "private, no-store, max-age=0"'));
   assert.ok(gpx.includes('"X-Robots-Tag": "noindex, nofollow, noarchive"'));
 });
+
+test("history table keeps its full data contract inside a width-contained scroller", () => {
+  const history = projectFile("app/[locale]/app/history/page.tsx");
+  const styles = projectFile("app/globals.css");
+  const wrapperRule = styles.match(/\.bike-app-history-table-wrap\s*\{([^}]*)\}/)?.[1] ?? "";
+  const tableRule = styles.match(/\.bike-app-table\s*\{([^}]*)\}/)?.[1] ?? "";
+
+  assert.ok(history.includes('className="bike-app-history-table-wrap"'));
+  assert.ok(history.includes('className="bike-app-table"'));
+  [
+    't("history.details")',
+    't("rides.distance")',
+    't("history.duration")',
+    't("history.elevation")',
+    't("common.view")'
+  ].forEach((column) => assert.ok(history.includes(column), column));
+
+  assert.match(wrapperRule, /\bwidth:\s*100%\s*;/);
+  assert.match(wrapperRule, /\bmax-width:\s*100%\s*;/);
+  assert.match(wrapperRule, /\bmin-width:\s*0\s*;/);
+  assert.match(wrapperRule, /\boverflow-x:\s*auto\s*;/);
+  assert.match(wrapperRule, /\bcontain:\s*inline-size\s*;/);
+  assert.match(tableRule, /\bmin-width:\s*720px\s*;/);
+  assert.equal(/(?:html|body)\s*\{[\s\S]*?overflow-x:\s*hidden\s*;/.test(styles), false);
+});

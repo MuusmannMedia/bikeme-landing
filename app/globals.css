@@ -241,7 +241,7 @@ a {
 .bike-app-request-card h2 { margin: 0 0 4px; }
 .bike-app-request-card p { margin: 0; color: var(--app-muted); font-size: 13px; }
 .bike-app-convert-form { border-top: 1px solid rgba(201,121,209,.24); padding-top: 18px; }
-.bike-app-history-table-wrap { width: 100%; overflow-x: auto; }
+.bike-app-history-table-wrap { width: 100%; max-width: 100%; min-width: 0; overflow-x: auto; contain: inline-size; }
 .bike-app-table { width: 100%; border-collapse: collapse; min-width: 720px; }
 .bike-app-table th { border-bottom: 1px solid var(--app-border); padding: 13px 12px; color: var(--app-muted); font-size: 11px; letter-spacing: .07em; text-align: left; text-transform: uppercase; }
 .bike-app-table td { border-bottom: 1px solid rgba(148,163,194,.12); padding: 15px 12px; }
