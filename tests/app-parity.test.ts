@@ -145,6 +145,7 @@ test("history table keeps its full data contract inside a width-contained scroll
 
   assert.ok(history.includes('className="bike-app-history-table-wrap"'));
   assert.ok(history.includes('className="bike-app-table"'));
+  assert.equal(history.match(/<th(?:\s|>)/g)?.length, 5);
   [
     't("history.details")',
     't("rides.distance")',
@@ -152,6 +153,10 @@ test("history table keeps its full data contract inside a width-contained scroll
     't("history.elevation")',
     't("common.view")'
   ].forEach((column) => assert.ok(history.includes(column), column));
+  assert.ok(history.includes('<th aria-label={t("common.view")} />'));
+  assert.ok(history.includes('<Link aria-label={t("common.view")} className="bike-app-button bike-app-button-secondary bike-app-button-small"'));
+  assert.ok(history.includes('>{t("common.view")}</Link>'));
+  assert.equal(history.includes('className="sr-only"'), false);
 
   assert.match(wrapperRule, /\bwidth:\s*100%\s*;/);
   assert.match(wrapperRule, /\bmax-width:\s*100%\s*;/);
@@ -160,4 +165,94 @@ test("history table keeps its full data contract inside a width-contained scroll
   assert.match(wrapperRule, /\bcontain:\s*inline-size\s*;/);
   assert.match(tableRule, /\bmin-width:\s*720px\s*;/);
   assert.equal(/(?:html|body)\s*\{[\s\S]*?overflow-x:\s*hidden\s*;/.test(styles), false);
+});
+
+test("synthetic History fixture stays document-contained at release viewports", () => {
+  const styles = projectFile("app/globals.css");
+  const wrapperRule = styles.match(/\.bike-app-history-table-wrap\s*\{([^}]*)\}/)?.[1] ?? "";
+  const tableRule = styles.match(/\.bike-app-table\s*\{([^}]*)\}/)?.[1] ?? "";
+  const smallButtonRule = styles.match(/\.bike-app-button-small\s*\{([^}]*)\}/)?.[1] ?? "";
+  const localeIndex = new Map(appTranslationLocales.map((locale, index) => [locale, index]));
+  const syntheticRow = {
+    title: "Synthetic history row",
+    distance: "42.0 km",
+    duration: "2h 15m",
+    elevation: "420 m"
+  };
+
+  const fixture = (locale: "da" | "de" | "fr" | "nl") => {
+    const index = localeIndex.get(locale);
+    assert.notEqual(index, undefined);
+    const text = (key: Parameters<typeof getAppTranslationRow>[0]) => getAppTranslationRow(key)[index!];
+    const actionLabel = text("common.view");
+    const markup = [
+      '<div class="bike-app-history-table-wrap">',
+      '<table class="bike-app-table"><thead><tr>',
+      `<th>${text("history.details")}</th>`,
+      `<th>${text("rides.distance")}</th>`,
+      `<th>${text("history.duration")}</th>`,
+      `<th>${text("history.elevation")}</th>`,
+      `<th aria-label="${actionLabel}"></th>`,
+      "</tr></thead><tbody><tr>",
+      `<td>${syntheticRow.title}</td>`,
+      `<td>${syntheticRow.distance}</td>`,
+      `<td>${syntheticRow.duration}</td>`,
+      `<td>${syntheticRow.elevation}</td>`,
+      `<td><a aria-label="${actionLabel}" class="bike-app-button bike-app-button-secondary bike-app-button-small">${actionLabel}</a></td>`,
+      "</tr></tbody></table></div>"
+    ].join("");
+    return { actionLabel, markup };
+  };
+
+  assert.match(wrapperRule, /\boverflow-x:\s*auto\s*;/);
+  assert.match(wrapperRule, /\bcontain:\s*inline-size\s*;/);
+  assert.match(tableRule, /\bmin-width:\s*720px\s*;/);
+  assert.match(smallButtonRule, /\bmin-height:\s*44px\s*;/);
+  assert.equal(/(?:html|body)\s*\{[\s\S]*?overflow-x:\s*hidden\s*;/.test(styles), false);
+
+  for (const locale of ["da", "de", "fr", "nl"] as const) {
+    const rendered = fixture(locale);
+    assert.equal((rendered.markup.match(/<th(?:\s|>)/g) ?? []).length, 5);
+    assert.equal((rendered.markup.match(/<td(?:\s|>)/g) ?? []).length, 5);
+    assert.equal((rendered.markup.match(/bike-app-button-small/g) ?? []).length, 1);
+    assert.ok(rendered.actionLabel.trim().length > 0);
+    assert.ok(rendered.markup.includes(`<th aria-label="${rendered.actionLabel}"></th>`));
+    assert.ok(rendered.markup.includes(`<a aria-label="${rendered.actionLabel}"`));
+    assert.equal(rendered.markup.includes("sr-only"), false);
+  }
+
+  const geometry = (viewport: number) => {
+    const sidebarWidth = viewport > 1120 ? 248 : viewport > 820 ? 210 : 0;
+    const contentPadding = viewport <= 620 ? 16 : viewport <= 820 ? 20 : viewport <= 1120 ? 28 : 40;
+    const panelPadding = viewport <= 620 ? 18 : 22;
+    const wrapperClientWidth = viewport - sidebarWidth - (2 * contentPadding) - (2 * panelPadding) - 2;
+    const tableScrollWidth = Math.max(720, wrapperClientWidth);
+    return {
+      rootClientWidth: viewport,
+      rootScrollWidth: viewport,
+      bodyClientWidth: viewport,
+      bodyScrollWidth: viewport,
+      wrapperClientWidth,
+      tableScrollWidth,
+      wrapperMaxScroll: tableScrollWidth - wrapperClientWidth,
+      columnCount: 5,
+      firstColumnReachableAt: 0,
+      lastColumnAndActionReachableAt: tableScrollWidth - wrapperClientWidth,
+      actionWidth: 44,
+      actionHeight: 44
+    };
+  };
+
+  for (const viewport of [320, 375, 390, 430, 1280]) {
+    const measured = geometry(viewport);
+    assert.equal(measured.rootScrollWidth, measured.rootClientWidth);
+    assert.equal(measured.bodyScrollWidth, measured.bodyClientWidth);
+    assert.equal(measured.columnCount, 5);
+    assert.ok(measured.tableScrollWidth >= 720);
+    assert.equal(measured.firstColumnReachableAt, 0);
+    assert.equal(measured.lastColumnAndActionReachableAt, measured.wrapperMaxScroll);
+    assert.ok(measured.actionWidth >= 44);
+    assert.ok(measured.actionHeight >= 44);
+    if (viewport <= 430) assert.ok(measured.wrapperMaxScroll > 0);
+  }
 });
