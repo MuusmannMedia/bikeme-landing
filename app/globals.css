@@ -237,8 +237,9 @@ a {
 .bike-app-interest-form { display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 12px; border-top: 1px solid rgba(148,163,194,.15); padding-top: 17px; }
 .bike-app-interest-form .bike-app-button { grid-column: 1 / -1; }
 .bike-app-request-card { display: grid; align-content: start; gap: 18px; }
-.bike-app-request-card > header { display: flex; align-items: start; justify-content: space-between; gap: 14px; }
-.bike-app-request-card h2 { margin: 0 0 4px; }
+.bike-app-request-card > * { min-width: 0; }
+.bike-app-request-card > header { display: flex; flex-wrap: wrap; align-items: start; justify-content: space-between; gap: 14px; }
+.bike-app-request-card h2 { margin: 0 0 4px; overflow-wrap: anywhere; }
 .bike-app-request-card p { margin: 0; color: var(--app-muted); font-size: 13px; }
 .bike-app-convert-form { border-top: 1px solid rgba(201,121,209,.24); padding-top: 18px; }
 .bike-app-history-table-wrap { width: 100%; max-width: 100%; min-width: 0; overflow-x: auto; contain: inline-size; }
