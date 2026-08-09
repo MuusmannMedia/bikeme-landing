@@ -256,3 +256,65 @@ test("synthetic History fixture stays document-contained at release viewports", 
     if (viewport <= 430) assert.ok(measured.wrapperMaxScroll > 0);
   }
 });
+
+test("request cards contain long localized actions without expanding the document", () => {
+  const requests = projectFile("app/[locale]/app/requests/page.tsx");
+  const styles = projectFile("app/globals.css");
+  const directChildRule = styles.match(/\.bike-app-request-card\s*>\s*\*\s*\{([^}]*)\}/)?.[1] ?? "";
+  const headerRule = styles.match(/\.bike-app-request-card\s*>\s*header\s*\{([^}]*)\}/)?.[1] ?? "";
+  const titleRule = styles.match(/\.bike-app-request-card\s+h2\s*\{([^}]*)\}/)?.[1] ?? "";
+  const smallButtonRule = styles.match(/\.bike-app-button-small\s*\{([^}]*)\}/)?.[1] ?? "";
+
+  assert.ok(requests.includes('className="bike-app-panel bike-app-request-card"'));
+  [
+    "requests.preferredDate",
+    "requests.preferredTime",
+    "respondRideInterestAction",
+    "cancelRideInterestAction",
+    "dismissRideInterestAction",
+    "convertRideInterestAction",
+    "requests.interested",
+    "requests.maybe",
+    "requests.declined",
+    "common.cancel",
+    "common.remove",
+    "requests.convert"
+  ].forEach((value) => assert.ok(requests.includes(value), value));
+
+  assert.match(directChildRule, /\bmin-width:\s*0\s*;/);
+  assert.match(headerRule, /\bflex-wrap:\s*wrap\s*;/);
+  assert.match(titleRule, /\boverflow-wrap:\s*anywhere\s*;/);
+  assert.match(smallButtonRule, /\bmin-height:\s*44px\s*;/);
+  assert.equal(/(?:html|body)\s*\{[\s\S]*?overflow-x:\s*hidden\s*;/.test(styles), false);
+
+  const localeIndex = new Map(appTranslationLocales.map((locale, index) => [locale, index]));
+  for (const locale of ["de", "fr", "nl"] as const) {
+    const index = localeIndex.get(locale);
+    assert.notEqual(index, undefined);
+    const labels = ["requests.interested", "requests.maybe", "requests.declined", "requests.convert"]
+      .map((key) => getAppTranslationRow(key as Parameters<typeof getAppTranslationRow>[0])[index!]);
+    labels.forEach((label) => assert.ok(label.trim().length > 0, `${locale}:${label}`));
+  }
+
+  for (const viewport of [320, 375, 390, 430, 1280]) {
+    const verticalScrollbar = 15;
+    const rootClientWidth = viewport - verticalScrollbar;
+    const sidebarWidth = viewport > 1120 ? 248 : viewport > 820 ? 210 : 0;
+    const contentPadding = viewport <= 620 ? 16 : viewport <= 820 ? 20 : viewport <= 1120 ? 28 : 40;
+    const panelPadding = viewport <= 620 ? 18 : 22;
+    const stageWidth = rootClientWidth - sidebarWidth;
+    const panelWidth = stageWidth - (2 * contentPadding);
+    const requestGridWidth = panelWidth - (2 * panelPadding) - 2;
+    const cardWidth = viewport <= 620 ? requestGridWidth : (requestGridWidth - 18) / 2;
+    const cardClientWidth = cardWidth - 2;
+    const cardContentWidth = cardClientWidth - (2 * panelPadding);
+    const constrainedTrackWidth = cardContentWidth;
+    const cardScrollWidth = Math.max(cardClientWidth, constrainedTrackWidth + (2 * panelPadding));
+    const bodyScrollWidth = Math.max(rootClientWidth, sidebarWidth + stageWidth);
+    assert.ok(cardContentWidth > 0);
+    assert.equal(cardScrollWidth, cardClientWidth);
+    assert.equal(bodyScrollWidth, rootClientWidth);
+    assert.ok(cardWidth <= rootClientWidth);
+    assert.ok(Number.parseInt(smallButtonRule.match(/min-height:\s*(\d+)px/)?.[1] ?? "0", 10) >= 44);
+  }
+});
