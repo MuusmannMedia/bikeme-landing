@@ -151,6 +151,26 @@ test("the authenticated shell owns the one persistent localized create-ride acti
   assert.equal(getAppTranslationRow("rides.create").length, 7);
 });
 
+test("mobile profile control keeps its avatar, accessible name and touch target", () => {
+  const shell = projectFile("components/app-shell.tsx");
+  const styles = projectFile("app/globals.css");
+  const viewerRule = styles.match(/\.bike-app-viewer\s*\{([^}]*)\}/)?.[1] ?? "";
+  const mobileStart = styles.indexOf("@media (max-width: 820px)");
+  const mobileEnd = styles.indexOf("@media (max-width: 620px)", mobileStart);
+  const mobileRules = styles.slice(mobileStart, mobileEnd);
+
+  assert.ok(shell.includes('aria-label={t("nav.profile")}'));
+  assert.ok(shell.includes('href={`${base}/profile`}'));
+  assert.ok(shell.includes('<span className="bike-app-viewer-name">{displayName}</span>'));
+  assert.ok(shell.includes('<AppAvatar name={displayName} url={viewer.profile.avatarUrl} size="small" />'));
+  assert.match(viewerRule, /\bmin-width:\s*44px\s*;/);
+  assert.match(viewerRule, /\bmin-height:\s*44px\s*;/);
+  assert.match(viewerRule, /\bflex:\s*0 0 auto\s*;/);
+  assert.ok(mobileRules.includes(".bike-app-viewer-name { display: none; }"));
+  assert.equal(mobileRules.includes(".bike-app-viewer > span { display: none; }"), false);
+  assert.equal(/\.bike-app-avatar\s*\{[^}]*display:\s*none\s*;/.test(mobileRules), false);
+});
+
 test("persistent header action and overview cards remain contained at release viewports", () => {
   const styles = projectFile("app/globals.css");
   const mobileRules = styles.slice(styles.lastIndexOf("@media (max-width: 620px)"));
@@ -183,9 +203,10 @@ test("persistent header action and overview cards remain contained at release vi
     if (viewport <= 620) {
       const estimatedCreateWidth = (longestCreateLabel.length * 7) + 20;
       const languageWidth = 62;
-      const avatarWidth = 36;
+      const profileTargetWidth = 44;
       const twoGaps = 16;
-      assert.ok(estimatedCreateWidth + languageWidth + avatarWidth + twoGaps <= contentWidth);
+      assert.ok(profileTargetWidth >= 44);
+      assert.ok(estimatedCreateWidth + languageWidth + profileTargetWidth + twoGaps <= contentWidth);
     }
     assert.equal(rootClientWidth, viewport - scrollbar);
     assert.ok(contentWidth > 0);
