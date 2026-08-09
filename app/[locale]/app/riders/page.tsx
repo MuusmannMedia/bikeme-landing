@@ -5,6 +5,7 @@ import { AppEmpty, AppNotice, AppPageHeader, AppPanel } from "@/components/app-u
 import { BrowserTimezoneInput } from "@/components/local-date-time-input";
 import { listConnections, loadViewer, searchRiders } from "@/lib/app-data";
 import { getAppDictionary } from "@/lib/app-i18n";
+import { selectAcceptedConnections } from "@/lib/app-overview";
 import { isLocale } from "@/lib/locales";
 import { createClient } from "@/lib/supabase/server";
 
@@ -26,31 +27,35 @@ function RiderDetails({ level, region, about, labels }: { level: string | null; 
   );
 }
 
-export default async function RidersPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ q?: string; notice?: string }> }) {
+export default async function RidersPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ q?: string; notice?: string; view?: string }> }) {
   const { locale: localeParam } = await params;
   if (!isLocale(localeParam)) notFound();
   const locale = localeParam;
   const t = getAppDictionary(locale);
   const client = await createClient();
   const viewer = await loadViewer(client);
-  const query = (await searchParams).q?.trim().slice(0, 80) ?? "";
+  const queryParams = await searchParams;
+  const connectedOnly = queryParams.view === "connected";
+  const query = connectedOnly ? "" : queryParams.q?.trim().slice(0, 80) ?? "";
   const connectionsResult = await listConnections(client, viewer.userId).then((value) => ({ value, failed: false })).catch(() => ({ value: [], failed: true }));
   const searchResult = query.length >= 2
     ? await searchRiders(client, viewer.userId, query).then((value) => ({ value, failed: false })).catch(() => ({ value: [], failed: true }))
     : { value: [], failed: false };
   const connections = connectionsResult.value;
-  const accepted = connections.filter((connection) => connection.state === "accepted");
+  const accepted = selectAcceptedConnections(connections);
   const incoming = connections.filter((connection) => connection.state === "pending_incoming");
   const outgoing = connections.filter((connection) => connection.state === "pending_outgoing");
   const connectionByRider = new Map(connections.map((connection) => [connection.counterpart.id, connection]));
-  const notice = (await searchParams).notice;
-  const returnTo = `/${locale}/app/riders${query ? `?q=${encodeURIComponent(query)}` : ""}`;
+  const notice = queryParams.notice;
+  const returnTo = connectedOnly
+    ? `/${locale}/app/riders?view=connected`
+    : `/${locale}/app/riders${query ? `?q=${encodeURIComponent(query)}` : ""}`;
   const labels = { level: t("riders.level"), region: t("riders.region"), about: t("riders.about") };
   return (
     <>
       <AppPageHeader eyebrow={t("shell.eyebrow")} title={t("riders.title")} intro={t("riders.intro")} />
       <AppNotice locale={locale} code={connectionsResult.failed ? "data" : searchResult.failed ? "search" : notice} />
-      <AppPanel title={t("riders.search")}>
+      {!connectedOnly ? <AppPanel title={t("riders.search")}>
         <form className="bike-app-search" method="get">
           <label className="bike-app-field"><span>{t("riders.searchPlaceholder")}</span><input type="search" name="q" defaultValue={query} minLength={2} maxLength={80} placeholder={t("riders.searchPlaceholder")} /></label>
           <button className="bike-app-button" type="submit">{t("riders.search")}</button>
@@ -71,9 +76,9 @@ export default async function RidersPage({ params, searchParams }: { params: Pro
           </div>
         ) : null}
         {query.length >= 2 && searchResult.value.length === 0 && !searchResult.failed ? <AppEmpty>{t("common.empty")}</AppEmpty> : null}
-      </AppPanel>
+      </AppPanel> : null}
 
-      {(incoming.length > 0 || outgoing.length > 0) ? <div className="bike-app-grid bike-app-section-gap" data-columns="2">
+      {!connectedOnly && (incoming.length > 0 || outgoing.length > 0) ? <div className="bike-app-grid bike-app-section-gap" data-columns="2">
         <AppPanel title={t("riders.incoming")}>
           {incoming.length ? <ul className="bike-app-list">{incoming.map((connection) => <li key={connection.id} className="bike-app-list-item"><div className="bike-app-list-main"><AppAvatar name={connection.counterpart.displayName} url={connection.counterpart.avatarUrl} /><div><strong>{connection.counterpart.displayName ?? "Bike Me"}</strong><small>{connection.counterpart.region}</small></div></div><div className="bike-app-actions"><form action={respondConnectionAction}><input type="hidden" name="locale" value={locale} /><input type="hidden" name="returnTo" value={returnTo} /><input type="hidden" name="connectionId" value={connection.id} /><input type="hidden" name="responseStatus" value="accepted" /><button className="bike-app-button bike-app-button-small">{t("common.accept")}</button></form><form action={respondConnectionAction}><input type="hidden" name="locale" value={locale} /><input type="hidden" name="returnTo" value={returnTo} /><input type="hidden" name="connectionId" value={connection.id} /><input type="hidden" name="responseStatus" value="declined" /><button className="bike-app-button bike-app-button-secondary bike-app-button-small">{t("common.decline")}</button></form></div></li>)}</ul> : <AppEmpty>{t("common.empty")}</AppEmpty>}
         </AppPanel>

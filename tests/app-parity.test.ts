@@ -6,7 +6,13 @@ import test from "node:test";
 import { createViewerAccess, hasProAccess } from "../lib/app-access";
 import { trimRouteForPrivacy } from "../lib/app-format";
 import { appTranslationKeys, appTranslationLocales, getAppTranslationRow } from "../lib/app-i18n";
-import type { RideHistorySummary } from "../lib/app-model";
+import type { RideHistorySummary, RideInterest, RideInvite, RiderConnection } from "../lib/app-model";
+import {
+  overviewRecentRideLimit,
+  selectAcceptedConnections,
+  selectPendingReceivedInterest,
+  selectPendingReceivedInvites
+} from "../lib/app-overview";
 import { buildStatusSummary, getStatusWindow, statusRanges } from "../lib/app-status";
 import { buildGpx } from "../lib/gpx";
 import { locales } from "../lib/locales";
@@ -31,6 +37,180 @@ test("authenticated app strings are complete for exactly seven locales", () => {
       assert.ok(value.trim().length > 0, `${key}:${appTranslationLocales[index]}`);
     });
   }
+});
+
+test("overview metrics and focused destinations share one authoritative status contract", () => {
+  const invite = (overrides: Partial<RideInvite> = {}): RideInvite => ({
+    rideId: "synthetic-ride",
+    hostId: "synthetic-host",
+    inviteeId: "synthetic-invitee",
+    createdAt: "2026-08-09T10:00:00.000Z",
+    acceptedAt: null,
+    declinedAt: null,
+    rideTitle: "Synthetic ride",
+    rideStartTime: null,
+    counterpart: null,
+    direction: "received",
+    ...overrides
+  });
+  const interest = (overrides: Partial<RideInterest> = {}): RideInterest => ({
+    id: "synthetic-interest",
+    senderId: "synthetic-sender",
+    recipientId: "synthetic-recipient",
+    direction: "received",
+    counterpart: null,
+    timeOption: "tomorrow",
+    windowStartDate: "2026-08-10",
+    windowEndDate: "2026-08-10",
+    timezone: "Europe/Copenhagen",
+    preferredTime: null,
+    responseStatus: "pending",
+    expiresAt: "2026-08-11T10:00:00.000Z",
+    expired: false,
+    createdRideId: null,
+    createdAt: "2026-08-09T10:00:00.000Z",
+    ...overrides
+  });
+  const connection = (state: RiderConnection["state"]): RiderConnection => ({
+    id: `synthetic-${state}`,
+    requesterId: "synthetic-requester",
+    receiverId: "synthetic-receiver",
+    status: state === "accepted" ? "accepted" : "pending",
+    createdAt: "2026-08-09T10:00:00.000Z",
+    updatedAt: "2026-08-09T10:00:00.000Z",
+    state,
+    counterpart: {} as RiderConnection["counterpart"]
+  });
+
+  assert.deepEqual(selectPendingReceivedInvites([
+    invite(),
+    invite({ rideId: "accepted", acceptedAt: "2026-08-09T11:00:00.000Z" }),
+    invite({ rideId: "declined", declinedAt: "2026-08-09T11:00:00.000Z" }),
+    invite({ rideId: "sent", direction: "sent" })
+  ]).map((item) => item.rideId), ["synthetic-ride"]);
+  assert.deepEqual(selectPendingReceivedInterest([
+    interest(),
+    interest({ id: "expired", expired: true }),
+    interest({ id: "answered", responseStatus: "interested" }),
+    interest({ id: "sent", direction: "sent" })
+  ]).map((item) => item.id), ["synthetic-interest"]);
+  assert.deepEqual(selectAcceptedConnections([
+    connection("accepted"),
+    connection("pending_incoming"),
+    connection("pending_outgoing")
+  ]).map((item) => item.state), ["accepted"]);
+  assert.equal(selectPendingReceivedInvites([]).length, 0);
+  assert.equal(selectPendingReceivedInterest([]).length, 0);
+  assert.equal(selectAcceptedConnections([]).length, 0);
+  assert.equal(overviewRecentRideLimit, 5);
+
+  const overview = projectFile("app/[locale]/app/page.tsx");
+  const requests = projectFile("app/[locale]/app/requests/page.tsx");
+  const riders = projectFile("app/[locale]/app/riders/page.tsx");
+  const history = projectFile("app/[locale]/app/history/page.tsx");
+  const mappings = [
+    ["selectPendingReceivedInvites", "requests?view=invites"],
+    ["selectPendingReceivedInterest", "requests?view=interest"],
+    ["selectAcceptedConnections", "riders?view=connected"],
+    ["overviewRecentRideLimit", "history?view=recent"]
+  ] as const;
+
+  assert.equal(overview.match(/className="bike-app-stat"/g)?.length, 4);
+  mappings.forEach(([selector, destination]) => {
+    assert.ok(overview.includes(selector), selector);
+    assert.ok(overview.includes(destination), destination);
+  });
+  assert.ok(requests.includes("selectPendingReceivedInvites(invites)"));
+  assert.ok(requests.includes("selectPendingReceivedInterest(interests)"));
+  assert.ok(riders.includes("selectAcceptedConnections(connections)"));
+  assert.ok(history.includes("overviewRecentRideLimit"));
+  assert.ok(overview.includes('aria-label={metricLabel('));
+  assert.ok(overview.includes('t("overview.viewMetric")'));
+});
+
+test("the authenticated shell owns the one persistent localized create-ride action", () => {
+  const shell = projectFile("components/app-shell.tsx");
+  const appLayout = projectFile("app/[locale]/app/layout.tsx");
+  const overview = projectFile("app/[locale]/app/page.tsx");
+  const rides = projectFile("app/[locale]/app/rides/page.tsx");
+  const styles = projectFile("app/globals.css");
+  const topbarRule = styles.match(/\.bike-app-topbar\s*\{([^}]*)\}/)?.[1] ?? "";
+  const createRule = styles.match(/\.bike-app-header-create\s*\{([^}]*)\}/)?.[1] ?? "";
+
+  assert.ok(shell.includes('href={`${base}/rides/new`}'));
+  assert.ok(shell.includes('aria-label={t("rides.create")}'));
+  assert.ok(shell.includes('className="bike-app-button bike-app-header-create"'));
+  assert.equal(shell.match(/className="bike-app-button bike-app-header-create"/g)?.length, 1);
+  assert.ok(appLayout.includes("<AppShell"));
+  assert.ok(appLayout.includes("{children}</AppShell>"));
+  assert.equal(overview.includes('href={`/${locale}/app/rides/new`}'), false);
+  assert.equal(rides.includes('href={`/${locale}/app/rides/new`}'), false);
+  assert.match(topbarRule, /\bposition:\s*sticky\s*;/);
+  assert.match(createRule, /\bmin-height:\s*44px\s*;/);
+  assert.match(createRule, /\bwhite-space:\s*nowrap\s*;/);
+  assert.equal(getAppTranslationRow("rides.create").length, 7);
+});
+
+test("persistent header action and overview cards remain contained at release viewports", () => {
+  const styles = projectFile("app/globals.css");
+  const mobileRules = styles.slice(styles.lastIndexOf("@media (max-width: 620px)"));
+  const narrowRules = styles.slice(styles.lastIndexOf("@media (max-width: 340px)"));
+  const actionRule = styles.match(/\.bike-app-header-create\s*\{([^}]*)\}/)?.[1] ?? "";
+  const actionGroupRule = styles.match(/\.bike-app-topbar-actions\s*\{([^}]*)\}/)?.[1] ?? "";
+  const statRule = styles.match(/\.bike-app-stat\s*\{([^}]*)\}/)?.[1] ?? "";
+  const longestCreateLabel = getAppTranslationRow("rides.create")
+    .reduce((longest, value) => value.length > longest.length ? value : longest, "");
+
+  assert.match(actionRule, /\bmin-height:\s*44px\s*;/);
+  assert.match(actionRule, /\bwhite-space:\s*nowrap\s*;/);
+  assert.match(actionGroupRule, /\bmin-width:\s*0\s*;/);
+  assert.match(statRule, /\bdisplay:\s*block\s*;/);
+  assert.match(statRule, /\bmin-height:\s*108px\s*;/);
+  assert.ok(mobileRules.includes(".bike-app-topbar { justify-content: flex-end; }"));
+  assert.ok(mobileRules.includes(".bike-app-mobile-brand { display: none; }"));
+  assert.ok(mobileRules.includes('.bike-app-grid[data-columns="4"] { grid-template-columns: 1fr; }'));
+  assert.ok(narrowRules.includes(".bike-app-topbar { padding-inline: 12px; }"));
+  getAppTranslationRow("overview.viewMetric").forEach((value) => {
+    assert.ok(value.includes("{label}"));
+    assert.ok(value.includes("{value}"));
+  });
+
+  for (const viewport of [320, 375, 390, 430, 1280]) {
+    const scrollbar = 15;
+    const rootClientWidth = viewport - scrollbar;
+    const topbarPadding = viewport <= 340 ? 12 : viewport <= 820 ? 18 : 38;
+    const contentWidth = rootClientWidth - (2 * topbarPadding);
+    if (viewport <= 620) {
+      const estimatedCreateWidth = (longestCreateLabel.length * 7) + 20;
+      const languageWidth = 62;
+      const avatarWidth = 36;
+      const twoGaps = 16;
+      assert.ok(estimatedCreateWidth + languageWidth + avatarWidth + twoGaps <= contentWidth);
+    }
+    assert.equal(rootClientWidth, viewport - scrollbar);
+    assert.ok(contentWidth > 0);
+  }
+});
+
+test("authenticated pages reuse the exact login background without global overflow suppression", () => {
+  const styles = projectFile("app/globals.css");
+  const appShell = projectFile("components/app-shell.tsx");
+  const publicPage = projectFile("app/[locale]/page.tsx");
+  const loginPage = projectFile("app/[locale]/login/page.tsx");
+  const rootRule = styles.match(/:root\s*\{([^}]*)\}/)?.[1] ?? "";
+  const bodyRule = styles.match(/body\s*\{([^}]*)\}/)?.[1] ?? "";
+  const appRule = styles.match(/\.bike-app\s*\{([^}]*)\}/)?.[1] ?? "";
+
+  assert.ok(rootRule.includes("--bike-me-page-background:"));
+  assert.ok(rootRule.includes("radial-gradient(circle at 12% 0%"));
+  assert.ok(rootRule.includes("radial-gradient(circle at 88% 15%"));
+  assert.match(bodyRule, /background:\s*var\(--bike-me-page-background\)\s*;/);
+  assert.match(appRule, /background:\s*var\(--bike-me-page-background\)\s*;/);
+  assert.match(appRule, /\bmin-height:\s*100vh\s*;/);
+  assert.ok(appShell.includes('className="bike-app"'));
+  assert.equal(publicPage.includes('className="bike-app"'), false);
+  assert.equal(loginPage.includes('className="bike-app"'), false);
+  assert.equal(/(?:html|body|\.bike-app)\s*\{[\s\S]*?overflow-x:\s*hidden\s*;/.test(styles), false);
 });
 
 test("Basic and Pro access matches mobile access semantics", () => {
@@ -103,7 +283,7 @@ test("authenticated app source contains no service role, tracking or sensitive l
   const sources = [
     ...filesBelow(appRoot).filter((path) => /\.(?:ts|tsx)$/.test(path)),
     ...filesBelow(join(process.cwd(), "components")).filter((path) => /\.(?:ts|tsx)$/.test(path)),
-    ...filesBelow(join(process.cwd(), "lib")).filter((path) => /app-(?:data|model|access|format|i18n|status)\.ts$/.test(path))
+    ...filesBelow(join(process.cwd(), "lib")).filter((path) => /app-(?:data|model|access|format|i18n|overview|status)\.ts$/.test(path))
   ].map((path) => readFileSync(path, "utf8")).join("\n");
   ["service_role", "service-role", "participant_live_locations", "last_location", "navigator.geolocation", "push_tokens"].forEach((value) => assert.equal(sources.includes(value), false, value));
   assert.equal(/\bconsole\.(?:log|info|warn|error|debug)\b/.test(sources), false);
