@@ -5,10 +5,11 @@ import { AppEmpty, AppNotice, AppPageHeader, AppPanel, ProGate } from "@/compone
 import { listRideHistory, loadViewer } from "@/lib/app-data";
 import { formatDate, formatDistance, formatDuration, formatElevation } from "@/lib/app-format";
 import { getAppDictionary } from "@/lib/app-i18n";
+import { overviewRecentRideLimit } from "@/lib/app-overview";
 import { isLocale } from "@/lib/locales";
 import { createClient } from "@/lib/supabase/server";
 
-export default async function HistoryPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ notice?: string }> }) {
+export default async function HistoryPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ notice?: string; view?: string }> }) {
   const { locale: localeParam } = await params;
   if (!isLocale(localeParam)) notFound();
   const locale = localeParam;
@@ -16,8 +17,10 @@ export default async function HistoryPage({ params, searchParams }: { params: Pr
   const client = await createClient();
   const viewer = await loadViewer(client);
   if (!viewer.access.hasPro) return <ProGate locale={locale} />;
-  const result = await listRideHistory(client, viewer.userId).then((value) => ({ value, failed: false })).catch(() => ({ value: [], failed: true }));
-  const { notice } = await searchParams;
+  const query = await searchParams;
+  const recentOnly = query.view === "recent";
+  const result = await listRideHistory(client, viewer.userId, recentOnly ? overviewRecentRideLimit : 200).then((value) => ({ value, failed: false })).catch(() => ({ value: [], failed: true }));
+  const notice = query.notice;
   return (
     <>
       <AppPageHeader eyebrow={t("common.pro")} title={t("history.title")} intro={t("history.intro")} />

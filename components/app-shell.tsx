@@ -57,6 +57,13 @@ export function AppShell({ children, locale, viewer, displayName, t }: AppShellP
             <span>Bike Me</span>
           </Link>
           <div className="bike-app-topbar-actions">
+            <Link
+              aria-label={t("rides.create")}
+              className="bike-app-button bike-app-header-create"
+              href={`${base}/rides/new`}
+            >
+              {t("rides.create")}
+            </Link>
             <AppLanguageSwitcher locale={locale} label={t("shell.language")} />
             <Link href={`${base}/profile`} className="bike-app-viewer">
               <span>{displayName}</span>

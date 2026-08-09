@@ -24,7 +24,7 @@ export default async function RidesPage({ params, searchParams }: { params: Prom
   const { notice } = await searchParams;
   return (
     <>
-      <AppPageHeader eyebrow={t("shell.eyebrow")} title={t("rides.title")} intro={t("rides.intro")} action={<Link className="bike-app-button" href={`/${locale}/app/rides/new`}>{t("rides.create")}</Link>} />
+      <AppPageHeader eyebrow={t("shell.eyebrow")} title={t("rides.title")} intro={t("rides.intro")} />
       <AppNotice locale={locale} code={ridesResult.status === "rejected" || hotspotsResult.status === "rejected" ? "data" : notice} />
       <AppPanel title={t("rides.upcoming")}>
         {rides.length ? <div className="bike-app-grid" data-columns="3">{rides.map((ride) => <RideCard key={ride.id} ride={ride} locale={locale} units={viewer.profile.unitSystem} t={t} />)}</div> : <AppEmpty>{t("rides.noRides")}</AppEmpty>}

@@ -7,6 +7,7 @@ import { listHotspots, listRideInterest, listRideInvites, loadViewer } from "@/l
 import { formatDate, formatDateTime } from "@/lib/app-format";
 import { getAppDictionary } from "@/lib/app-i18n";
 import type { RideInterest } from "@/lib/app-model";
+import { selectPendingReceivedInterest, selectPendingReceivedInvites } from "@/lib/app-overview";
 import { isLocale } from "@/lib/locales";
 import { createClient } from "@/lib/supabase/server";
 
@@ -19,7 +20,7 @@ import {
   respondRideInterestAction
 } from "../actions";
 
-export default async function RequestsPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ notice?: string }> }) {
+export default async function RequestsPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ notice?: string; view?: string }> }) {
   const { locale: localeParam } = await params;
   if (!isLocale(localeParam)) notFound();
   const locale = localeParam;
@@ -34,8 +35,12 @@ export default async function RequestsPage({ params, searchParams }: { params: P
   const invites = invitesResult.status === "fulfilled" ? invitesResult.value : [];
   const interests = interestResult.status === "fulfilled" ? interestResult.value : [];
   const hotspots = hotspotsResult.status === "fulfilled" ? hotspotsResult.value : [];
-  const { notice } = await searchParams;
-  const returnTo = `/${locale}/app/requests`;
+  const query = await searchParams;
+  const view = query.view === "invites" || query.view === "interest" ? query.view : null;
+  const visibleInvites = view === "invites" ? selectPendingReceivedInvites(invites) : invites;
+  const visibleInterests = view === "interest" ? selectPendingReceivedInterest(interests) : interests;
+  const notice = query.notice;
+  const returnTo = `/${locale}/app/requests${view ? `?view=${view}` : ""}`;
   const statusText = (item: RideInterest) => {
     if (item.expired && item.responseStatus !== "converted") return t("common.unavailable");
     const keys = {
@@ -54,15 +59,15 @@ export default async function RequestsPage({ params, searchParams }: { params: P
     <>
       <AppPageHeader eyebrow={t("shell.eyebrow")} title={t("requests.title")} intro={t("requests.intro")} />
       <AppNotice locale={locale} code={loadFailed ? "data" : notice} />
-      <AppPanel title={t("requests.invites")}>
-        {invites.length ? <ul className="bike-app-list">{invites.map((invite) => {
+      {view !== "interest" ? <AppPanel title={t("requests.invites")}>
+        {visibleInvites.length ? <ul className="bike-app-list">{visibleInvites.map((invite) => {
           const isPending = !invite.acceptedAt && !invite.declinedAt;
           return <li key={`${invite.rideId}-${invite.inviteeId}`} className="bike-app-list-item"><div className="bike-app-list-main"><AppAvatar name={invite.counterpart?.displayName ?? null} url={invite.counterpart?.avatarUrl} /><div><strong>{invite.rideTitle ?? t("rides.details")}</strong><small>{invite.direction === "received" ? t("common.received") : t("common.sent")}{invite.rideStartTime ? ` · ${formatDateTime(locale, invite.rideStartTime)}` : ""} · {invite.counterpart?.displayName ?? "Bike Me"}</small></div></div><div className="bike-app-actions"><Link className="bike-app-button bike-app-button-secondary bike-app-button-small" href={`/${locale}/app/rides/${invite.rideId}`}>{t("common.view")}</Link>{invite.direction === "received" && isPending ? <><form action={acceptRideInviteAction}><input type="hidden" name="locale" value={locale} /><input type="hidden" name="returnTo" value={returnTo} /><input type="hidden" name="rideId" value={invite.rideId} /><button className="bike-app-button bike-app-button-small">{t("common.accept")}</button></form><form action={declineRideInviteAction}><input type="hidden" name="locale" value={locale} /><input type="hidden" name="returnTo" value={returnTo} /><input type="hidden" name="rideId" value={invite.rideId} /><button className="bike-app-button bike-app-button-secondary bike-app-button-small">{t("common.decline")}</button></form></> : <span className="bike-app-chip">{invite.acceptedAt ? t("common.accept") : invite.declinedAt ? t("requests.declined") : t("common.pending")}</span>}</div></li>;
         })}</ul> : <AppEmpty>{t("common.empty")}</AppEmpty>}
-      </AppPanel>
+      </AppPanel> : null}
 
-      <AppPanel title={t("requests.interest")} className="bike-app-section-gap">
-        {interests.length ? <div className="bike-app-grid" data-columns="2">{interests.map((item) => {
+      {view !== "invites" ? <AppPanel title={t("requests.interest")} className={view === "interest" ? "" : "bike-app-section-gap"}>
+        {visibleInterests.length ? <div className="bike-app-grid" data-columns="2">{visibleInterests.map((item) => {
           const isExpired = item.expired;
           const canRespond = item.direction === "received" && item.responseStatus === "pending" && !isExpired;
           const canCancel = item.direction === "sent" && item.responseStatus === "pending" && !isExpired;
@@ -80,7 +85,7 @@ export default async function RequestsPage({ params, searchParams }: { params: P
             </article>
           );
         })}</div> : <AppEmpty>{t("common.empty")}</AppEmpty>}
-      </AppPanel>
+      </AppPanel> : null}
     </>
   );
 }
