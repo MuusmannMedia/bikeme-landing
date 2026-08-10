@@ -250,6 +250,43 @@ test("authentication and app pages share one responsive background painter witho
   assert.equal(/(?:html|body|\.bike-app)\s*\{[\s\S]*?overflow-x:\s*hidden\s*;/.test(styles), false);
 });
 
+test("unknown authenticated app paths delegate to the localized app not-found boundary", () => {
+  const catchAll = projectFile("app/[locale]/app/[...notFound]/page.tsx");
+  const appNotFound = projectFile("app/[locale]/app/not-found.tsx");
+  const appLayout = projectFile("app/[locale]/app/layout.tsx");
+  const shell = projectFile("components/app-shell.tsx");
+  const styles = projectFile("app/globals.css");
+
+  assert.ok(catchAll.includes('import { notFound } from "next/navigation"'));
+  assert.match(catchAll, /notFound\(\);/);
+  assert.equal(catchAll.includes("AppShell"), false);
+  assert.equal(catchAll.includes("bike-app"), false);
+
+  assert.ok(appNotFound.includes("AppPageHeader"));
+  assert.ok(appNotFound.includes("AppPanel"));
+  assert.ok(appNotFound.includes('href={`/${locale}/app`}'));
+  assert.ok(appLayout.includes("<AppShell"));
+  assert.ok(appLayout.includes("{children}</AppShell>"));
+  assert.ok(shell.includes('className="bike-app"'));
+  assert.match(styles, /\.bike-app::before,\s*\.bike-auth-page::before\s*\{[\s\S]*?position:\s*fixed\s*;/);
+  assert.equal(/(?:html|body|\.bike-app)\s*\{[\s\S]*?overflow-x:\s*hidden\s*;/.test(styles), false);
+
+  locales.forEach((locale) => {
+    const unknownPath = `/${locale}/app/unknown`;
+    assert.ok(unknownPath.startsWith(`/${locale}/app/`));
+  });
+
+  [
+    "app/[locale]/app/page.tsx",
+    "app/[locale]/app/rides/page.tsx",
+    "app/[locale]/app/riders/page.tsx",
+    "app/[locale]/app/requests/page.tsx",
+    "app/[locale]/app/history/page.tsx",
+    "app/[locale]/app/status/page.tsx",
+    "app/[locale]/app/profile/page.tsx"
+  ].forEach((path) => assert.ok(projectFile(path).length > 0, path));
+});
+
 test("Basic and Pro access matches mobile access semantics", () => {
   assert.equal(hasProAccess("basic", null), false);
   assert.equal(hasProAccess("premium", null), true);
