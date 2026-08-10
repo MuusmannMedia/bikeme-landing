@@ -177,17 +177,22 @@ test("persistent header action and overview cards remain contained at release vi
   const narrowRules = styles.slice(styles.lastIndexOf("@media (max-width: 340px)"));
   const actionRule = styles.match(/\.bike-app-header-create\s*\{([^}]*)\}/)?.[1] ?? "";
   const actionGroupRule = styles.match(/\.bike-app-topbar-actions\s*\{([^}]*)\}/)?.[1] ?? "";
+  const languageRule = styles.match(/\.bike-app-language select\s*\{([^}]*)\}/)?.[1] ?? "";
   const statRule = styles.match(/\.bike-app-stat\s*\{([^}]*)\}/)?.[1] ?? "";
   const longestCreateLabel = getAppTranslationRow("rides.create")
     .reduce((longest, value) => value.length > longest.length ? value : longest, "");
 
   assert.match(actionRule, /\bmin-height:\s*44px\s*;/);
+  assert.match(actionRule, /\bheight:\s*44px\s*;/);
   assert.match(actionRule, /\bwhite-space:\s*nowrap\s*;/);
   assert.match(actionGroupRule, /\bmin-width:\s*0\s*;/);
+  assert.match(languageRule, /\bheight:\s*44px\s*;/);
+  assert.match(languageRule, /\bmin-height:\s*44px\s*;/);
   assert.match(statRule, /\bdisplay:\s*block\s*;/);
   assert.match(statRule, /\bmin-height:\s*108px\s*;/);
-  assert.ok(mobileRules.includes(".bike-app-topbar { justify-content: flex-end; }"));
-  assert.ok(mobileRules.includes(".bike-app-mobile-brand { display: none; }"));
+  assert.ok(mobileRules.includes(".bike-app-topbar { justify-content: space-between; }"));
+  assert.ok(mobileRules.includes(".bike-app-mobile-brand { display: flex; width: 44px;"));
+  assert.ok(mobileRules.includes(".bike-app-mobile-brand span { display: none; }"));
   assert.ok(mobileRules.includes('.bike-app-grid[data-columns="4"] { grid-template-columns: 1fr; }'));
   assert.ok(narrowRules.includes(".bike-app-topbar { padding-inline: 12px; }"));
   getAppTranslationRow("overview.viewMetric").forEach((value) => {
@@ -201,12 +206,13 @@ test("persistent header action and overview cards remain contained at release vi
     const topbarPadding = viewport <= 340 ? 12 : viewport <= 820 ? 18 : 38;
     const contentWidth = rootClientWidth - (2 * topbarPadding);
     if (viewport <= 620) {
-      const estimatedCreateWidth = (longestCreateLabel.length * 7) + 20;
-      const languageWidth = 62;
+      const estimatedCreateWidth = (longestCreateLabel.length * (viewport <= 340 ? 6 : 7)) + (viewport <= 340 ? 16 : 20);
+      const languageWidth = viewport <= 340 ? 58 : 62;
       const profileTargetWidth = 44;
-      const twoGaps = 16;
+      const logoTargetWidth = 44;
+      const twoGaps = viewport <= 340 ? 12 : 16;
       assert.ok(profileTargetWidth >= 44);
-      assert.ok(estimatedCreateWidth + languageWidth + profileTargetWidth + twoGaps <= contentWidth);
+      assert.ok(estimatedCreateWidth + languageWidth + profileTargetWidth + logoTargetWidth + twoGaps <= contentWidth);
     }
     assert.equal(rootClientWidth, viewport - scrollbar);
     assert.ok(contentWidth > 0);
