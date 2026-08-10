@@ -63,6 +63,26 @@ test("external, protocol-relative, cross-locale, and unrelated returns are rejec
   });
 });
 
+test("unknown authenticated app paths stay protected with localized safe returns", () => {
+  const proxySource = projectFile("proxy.ts");
+
+  locales.forEach((locale) => {
+    const unknownPath = `/${locale}/app/unknown`;
+
+    assert.equal(isProtectedRoutePath(locale, unknownPath), true);
+    assert.equal(getSafeReturnPath(locale, unknownPath), unknownPath);
+    assert.equal(
+      buildLoginPath(locale, unknownPath),
+      `/${locale}/login?returnTo=${encodeURIComponent(unknownPath)}`
+    );
+    assert.equal(getSafeReturnPath(locale, `/${locale === "da" ? "en" : "da"}/app/unknown`), `/${locale}/app`);
+  });
+
+  assert.ok(proxySource.includes("const isProtectedRoute = isProtectedRoutePath(locale, pathname)"));
+  assert.ok(proxySource.includes("if (isProtectedRoute && !auth.user)"));
+  assert.ok(proxySource.includes("buildLoginPath("));
+});
+
 test("login paths encode only validated local return targets", () => {
   assert.equal(
     buildLoginPath("fr", "/fr/app", "expired"),

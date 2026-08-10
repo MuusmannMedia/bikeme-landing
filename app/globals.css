@@ -160,8 +160,8 @@ a {
 .bike-app-topbar { position: sticky; top: 0; z-index: 25; display: flex; min-height: 72px; align-items: center; justify-content: flex-end; border-bottom: 1px solid var(--app-border); background: rgba(2,8,23,.92); padding: 0 38px; backdrop-filter: blur(16px); }
 .bike-app-mobile-brand { display: none; }
 .bike-app-topbar-actions { display: flex; min-width: 0; align-items: center; gap: 14px; }
-.bike-app-header-create { min-height: 44px; flex: 0 0 auto; white-space: nowrap; }
-.bike-app-language select { min-height: 44px; border: 1px solid var(--app-border); border-radius: 9px; background: #101827; color: white; padding: 0 34px 0 12px; font: inherit; }
+.bike-app-header-create { height: 44px; min-height: 44px; flex: 0 0 auto; white-space: nowrap; }
+.bike-app-language select { height: 44px; min-height: 44px; border: 1px solid var(--app-border); border-radius: 9px; background: #101827; color: white; padding: 0 34px 0 12px; font: inherit; }
 .bike-app-viewer { display: flex; min-width: 44px; min-height: 44px; flex: 0 0 auto; align-items: center; gap: 10px; border-radius: 10px; color: white; font-size: 14px; font-weight: 650; text-decoration: none; }
 .bike-app-avatar { display: inline-flex; flex: 0 0 auto; align-items: center; justify-content: center; overflow: hidden; border: 1px solid rgba(255,255,255,.2); border-radius: 999px; background: linear-gradient(135deg, #25306d, #802782); color: white; font-weight: 800; }
 .bike-app-avatar[data-size="small"] { width: 36px; height: 36px; font-size: 13px; }
@@ -335,8 +335,10 @@ a {
 }
 
 @media (max-width: 620px) {
-  .bike-app-topbar { justify-content: flex-end; }
-  .bike-app-mobile-brand { display: none; }
+  .bike-app-topbar { justify-content: space-between; }
+  .bike-app-mobile-brand { display: flex; width: 44px; min-width: 44px; min-height: 44px; flex: 0 0 44px; justify-content: center; }
+  .bike-app-mobile-brand img { width: 40px; height: 40px; }
+  .bike-app-mobile-brand span { display: none; }
   .bike-app-topbar-actions { gap: 8px; }
   .bike-app-header-create { padding-inline: 10px; font-size: 12px; }
   .bike-app-language select { min-height: 44px; padding-left: 10px; }
@@ -360,6 +362,9 @@ a {
 
 @media (max-width: 340px) {
   .bike-app-topbar { padding-inline: 12px; }
+  .bike-app-topbar-actions { gap: 6px; }
+  .bike-app-header-create { padding-inline: 8px; font-size: 11px; }
+  .bike-app-language select { padding-right: 30px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

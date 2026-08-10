@@ -177,17 +177,22 @@ test("persistent header action and overview cards remain contained at release vi
   const narrowRules = styles.slice(styles.lastIndexOf("@media (max-width: 340px)"));
   const actionRule = styles.match(/\.bike-app-header-create\s*\{([^}]*)\}/)?.[1] ?? "";
   const actionGroupRule = styles.match(/\.bike-app-topbar-actions\s*\{([^}]*)\}/)?.[1] ?? "";
+  const languageRule = styles.match(/\.bike-app-language select\s*\{([^}]*)\}/)?.[1] ?? "";
   const statRule = styles.match(/\.bike-app-stat\s*\{([^}]*)\}/)?.[1] ?? "";
   const longestCreateLabel = getAppTranslationRow("rides.create")
     .reduce((longest, value) => value.length > longest.length ? value : longest, "");
 
   assert.match(actionRule, /\bmin-height:\s*44px\s*;/);
+  assert.match(actionRule, /\bheight:\s*44px\s*;/);
   assert.match(actionRule, /\bwhite-space:\s*nowrap\s*;/);
   assert.match(actionGroupRule, /\bmin-width:\s*0\s*;/);
+  assert.match(languageRule, /\bheight:\s*44px\s*;/);
+  assert.match(languageRule, /\bmin-height:\s*44px\s*;/);
   assert.match(statRule, /\bdisplay:\s*block\s*;/);
   assert.match(statRule, /\bmin-height:\s*108px\s*;/);
-  assert.ok(mobileRules.includes(".bike-app-topbar { justify-content: flex-end; }"));
-  assert.ok(mobileRules.includes(".bike-app-mobile-brand { display: none; }"));
+  assert.ok(mobileRules.includes(".bike-app-topbar { justify-content: space-between; }"));
+  assert.ok(mobileRules.includes(".bike-app-mobile-brand { display: flex; width: 44px;"));
+  assert.ok(mobileRules.includes(".bike-app-mobile-brand span { display: none; }"));
   assert.ok(mobileRules.includes('.bike-app-grid[data-columns="4"] { grid-template-columns: 1fr; }'));
   assert.ok(narrowRules.includes(".bike-app-topbar { padding-inline: 12px; }"));
   getAppTranslationRow("overview.viewMetric").forEach((value) => {
@@ -201,12 +206,13 @@ test("persistent header action and overview cards remain contained at release vi
     const topbarPadding = viewport <= 340 ? 12 : viewport <= 820 ? 18 : 38;
     const contentWidth = rootClientWidth - (2 * topbarPadding);
     if (viewport <= 620) {
-      const estimatedCreateWidth = (longestCreateLabel.length * 7) + 20;
-      const languageWidth = 62;
+      const estimatedCreateWidth = (longestCreateLabel.length * (viewport <= 340 ? 6 : 7)) + (viewport <= 340 ? 16 : 20);
+      const languageWidth = viewport <= 340 ? 58 : 62;
       const profileTargetWidth = 44;
-      const twoGaps = 16;
+      const logoTargetWidth = 44;
+      const twoGaps = viewport <= 340 ? 12 : 16;
       assert.ok(profileTargetWidth >= 44);
-      assert.ok(estimatedCreateWidth + languageWidth + profileTargetWidth + twoGaps <= contentWidth);
+      assert.ok(estimatedCreateWidth + languageWidth + profileTargetWidth + logoTargetWidth + twoGaps <= contentWidth);
     }
     assert.equal(rootClientWidth, viewport - scrollbar);
     assert.ok(contentWidth > 0);
@@ -248,6 +254,43 @@ test("authentication and app pages share one responsive background painter witho
   assert.equal(publicPage.includes('className="bike-app"'), false);
   assert.equal(/(?:min-h-screen|fixed\s+inset-0|bg-\[(?:linear|radial)-gradient)/.test(appPages), false);
   assert.equal(/(?:html|body|\.bike-app)\s*\{[\s\S]*?overflow-x:\s*hidden\s*;/.test(styles), false);
+});
+
+test("unknown authenticated app paths delegate to the localized app not-found boundary", () => {
+  const catchAll = projectFile("app/[locale]/app/[...notFound]/page.tsx");
+  const appNotFound = projectFile("app/[locale]/app/not-found.tsx");
+  const appLayout = projectFile("app/[locale]/app/layout.tsx");
+  const shell = projectFile("components/app-shell.tsx");
+  const styles = projectFile("app/globals.css");
+
+  assert.ok(catchAll.includes('import { notFound } from "next/navigation"'));
+  assert.match(catchAll, /notFound\(\);/);
+  assert.equal(catchAll.includes("AppShell"), false);
+  assert.equal(catchAll.includes("bike-app"), false);
+
+  assert.ok(appNotFound.includes("AppPageHeader"));
+  assert.ok(appNotFound.includes("AppPanel"));
+  assert.ok(appNotFound.includes('href={`/${locale}/app`}'));
+  assert.ok(appLayout.includes("<AppShell"));
+  assert.ok(appLayout.includes("{children}</AppShell>"));
+  assert.ok(shell.includes('className="bike-app"'));
+  assert.match(styles, /\.bike-app::before,\s*\.bike-auth-page::before\s*\{[\s\S]*?position:\s*fixed\s*;/);
+  assert.equal(/(?:html|body|\.bike-app)\s*\{[\s\S]*?overflow-x:\s*hidden\s*;/.test(styles), false);
+
+  locales.forEach((locale) => {
+    const unknownPath = `/${locale}/app/unknown`;
+    assert.ok(unknownPath.startsWith(`/${locale}/app/`));
+  });
+
+  [
+    "app/[locale]/app/page.tsx",
+    "app/[locale]/app/rides/page.tsx",
+    "app/[locale]/app/riders/page.tsx",
+    "app/[locale]/app/requests/page.tsx",
+    "app/[locale]/app/history/page.tsx",
+    "app/[locale]/app/status/page.tsx",
+    "app/[locale]/app/profile/page.tsx"
+  ].forEach((path) => assert.ok(projectFile(path).length > 0, path));
 });
 
 test("Basic and Pro access matches mobile access semantics", () => {
