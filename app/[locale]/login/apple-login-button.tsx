@@ -42,7 +42,7 @@ export function AppleLoginButton({
   };
 
   return (
-    <div className="mt-6">
+    <div className="mt-4">
       <div className="flex items-center gap-3" aria-hidden="true">
         <span className="h-px flex-1 bg-white/15" />
         <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">
@@ -60,7 +60,7 @@ export function AppleLoginButton({
         }
         aria-describedby={hasError ? "apple-login-error" : undefined}
         onClick={() => void handleAppleLogin()}
-        className="relative mt-5 inline-flex h-[52px] min-h-[52px] w-full items-center justify-center overflow-hidden rounded-lg border border-transparent bg-white px-3 font-[system-ui] text-[19px] font-medium leading-none text-black transition hover:bg-[#f2f2f2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0f18] disabled:cursor-wait disabled:opacity-65 sm:text-[22px]"
+        className="relative mt-4 inline-flex h-[52px] min-h-[52px] w-full items-center justify-center overflow-hidden rounded-lg border border-transparent bg-white px-3 font-[system-ui] text-[19px] font-medium leading-none text-black transition hover:bg-[#f2f2f2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0f18] disabled:cursor-wait disabled:opacity-65 sm:text-[22px]"
       >
         <span
           aria-hidden="true"
@@ -85,17 +85,13 @@ export function AppleLoginButton({
         ) : null}
       </button>
 
-      <div
-        id="apple-login-error"
-        aria-live="polite"
-        className="mt-3 min-h-5"
-      >
-        {hasError ? (
+      {hasError ? (
+        <div id="apple-login-error" aria-live="polite" className="mt-3">
           <p className="text-sm leading-relaxed text-[#ffc3ca]">
             {translations.appleLoginError}
           </p>
-        ) : null}
-      </div>
+        </div>
+      ) : null}
     </div>
   );
 }

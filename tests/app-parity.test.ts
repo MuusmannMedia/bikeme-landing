@@ -151,6 +151,26 @@ test("the authenticated shell owns the one persistent localized create-ride acti
   assert.equal(getAppTranslationRow("rides.create").length, 7);
 });
 
+test("mobile profile control keeps its avatar, accessible name and touch target", () => {
+  const shell = projectFile("components/app-shell.tsx");
+  const styles = projectFile("app/globals.css");
+  const viewerRule = styles.match(/\.bike-app-viewer\s*\{([^}]*)\}/)?.[1] ?? "";
+  const mobileStart = styles.indexOf("@media (max-width: 820px)");
+  const mobileEnd = styles.indexOf("@media (max-width: 620px)", mobileStart);
+  const mobileRules = styles.slice(mobileStart, mobileEnd);
+
+  assert.ok(shell.includes('aria-label={t("nav.profile")}'));
+  assert.ok(shell.includes('href={`${base}/profile`}'));
+  assert.ok(shell.includes('<span className="bike-app-viewer-name">{displayName}</span>'));
+  assert.ok(shell.includes('<AppAvatar name={displayName} url={viewer.profile.avatarUrl} size="small" />'));
+  assert.match(viewerRule, /\bmin-width:\s*44px\s*;/);
+  assert.match(viewerRule, /\bmin-height:\s*44px\s*;/);
+  assert.match(viewerRule, /\bflex:\s*0 0 auto\s*;/);
+  assert.ok(mobileRules.includes(".bike-app-viewer-name { display: none; }"));
+  assert.equal(mobileRules.includes(".bike-app-viewer > span { display: none; }"), false);
+  assert.equal(/\.bike-app-avatar\s*\{[^}]*display:\s*none\s*;/.test(mobileRules), false);
+});
+
 test("persistent header action and overview cards remain contained at release viewports", () => {
   const styles = projectFile("app/globals.css");
   const mobileRules = styles.slice(styles.lastIndexOf("@media (max-width: 620px)"));
@@ -183,33 +203,50 @@ test("persistent header action and overview cards remain contained at release vi
     if (viewport <= 620) {
       const estimatedCreateWidth = (longestCreateLabel.length * 7) + 20;
       const languageWidth = 62;
-      const avatarWidth = 36;
+      const profileTargetWidth = 44;
       const twoGaps = 16;
-      assert.ok(estimatedCreateWidth + languageWidth + avatarWidth + twoGaps <= contentWidth);
+      assert.ok(profileTargetWidth >= 44);
+      assert.ok(estimatedCreateWidth + languageWidth + profileTargetWidth + twoGaps <= contentWidth);
     }
     assert.equal(rootClientWidth, viewport - scrollbar);
     assert.ok(contentWidth > 0);
   }
 });
 
-test("authenticated pages reuse the exact login background without global overflow suppression", () => {
+test("authentication and app pages share one responsive background painter without opaque overlays", () => {
   const styles = projectFile("app/globals.css");
   const appShell = projectFile("components/app-shell.tsx");
   const publicPage = projectFile("app/[locale]/page.tsx");
   const loginPage = projectFile("app/[locale]/login/page.tsx");
   const rootRule = styles.match(/:root\s*\{([^}]*)\}/)?.[1] ?? "";
   const bodyRule = styles.match(/body\s*\{([^}]*)\}/)?.[1] ?? "";
+  const sharedPageRule = styles.match(/\.bike-app,\s*\.bike-auth-page\s*\{([^}]*)\}/)?.[1] ?? "";
   const appRule = styles.match(/\.bike-app\s*\{([^}]*)\}/)?.[1] ?? "";
+  const sharedBackdropRule = styles.match(/\.bike-app::before,\s*\.bike-auth-page::before\s*\{([^}]*)\}/)?.[1] ?? "";
+  const backgroundToken = rootRule.match(/--bike-me-page-background:\s*([\s\S]*?);/)?.[1] ?? "";
+  const appPages = filesBelow(join(process.cwd(), "app/[locale]/app"))
+    .filter((path) => path.endsWith(".tsx"))
+    .map((path) => readFileSync(path, "utf8"))
+    .join("\n");
 
   assert.ok(rootRule.includes("--bike-me-page-background:"));
   assert.ok(rootRule.includes("radial-gradient(circle at 12% 0%"));
   assert.ok(rootRule.includes("radial-gradient(circle at 88% 15%"));
+  assert.equal(/\d+(?:\.\d+)?px/.test(backgroundToken), false);
   assert.match(bodyRule, /background:\s*var\(--bike-me-page-background\)\s*;/);
-  assert.match(appRule, /background:\s*var\(--bike-me-page-background\)\s*;/);
+  assert.match(sharedPageRule, /\bposition:\s*relative\s*;/);
+  assert.match(sharedPageRule, /\bisolation:\s*isolate\s*;/);
+  assert.match(sharedPageRule, /\bbackground:\s*transparent\s*;/);
   assert.match(appRule, /\bmin-height:\s*100vh\s*;/);
+  assert.equal(appRule.includes("background:"), false);
+  assert.match(sharedBackdropRule, /\bposition:\s*fixed\s*;/);
+  assert.match(sharedBackdropRule, /\binset:\s*0\s*;/);
+  assert.match(sharedBackdropRule, /background:\s*var\(--bike-me-page-background\)\s*;/);
+  assert.match(sharedBackdropRule, /\bpointer-events:\s*none\s*;/);
   assert.ok(appShell.includes('className="bike-app"'));
+  assert.ok(loginPage.includes('className="bike-auth-page section-shell'));
   assert.equal(publicPage.includes('className="bike-app"'), false);
-  assert.equal(loginPage.includes('className="bike-app"'), false);
+  assert.equal(/(?:min-h-screen|fixed\s+inset-0|bg-\[(?:linear|radial)-gradient)/.test(appPages), false);
   assert.equal(/(?:html|body|\.bike-app)\s*\{[\s\S]*?overflow-x:\s*hidden\s*;/.test(styles), false);
 });
 

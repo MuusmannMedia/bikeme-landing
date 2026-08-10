@@ -65,8 +65,8 @@ export function AppShell({ children, locale, viewer, displayName, t }: AppShellP
               {t("rides.create")}
             </Link>
             <AppLanguageSwitcher locale={locale} label={t("shell.language")} />
-            <Link href={`${base}/profile`} className="bike-app-viewer">
-              <span>{displayName}</span>
+            <Link aria-label={t("nav.profile")} href={`${base}/profile`} className="bike-app-viewer">
+              <span className="bike-app-viewer-name">{displayName}</span>
               <AppAvatar name={displayName} url={viewer.profile.avatarUrl} size="small" />
             </Link>
           </div>

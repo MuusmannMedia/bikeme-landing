@@ -356,6 +356,27 @@ test("the Apple button uses the verified official white-style artwork accessibly
   assert.ok(buttonSource.includes("whitespace-nowrap"));
 });
 
+test("the login card is responsive and does not reserve empty error space", () => {
+  const loginPage = projectFile("app/[locale]/login/page.tsx");
+  const loginForm = projectFile("app/[locale]/login/login-form.tsx");
+  const appleButton = projectFile("app/[locale]/login/apple-login-button.tsx");
+
+  assert.ok(loginPage.includes('className="bike-auth-page section-shell'));
+  assert.ok(loginPage.includes("min-h-[100svh]"));
+  assert.ok(loginPage.includes("items-start"));
+  assert.ok(loginPage.includes("sm:items-center"));
+  assert.ok(loginPage.includes("py-4"));
+  assert.ok(loginPage.includes("mb-3"));
+  assert.ok(loginPage.includes("h-24 w-24"));
+  assert.ok(loginForm.includes('className="grid gap-4"'));
+  assert.ok(loginForm.includes('aria-describedby={errorMessage ? "login-error" : undefined}'));
+  assert.equal(loginForm.includes("min-h-24"), false);
+  assert.equal(loginForm.includes("sm:min-h-[72px]"), false);
+  assert.ok(appleButton.includes('<div className="mt-4">'));
+  assert.ok(appleButton.includes('className="relative mt-4 inline-flex'));
+  assert.equal(appleButton.includes("min-h-5"), false);
+});
+
 test("auth routes stay private and noindex while public landing stays static", () => {
   const loginPageSource = projectFile("app/[locale]/login/page.tsx");
   const protectedPageSource = projectFile("app/[locale]/app/page.tsx");
