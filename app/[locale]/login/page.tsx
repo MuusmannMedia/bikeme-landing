@@ -70,25 +70,25 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
             : null;
 
   return (
-    <main className="section-shell flex min-h-screen items-center justify-center py-10 md:py-16">
+    <main className="bike-auth-page section-shell flex min-h-[100svh] items-start justify-center py-4 sm:items-center">
       <section className="w-full max-w-[520px]">
-        <div className="rounded-xl border border-white/20 bg-[linear-gradient(135deg,rgba(27,45,76,0.84),rgba(10,18,32,0.94))] p-5 shadow-[0_32px_90px_-45px_rgba(0,0,0,0.95)] sm:p-8">
-          <div className="mb-7 flex flex-col items-center text-center">
+        <div className="rounded-xl border border-white/20 bg-[linear-gradient(135deg,rgba(27,45,76,0.84),rgba(10,18,32,0.94))] p-5 shadow-[0_32px_90px_-45px_rgba(0,0,0,0.95)]">
+          <div className="mb-3 flex flex-col items-center text-center">
             <Image
               src="/brand/bike-me-logo-white.png"
               alt="Bike Me logo"
               width={1024}
               height={1024}
-              className="h-28 w-28 rounded-full sm:h-32 sm:w-32"
+              className="h-24 w-24 rounded-full"
               priority
             />
-            <p className="mt-5 text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(209,161,255)]">
+            <p className="mt-2 text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(209,161,255)]">
               {translations.loginEyebrow}
             </p>
-            <h1 className="mt-3 font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">
+            <h1 className="mt-2 font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">
               {translations.loginTitle}
             </h1>
-            <p className="mt-3 max-w-sm leading-relaxed text-[var(--ink-soft)]">
+            <p className="mt-2 max-w-sm leading-relaxed text-[var(--ink-soft)]">
               {translations.loginIntro}
             </p>
           </div>
@@ -109,7 +109,7 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
 
           <Link
             href={`/${locale}`}
-            className="mt-6 inline-flex min-h-11 w-full items-center justify-center rounded-lg px-4 text-sm font-semibold text-[var(--ink-soft)] underline decoration-white/30 underline-offset-4 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(209,161,255)]"
+            className="mt-2 inline-flex min-h-11 w-full items-center justify-center rounded-lg px-4 text-sm font-semibold text-[var(--ink-soft)] underline decoration-white/30 underline-offset-4 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(209,161,255)]"
           >
             {translations.backToBikeMe}
           </Link>

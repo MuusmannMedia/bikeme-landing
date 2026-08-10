@@ -88,8 +88,16 @@ a {
   background-size: 220% 100%;
 }
 
-/* Authenticated Bike Me application. All selectors are intentionally scoped so
-   the public landing page keeps its existing visual system. */
+/* Authentication and authenticated application pages share one viewport-sized
+   background painter. Their content wrappers stay transparent so long pages do
+   not stretch or cover the approved gradient. */
+.bike-app,
+.bike-auth-page {
+  position: relative;
+  isolation: isolate;
+  background: transparent;
+}
+
 .bike-app {
   --app-bg: #020817;
   --app-panel: #101827;
@@ -98,8 +106,17 @@ a {
   --app-text: #f8faff;
   --app-muted: #b8c6de;
   min-height: 100vh;
-  background: var(--bike-me-page-background);
   color: var(--app-text);
+}
+
+.bike-app::before,
+.bike-auth-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--bike-me-page-background);
+  pointer-events: none;
 }
 
 .bike-app-sidebar {

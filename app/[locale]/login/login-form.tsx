@@ -25,7 +25,7 @@ export function LoginForm({
   return (
     <form
       action={action}
-      className="space-y-5"
+      className="grid gap-4"
       onSubmit={() => setIsSubmitting(true)}
     >
       <input type="hidden" name="locale" value={locale} />
@@ -43,7 +43,7 @@ export function LoginForm({
           inputMode="email"
           required
           disabled={isSubmitting}
-          aria-describedby="login-error"
+          aria-describedby={errorMessage ? "login-error" : undefined}
           className="min-h-[52px] w-full rounded-lg border border-white/20 bg-[rgba(6,10,20,0.82)] px-4 text-base text-[var(--ink)] outline-none transition placeholder:text-[var(--muted)] hover:border-white/30 focus-visible:border-[rgba(128,39,130,0.95)] focus-visible:ring-2 focus-visible:ring-[rgba(209,161,255,0.82)] disabled:cursor-wait disabled:opacity-70"
         />
       </div>
@@ -59,18 +59,18 @@ export function LoginForm({
           autoComplete="current-password"
           required
           disabled={isSubmitting}
-          aria-describedby="login-error"
+          aria-describedby={errorMessage ? "login-error" : undefined}
           className="min-h-[52px] w-full rounded-lg border border-white/20 bg-[rgba(6,10,20,0.82)] px-4 text-base text-[var(--ink)] outline-none transition placeholder:text-[var(--muted)] hover:border-white/30 focus-visible:border-[rgba(128,39,130,0.95)] focus-visible:ring-2 focus-visible:ring-[rgba(209,161,255,0.82)] disabled:cursor-wait disabled:opacity-70"
         />
       </div>
 
-      <div id="login-error" aria-live="polite" className="min-h-24 sm:min-h-[72px]">
-        {errorMessage ? (
+      {errorMessage ? (
+        <div id="login-error" aria-live="polite">
           <p className="rounded-lg border border-[rgba(255,142,154,0.42)] bg-[rgba(92,24,34,0.28)] px-4 py-3 text-sm leading-relaxed text-[#ffc3ca]">
             {errorMessage}
           </p>
-        ) : null}
-      </div>
+        </div>
+      ) : null}
 
       <button
         type="submit"
