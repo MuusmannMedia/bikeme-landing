@@ -6,14 +6,23 @@ import test from "node:test";
 import { createViewerAccess, hasProAccess } from "../lib/app-access";
 import { trimRouteForPrivacy } from "../lib/app-format";
 import { appTranslationKeys, appTranslationLocales, getAppTranslationRow } from "../lib/app-i18n";
-import type { RideHistorySummary, RideInterest, RideInvite, RiderConnection } from "../lib/app-model";
+import type { RideHistorySummary, RideInterest, RideInvite, RiderConnection, StatusHistoryRide } from "../lib/app-model";
 import {
   overviewRecentRideLimit,
   selectAcceptedConnections,
   selectPendingReceivedInterest,
   selectPendingReceivedInvites
 } from "../lib/app-overview";
-import { buildStatusSummary, getStatusWindow, statusRanges } from "../lib/app-status";
+import {
+  buildStatusCalendar,
+  buildStatusInsights,
+  buildStatusSummary,
+  getStatusWindow,
+  resolveStatusElevation,
+  statusDateKey,
+  statusRanges
+} from "../lib/app-status";
+import { formatStatusDistance, formatStatusDuration, formatStatusSpeed } from "../lib/status-format";
 import { buildGpx } from "../lib/gpx";
 import { locales } from "../lib/locales";
 
@@ -312,7 +321,7 @@ test("status periods use the same day windows and bucket counts as mobile", () =
   });
 });
 
-test("status totals and previous-period comparison use only stored ride values", () => {
+test("status totals and previous-period comparison preserve the mobile range contract", () => {
   const now = new Date(2026, 7, 2, 12, 0, 0);
   const ride = (startedAt: Date, distanceKm: number): RideHistorySummary => ({
     id: startedAt.toISOString(), startedAt: startedAt.toISOString(), title: "Ride", discipline: "ROAD",
@@ -327,6 +336,147 @@ test("status totals and previous-period comparison use only stored ride values",
   assert.equal(summary.totals.durationMinutes, 60);
   assert.equal(summary.totals.rideCount, 1);
   assert.equal(summary.comparisonPercent, 100);
+});
+
+function statusRide(overrides: Partial<StatusHistoryRide> = {}): StatusHistoryRide {
+  return {
+    id: "status-ride",
+    startedAt: "2026-08-11T08:00:00.000Z",
+    title: "Status ride",
+    discipline: "ROAD",
+    startAddress: null,
+    distanceKm: 20,
+    durationMinutes: 60,
+    elevationGain: 100,
+    averageWatts: null,
+    maxWatts: null,
+    caloriesKcal: null,
+    participantCount: 1,
+    route: [],
+    zones: null,
+    ...overrides
+  };
+}
+
+test("Status uses browser-IANA calendar days across DST boundaries", () => {
+  const timeZone = "Europe/Copenhagen";
+  const now = new Date("2026-03-29T12:00:00.000Z");
+  const window = getStatusWindow("7D", now, timeZone);
+  assert.equal(statusDateKey(window.start, timeZone), "2026-03-23");
+  assert.equal(statusDateKey(window.end, timeZone), "2026-03-29");
+  assert.equal((window.end.getTime() - window.start.getTime() + 1) / 3_600_000, 167);
+
+  const midnightDstZone = "America/Havana";
+  const midnightDstWindow = getStatusWindow("7D", new Date("2026-03-08T12:00:00.000Z"), midnightDstZone);
+  assert.equal(statusDateKey(midnightDstWindow.start, midnightDstZone), "2026-03-02");
+  assert.equal(statusDateKey(midnightDstWindow.end, midnightDstZone), "2026-03-08");
+  const endClock = new Intl.DateTimeFormat("en-CA", {
+    timeZone: midnightDstZone,
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23"
+  }).format(midnightDstWindow.end);
+  assert.equal(endClock, "23:59:59");
+});
+
+test("mobile-equivalent elevation prefers a plausible route and applies stored scaling guards", () => {
+  const route = Array.from({ length: 8 }, (_, index) => ({
+    latitude: 55 + index * 0.0001,
+    longitude: 12,
+    recordedAt: new Date(Date.parse("2026-08-11T08:00:00.000Z") + index * 10_000).toISOString(),
+    elevation: 10 + index * 1.2,
+    altitudeAccuracy: 5,
+    startsNewSegment: false
+  }));
+  const routeValue = resolveStatusElevation(statusRide({ route, elevationGain: 1 }));
+  assert.ok(routeValue > 1);
+  assert.equal(resolveStatusElevation(statusRide({ route: [], distanceKm: 10, elevationGain: 100_000 })), 1000);
+  assert.equal(resolveStatusElevation(statusRide({ route: route.map((point) => ({ ...point, altitudeAccuracy: 150 })), elevationGain: 250 })), 250);
+});
+
+test("weekly summaries and streak start in the current Monday week", () => {
+  const now = new Date("2026-08-11T12:00:00.000Z");
+  const timeZone = "Europe/Copenhagen";
+  const active = buildStatusInsights([
+    statusRide({ id: "current", startedAt: "2026-08-10T08:00:00.000Z" }),
+    statusRide({ id: "previous", startedAt: "2026-08-03T08:00:00.000Z" })
+  ], "3M", { weightKg: 75, ftp: 250 }, now, timeZone);
+  assert.equal(active.weeks.length, 12);
+  assert.equal(active.streakWeeks, 2);
+  assert.equal(active.streakActivities, 2);
+  const currentWeekEmpty = buildStatusInsights([
+    statusRide({ id: "previous", startedAt: "2026-08-03T08:00:00.000Z" })
+  ], "3M", { weightKg: 75, ftp: 250 }, now, timeZone);
+  assert.equal(currentWeekEmpty.streakWeeks, 0);
+});
+
+test("actual training-zone telemetry suppresses partial average-watt fallback", () => {
+  const insights = buildStatusInsights([
+    statusRide({ id: "actual", zones: { z1: 0, z2: 60, z3: 0, z4: 0, z5: 0, z6: 0, z7: 0 } }),
+    statusRide({ id: "fallback-candidate", averageWatts: 200, zones: null })
+  ], "3M", { weightKg: 75, ftp: 250 }, new Date("2026-08-11T12:00:00.000Z"), "Europe/Copenhagen");
+  assert.deepEqual(insights.zones.seconds, [0, 60, 0, 0, 0, 0, 0]);
+  assert.equal(insights.zones.usedAveragePowerFallback, false);
+});
+
+test("FTP, max-watt and estimated split guards match mobile Status", () => {
+  const insights = buildStatusInsights([
+    statusRide({ id: "twenty", durationMinutes: 20, distanceKm: null, averageWatts: 300, maxWatts: 2001 }),
+    statusRide({ id: "qualified", durationMinutes: 20.1, averageWatts: 200, maxWatts: 2000, distanceKm: 10 })
+  ], "3M", { weightKg: 80, ftp: 250 }, new Date("2026-08-11T12:00:00.000Z"), "Europe/Copenhagen");
+  assert.equal(insights.power.estimatedFtpWatts, 190);
+  assert.equal(insights.power.maxWatts, 2000);
+  assert.equal(insights.records.highestWatts, 2000);
+  assert.equal(insights.records.estimatedFastestSeconds[5], 603);
+});
+
+test("activity calendar groups rides by the selected IANA local date", () => {
+  const history = [statusRide({ startedAt: "2026-08-10T22:30:00.000Z" })];
+  const days = buildStatusCalendar(history, 2026, 8, new Date("2026-08-11T12:00:00.000Z"), "Europe/Copenhagen");
+  assert.equal(days.find((day) => day.dateKey === "2026-08-11")?.rides.length, 1);
+});
+
+test("Status-scoped unit and duration formatting is locale-aware without changing global formatters", () => {
+  assert.equal(formatStatusDistance("da", 100, "metric"), "100,0 km");
+  assert.equal(formatStatusDistance("da", 42, "metric"), "42 km");
+  assert.equal(formatStatusDistance("da", 0, "metric"), "0 km");
+  assert.equal(formatStatusDuration("da", 60), "1 t 00 min");
+  assert.equal(formatStatusDuration("nl", 60), "1 u 00 min");
+  assert.equal(formatStatusSpeed("da", 30, "metric"), "30,0 km/t");
+  assert.equal(formatStatusSpeed("nl", 30, "metric"), "30,0 km/u");
+});
+
+test("Status projection and interactive UI stay owner-scoped and accessible", () => {
+  const data = projectFile("lib/app-data.ts");
+  const chart = projectFile("components/status-bars.tsx");
+  const calendar = projectFile("components/status-calendar.tsx");
+  const dashboard = projectFile("components/status-dashboard.tsx");
+  const css = projectFile("app/globals.css");
+  assert.ok(data.includes("listStatusHistory"));
+  ["route_coordinates", "route_data", "zone_distribution"].forEach((field) => assert.ok(data.includes(field), field));
+  assert.ok(data.includes("Array.isArray(entry) && entry.length >= 2"));
+  assert.ok(data.includes("Array.isArray(geometry?.coordinates)"));
+  assert.ok(data.includes("row.elevation_meters"));
+  assert.ok(data.includes("candidate = JSON.parse(candidate)"));
+  assert.ok(data.includes('.eq("owner_id", userId)'));
+  assert.ok(data.includes(".range(from, from + pageSize - 1)"));
+  assert.ok(chart.includes('aria-pressed={selectedIndex === index}'));
+  assert.ok(chart.includes('type="button"'));
+  assert.ok(chart.includes("formatRange(bucket)"));
+  assert.ok(chart.includes("statusElevationUnit(unitSystem)"));
+  assert.ok(chart.includes('metric === "elevation" || value >= 100'));
+  assert.ok(chart.includes('"--status-point-min-width": "24px"'));
+  assert.ok(calendar.includes("buildStatusCalendar"));
+  assert.ok(calendar.includes('event.key === "Escape"'));
+  assert.ok(calendar.includes("closeButtonRef.current?.focus()"));
+  assert.ok(calendar.includes("trigger?.isConnected"));
+  assert.ok(css.includes("grid-template-columns: repeat(7,44px)"));
+  assert.ok(css.includes("width: 44px; height: 44px"));
+  assert.ok(css.includes("min-width: var(--status-point-min-width,24px)"));
+  assert.ok(dashboard.includes("status.estimatedResults"));
+  assert.ok(dashboard.includes("status.latestRides"));
+  assert.ok(dashboard.includes('role="region" tabIndex={0}'));
 });
 
 test("route privacy trims the same five percent from both ends as mobile", () => {
