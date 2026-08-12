@@ -63,37 +63,37 @@ const metadataByLocale: Partial<Record<Locale, { title: string; description: str
 const uiByLocale: Partial<Record<Locale, { pageTitle: string; lastUpdated: string; backToHome: string }>> = {
   en: {
     pageTitle: "Privacy Policy for Bike ME",
-    lastUpdated: "Last updated: June 3, 2026",
+    lastUpdated: "Last updated: August 12, 2026",
     backToHome: "Back to home"
   },
   da: {
     pageTitle: "Privatlivspolitik for Bike ME",
-    lastUpdated: "Senest opdateret: 3. juni 2026",
+    lastUpdated: "Senest opdateret: 12. august 2026",
     backToHome: "Tilbage til forsiden"
   },
   de: {
     pageTitle: "Datenschutzerklärung für Bike ME",
-    lastUpdated: "Zuletzt aktualisiert: 3. Juni 2026",
+    lastUpdated: "Zuletzt aktualisiert: 12. August 2026",
     backToHome: "Zur Startseite"
   },
   es: {
     pageTitle: "Política de privacidad de Bike ME",
-    lastUpdated: "Última actualización: 3 de junio de 2026",
+    lastUpdated: "Última actualización: 12 de agosto de 2026",
     backToHome: "Volver al inicio"
   },
   it: {
     pageTitle: "Informativa sulla privacy di Bike ME",
-    lastUpdated: "Ultimo aggiornamento: 3 giugno 2026",
+    lastUpdated: "Ultimo aggiornamento: 12 agosto 2026",
     backToHome: "Torna alla home"
   },
   fr: {
     pageTitle: "Politique de confidentialité de Bike ME",
-    lastUpdated: "Dernière mise à jour : 3 juin 2026",
+    lastUpdated: "Dernière mise à jour : 12 août 2026",
     backToHome: "Retour à l'accueil"
   },
   nl: {
     pageTitle: "Privacybeleid voor Bike ME",
-    lastUpdated: "Laatst bijgewerkt: 3 juni 2026",
+    lastUpdated: "Laatst bijgewerkt: 12 augustus 2026",
     backToHome: "Terug naar home"
   }
 };
@@ -178,7 +178,8 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
           { text: "error/logging tools (if used)" }
         ],
         afterList: [
-          "Processors may only process information on our behalf and according to our instructions."
+          "Processors may only process information on our behalf and according to our instructions.",
+          "When you open a route map on the website, your browser retrieves map tiles from the external map service OpenFreeMap. OpenFreeMap and its delivery provider Cloudflare may therefore receive your IP address and the approximate map area viewed. The saved route is drawn in your browser and is not sent to the map service as route data."
         ]
       },
       {
@@ -299,7 +300,8 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
           { text: "fejl-/logningsværktøjer (hvis anvendt)" }
         ],
         afterList: [
-          "Databehandlere må kun behandle oplysninger på vores vegne og efter instruks."
+          "Databehandlere må kun behandle oplysninger på vores vegne og efter instruks.",
+          "Når du åbner et rutekort på hjemmesiden, henter din browser kortfliser fra den eksterne korttjeneste OpenFreeMap. OpenFreeMap og deres leveringsudbyder Cloudflare kan derfor modtage din IP-adresse og det omtrentlige viste kortområde. Den gemte rute tegnes i din browser og sendes ikke til korttjenesten som rutedata."
         ]
       },
       {
@@ -416,7 +418,8 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
           { text: "Fehler-/Logging-Tools (falls verwendet)" }
         ],
         afterList: [
-          "Auftragsverarbeiter dürfen Informationen nur in unserem Auftrag und nach unseren Weisungen verarbeiten."
+          "Auftragsverarbeiter dürfen Informationen nur in unserem Auftrag und nach unseren Weisungen verarbeiten.",
+          "Wenn du eine Routenkarte auf der Website öffnest, ruft dein Browser Kartenkacheln vom externen Kartendienst OpenFreeMap ab. OpenFreeMap und dessen Auslieferungsanbieter Cloudflare können daher deine IP-Adresse und den ungefähr angezeigten Kartenbereich erhalten. Die gespeicherte Route wird in deinem Browser gezeichnet und nicht als Routendaten an den Kartendienst gesendet."
         ]
       },
       {
@@ -533,7 +536,8 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
           { text: "herramientas de errores/registros (si se usan)" }
         ],
         afterList: [
-          "Los encargados del tratamiento solo pueden tratar información en nuestro nombre y siguiendo nuestras instrucciones."
+          "Los encargados del tratamiento solo pueden tratar información en nuestro nombre y siguiendo nuestras instrucciones.",
+          "Cuando abres un mapa de ruta en el sitio web, tu navegador obtiene teselas cartográficas del servicio de mapas externo OpenFreeMap. Por ello, OpenFreeMap y su proveedor de entrega Cloudflare pueden recibir tu dirección IP y el área aproximada del mapa visualizada. La ruta guardada se dibuja en tu navegador y no se envía al servicio de mapas como datos de ruta."
         ]
       },
       {
@@ -650,7 +654,8 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
           { text: "strumenti di errore/logging (se usati)" }
         ],
         afterList: [
-          "I responsabili del trattamento possono trattare le informazioni solo per nostro conto e secondo le nostre istruzioni."
+          "I responsabili del trattamento possono trattare le informazioni solo per nostro conto e secondo le nostre istruzioni.",
+          "Quando apri una mappa del percorso sul sito web, il browser recupera le tessere cartografiche dal servizio di mappe esterno OpenFreeMap. OpenFreeMap e il suo fornitore di distribuzione Cloudflare possono quindi ricevere il tuo indirizzo IP e l'area approssimativa della mappa visualizzata. Il percorso salvato viene disegnato nel browser e non viene inviato al servizio di mappe come dati del percorso."
         ]
       },
       {
@@ -767,7 +772,8 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
           { text: "outils d'erreurs/de journalisation (si utilisés)" }
         ],
         afterList: [
-          "Les sous-traitants ne peuvent traiter les informations que pour notre compte et selon nos instructions."
+          "Les sous-traitants ne peuvent traiter les informations que pour notre compte et selon nos instructions.",
+          "Lorsque vous ouvrez une carte d’itinéraire sur le site web, votre navigateur récupère des tuiles cartographiques auprès du service cartographique externe OpenFreeMap. OpenFreeMap et son fournisseur de diffusion Cloudflare peuvent donc recevoir votre adresse IP et la zone cartographique approximative affichée. L’itinéraire enregistré est tracé dans votre navigateur et n’est pas envoyé au service cartographique en tant que données d’itinéraire."
         ]
       },
       {
@@ -884,7 +890,8 @@ const privacyContentByLocale: Record<Locale, PrivacyContent> = {
           { text: "fout-/loggingtools (indien gebruikt)" }
         ],
         afterList: [
-          "Verwerkers mogen informatie alleen namens ons en volgens onze instructies verwerken."
+          "Verwerkers mogen informatie alleen namens ons en volgens onze instructies verwerken.",
+          "Wanneer je op de website een routekaart opent, haalt je browser kaarttegels op bij de externe kaartdienst OpenFreeMap. OpenFreeMap en diens leveringsprovider Cloudflare kunnen daardoor je IP-adres en het ongeveer weergegeven kaartgebied ontvangen. De opgeslagen route wordt in je browser getekend en niet als routegegevens naar de kaartdienst gestuurd."
         ]
       },
       {

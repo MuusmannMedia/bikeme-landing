@@ -46,6 +46,7 @@ import {
 } from "../lib/status-format";
 import { buildGpx } from "../lib/gpx";
 import { locales } from "../lib/locales";
+import { buildRouteMapModel, OPEN_FREE_MAP_STYLE_URL } from "../lib/route-map";
 
 const projectFile = (path: string) => readFileSync(join(process.cwd(), path), "utf8");
 
@@ -902,6 +903,69 @@ test("route privacy trims the same five percent from both ends as mobile", () =>
   assert.equal(trimmed[0], points[5]);
   assert.equal(trimmed.at(-1), points[94]);
   assert.equal(trimRouteForPrivacy(points, false), points);
+});
+
+test("completed ride map preserves route segments, bounds and visible endpoints", () => {
+  const points = [
+    { latitude: 55, longitude: 12, recordedAt: "2026-08-02T08:00:00.000Z", elevation: 10, startsNewSegment: false },
+    { latitude: 55.001, longitude: 12.001, recordedAt: "2026-08-02T08:01:00.000Z", elevation: 11, startsNewSegment: false },
+    { latitude: 55.01, longitude: 12.01, recordedAt: "2026-08-02T08:10:00.000Z", elevation: 12, startsNewSegment: true },
+    { latitude: 55.011, longitude: 12.011, recordedAt: "2026-08-02T08:11:00.000Z", elevation: 13, startsNewSegment: false },
+    { latitude: 56, longitude: 13, recordedAt: "2026-08-02T08:12:00.000Z", elevation: 14, startsNewSegment: true }
+  ];
+  const model = buildRouteMapModel(points);
+  assert.ok(model);
+  assert.deepEqual(model.segments, [
+    [[12, 55], [12.001, 55.001]],
+    [[12.01, 55.01], [12.011, 55.011]]
+  ]);
+  assert.deepEqual(model.bounds, [[12, 55], [12.011, 55.011]]);
+  assert.deepEqual(model.start, [12, 55]);
+  assert.deepEqual(model.finish, [12.011, 55.011]);
+  assert.equal(buildRouteMapModel(points.slice(0, 1)), null);
+  assert.equal(OPEN_FREE_MAP_STYLE_URL, "https://tiles.openfreemap.org/styles/liberty");
+
+  const invalidGap = buildRouteMapModel([
+    points[0],
+    points[1],
+    { ...points[1], latitude: Number.NaN },
+    points[2],
+    points[3]
+  ]);
+  assert.deepEqual(invalidGap?.segments, [
+    [[12, 55], [12.001, 55.001]],
+    [[12.01, 55.01], [12.011, 55.011]]
+  ]);
+});
+
+test("ride detail map uses the privacy-trimmed route with an accessible SVG fallback", () => {
+  const detail = projectFile("app/[locale]/app/history/[historyId]/page.tsx");
+  const routeMap = projectFile("components/route-map.tsx");
+  const styles = projectFile("app/globals.css");
+
+  assert.ok(detail.includes("const displayRoute = trimRouteForPrivacy"));
+  assert.ok(detail.includes("<RouteMap"));
+  assert.ok(detail.includes("points={displayRoute}"));
+  assert.ok(detail.includes("fallback={<RoutePreview points={displayRoute}"));
+  assert.equal(detail.includes("<RouteMap points={ride.route}"), false);
+  assert.ok(routeMap.includes('void import("maplibre-gl")'));
+  assert.ok(routeMap.includes('role={fullscreen ? "dialog" : undefined}'));
+  assert.ok(routeMap.includes("aria-modal={fullscreen ? true : undefined}"));
+  assert.ok(routeMap.includes('event.key === "Escape"'));
+  assert.ok(routeMap.includes("focusTarget.focus()"));
+  assert.ok(routeMap.includes('map.addControl(attribution, "bottom-left")'));
+  assert.ok(routeMap.includes('referrerPolicy: "no-referrer"'));
+  assert.ok(routeMap.includes('"AttributionControl.ToggleAttribution": attributionLabel'));
+  assert.ok(routeMap.includes('"Map.Title": label'));
+  assert.ok(routeMap.includes('"line-color": "#FF6A00"'));
+  assert.match(styles, /\.bike-app-route-map\[data-fullscreen="true"\]\s*\{[^}]*position:\s*fixed/);
+  assert.match(styles, /\.bike-app-route-map-close\s*\{[^}]*width:\s*44px;[^}]*height:\s*44px/);
+});
+
+test("all privacy-policy locales disclose the external route-map service", () => {
+  const privacy = projectFile("app/[locale]/privacy/page.tsx");
+  assert.equal(privacy.match(/OpenFreeMap/g)?.length, 14);
+  assert.equal(privacy.match(/Cloudflare/g)?.length, 7);
 });
 
 test("GPX export validates route length, escapes titles and preserves segments", () => {
