@@ -16,6 +16,7 @@ import type {
   RiderProfile,
   RideSummary,
   RoutePoint,
+  StatusHistoryRide,
   Viewer,
   ViewerProfile,
   ZoneDistribution
@@ -240,12 +241,30 @@ function normalizeRoute(value: unknown): RoutePoint[] {
       return [];
     }
   }
+  if (candidate && typeof candidate === "object" && !Array.isArray(candidate)) {
+    const coordinates = (candidate as { coordinates?: unknown }).coordinates;
+    if (Array.isArray(coordinates)) candidate = coordinates;
+  }
   if (!Array.isArray(candidate)) return [];
   return candidate.flatMap((entry): RoutePoint[] => {
+    if (Array.isArray(entry) && entry.length >= 2) {
+      const longitude = nullableNumber(entry[0]);
+      const latitude = nullableNumber(entry[1]);
+      if (latitude == null || longitude == null || latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) return [];
+      return [{ latitude, longitude, recordedAt: null, elevation: null, altitudeAccuracy: null, startsNewSegment: false }];
+    }
     if (!entry || typeof entry !== "object") return [];
     const row = entry as Record<string, unknown>;
-    const latitude = nullableNumber(row.latitude ?? row.lat);
-    const longitude = nullableNumber(row.longitude ?? row.lng ?? row.lon);
+    const geometry = row.geometry && typeof row.geometry === "object" ? row.geometry as Record<string, unknown> : null;
+    const nested = Array.isArray(row.coordinates) && row.coordinates.length >= 2
+      ? row.coordinates
+      : Array.isArray(geometry?.coordinates) && geometry.coordinates.length >= 2
+        ? geometry.coordinates
+        : Array.isArray(row.lonlat) && row.lonlat.length >= 2
+          ? row.lonlat
+          : null;
+    const latitude = nullableNumber(row.latitude ?? row.lat ?? nested?.[1]);
+    const longitude = nullableNumber(row.longitude ?? row.lng ?? row.lon ?? nested?.[0]);
     if (latitude == null || longitude == null || latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
       return [];
     }
@@ -253,7 +272,8 @@ function normalizeRoute(value: unknown): RoutePoint[] {
       latitude,
       longitude,
       recordedAt: nullableString(row.recorded_at),
-      elevation: nullableNumber(row.altitude ?? row.altitude_m ?? row.elevation ?? row.elevation_m),
+      elevation: nullableNumber(row.altitude ?? row.altitude_m ?? row.altitudeMeters ?? row.elevation ?? row.elevation_m ?? row.elevation_meters),
+      altitudeAccuracy: nullableNumber(row.altitude_accuracy ?? row.altitudeAccuracy ?? row.altitudeAccuracyMeters),
       startsNewSegment: row.starts_new_segment === true
     }];
   });
@@ -473,9 +493,71 @@ export async function listRideHistory(client: Client, userId: string, limit = 20
   }
 }
 
+const statusOptionalFields = [
+  ...historyOptionalSummaryFields,
+  "route_coordinates",
+  "route_data",
+  "zone_distribution"
+];
+
+function normalizeStatusHistory(row: Record<string, unknown>): StatusHistoryRide {
+  const primaryRoute = normalizeRoute(row.route_coordinates);
+  return {
+    ...normalizeHistory(row),
+    route: primaryRoute.length > 0 ? primaryRoute : normalizeRoute(row.route_data),
+    zones: normalizeZones(row.zone_distribution)
+  };
+}
+
+/**
+ * Loads the complete owner-scoped Status dataset in read-only pages. The
+ * projection is intentionally separate from the lightweight History list DTO.
+ */
+export async function listStatusHistory(client: Client, userId: string): Promise<StatusHistoryRide[]> {
+  const pageSize = 1000;
+  let fields = [...historyBaseFields, ...statusOptionalFields];
+
+  while (true) {
+    const rows: Record<string, unknown>[] = [];
+    let restartWithReducedProjection = false;
+
+    for (let from = 0; ; from += pageSize) {
+      const { data, error } = await client
+        .from("ride_history")
+        .select(fields.join(","))
+        .eq("owner_id", userId)
+        .order("started_at", { ascending: false })
+        .range(from, from + pageSize - 1);
+
+      if (error) {
+        const message = `${error.message ?? ""} ${error.details ?? ""}`.toLowerCase();
+        const missing = statusOptionalFields.filter((field) => fields.includes(field) && message.includes(field));
+        if (missing.length === 0) throw new AppDataError("LOAD_FAILED");
+        fields = fields.filter((field) => !missing.includes(field));
+        restartWithReducedProjection = true;
+        break;
+      }
+
+      const page = (data ?? []) as unknown as Record<string, unknown>[];
+      rows.push(...page);
+      if (page.length < pageSize) return rows.map(normalizeStatusHistory);
+    }
+
+    if (!restartWithReducedProjection) return rows.map(normalizeStatusHistory);
+  }
+}
+
 function normalizeZones(value: unknown): ZoneDistribution | null {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
-  const row = value as Record<string, unknown>;
+  let candidate = value;
+  if (typeof candidate === "string") {
+    try {
+      candidate = JSON.parse(candidate);
+    } catch {
+      return null;
+    }
+  }
+  if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) return null;
+  const row = candidate as Record<string, unknown>;
   return {
     z1: nullableNumber(row.z1) ?? 0,
     z2: nullableNumber(row.z2) ?? 0,

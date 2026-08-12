@@ -46,6 +46,7 @@ export type RoutePoint = {
   longitude: number;
   recordedAt: string | null;
   elevation: number | null;
+  altitudeAccuracy?: number | null;
   startsNewSegment: boolean;
 };
 
@@ -164,6 +165,11 @@ export type RideHistoryDetail = RideHistorySummary & {
   notes: string | null;
   mood: string | null;
   routeLink: string | null;
+  route: RoutePoint[];
+  zones: ZoneDistribution | null;
+};
+
+export type StatusHistoryRide = RideHistorySummary & {
   route: RoutePoint[];
   zones: ZoneDistribution | null;
 };
