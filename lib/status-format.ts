@@ -1,6 +1,6 @@
 import { getLocaleTag } from "./app-format";
 import { getAppText, type AppTextKey } from "./app-i18n";
-import type { UnitSystem } from "./app-model";
+import type { RideDiscipline, UnitSystem } from "./app-model";
 import type { Locale } from "./locales";
 
 const kilometersPerMile = 1.609344;
@@ -60,8 +60,18 @@ export function formatStatusDuration(locale: Locale, totalMinutes: number): stri
   });
 }
 
+export function formatStatusDurationCompact(locale: Locale, totalMinutes: number): string {
+  const minutes = Math.max(0, Math.round(Number.isFinite(totalMinutes) ? totalMinutes : 0));
+  if (minutes < 60) return statusText(locale, "status.durationMinutesCompact", { minutes });
+  return statusText(locale, "status.durationHoursMinutes", {
+    hours: Math.floor(minutes / 60),
+    minutes: String(minutes % 60).padStart(2, "0")
+  });
+}
+
 export function formatStatusZoneDuration(locale: Locale, totalSeconds: number): string {
   const seconds = Math.max(0, Math.round(Number.isFinite(totalSeconds) ? totalSeconds : 0));
+  if (seconds === 0) return statusText(locale, "status.durationMinutes", { minutes: 0 });
   if (seconds < 60) return statusText(locale, "status.durationSeconds", { seconds });
   const minutes = Math.max(1, Math.round(seconds / 60));
   if (minutes < 60) return statusText(locale, "status.durationMinutes", { minutes });
@@ -87,6 +97,14 @@ export function formatStatusWkg(locale: Locale, value: number | null): string {
     : "—";
 }
 
+export function formatStatusPercent(locale: Locale, percent: number): string {
+  const value = Number.isFinite(percent) ? percent : 0;
+  return new Intl.NumberFormat(getLocaleTag(locale), {
+    style: "percent",
+    maximumFractionDigits: 0
+  }).format(value / 100);
+}
+
 export function formatEstimatedSplit(locale: Locale, totalSeconds: number | null): string {
   if (totalSeconds == null || !Number.isFinite(totalSeconds) || totalSeconds <= 0) return "—";
   const seconds = Math.max(1, Math.round(totalSeconds));
@@ -96,4 +114,69 @@ export function formatEstimatedSplit(locale: Locale, totalSeconds: number | null
   return hours > 0
     ? statusText(locale, "status.splitTimeHours", { hours, minutes: String(minutes).padStart(2, "0"), seconds: String(remainder).padStart(2, "0") })
     : `${String(minutes).padStart(2, "0")}:${String(remainder).padStart(2, "0")}`;
+}
+
+const disciplineKey: Record<RideDiscipline, AppTextKey> = {
+  ROAD: "discipline.road",
+  GRAVEL: "discipline.gravel",
+  MTB: "discipline.mtb",
+  CITY: "discipline.city"
+};
+
+export function formatStatusDiscipline(locale: Locale, discipline: RideDiscipline): string {
+  return statusText(locale, disciplineKey[discipline]);
+}
+
+export function formatStatusRideClock(locale: Locale, startedAt: string, timeZone: string): string {
+  const date = new Date(startedAt);
+  if (!Number.isFinite(date.getTime())) return "—";
+  return new Intl.DateTimeFormat(getLocaleTag(locale), {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone
+  }).format(date);
+}
+
+export function formatStatusCalendarRideTitle(
+  locale: Locale,
+  title: string,
+  distanceKm: number | null,
+  unitSystem: UnitSystem
+): string {
+  return distanceKm != null && Number.isFinite(distanceKm) && distanceKm > 0
+    ? `${formatStatusDistance(locale, distanceKm, unitSystem, "weekly")} • ${title}`
+    : title;
+}
+
+export function formatStatusCalendarRideStats(
+  locale: Locale,
+  distanceKm: number | null,
+  durationMinutes: number | null,
+  unitSystem: UnitSystem
+): string {
+  const values: string[] = [];
+  if (distanceKm != null && Number.isFinite(distanceKm) && distanceKm > 0) {
+    values.push(formatStatusDistance(locale, distanceKm, unitSystem, "weekly"));
+  }
+  if (durationMinutes != null && Number.isFinite(durationMinutes) && durationMinutes > 0) {
+    values.push(formatStatusDurationCompact(locale, durationMinutes));
+  }
+  return values.length > 0 ? values.join(" • ") : statusText(locale, "status.noDistance");
+}
+
+export function getStatusComparisonPresentation(locale: Locale, percent: number | null) {
+  if (percent == null) {
+    return {
+      direction: "neutral" as const,
+      value: statusText(locale, "status.firstPeriod"),
+      label: statusText(locale, "status.noPreviousData")
+    };
+  }
+  const direction = percent > 0 ? "up" as const : percent < 0 ? "down" as const : "neutral" as const;
+  const indicator = direction === "up" ? "▲" : direction === "down" ? "▼" : "•";
+  return {
+    direction,
+    value: `${indicator} ${formatStatusPercent(locale, Math.abs(percent))}`,
+    label: statusText(locale, "status.vsPreviousPeriod")
+  };
 }

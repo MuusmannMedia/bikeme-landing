@@ -25,7 +25,7 @@ export default async function StatusPage({ params, searchParams }: { params: Pro
 
   return (
     <>
-      <AppPageHeader eyebrow={t("common.pro")} title={t("status.title")} intro={t("status.intro")} />
+      <AppPageHeader className="bike-app-status-page-header" eyebrow={t("common.pro")} title={t("status.title")} intro={t("status.intro")} />
       <AppNotice locale={locale} code={result.failed ? "data" : query.notice} />
       <StatusDashboard
         history={result.value}

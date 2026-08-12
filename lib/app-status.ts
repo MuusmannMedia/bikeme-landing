@@ -79,7 +79,7 @@ type ZonedParts = { year: number; month: number; day: number; hour: number; minu
 export const statusRanges: readonly StatusRange[] = ["7D", "1M", "3M", "6M", "YTD", "1Y"];
 export const statusMetrics: readonly StatusMetric[] = ["distance", "elevation", "duration"];
 export const statusFallbackTimeZone = "Europe/Copenhagen";
-export const statusZoneColors = ["#C084FC", "#B56AF7", "#A855F7", "#9C4EE8", "#A855F7", "#8A3EC9", "#6D28D9"] as const;
+export const statusZoneColors = ["#4A90E2", "#3AAFD9", "#5BC27A", "#F4B63F", "#FF8A3D", "#FF6B00", "#E5484D"] as const;
 
 const MAX_REALISTIC_AVERAGE_SPEED_KMH = 90;
 const MAX_REALISTIC_TOP_SPEED_KMH = 120;
@@ -331,7 +331,7 @@ export function buildStatusSummary(
     const bucketEnd = index === bucketCount - 1 ? end : new Date(start.getTime() + bucketMs * (index + 1) - 1);
     return {
       id: `${range}-${index}`,
-      label: formatter.format(bucketStart).replace(".", ""),
+      label: formatter.format(bucketStart),
       start: bucketStart.toISOString(),
       end: bucketEnd.toISOString(),
       distanceKm: 0,
@@ -452,6 +452,10 @@ export function buildStatusInsights(
   now = new Date(),
   timeZone = statusFallbackTimeZone
 ): StatusInsights {
+  const powerMaxWatts = history.reduce<number | null>((maximum, ride) => {
+    const value = finitePositive(ride.maxWatts);
+    return value != null && value <= MAX_WATTS ? Math.max(maximum ?? 0, value) : maximum;
+  }, null);
   const currentWeek = startOfWeek(now, timeZone);
   const weeks: StatusWeeklySummary[] = Array.from({ length: WEEK_SUMMARY_COUNT }, (_, index) => {
     const start = addZonedDays(currentWeek, -7 * index, timeZone);
@@ -552,7 +556,7 @@ export function buildStatusInsights(
     weeks,
     streakWeeks,
     streakActivities,
-    power: { estimatedFtpWatts, wattsPerKg, maxWatts: highestWatts, latestAverageWatts },
+    power: { estimatedFtpWatts, wattsPerKg, maxWatts: powerMaxWatts, latestAverageWatts },
     zones: { seconds, totalSeconds, usedAveragePowerFallback: actualTotal <= 0 && usedAveragePowerFallback, emptyReason },
     records: {
       estimatedFastestSeconds: { 1: fastest(1), 5: fastest(5), 10: fastest(10) },

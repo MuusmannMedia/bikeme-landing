@@ -7,15 +7,17 @@ export function AppPageHeader({
   eyebrow,
   title,
   intro,
-  action
+  action,
+  className = ""
 }: {
   eyebrow?: string;
   title: string;
   intro: string;
   action?: React.ReactNode;
+  className?: string;
 }) {
   return (
-    <header className="bike-app-page-header">
+    <header className={`bike-app-page-header ${className}`.trim()}>
       <div>
         {eyebrow ? <p className="bike-app-eyebrow">{eyebrow}</p> : null}
         <h1>{title}</h1>
@@ -30,18 +32,21 @@ export function AppPanel({
   title,
   children,
   action,
-  className = ""
+  className = "",
+  headingLevel = 2
 }: {
   title?: string;
   children: React.ReactNode;
   action?: React.ReactNode;
   className?: string;
+  headingLevel?: 2 | 3;
 }) {
+  const Heading = headingLevel === 3 ? "h3" : "h2";
   return (
     <section className={`bike-app-panel ${className}`.trim()}>
       {title || action ? (
         <header className="bike-app-panel-header">
-          {title ? <h2>{title}</h2> : <span />}
+          {title ? <Heading>{title}</Heading> : <span />}
           {action}
         </header>
       ) : null}

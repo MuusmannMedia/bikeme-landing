@@ -18,15 +18,37 @@ import {
   buildStatusInsights,
   buildStatusSummary,
   getStatusWindow,
+  resolveStatusAverageWatts,
   resolveStatusElevation,
   statusDateKey,
   statusRanges
 } from "../lib/app-status";
-import { formatStatusDistance, formatStatusDuration, formatStatusSpeed } from "../lib/status-format";
+import {
+  formatStatusCalendarRideStats,
+  formatStatusCalendarRideTitle,
+  formatStatusDiscipline,
+  formatStatusDistance,
+  formatStatusDuration,
+  formatStatusDurationCompact,
+  formatStatusElevation,
+  formatStatusRideClock,
+  formatStatusSpeed,
+  formatStatusWkg,
+  formatStatusPercent,
+  formatStatusZoneDuration,
+  getStatusComparisonPresentation
+} from "../lib/status-format";
 import { buildGpx } from "../lib/gpx";
 import { locales } from "../lib/locales";
 
 const projectFile = (path: string) => readFileSync(join(process.cwd(), path), "utf8");
+
+function cssRule(source: string, selector: string) {
+  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = source.match(new RegExp(`(?:^|\\n)\\s*${escaped}\\s*\\{([^}]*)\\}`, "m"));
+  assert.ok(match, `Missing CSS rule: ${selector}`);
+  return match[1].replace(/\s+/g, " ").trim();
+}
 
 function filesBelow(path: string): string[] {
   return readdirSync(path).flatMap((name) => {
@@ -311,13 +333,22 @@ test("Basic and Pro access matches mobile access semantics", () => {
   assert.equal(createViewerAccess("unknown", null, false).level, "basic");
 });
 
-test("status periods use the same day windows and bucket counts as mobile", () => {
-  const now = new Date(2026, 7, 2, 12, 0, 0);
-  const expectedCounts = [7, 6, 12, 12, 8, 12];
-  statusRanges.forEach((range, index) => {
-    const window = getStatusWindow(range, now);
-    assert.equal(window.bucketCount, expectedCounts[index]);
-    assert.ok(window.end > window.start);
+test("all Status periods preserve the mobile local-day endpoints and bucket counts", () => {
+  const now = new Date("2026-08-11T12:00:00.000Z");
+  const timeZone = "Europe/Copenhagen";
+  const expected = {
+    "7D": ["2026-08-05", "2026-08-11", 7],
+    "1M": ["2026-07-13", "2026-08-11", 6],
+    "3M": ["2026-05-14", "2026-08-11", 12],
+    "6M": ["2026-02-13", "2026-08-11", 12],
+    YTD: ["2026-01-01", "2026-08-11", 8],
+    "1Y": ["2025-08-12", "2026-08-11", 12]
+  } as const;
+  statusRanges.forEach((range) => {
+    const window = getStatusWindow(range, now, timeZone);
+    assert.equal(statusDateKey(window.start, timeZone), expected[range][0], `${range}:start`);
+    assert.equal(statusDateKey(window.end, timeZone), expected[range][1], `${range}:end`);
+    assert.equal(window.bucketCount, expected[range][2], `${range}:buckets`);
   });
 });
 
@@ -403,6 +434,7 @@ test("weekly summaries and streak start in the current Monday week", () => {
     statusRide({ id: "previous", startedAt: "2026-08-03T08:00:00.000Z" })
   ], "3M", { weightKg: 75, ftp: 250 }, now, timeZone);
   assert.equal(active.weeks.length, 12);
+  assert.equal(active.weeks.filter((week) => week.isCurrent).length, 1);
   assert.equal(active.streakWeeks, 2);
   assert.equal(active.streakActivities, 2);
   const currentWeekEmpty = buildStatusInsights([
@@ -423,12 +455,21 @@ test("actual training-zone telemetry suppresses partial average-watt fallback", 
 test("FTP, max-watt and estimated split guards match mobile Status", () => {
   const insights = buildStatusInsights([
     statusRide({ id: "twenty", durationMinutes: 20, distanceKm: null, averageWatts: 300, maxWatts: 2001 }),
-    statusRide({ id: "qualified", durationMinutes: 20.1, averageWatts: 200, maxWatts: 2000, distanceKm: 10 })
+    statusRide({ id: "qualified", durationMinutes: 20.1, averageWatts: 200, maxWatts: 1500, distanceKm: 10 }),
+    statusRide({ id: "invalid-date", startedAt: "invalid", distanceKm: null, averageWatts: null, maxWatts: 2000 })
   ], "3M", { weightKg: 80, ftp: 250 }, new Date("2026-08-11T12:00:00.000Z"), "Europe/Copenhagen");
   assert.equal(insights.power.estimatedFtpWatts, 190);
   assert.equal(insights.power.maxWatts, 2000);
-  assert.equal(insights.records.highestWatts, 2000);
+  assert.equal(insights.power.wattsPerKg, 2.375);
+  assert.equal(insights.power.latestAverageWatts, 300);
+  assert.equal(insights.records.highestWatts, 1500);
   assert.equal(insights.records.estimatedFastestSeconds[5], 603);
+
+  const estimatedRide = statusRide({ distanceKm: 36, durationMinutes: 120, elevationGain: 0, averageWatts: null });
+  assert.equal(resolveStatusAverageWatts(estimatedRide, 75), 41);
+  assert.equal(resolveStatusAverageWatts({ ...estimatedRide, averageWatts: 100 }, 75), 41);
+  assert.equal(resolveStatusAverageWatts(statusRide({ distanceKm: null, averageWatts: 1200 }), 75), 1200);
+  assert.equal(resolveStatusAverageWatts(statusRide({ distanceKm: null, averageWatts: 1201 }), 75), null);
 });
 
 test("activity calendar groups rides by the selected IANA local date", () => {
@@ -442,13 +483,323 @@ test("Status-scoped unit and duration formatting is locale-aware without changin
   assert.equal(formatStatusDistance("da", 42, "metric"), "42 km");
   assert.equal(formatStatusDistance("da", 0, "metric"), "0 km");
   assert.equal(formatStatusDuration("da", 60), "1 t 00 min");
+  assert.equal(formatStatusDurationCompact("da", 5), "5 min");
   assert.equal(formatStatusDuration("nl", 60), "1 u 00 min");
+  assert.equal(formatStatusZoneDuration("da", 0), "0 min");
   assert.equal(formatStatusSpeed("da", 30, "metric"), "30,0 km/t");
   assert.equal(formatStatusSpeed("nl", 30, "metric"), "30,0 km/u");
+  assert.equal(formatStatusElevation("en", 100, "imperial"), "328 ft");
+  assert.equal(formatStatusWkg("da", 3.14), "3,1");
+  assert.equal(formatStatusPercent("en", 12), "12%");
+  assert.notEqual(formatStatusPercent("fr", 12), "12%");
 });
 
-test("Status projection and interactive UI stay owner-scoped and accessible", () => {
+test("Status hero comparison distinguishes first, up, down and neutral periods", () => {
+  assert.deepEqual(getStatusComparisonPresentation("da", null), {
+    direction: "neutral",
+    value: "Første periode",
+    label: "Ingen tidligere data"
+  });
+  assert.deepEqual(getStatusComparisonPresentation("en", 12), {
+    direction: "up",
+    value: "▲ 12%",
+    label: "compared with the previous period"
+  });
+  assert.equal(getStatusComparisonPresentation("en", -7).value, "▼ 7%");
+  assert.equal(getStatusComparisonPresentation("en", 0).value, "• 0%");
+});
+
+test("Status chart keeps a complete zero series when no rides exist", () => {
+  const summary = buildStatusSummary([], "3M", "distance", "en", new Date("2026-08-11T12:00:00.000Z"), "Europe/Copenhagen");
+  assert.equal(summary.buckets.length, 12);
+  assert.equal(summary.totals.rideCount, 0);
+  assert.equal(summary.comparisonPercent, null);
+  assert.ok(summary.buckets.every((bucket) => bucket.distanceKm === 0 && bucket.elevationMeters === 0 && bucket.durationMinutes === 0));
+});
+
+test("calendar ride summaries match mobile information in metric and imperial units", () => {
+  assert.equal(formatStatusCalendarRideTitle("da", "Morgentur", 42.5, "metric"), "42,5 km • Morgentur");
+  assert.equal(formatStatusCalendarRideTitle("en", "Morning ride", 16.09344, "imperial"), "10 mi • Morning ride");
+  assert.equal(formatStatusCalendarRideStats("da", 42.5, 65, "metric"), "42,5 km • 1 t 05 min");
+  assert.equal(formatStatusCalendarRideStats("da", 5, 5, "metric"), "5 km • 5 min");
+  assert.equal(formatStatusCalendarRideStats("en", null, 65, "imperial"), "1 h 05 min");
+  assert.equal(formatStatusCalendarRideStats("en", null, null, "metric"), "No distance yet");
+  assert.equal(formatStatusRideClock("da", "2026-08-11T08:00:00.000Z", "Europe/Copenhagen"), "10.00");
+  assert.equal(formatStatusDiscipline("da", "ROAD"), "Landevej");
+  assert.equal(formatStatusDiscipline("fr", "MTB"), "VTT");
+  locales.forEach((locale) => {
+    assert.ok(formatStatusCalendarRideTitle(locale, "Ride", 12.5, "metric").includes("km"), locale);
+    assert.ok(formatStatusCalendarRideStats(locale, 12.5, 65, "metric").length > 0, locale);
+    assert.ok(formatStatusDiscipline(locale, "CITY").length > 0, locale);
+  });
+});
+
+test("training-zone fallback preserves all seven mobile FTP boundaries", () => {
+  const watts = [54, 55, 75, 76, 90, 91, 105, 106, 120, 121, 150, 151];
+  const insights = buildStatusInsights(
+    watts.map((averageWatts, index) => statusRide({
+      id: `zone-${index + 1}`,
+      distanceKm: null,
+      durationMinutes: 1,
+      averageWatts,
+      zones: null
+    })),
+    "3M",
+    { weightKg: 75, ftp: 100 },
+    new Date("2026-08-11T12:00:00.000Z"),
+    "Europe/Copenhagen"
+  );
+  assert.deepEqual(insights.zones.seconds, [60, 120, 120, 120, 120, 120, 60]);
+  assert.equal(insights.zones.usedAveragePowerFallback, true);
+});
+
+test("Status source preserves the mobile hierarchy and required interaction hooks", () => {
+  const dashboard = projectFile("components/status-dashboard.tsx");
+  const ui = projectFile("components/app-ui.tsx");
+  const chart = projectFile("components/status-bars.tsx");
+  const calendar = projectFile("components/status-calendar.tsx");
+  const styles = projectFile("app/globals.css");
+  const rendered = dashboard.slice(dashboard.indexOf('<div className="bike-app-status-dashboard"'));
+  const sequence = [
+    'kind="metric"',
+    'className="bike-app-status-hero"',
+    "<StatusBars",
+    'kind="range"',
+    'className="bike-app-grid bike-app-status-kpis"',
+    'statusText(locale, "status.thisWeek")',
+    'statusText(locale, "status.overview")',
+    'statusText(locale, "status.wattPerformance")',
+    'statusText(locale, "status.trainingZones")',
+    'statusText(locale, "status.topPerformances")',
+    'statusText(locale, "status.latestRides")'
+  ];
+  let previous = -1;
+  sequence.forEach((needle) => {
+    const index = rendered.indexOf(needle);
+    assert.ok(index > previous, needle);
+    previous = index;
+  });
+
+  assert.equal((rendered.match(/kind="range"/g) ?? []).length, 2);
+  assert.ok(dashboard.includes('?range=${item}&metric=${metric}'));
+  assert.ok(dashboard.includes('?range=${range}&metric=${item}'));
+  assert.ok(dashboard.includes('role="group" aria-label={statusText'));
+  assert.ok(dashboard.includes('aria-current={active ? "true" : undefined}'));
+  assert.ok(dashboard.includes('<BicycleIcon />'));
+  assert.ok(dashboard.includes('aria-hidden="true" focusable="false"'));
+  assert.ok(dashboard.includes("getStatusComparisonPresentation"));
+  assert.equal(dashboard.includes("summary.totals.rideCount > 0"), false);
+  assert.ok(chart.includes('event.key === "Escape"'));
+  assert.ok(chart.includes('statusText(locale, "common.close")'));
+  assert.ok(chart.includes("selectedTriggerRef.current?.focus()"));
+  assert.ok(calendar.includes("formatStatusCalendarRideTitle"));
+  assert.ok(calendar.includes("formatStatusDiscipline"));
+  assert.ok(calendar.includes("formatStatusCalendarRideStats"));
+  assert.ok(calendar.includes('href={`/${locale}/app/history/${ride.id}`}'));
+  assert.ok(calendar.includes('role="dialog" aria-modal="true" aria-labelledby="status-day-rides-title"'));
+  assert.ok(calendar.includes('count > 9 ? "9+" : count'));
+  assert.ok(dashboard.includes('className="bike-app-status-overview-grid"'));
+  assert.ok(dashboard.includes('className="bike-app-status-calendar-panel"'));
+  assert.ok(dashboard.includes("headingLevel={3}"));
+  assert.ok(ui.includes('headingLevel?: 2 | 3'));
+  assert.ok(ui.includes('const Heading = headingLevel === 3 ? "h3" : "h2"'));
+  assert.match(styles, /\.bike-app-status-overview-grid\s*\{[^}]*width:\s*100%[^}]*grid-template-columns:\s*minmax\(0,2fr\)\s+minmax\(280px,1fr\)/);
+  assert.match(styles, /\.bike-app-status-overview-grid \.bike-app-status-streak-grid\s*\{[^}]*grid-template-columns:\s*1fr[^}]*grid-template-rows:\s*repeat\(2,minmax\(0,1fr\)\)/);
+  const typeTokens = cssRule(styles, ".bike-app-status-dashboard");
+  [
+    "--status-type-section: 24px", "--status-type-card-title: 20px", "--status-type-subtitle: 16px",
+    "--status-type-label: 12px", "--status-type-micro: 10px", "--status-type-value: clamp(24px,2.45vw,32px)",
+    "--status-type-row-value: clamp(16px,1.6vw,20px)"
+  ].forEach((token) => assert.ok(typeTokens.includes(token), token));
+  const primaryHeadingRule = cssRule(styles, ".bike-app-status-hero h2, .bike-app-status-primary-panel > .bike-app-panel-header h2, .bike-app-status-section-heading h2");
+  assert.match(primaryHeadingRule, /font-size: var\(--status-type-section\)/);
+  assert.match(styles, /\.bike-app-status-streak-grid strong\s*\{[^}]*font-size:\s*var\(--status-type-value\)/);
+  assert.match(styles, /\.bike-app-status-zones > div > span\s*\{[^}]*font-size:\s*var\(--status-type-label\)/);
+  assert.match(styles, /\.bike-app-status-value-grid\s*\{[^}]*grid-template-columns:\s*repeat\(2,minmax\(0,1fr\)\)/);
+  assert.match(styles, /\.bike-app-status-plot-scroll\s*\{[^}]*overflow-x:\s*auto/);
+  assert.ok(styles.includes('.bike-app-status-comparison[data-direction="up"]'));
+  const page = projectFile("app/[locale]/app/status/page.tsx");
+  assert.ok(page.includes(': "3M"'));
+  assert.ok(page.includes(': "distance"'));
+});
+
+test("Status typography follows one scoped semantic role matrix", () => {
+  const dashboard = projectFile("components/status-dashboard.tsx");
+  const page = projectFile("app/[locale]/app/status/page.tsx");
+  const chart = projectFile("components/status-bars.tsx");
+  const calendar = projectFile("components/status-calendar.tsx");
+  const styles = projectFile("app/globals.css");
+
+  const panelOpenings = dashboard.match(/<AppPanel\b[\s\S]*?(?=>)/g) ?? [];
+  const primaryPanels = panelOpenings.filter((opening) => opening.includes("bike-app-status-primary-panel"));
+  assert.equal(primaryPanels.length, 6);
+  ["status.development", "status.thisWeek", "status.wattPerformance", "status.trainingZones", "status.topPerformances", "status.latestRides"]
+    .forEach((key) => assert.equal(primaryPanels.filter((opening) => opening.includes(`statusText(locale, "${key}")`)).length, 1, key));
+  primaryPanels.forEach((opening) => assert.equal(opening.includes("headingLevel={3}"), false));
+  const calendarPanel = panelOpenings.find((opening) => opening.includes("status.activityCalendar")) ?? "";
+  assert.ok(calendarPanel.includes("headingLevel={3}"));
+  assert.ok(page.includes('className="bike-app-status-page-header"'));
+  const pageTitle = cssRule(styles, ".bike-app-status-page-header h1");
+  assert.match(pageTitle, /font-size: clamp\(32px,3\.2vw,48px\)/);
+  assert.match(pageTitle, /font-weight: 750/);
+  assert.match(pageTitle, /line-height: 1\.05/);
+
+  const primaryHeadingSelector = ".bike-app-status-hero h2, .bike-app-status-primary-panel > .bike-app-panel-header h2, .bike-app-status-section-heading h2";
+  const primaryHeading = cssRule(styles, primaryHeadingSelector);
+  assert.match(primaryHeading, /font-family: var\(--font-heading\), ui-sans-serif, system-ui, sans-serif/);
+  assert.match(primaryHeading, /font-size: var\(--status-type-section\)/);
+  assert.match(primaryHeading, /font-weight: 750/);
+  assert.match(primaryHeading, /line-height: 1\.25/);
+  assert.match(primaryHeading, /letter-spacing: -\.015em/);
+
+  [".bike-app-status-calendar-panel .bike-app-panel-header h3", ".bike-app-zone-info > div > h3", ".bike-app-status-modal h3"].forEach((selector) => {
+    const rule = cssRule(styles, selector);
+    assert.match(rule, /font-size: var\(--status-type-card-title\)/, selector);
+    assert.match(rule, /font-weight: 750/, selector);
+    assert.match(rule, /line-height: 1\.25/, selector);
+  });
+  assert.ok(dashboard.includes('<h3>{statusText(locale, "status.zoneInfoTitle")}</h3>'));
+  assert.ok(calendar.includes('<h3 id="status-day-rides-title">'));
+
+  const weekTitle = cssRule(styles, ".bike-app-week-scroller h3");
+  assert.match(weekTitle, /font-size: var\(--status-type-subtitle\)/);
+  assert.match(weekTitle, /font-weight: 750/);
+  assert.match(weekTitle, /line-height: 1\.25/);
+  const calendarMonth = cssRule(styles, ".bike-app-activity-calendar > header strong");
+  assert.match(calendarMonth, /font-size: var\(--status-type-subtitle\)/);
+  assert.match(calendarMonth, /font-weight: 750/);
+  assert.match(calendarMonth, /line-height: 1\.25/);
+  const category = cssRule(styles, ".bike-app-status-performance .bike-app-status-category-title");
+  assert.match(category, /font-size: var\(--status-type-label\)/);
+  assert.match(category, /font-weight: 800/);
+  assert.match(category, /text-transform: uppercase/);
+  assert.match(category, /letter-spacing: \.07em/);
+  assert.ok(dashboard.includes('<h3 className="bike-app-status-category-title">'));
+
+  const centralValue = cssRule(styles, ".bike-app-status-dashboard .bike-app-stat strong");
+  assert.match(centralValue, /font-size: var\(--status-type-value\)/);
+  assert.match(centralValue, /font-weight: 800/);
+  const rowValue = cssRule(styles, ".bike-app-status-row-value");
+  assert.match(rowValue, /font-size: var\(--status-type-row-value\)/);
+  assert.match(rowValue, /font-weight: 800/);
+  assert.match(rowValue, /line-height: 1\.25/);
+  const heroValue = cssRule(styles, ".bike-app-status-hero-value");
+  assert.match(heroValue, /font-size: clamp\(42px,7vw,72px\)/);
+  assert.match(heroValue, /font-weight: 800/);
+
+  assert.ok(chart.includes('<strong className="bike-app-status-row-value">'));
+  assert.ok(chart.includes('<span className="bike-app-status-meta">'));
+  assert.ok(calendar.includes('<strong className="bike-app-status-ride-title">'));
+  assert.ok(calendar.includes('<span className="bike-app-status-ride-meta">'));
+  assert.ok(calendar.includes('<small className="bike-app-status-ride-value">'));
+  const metadata = cssRule(styles, ".bike-app-status-meta");
+  assert.match(metadata, /font-size: var\(--status-type-label\)/);
+  assert.match(metadata, /font-weight: 650/);
+  assert.match(metadata, /line-height: 1\.4/);
+  const rideTitle = cssRule(styles, ".bike-app-status-ride-title");
+  assert.match(rideTitle, /font-size: var\(--status-type-subtitle\)/);
+  assert.match(rideTitle, /font-weight: 750/);
+  assert.match(rideTitle, /line-height: 1\.25/);
+  const rideMeta = cssRule(styles, ".bike-app-status-ride-meta");
+  assert.match(rideMeta, /font-size: var\(--status-type-label\)/);
+  assert.match(rideMeta, /font-weight: 650/);
+  assert.match(rideMeta, /line-height: 1\.4/);
+  const rideValue = cssRule(styles, ".bike-app-status-ride-value");
+  assert.match(rideValue, /font-size: var\(--status-type-row-value\)/);
+  assert.match(rideValue, /font-weight: 800/);
+  assert.match(rideValue, /line-height: 1\.25/);
+
+  [".bike-app-week-scroller dd", ".bike-app-status-zones strong", ".bike-app-status-performance dd"].forEach((selector) => {
+    const rule = cssRule(styles, selector);
+    assert.match(rule, /font-size: var\(--status-type-row-value\)/, selector);
+    assert.match(rule, /font-weight: 800/, selector);
+    assert.match(rule, /line-height: 1\.25/, selector);
+  });
+  [".bike-app-status-streak-grid strong", ".bike-app-status-value-grid dd"].forEach((selector) => {
+    const rule = cssRule(styles, selector);
+    assert.match(rule, /font-size: var\(--status-type-value\)/, selector);
+    assert.match(rule, /font-weight: 800/, selector);
+  });
+
+  assert.match(cssRule(styles, ".bike-app-status-axis"), /font-size: var\(--status-type-micro\)/);
+  assert.match(cssRule(styles, ".bike-app-status-x-axis"), /font-size: var\(--status-type-micro\)/);
+  assert.match(cssRule(styles, ".bike-app-calendar-weekdays"), /font-size: var\(--status-type-micro\)/);
+  assert.match(cssRule(styles, ".bike-app-calendar-grid b"), /font-size: var\(--status-type-micro\)/);
+  const pageEyebrow = cssRule(styles, ".bike-app-status-page-header .bike-app-eyebrow");
+  assert.match(pageEyebrow, /font-size: 12px/);
+  assert.match(pageEyebrow, /font-weight: 800/);
+  assert.match(pageEyebrow, /line-height: 1\.4/);
+  const heroEyebrow = cssRule(styles, ".bike-app-status-hero-top > div:first-child > span");
+  assert.match(heroEyebrow, /font-size: var\(--status-type-label\)/);
+  assert.match(heroEyebrow, /font-weight: 800/);
+  assert.match(heroEyebrow, /text-transform: uppercase/);
+  assert.match(heroEyebrow, /letter-spacing: \.12em/);
+});
+
+test("Status casing stays locale-authored and the weekly heading is not duplicated", () => {
+  const dashboard = projectFile("components/status-dashboard.tsx");
+  const calendar = projectFile("components/status-calendar.tsx");
+  const statusSource = projectFile("lib/app-status.ts");
+  const styles = projectFile("app/globals.css");
+
+  assert.ok(dashboard.includes('<AppPanel title={statusText(locale, "status.thisWeek")}'));
+  assert.ok(dashboard.includes('aria-label={statusText(locale, "status.thisWeek")}'));
+  assert.equal((dashboard.match(/statusText\(locale, "status\.thisWeek"\)/g) ?? []).length, 2);
+  assert.ok(dashboard.includes('<h3>{statusText(locale, "status.weekNumber", { number: week.weekNumber })}</h3>'));
+  assert.equal(dashboard.includes('week.isCurrent ? statusText(locale, "status.thisWeek")'), false);
+
+  [".bike-app-week-scroller dt", ".bike-app-calendar-weekdays", ".bike-app-status-section-heading p", ".bike-app-calendar-list time"].forEach((selector) => {
+    const rule = cssRule(styles, selector);
+    assert.match(rule, /text-transform: none/, selector);
+    assert.match(rule, /letter-spacing: normal/, selector);
+    assert.equal(/text-transform: (?:uppercase|capitalize)/.test(rule), false, selector);
+  });
+  const kpiLabel = cssRule(styles, ".bike-app-status-dashboard .bike-app-stat span");
+  assert.match(kpiLabel, /font-size: var\(--status-type-label\)/);
+  assert.match(kpiLabel, /font-weight: 650/);
+  assert.match(kpiLabel, /line-height: 1\.4/);
+  assert.match(kpiLabel, /text-transform: none/);
+  assert.match(kpiLabel, /letter-spacing: normal/);
+
+  const weekdayStart = calendar.indexOf("const weekdays");
+  const weekdayEnd = calendar.indexOf("const fullDate");
+  assert.ok(weekdayStart >= 0 && weekdayEnd > weekdayStart);
+  const weekdaySource = calendar.slice(weekdayStart, weekdayEnd);
+  assert.equal(weekdaySource.includes(".replace("), false);
+  const summaryStart = statusSource.indexOf("export function buildStatusSummary");
+  const summaryEnd = statusSource.indexOf("export function buildStatusCalendar");
+  assert.ok(summaryStart >= 0 && summaryEnd > summaryStart);
+  const summarySource = statusSource.slice(summaryStart, summaryEnd);
+  const bucketStart = summarySource.indexOf("const formatter");
+  const bucketEnd = summarySource.indexOf("const previous =");
+  assert.ok(bucketStart >= 0 && bucketEnd > bucketStart);
+  const bucketLabelSource = summarySource.slice(bucketStart, bucketEnd);
+  assert.equal(bucketLabelSource.includes(".replace("), false);
+  const danish = buildStatusSummary([], "7D", "distance", "da", new Date("2026-08-11T12:00:00.000Z"), "Europe/Copenhagen");
+  assert.equal(danish.buckets[0].label, "ons.");
+
+  const zoneTitle = getAppTranslationRow("status.zoneInfoTitle");
+  assert.equal(zoneTitle[appTranslationLocales.indexOf("en")], "Understand your training zones");
+  assert.equal(zoneTitle[appTranslationLocales.indexOf("da")], "Forstå dine træningszoner");
+});
+
+test("new Status accents avoid legacy mobile purple and keep zone values readable", () => {
+  const sources = [
+    projectFile("components/status-dashboard.tsx"),
+    projectFile("components/status-bars.tsx"),
+    projectFile("components/status-calendar.tsx"),
+    projectFile("lib/app-status.ts")
+  ].join("\n");
+  const styles = projectFile("app/globals.css");
+  assert.equal(/#(?:A855F7|8A3EC9)/i.test(sources), false);
+  assert.ok(styles.includes("rgba(128,39,130,.58)"));
+  assert.match(styles, /\.bike-app-status-zones strong\s*\{[^}]*color:\s*var\(--app-text\)/);
+  assert.equal(/style=\{\{\s*color:\s*seconds/.test(sources), false);
+});
+
+test("Status source declares an owner-scoped projection and accessibility hooks", () => {
   const data = projectFile("lib/app-data.ts");
+  const statusLoader = data.slice(data.indexOf("export async function listStatusHistory"), data.indexOf("function normalizeZones"));
   const chart = projectFile("components/status-bars.tsx");
   const calendar = projectFile("components/status-calendar.tsx");
   const dashboard = projectFile("components/status-dashboard.tsx");
@@ -459,8 +810,8 @@ test("Status projection and interactive UI stay owner-scoped and accessible", ()
   assert.ok(data.includes("Array.isArray(geometry?.coordinates)"));
   assert.ok(data.includes("row.elevation_meters"));
   assert.ok(data.includes("candidate = JSON.parse(candidate)"));
-  assert.ok(data.includes('.eq("owner_id", userId)'));
-  assert.ok(data.includes(".range(from, from + pageSize - 1)"));
+  assert.ok(statusLoader.includes('.eq("owner_id", userId)'));
+  assert.ok(statusLoader.includes(".range(from, from + pageSize - 1)"));
   assert.ok(chart.includes('aria-pressed={selectedIndex === index}'));
   assert.ok(chart.includes('type="button"'));
   assert.ok(chart.includes("formatRange(bucket)"));

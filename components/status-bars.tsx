@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type CSSProperties } from "react";
+import { useMemo, useRef, useState, type CSSProperties } from "react";
 
 import { getLocaleTag } from "@/lib/app-format";
 import type { UnitSystem } from "@/lib/app-model";
@@ -49,6 +49,11 @@ export function StatusBars({
   timeZone: string;
 }) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const selectedTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const closeSelection = () => {
+    setSelectedIndex(null);
+    requestAnimationFrame(() => selectedTriggerRef.current?.focus());
+  };
   const values = useMemo(() => buckets.map((bucket) => displayValue(bucket, metric, unitSystem)), [buckets, metric, unitSystem]);
   const maximum = Math.max(1, ...values);
   const width = 720;
@@ -85,11 +90,22 @@ export function StatusBars({
         })}
       </div>
       <div className="bike-app-status-plot-scroll">
-      <div className="bike-app-status-plot" role="group" aria-label={label} style={plotStyle}>
+      <div
+        className="bike-app-status-plot"
+        role="group"
+        aria-label={label}
+        style={plotStyle}
+        onKeyDown={(event) => {
+          if (event.key === "Escape" && selectedIndex != null) {
+            event.preventDefault();
+            closeSelection();
+          }
+        }}
+      >
         <svg viewBox={`0 0 ${width} ${height}`} aria-hidden="true" preserveAspectRatio="none">
           <defs>
             <linearGradient id="bike-status-fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#8fa8ff" stopOpacity=".62" /><stop offset="1" stopColor="#802782" stopOpacity=".08" /></linearGradient>
-            <linearGradient id="bike-status-line" x1="0" x2="1"><stop offset="0" stopColor="#8fa8ff" /><stop offset="1" stopColor="#d779d9" /></linearGradient>
+            <linearGradient id="bike-status-line" x1="0" x2="1"><stop offset="0" stopColor="#8fa8ff" /><stop offset="1" stopColor="#d49cff" /></linearGradient>
           </defs>
           <line x1={insetX} x2={width - insetX} y1={insetY} y2={insetY} className="bike-app-status-gridline" />
           <line x1={insetX} x2={width - insetX} y1={height / 2} y2={height / 2} className="bike-app-status-gridline" />
@@ -101,10 +117,14 @@ export function StatusBars({
         <div className="bike-app-status-hit-zones">
           {buckets.map((bucket, index) => {
             const aria = `${statusText(locale, "status.dataPointA11y", { index: index + 1 })}: ${formatRange(bucket)}, ${formattedValue(bucket, metric, locale, unitSystem)}`;
-            return <button key={bucket.id} type="button" aria-label={aria} aria-pressed={selectedIndex === index} onClick={() => setSelectedIndex(selectedIndex === index ? null : index)} />;
+            return <button key={bucket.id} type="button" aria-label={aria} aria-pressed={selectedIndex === index} onClick={(event) => {
+              selectedTriggerRef.current = event.currentTarget;
+              if (selectedIndex === index) closeSelection();
+              else setSelectedIndex(index);
+            }} />;
           })}
         </div>
-        {selected ? <output className="bike-app-status-tooltip" aria-live="polite"><strong>{formattedValue(selected, metric, locale, unitSystem)}</strong><span>{formatRange(selected)}</span></output> : null}
+        {selected ? <div className="bike-app-status-tooltip"><div role="status" aria-live="polite"><strong className="bike-app-status-row-value">{formattedValue(selected, metric, locale, unitSystem)}</strong><span className="bike-app-status-meta">{formatRange(selected)}</span></div><button type="button" onClick={closeSelection} aria-label={statusText(locale, "common.close")}>×</button></div> : null}
         <div className="bike-app-status-x-axis" aria-hidden="true">
           {buckets.map((bucket, index) => <small key={bucket.id} data-visible={index === 0 || index === Math.floor((buckets.length - 1) / 2) || index === buckets.length - 1}>{bucket.label}</small>)}
         </div>

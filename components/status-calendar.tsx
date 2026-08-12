@@ -4,9 +4,15 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { getLocaleTag } from "@/lib/app-format";
-import type { StatusHistoryRide } from "@/lib/app-model";
+import type { StatusHistoryRide, UnitSystem } from "@/lib/app-model";
 import { buildStatusCalendar } from "@/lib/app-status";
-import { statusText } from "@/lib/status-format";
+import {
+  formatStatusCalendarRideStats,
+  formatStatusCalendarRideTitle,
+  formatStatusDiscipline,
+  formatStatusRideClock,
+  statusText
+} from "@/lib/status-format";
 import type { Locale } from "@/lib/locales";
 
 function shiftedMonth(year: number, month: number, delta: number) {
@@ -20,7 +26,8 @@ export function StatusCalendar({
   timeZone,
   now,
   initialYear,
-  initialMonth
+  initialMonth,
+  unitSystem
 }: {
   history: StatusHistoryRide[];
   locale: Locale;
@@ -28,6 +35,7 @@ export function StatusCalendar({
   now: Date;
   initialYear: number;
   initialMonth: number;
+  unitSystem: UnitSystem;
 }) {
   const [visible, setVisible] = useState({ year: initialYear, month: initialMonth });
   const [selectedRides, setSelectedRides] = useState<StatusHistoryRide[] | null>(null);
@@ -37,7 +45,7 @@ export function StatusCalendar({
   const days = buildStatusCalendar(history, visible.year, visible.month, now, timeZone);
   const localeTag = getLocaleTag(locale);
   const monthLabel = new Intl.DateTimeFormat(localeTag, { month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(Date.UTC(visible.year, visible.month - 1, 1)));
-  const weekdays = Array.from({ length: 7 }, (_, index) => new Intl.DateTimeFormat(localeTag, { weekday: "short", timeZone: "UTC" }).format(new Date(Date.UTC(2024, 0, 1 + index))).replace(".", ""));
+  const weekdays = Array.from({ length: 7 }, (_, index) => new Intl.DateTimeFormat(localeTag, { weekday: "short", timeZone: "UTC" }).format(new Date(Date.UTC(2024, 0, 1 + index))));
   const fullDate = (dateKey: string) => {
     const [year, month, day] = dateKey.split("-").map(Number);
     return new Intl.DateTimeFormat(localeTag, { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(Date.UTC(year, month - 1, day)));
@@ -90,9 +98,10 @@ export function StatusCalendar({
           {days.map((day) => {
             const count = day.rides.length;
             const template = count === 1 ? "status.calendarDayRideSingular" : "status.calendarDayRidePlural";
-            const label = count > 0
+            const dateLabel = count > 0
               ? statusText(locale, template, { day: fullDate(day.dateKey), count })
               : fullDate(day.dateKey);
+            const label = day.isToday ? `${statusText(locale, "status.today")}: ${dateLabel}` : dateLabel;
             const content = <><span>{day.day}</span>{count > 0 ? <i aria-hidden="true" /> : null}{count > 1 ? <b aria-hidden="true">{count > 9 ? "9+" : count}</b> : null}</>;
             if (day.inMonth && count === 1) {
               return <Link key={day.dateKey} href={`/${locale}/app/history/${day.rides[0].id}`} aria-label={label} data-today={day.isToday}>{content}</Link>;
@@ -119,12 +128,23 @@ export function StatusCalendar({
           <section>
             <header><h3 id="status-day-rides-title">{statusText(locale, "status.ridesThisDay")}</h3><button ref={closeButtonRef} type="button" aria-label={statusText(locale, "common.close")} onClick={closeDialog}>×</button></header>
             <div className="bike-app-status-day-rides">
-              {selectedRides.map((ride) => (
-                <Link key={ride.id} href={`/${locale}/app/history/${ride.id}`}>
-                  <strong>{ride.title}</strong>
-                  <span>{new Intl.DateTimeFormat(localeTag, { hour: "2-digit", minute: "2-digit", timeZone }).format(new Date(ride.startedAt))}</span>
-                </Link>
-              ))}
+              {selectedRides.map((ride) => {
+                const title = formatStatusCalendarRideTitle(locale, ride.title, ride.distanceKm, unitSystem);
+                const clock = formatStatusRideClock(locale, ride.startedAt, timeZone);
+                const discipline = formatStatusDiscipline(locale, ride.discipline);
+                const stats = formatStatusCalendarRideStats(locale, ride.distanceKm, ride.durationMinutes, unitSystem);
+                return (
+                  <Link
+                    key={ride.id}
+                    href={`/${locale}/app/history/${ride.id}`}
+                    aria-label={`${title}. ${clock}. ${discipline}. ${stats}`}
+                  >
+                    <strong className="bike-app-status-ride-title">{title}</strong>
+                    <span className="bike-app-status-ride-meta">{clock} • {discipline}</span>
+                    <small className="bike-app-status-ride-value">{stats}</small>
+                  </Link>
+                );
+              })}
             </div>
           </section>
         </div>
