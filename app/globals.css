@@ -171,7 +171,7 @@ a {
 .bike-app-mobile-nav { display: none; }
 .bike-app-content { width: min(1440px, 100%); margin: 0 auto; padding: 42px 40px 72px; }
 .bike-app-page-header { display: flex; align-items: end; justify-content: space-between; gap: 30px; margin-bottom: 30px; }
-.bike-app-page-header h1 { margin: 6px 0 10px; font-size: clamp(30px, 3.2vw, 48px); line-height: 1.05; }
+.bike-app-page-header h1 { margin: 6px 0 10px; font-size: clamp(30px, 3.2vw, 48px); font-weight: 400; line-height: 1.05; }
 .bike-app-page-header > div > p:not(.bike-app-eyebrow) { max-width: 720px; margin: 0; color: var(--app-muted); font-size: 16px; line-height: 1.65; }
 .bike-app-eyebrow { margin: 0; color: #c979d1; font-size: 11px; font-weight: 750; letter-spacing: .14em; text-transform: uppercase; }
 .bike-app-page-action { flex: 0 0 auto; }
@@ -280,8 +280,6 @@ a {
 .bike-app-segments a[data-active="true"] { background: #25306d; color: white; }
 .bike-app-metric-segments { margin-bottom: 22px; }
 .bike-app-status-dashboard { min-width: 0; --status-type-section: 24px; --status-type-card-title: 20px; --status-type-subtitle: 16px; --status-type-body: 16px; --status-type-label: 12px; --status-type-micro: 10px; --status-type-value: clamp(24px,2.45vw,32px); --status-type-row-value: clamp(16px,1.6vw,20px); }
-.bike-app-status-page-header h1 { font-size: clamp(32px,3.2vw,48px); font-weight: 750; line-height: 1.05; }
-.bike-app-status-page-header .bike-app-eyebrow { font-size: 12px; font-weight: 800; line-height: 1.4; }
 .bike-app-status-hero h2, .bike-app-status-primary-panel > .bike-app-panel-header h2, .bike-app-status-section-heading h2 { font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif; font-size: var(--status-type-section); font-weight: 750; line-height: 1.25; letter-spacing: -.015em; }
 .bike-app-status-row-value { font-size: var(--status-type-row-value); font-weight: 800; line-height: 1.25; }
 .bike-app-status-meta { font-size: var(--status-type-label); font-weight: 650; line-height: 1.4; letter-spacing: normal; text-transform: none; }
