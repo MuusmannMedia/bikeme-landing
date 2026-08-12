@@ -638,10 +638,11 @@ test("Status typography follows one scoped semantic role matrix", () => {
   primaryPanels.forEach((opening) => assert.equal(opening.includes("headingLevel={3}"), false));
   const calendarPanel = panelOpenings.find((opening) => opening.includes("status.activityCalendar")) ?? "";
   assert.ok(calendarPanel.includes("headingLevel={3}"));
-  assert.ok(page.includes('className="bike-app-status-page-header"'));
-  const pageTitle = cssRule(styles, ".bike-app-status-page-header h1");
-  assert.match(pageTitle, /font-size: clamp\(32px,3\.2vw,48px\)/);
-  assert.match(pageTitle, /font-weight: 750/);
+  assert.equal(page.includes("bike-app-status-page-header"), false);
+  assert.equal(styles.includes(".bike-app-status-page-header"), false);
+  const pageTitle = cssRule(styles, ".bike-app-page-header h1");
+  assert.match(pageTitle, /font-size: clamp\(30px, 3\.2vw, 48px\)/);
+  assert.match(pageTitle, /font-weight: 400/);
   assert.match(pageTitle, /line-height: 1\.05/);
 
   const primaryHeadingSelector = ".bike-app-status-hero h2, .bike-app-status-primary-panel > .bike-app-panel-header h2, .bike-app-status-section-heading h2";
@@ -725,10 +726,10 @@ test("Status typography follows one scoped semantic role matrix", () => {
   assert.match(cssRule(styles, ".bike-app-status-x-axis"), /font-size: var\(--status-type-micro\)/);
   assert.match(cssRule(styles, ".bike-app-calendar-weekdays"), /font-size: var\(--status-type-micro\)/);
   assert.match(cssRule(styles, ".bike-app-calendar-grid b"), /font-size: var\(--status-type-micro\)/);
-  const pageEyebrow = cssRule(styles, ".bike-app-status-page-header .bike-app-eyebrow");
-  assert.match(pageEyebrow, /font-size: 12px/);
-  assert.match(pageEyebrow, /font-weight: 800/);
-  assert.match(pageEyebrow, /line-height: 1\.4/);
+  const pageEyebrow = cssRule(styles, ".bike-app-eyebrow");
+  assert.match(pageEyebrow, /font-size: 11px/);
+  assert.match(pageEyebrow, /font-weight: 750/);
+  assert.match(pageEyebrow, /letter-spacing: \.14em/);
   const heroEyebrow = cssRule(styles, ".bike-app-status-hero-top > div:first-child > span");
   assert.match(heroEyebrow, /font-size: var\(--status-type-label\)/);
   assert.match(heroEyebrow, /font-weight: 800/);
