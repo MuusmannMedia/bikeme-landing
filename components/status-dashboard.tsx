@@ -12,6 +12,8 @@ import {
   buildStatusInsights,
   buildStatusSummary,
   getStatusZonedParts,
+  statusCalendarMonthKey,
+  type StatusCalendarMonth,
   statusFallbackTimeZone,
   statusMetrics,
   statusRanges,
@@ -57,15 +59,16 @@ function BicycleIcon() {
   );
 }
 
-function FilterLinks({ locale, range, metric, kind }: { locale: Locale; range: StatusRange; metric: StatusMetric; kind: "range" | "metric" }) {
+function FilterLinks({ locale, range, metric, calendarMonth, kind }: { locale: Locale; range: StatusRange; metric: StatusMetric; calendarMonth: StatusCalendarMonth; kind: "range" | "metric" }) {
   const items = kind === "range" ? statusRanges : statusMetrics;
+  const calendar = statusCalendarMonthKey(calendarMonth);
   return (
     <div className={`bike-app-segments ${kind === "metric" ? "bike-app-metric-segments" : ""}`} role="group" aria-label={statusText(locale, kind === "range" ? "status.periodSelector" : "status.metricSelector")}>
       {items.map((item) => {
         const active = kind === "range" ? range === item : metric === item;
         const href = kind === "range"
-          ? `/${locale}/app/status?range=${item}&metric=${metric}`
-          : `/${locale}/app/status?range=${range}&metric=${item}`;
+          ? `/${locale}/app/status?range=${item}&metric=${metric}&calendar=${calendar}`
+          : `/${locale}/app/status?range=${range}&metric=${item}&calendar=${calendar}`;
         const label = kind === "range" ? statusText(locale, rangeKey[item as StatusRange]) : statusText(locale, metricKey[item as StatusMetric]);
         return <Link key={item} href={href} data-active={active} aria-current={active ? "true" : undefined}>{kind === "metric" && item === "distance" ? <BicycleIcon /> : null}{label}</Link>;
       })}
@@ -78,6 +81,7 @@ export function StatusDashboard({
   locale,
   range,
   metric,
+  calendarMonth,
   unitSystem,
   weightKg,
   ftp,
@@ -87,6 +91,7 @@ export function StatusDashboard({
   locale: Locale;
   range: StatusRange;
   metric: StatusMetric;
+  calendarMonth: StatusCalendarMonth | null;
   unitSystem: UnitSystem;
   weightKg: number | null;
   ftp: number | null;
@@ -101,7 +106,10 @@ export function StatusDashboard({
   const summary = useMemo(() => buildStatusSummary(history, range, metric, locale, now, timeZone), [history, locale, metric, now, range, timeZone]);
   const insights = useMemo(() => buildStatusInsights(history, range, { weightKg, ftp }, now, timeZone), [ftp, history, now, range, timeZone, weightKg]);
   const nowParts = getStatusZonedParts(now, timeZone);
+  const calendarParts = calendarMonth ?? nowParts;
   const localeTag = getLocaleTag(locale);
+  const calendarLabel = new Intl.DateTimeFormat(localeTag, { month: "long", year: "numeric", timeZone: "UTC" })
+    .format(new Date(Date.UTC(calendarParts.year, calendarParts.month - 1, 1)));
   const metricLabel = statusText(locale, metricKey[metric]);
   const dateRange = new Intl.DateTimeFormat(localeTag, { day: "numeric", month: "short", year: "numeric", timeZone });
   const periodLabel = `${dateRange.format(new Date(summary.start))} – ${dateRange.format(new Date(summary.end))}`;
@@ -150,7 +158,7 @@ export function StatusDashboard({
 
   return (
     <div className="bike-app-status-dashboard" data-time-zone={timeZone}>
-      <FilterLinks locale={locale} range={range} metric={metric} kind="metric" />
+      <FilterLinks locale={locale} range={range} metric={metric} calendarMonth={calendarParts} kind="metric" />
 
       <section className="bike-app-status-hero" aria-labelledby="status-hero-title">
         <div className="bike-app-status-hero-top">
@@ -178,7 +186,7 @@ export function StatusDashboard({
       >
         <StatusBars key={`${range}-${metric}-${timeZone}`} buckets={summary.buckets} metric={metric} label={metricLabel} locale={locale} unitSystem={unitSystem} timeZone={timeZone} />
       </AppPanel>
-      <div className="bike-app-section-gap"><FilterLinks locale={locale} range={range} metric={metric} kind="range" /></div>
+      <div className="bike-app-section-gap"><FilterLinks locale={locale} range={range} metric={metric} calendarMonth={calendarParts} kind="range" /></div>
 
       <div className="bike-app-grid bike-app-status-kpis" data-columns="4">
         <div className="bike-app-stat"><span>{statusText(locale, "status.distance")}</span><strong>{formatStatusDistance(locale, summary.totals.distanceKm, unitSystem)}</strong></div>
@@ -198,11 +206,11 @@ export function StatusDashboard({
         </div>
       </AppPanel>
 
-      <section className="bike-app-section-gap" aria-labelledby="status-overview-title">
-        <header className="bike-app-status-section-heading"><div><h2 id="status-overview-title">{statusText(locale, "status.overview")}</h2><p>{new Intl.DateTimeFormat(localeTag, { month: "long", year: "numeric", timeZone }).format(now)}</p></div></header>
+      <section id="status-calendar" className="bike-app-section-gap bike-app-status-calendar-anchor" aria-labelledby="status-overview-title">
+        <header className="bike-app-status-section-heading"><div><h2 id="status-overview-title">{statusText(locale, "status.overview")}</h2><p>{calendarLabel}</p></div></header>
         <div className="bike-app-status-overview-grid">
           <AppPanel title={statusText(locale, "status.activityCalendar")} headingLevel={3} className="bike-app-status-calendar-panel">
-            <StatusCalendar key={`${timeZone}-${nowParts.year}-${nowParts.month}`} history={history} locale={locale} timeZone={timeZone} now={now} initialYear={nowParts.year} initialMonth={nowParts.month} unitSystem={unitSystem} />
+            <StatusCalendar key={`${timeZone}-${calendarParts.year}-${calendarParts.month}`} history={history} locale={locale} timeZone={timeZone} now={now} initialYear={calendarParts.year} initialMonth={calendarParts.month} range={range} metric={metric} unitSystem={unitSystem} />
           </AppPanel>
           <div className="bike-app-status-streak-grid">
             <div><span>{statusText(locale, "status.streak")}</span><strong>{statusText(locale, "status.weeksCount", { count: insights.streakWeeks })}</strong></div>
@@ -225,7 +233,7 @@ export function StatusDashboard({
         className="bike-app-section-gap bike-app-status-primary-panel"
         action={<details className="bike-app-zone-info"><summary aria-label={statusText(locale, "status.trainingZonesInfoA11y")}>i</summary><div><h3>{statusText(locale, "status.zoneInfoTitle")}</h3><p>{statusText(locale, "status.zoneInfoIntro")}</p><ul>{(["status.zoneInfoZ1", "status.zoneInfoZ2", "status.zoneInfoZ3", "status.zoneInfoZ4", "status.zoneInfoZ5", "status.zoneInfoZ6", "status.zoneInfoZ7"] as const).map((key) => <li key={key}>{statusText(locale, key)}</li>)}</ul><p>{statusText(locale, "status.zoneInfoOutro")}</p></div></details>}
       >
-        <FilterLinks locale={locale} range={range} metric={metric} kind="range" />
+        <FilterLinks locale={locale} range={range} metric={metric} calendarMonth={calendarParts} kind="range" />
         {insights.zones.totalSeconds > 0 ? (
           <div className="bike-app-status-zones">
             {insights.zones.seconds.map((seconds, index) => {

@@ -5,6 +5,16 @@ import { getLocaleTag } from "./app-format";
 export type StatusRange = "7D" | "1M" | "3M" | "6M" | "YTD" | "1Y";
 export type StatusMetric = "distance" | "elevation" | "duration";
 
+export type StatusCalendarMonth = {
+  year: number;
+  month: number;
+};
+
+export type StatusCalendarOrigin = StatusCalendarMonth & {
+  range: StatusRange;
+  metric: StatusMetric;
+};
+
 export type StatusBucket = {
   id: string;
   label: string;
@@ -80,6 +90,51 @@ export const statusRanges: readonly StatusRange[] = ["7D", "1M", "3M", "6M", "YT
 export const statusMetrics: readonly StatusMetric[] = ["distance", "elevation", "duration"];
 export const statusFallbackTimeZone = "Europe/Copenhagen";
 export const statusZoneColors = ["#4A90E2", "#3AAFD9", "#5BC27A", "#F4B63F", "#FF8A3D", "#FF6B00", "#E5484D"] as const;
+
+export function statusCalendarMonthKey({ year, month }: StatusCalendarMonth): string {
+  return `${year}-${String(month).padStart(2, "0")}`;
+}
+
+export function parseStatusCalendarMonth(value: unknown): StatusCalendarMonth | null {
+  if (typeof value !== "string") return null;
+  const match = /^(\d{4})-(0[1-9]|1[0-2])$/.exec(value);
+  if (!match) return null;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  return year >= 2000 && year <= 2100 ? { year, month } : null;
+}
+
+export function parseStatusCalendarOrigin(query: {
+  from?: unknown;
+  calendar?: unknown;
+  range?: unknown;
+  metric?: unknown;
+}): StatusCalendarOrigin | null {
+  if (query.from !== "status") return null;
+  const calendar = parseStatusCalendarMonth(query.calendar);
+  const range = statusRanges.includes(query.range as StatusRange) ? query.range as StatusRange : null;
+  const metric = statusMetrics.includes(query.metric as StatusMetric) ? query.metric as StatusMetric : null;
+  return calendar && range && metric ? { ...calendar, range, metric } : null;
+}
+
+export function buildStatusCalendarReturnPath(locale: Locale, origin: StatusCalendarOrigin): string {
+  const query = new URLSearchParams({
+    range: origin.range,
+    metric: origin.metric,
+    calendar: statusCalendarMonthKey(origin)
+  });
+  return `/${locale}/app/status?${query.toString()}#status-calendar`;
+}
+
+export function buildStatusCalendarRidePath(locale: Locale, historyId: string, origin: StatusCalendarOrigin): string {
+  const query = new URLSearchParams({
+    from: "status",
+    range: origin.range,
+    metric: origin.metric,
+    calendar: statusCalendarMonthKey(origin)
+  });
+  return `/${locale}/app/history/${encodeURIComponent(historyId)}?${query.toString()}`;
+}
 
 const MAX_REALISTIC_AVERAGE_SPEED_KMH = 90;
 const MAX_REALISTIC_TOP_SPEED_KMH = 120;

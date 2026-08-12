@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { getLocaleTag } from "@/lib/app-format";
 import type { StatusHistoryRide, UnitSystem } from "@/lib/app-model";
-import { buildStatusCalendar } from "@/lib/app-status";
+import { buildStatusCalendar, buildStatusCalendarReturnPath, buildStatusCalendarRidePath, type StatusMetric, type StatusRange } from "@/lib/app-status";
 import {
   formatStatusCalendarRideStats,
   formatStatusCalendarRideTitle,
@@ -27,6 +28,8 @@ export function StatusCalendar({
   now,
   initialYear,
   initialMonth,
+  range,
+  metric,
   unitSystem
 }: {
   history: StatusHistoryRide[];
@@ -35,8 +38,11 @@ export function StatusCalendar({
   now: Date;
   initialYear: number;
   initialMonth: number;
+  range: StatusRange;
+  metric: StatusMetric;
   unitSystem: UnitSystem;
 }) {
+  const router = useRouter();
   const [visible, setVisible] = useState({ year: initialYear, month: initialMonth });
   const [selectedRides, setSelectedRides] = useState<StatusHistoryRide[] | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -57,6 +63,12 @@ export function StatusCalendar({
       if (trigger?.isConnected) trigger.focus();
     });
   }, []);
+  const changeMonth = (delta: number) => {
+    const next = shiftedMonth(visible.year, visible.month, delta);
+    setVisible(next);
+    setSelectedRides(null);
+    router.replace(buildStatusCalendarReturnPath(locale, { ...next, range, metric }), { scroll: false });
+  };
 
   useEffect(() => {
     if (!selectedRides || selectedRides.length <= 1) return;
@@ -89,14 +101,15 @@ export function StatusCalendar({
     <>
       <div className="bike-app-activity-calendar">
         <header>
-          <button type="button" aria-label={statusText(locale, "status.previousMonth")} onClick={() => setVisible(shiftedMonth(visible.year, visible.month, -1))}>‹</button>
+          <button type="button" aria-label={statusText(locale, "status.previousMonth")} onClick={() => changeMonth(-1)}>‹</button>
           <strong aria-live="polite">{monthLabel}</strong>
-          <button type="button" aria-label={statusText(locale, "status.nextMonth")} onClick={() => setVisible(shiftedMonth(visible.year, visible.month, 1))}>›</button>
+          <button type="button" aria-label={statusText(locale, "status.nextMonth")} onClick={() => changeMonth(1)}>›</button>
         </header>
         <div className="bike-app-calendar-weekdays" aria-hidden="true">{weekdays.map((day) => <span key={day}>{day}</span>)}</div>
         <div className="bike-app-calendar-grid">
           {days.map((day) => {
             const count = day.rides.length;
+            const calendarOrigin = { year: visible.year, month: visible.month, range, metric };
             const template = count === 1 ? "status.calendarDayRideSingular" : "status.calendarDayRidePlural";
             const dateLabel = count > 0
               ? statusText(locale, template, { day: fullDate(day.dateKey), count })
@@ -104,7 +117,7 @@ export function StatusCalendar({
             const label = day.isToday ? `${statusText(locale, "status.today")}: ${dateLabel}` : dateLabel;
             const content = <><span>{day.day}</span>{count > 0 ? <i aria-hidden="true" /> : null}{count > 1 ? <b aria-hidden="true">{count > 9 ? "9+" : count}</b> : null}</>;
             if (day.inMonth && count === 1) {
-              return <Link key={day.dateKey} href={`/${locale}/app/history/${day.rides[0].id}`} aria-label={label} data-today={day.isToday}>{content}</Link>;
+              return <Link key={day.dateKey} href={buildStatusCalendarRidePath(locale, day.rides[0].id, calendarOrigin)} aria-label={label} data-in-month={day.inMonth} data-rides="true" data-today={day.isToday}>{content}</Link>;
             }
             return (
               <button
@@ -112,6 +125,8 @@ export function StatusCalendar({
                 type="button"
                 aria-label={label}
                 disabled={!day.inMonth || count === 0}
+                data-in-month={day.inMonth}
+                data-rides={day.inMonth && count > 0}
                 data-today={day.isToday}
                 onClick={(event) => {
                   triggerRef.current = event.currentTarget;
@@ -136,7 +151,7 @@ export function StatusCalendar({
                 return (
                   <Link
                     key={ride.id}
-                    href={`/${locale}/app/history/${ride.id}`}
+                    href={buildStatusCalendarRidePath(locale, ride.id, { year: visible.year, month: visible.month, range, metric })}
                     aria-label={`${title}. ${clock}. ${discipline}. ${stats}`}
                   >
                     <strong className="bike-app-status-ride-title">{title}</strong>

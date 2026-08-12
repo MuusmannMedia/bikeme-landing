@@ -4,11 +4,11 @@ import { AppNotice, AppPageHeader, ProGate } from "@/components/app-ui";
 import { StatusDashboard } from "@/components/status-dashboard";
 import { listStatusHistory, loadViewer } from "@/lib/app-data";
 import { getAppDictionary } from "@/lib/app-i18n";
-import { statusRanges, type StatusMetric, type StatusRange } from "@/lib/app-status";
+import { parseStatusCalendarMonth, statusRanges, type StatusMetric, type StatusRange } from "@/lib/app-status";
 import { isLocale } from "@/lib/locales";
 import { createClient } from "@/lib/supabase/server";
 
-export default async function StatusPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ range?: string; metric?: string; notice?: string }> }) {
+export default async function StatusPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ range?: string; metric?: string; calendar?: string; notice?: string }> }) {
   const { locale: localeParam } = await params;
   if (!isLocale(localeParam)) notFound();
   const locale = localeParam;
@@ -19,6 +19,7 @@ export default async function StatusPage({ params, searchParams }: { params: Pro
   const query = await searchParams;
   const range: StatusRange = statusRanges.includes(query.range as StatusRange) ? query.range as StatusRange : "3M";
   const metric: StatusMetric = query.metric === "elevation" || query.metric === "duration" ? query.metric : "distance";
+  const calendarMonth = parseStatusCalendarMonth(query.calendar);
   const result = await listStatusHistory(client, viewer.userId)
     .then((value) => ({ value, failed: false }))
     .catch(() => ({ value: [], failed: true }));
@@ -32,6 +33,7 @@ export default async function StatusPage({ params, searchParams }: { params: Pro
         locale={locale}
         range={range}
         metric={metric}
+        calendarMonth={calendarMonth}
         unitSystem={viewer.profile.unitSystem}
         weightKg={viewer.profile.weightKg}
         ftp={viewer.profile.ftp}

@@ -6,14 +6,17 @@ import { RoutePreview } from "@/components/route-preview";
 import { loadRideHistoryDetail, loadViewer } from "@/lib/app-data";
 import { formatDateTime, formatDistance, formatDuration, formatElevation, formatNumber, formatSpeed, trimRouteForPrivacy } from "@/lib/app-format";
 import { getAppDictionary } from "@/lib/app-i18n";
+import { buildStatusCalendarReturnPath, parseStatusCalendarOrigin } from "@/lib/app-status";
 import { isLocale } from "@/lib/locales";
 import { createClient } from "@/lib/supabase/server";
 
-export default async function HistoryDetailPage({ params }: { params: Promise<{ locale: string; historyId: string }> }) {
+export default async function HistoryDetailPage({ params, searchParams }: { params: Promise<{ locale: string; historyId: string }>; searchParams: Promise<{ from?: string; calendar?: string; range?: string; metric?: string }> }) {
   const { locale: localeParam, historyId } = await params;
   if (!isLocale(localeParam)) notFound();
   const locale = localeParam;
   const t = getAppDictionary(locale);
+  const calendarOrigin = parseStatusCalendarOrigin(await searchParams);
+  const backHref = calendarOrigin ? buildStatusCalendarReturnPath(locale, calendarOrigin) : `/${locale}/app/history`;
   const client = await createClient();
   const viewer = await loadViewer(client);
   if (!viewer.access.hasPro) return <ProGate locale={locale} />;
@@ -24,7 +27,7 @@ export default async function HistoryDetailPage({ params }: { params: Promise<{ 
   const zoneTotal = zoneEntries.reduce((sum, [, seconds]) => sum + seconds, 0);
   return (
     <>
-      <AppPageHeader eyebrow={formatDateTime(locale, ride.startedAt)} title={ride.title} intro={ride.startAddress ?? t("history.details")} action={<Link className="bike-app-button bike-app-button-secondary" href={`/${locale}/app/history`}>{t("common.back")}</Link>} />
+      <AppPageHeader eyebrow={formatDateTime(locale, ride.startedAt)} title={ride.title} intro={ride.startAddress ?? t("history.details")} action={<Link className="bike-app-button bike-app-button-secondary" href={backHref}>{t("common.back")}</Link>} />
       <div className="bike-app-grid" data-columns="2">
         <AppPanel title={t("history.details")}>
           <dl className="bike-app-definition">

@@ -15,12 +15,18 @@ import {
 } from "../lib/app-overview";
 import {
   buildStatusCalendar,
+  buildStatusCalendarReturnPath,
+  buildStatusCalendarRidePath,
   buildStatusInsights,
   buildStatusSummary,
   getStatusWindow,
+  parseStatusCalendarMonth,
+  parseStatusCalendarOrigin,
   resolveStatusAverageWatts,
   resolveStatusElevation,
+  statusCalendarMonthKey,
   statusDateKey,
+  statusMetrics,
   statusRanges
 } from "../lib/app-status";
 import {
@@ -478,6 +484,39 @@ test("activity calendar groups rides by the selected IANA local date", () => {
   assert.equal(days.find((day) => day.dateKey === "2026-08-11")?.rides.length, 1);
 });
 
+test("Status calendar ride links preserve a validated calendar return destination", () => {
+  const origin = { year: 2026, month: 7, range: "3M", metric: "distance" } as const;
+  assert.equal(statusCalendarMonthKey(origin), "2026-07");
+  assert.deepEqual(parseStatusCalendarMonth("2026-07"), { year: 2026, month: 7 });
+  ["2026-7", "2026-00", "2026-13", "1999-12", "2101-01", "https://example.com"].forEach((value) => {
+    assert.equal(parseStatusCalendarMonth(value), null, value);
+  });
+  assert.deepEqual(parseStatusCalendarOrigin({ from: "status", calendar: "2026-07", range: "3M", metric: "distance" }), origin);
+  assert.equal(parseStatusCalendarOrigin({ from: "status", calendar: "2026-07", range: "invalid", metric: "distance" }), null);
+  assert.equal(parseStatusCalendarOrigin({ from: "status", calendar: "2026-07", range: "3M", metric: "invalid" }), null);
+  assert.equal(parseStatusCalendarOrigin({ from: "status", calendar: "2026-07", range: "3M" }), null);
+  assert.equal(parseStatusCalendarOrigin({ from: "history", calendar: "2026-07", range: "3M", metric: "distance" }), null);
+  statusRanges.forEach((range) => statusMetrics.forEach((metric) => {
+    assert.deepEqual(parseStatusCalendarOrigin({ from: "status", calendar: "2026-07", range, metric }), { ...origin, range, metric });
+  }));
+  assert.equal(buildStatusCalendarRidePath("da", "ride id", origin), "/da/app/history/ride%20id?from=status&range=3M&metric=distance&calendar=2026-07");
+  assert.equal(buildStatusCalendarReturnPath("da", origin), "/da/app/status?range=3M&metric=distance&calendar=2026-07#status-calendar");
+
+  const calendar = projectFile("components/status-calendar.tsx");
+  const statusPage = projectFile("app/[locale]/app/status/page.tsx");
+  const detailPage = projectFile("app/[locale]/app/history/[historyId]/page.tsx");
+  assert.equal((calendar.match(/href=\{buildStatusCalendarRidePath/g) ?? []).length, 2);
+  assert.ok(calendar.includes("router.replace(buildStatusCalendarReturnPath"));
+  assert.ok(calendar.includes("{ scroll: false }") );
+  const dashboard = projectFile("components/status-dashboard.tsx");
+  assert.ok(dashboard.includes("statusCalendarMonthKey(calendarMonth)"));
+  assert.equal((dashboard.match(/calendarMonth=\{calendarParts\}/g) ?? []).length, 3);
+  assert.ok(dashboard.includes("<p>{calendarLabel}</p>"));
+  assert.ok(statusPage.includes("parseStatusCalendarMonth(query.calendar)"));
+  assert.ok(detailPage.includes("parseStatusCalendarOrigin(await searchParams)"));
+  assert.ok(detailPage.includes("calendarOrigin ? buildStatusCalendarReturnPath(locale, calendarOrigin) : `/${locale}/app/history`"));
+});
+
 test("Status-scoped unit and duration formatting is locale-aware without changing global formatters", () => {
   assert.equal(formatStatusDistance("da", 100, "metric"), "100,0 km");
   assert.equal(formatStatusDistance("da", 42, "metric"), "42 km");
@@ -595,7 +634,7 @@ test("Status source preserves the mobile hierarchy and required interaction hook
   assert.ok(calendar.includes("formatStatusCalendarRideTitle"));
   assert.ok(calendar.includes("formatStatusDiscipline"));
   assert.ok(calendar.includes("formatStatusCalendarRideStats"));
-  assert.ok(calendar.includes('href={`/${locale}/app/history/${ride.id}`}'));
+  assert.ok(calendar.includes("buildStatusCalendarRidePath"));
   assert.ok(calendar.includes('role="dialog" aria-modal="true" aria-labelledby="status-day-rides-title"'));
   assert.ok(calendar.includes('count > 9 ? "9+" : count'));
   assert.ok(dashboard.includes('className="bike-app-status-overview-grid"'));
@@ -724,8 +763,27 @@ test("Status typography follows one scoped semantic role matrix", () => {
 
   assert.match(cssRule(styles, ".bike-app-status-axis"), /font-size: var\(--status-type-micro\)/);
   assert.match(cssRule(styles, ".bike-app-status-x-axis"), /font-size: var\(--status-type-micro\)/);
-  assert.match(cssRule(styles, ".bike-app-calendar-weekdays"), /font-size: var\(--status-type-micro\)/);
-  assert.match(cssRule(styles, ".bike-app-calendar-grid b"), /font-size: var\(--status-type-micro\)/);
+  assert.match(cssRule(styles, ".bike-app-calendar-weekdays"), /font-size: var\(--status-type-label\)/);
+  assert.match(cssRule(styles, ".bike-app-calendar-grid b"), /font-size: var\(--status-type-label\)/);
+  const calendarDay = cssRule(styles, ".bike-app-calendar-grid > a > span, .bike-app-calendar-grid > button > span");
+  assert.match(calendarDay, /font-size: 18px/);
+  assert.match(calendarDay, /font-weight: 700/);
+  assert.match(calendarDay, /font-variant-numeric: tabular-nums/);
+  assert.match(cssRule(styles, ".bike-app-calendar-grid > button:disabled"), /color: #e2e9f6/);
+  assert.match(cssRule(styles, '.bike-app-calendar-grid > button[data-in-month="false"]:disabled'), /color: #8794ad/);
+  assert.match(cssRule(styles, '.bike-app-calendar-grid > [data-rides="true"] > span'), /font-weight: 750/);
+  assert.match(cssRule(styles, ".bike-app-calendar-grid"), /padding: 4px/);
+  const calendarBadge = cssRule(styles, ".bike-app-calendar-grid b");
+  assert.match(calendarBadge, /top: -4px/);
+  assert.match(calendarBadge, /right: -4px/);
+  assert.match(calendarBadge, /min-width: 20px/);
+  assert.match(calendarBadge, /height: 20px/);
+  assert.match(calendarBadge, /border: 2px solid #101827/);
+  const todayDay = cssRule(styles, '.bike-app-calendar-grid > [data-today="true"]');
+  assert.match(todayDay, /border-width: 2px/);
+  assert.match(todayDay, /color: #f1d4ff/);
+  assert.match(cssRule(styles, '.bike-app-calendar-grid > button[data-today="true"]:disabled'), /color: #f1d4ff/);
+  assert.match(styles.slice(styles.indexOf("@media (max-width: 820px)")), /\.bike-app-status-calendar-anchor\s*\{[^}]*scroll-margin-top:\s*132px/);
   const pageEyebrow = cssRule(styles, ".bike-app-eyebrow");
   assert.match(pageEyebrow, /font-size: 11px/);
   assert.match(pageEyebrow, /font-weight: 750/);
@@ -768,7 +826,7 @@ test("Status casing stays locale-authored and the weekly heading is not duplicat
   const weekdaySource = calendar.slice(weekdayStart, weekdayEnd);
   assert.equal(weekdaySource.includes(".replace("), false);
   const summaryStart = statusSource.indexOf("export function buildStatusSummary");
-  const summaryEnd = statusSource.indexOf("export function buildStatusCalendar");
+  const summaryEnd = statusSource.indexOf("export function buildStatusCalendar(");
   assert.ok(summaryStart >= 0 && summaryEnd > summaryStart);
   const summarySource = statusSource.slice(summaryStart, summaryEnd);
   const bucketStart = summarySource.indexOf("const formatter");
