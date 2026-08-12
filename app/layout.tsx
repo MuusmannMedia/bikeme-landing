@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
 import { CANONICAL_DOMAIN } from "@/lib/site-config";
+import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
 
 const interBody = Inter({

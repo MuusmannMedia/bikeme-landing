@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AppEmpty, AppPageHeader, AppPanel, ProGate } from "@/components/app-ui";
+import { RouteMap } from "@/components/route-map";
 import { RoutePreview } from "@/components/route-preview";
 import { loadRideHistoryDetail, loadViewer } from "@/lib/app-data";
 import { formatDateTime, formatDistance, formatDuration, formatElevation, formatNumber, formatSpeed, trimRouteForPrivacy } from "@/lib/app-format";
@@ -41,7 +42,21 @@ export default async function HistoryDetailPage({ params, searchParams }: { para
           {ride.route.length >= 2 ? <a className="bike-app-button bike-app-detail-actions" href={`/${locale}/app/history/${ride.id}/gpx`} download>{t("history.export")}</a> : null}
         </AppPanel>
         <AppPanel title={t("rides.route")}>
-          {displayRoute.length >= 2 ? <RoutePreview points={displayRoute} label={t("rides.route")} /> : <AppEmpty>{t("history.noRoute")}</AppEmpty>}
+          {displayRoute.length >= 2 ? (
+            <RouteMap
+              points={displayRoute}
+              label={t("rides.route")}
+              fullscreenTitle={t("rides.route")}
+              openFullscreenLabel={t("history.routeOpenFullscreen")}
+              closeFullscreenLabel={t("common.close")}
+              startLabel={t("history.routeStart")}
+              finishLabel={t("history.routeFinish")}
+              zoomInLabel={t("history.routeZoomIn")}
+              zoomOutLabel={t("history.routeZoomOut")}
+              attributionLabel={t("history.routeAttribution")}
+              fallback={<RoutePreview points={displayRoute} label={t("rides.route")} />}
+            />
+          ) : <AppEmpty>{t("history.noRoute")}</AppEmpty>}
         </AppPanel>
       </div>
       <div className="bike-app-grid bike-app-section-gap" data-columns="2">
