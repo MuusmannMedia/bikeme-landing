@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { AppStoreQrCard } from "@/components/app-store-qr-card";
 import { getAuthDictionary } from "@/lib/auth-i18n";
 import { getDictionary } from "@/lib/i18n";
 import { isLocale, localeLabels, locales, type Locale } from "@/lib/locales";
@@ -212,9 +213,9 @@ export default async function LocalePage({ params }: LocalePageProps) {
           </div>
         </section>
 
-        <section id="download" className="section-shell pb-20 md:pb-24">
+        <section id="download" className="section-shell scroll-mt-28 pb-20 md:pb-24">
           <div className="glass-panel overflow-hidden rounded-3xl border shadow-[0_32px_80px_-50px_rgba(0,0,0,0.9)]">
-            <div className="grid gap-8 px-5 py-10 md:px-8 md:py-12 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:px-10">
+            <div className="grid gap-10 px-5 py-10 md:px-8 md:py-12 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-center lg:gap-12 lg:px-10">
               <div className="max-w-3xl space-y-4">
                 <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(147,171,255)]">
                   {t.launch.eyebrow}
@@ -228,14 +229,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
                 <p className="text-sm font-medium text-[rgb(209,161,255)]">{t.launch.note}</p>
               </div>
 
-              <a
-                href={APP_STORE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex w-fit rounded-full border-2 border-[rgba(143,168,255,0.75)] bg-[linear-gradient(135deg,rgba(94,127,255,0.9),rgba(128,39,130,0.85))] px-7 py-3 text-sm font-semibold text-white shadow-[0_18px_50px_-28px_rgba(128,39,130,0.9)] transition-transform hover:scale-[1.02]"
-              >
-                {t.launch.cta}
-              </a>
+              <AppStoreQrCard appStoreUrl={APP_STORE_URL} locale={locale} />
             </div>
           </div>
         </section>

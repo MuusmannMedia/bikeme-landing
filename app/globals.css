@@ -88,6 +88,34 @@ a {
   background-size: 220% 100%;
 }
 
+.app-store-qr-image {
+  image-rendering: pixelated;
+}
+
+@media print {
+  .app-store-qr-card {
+    break-inside: avoid;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    box-shadow: none;
+  }
+
+  .app-store-qr-instruction {
+    color: #0f172a;
+  }
+
+  .app-store-qr-link {
+    border: 1px solid #e2e8f0;
+    box-shadow: none;
+  }
+
+  .app-store-download-link {
+    border-color: #25306d;
+    background: #25306d;
+    box-shadow: none;
+  }
+}
+
 /* Authentication and authenticated application pages share one viewport-sized
    background painter. Their content wrappers stay transparent so long pages do
    not stretch or cover the approved gradient. */
