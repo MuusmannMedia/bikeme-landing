@@ -2,9 +2,6 @@ import type { RoutePoint } from "./app-model";
 
 export const OPEN_FREE_MAP_STYLE_URL = "https://tiles.openfreemap.org/styles/liberty";
 
-const EARTH_RADIUS_METERS = 6_371_000;
-const GPS_OUTLIER_MAX_SPEED_MPS = 150 / 3.6;
-
 export type RouteMapCoordinate = [longitude: number, latitude: number];
 
 export type RouteMapModel = {
@@ -25,68 +22,13 @@ function isValidPoint(point: RoutePoint): boolean {
   );
 }
 
-function recordedAtMs(point: RoutePoint): number | null {
-  if (!point.recordedAt) return null;
-  const value = Date.parse(point.recordedAt);
-  return Number.isFinite(value) ? value : null;
-}
-
-function toRadians(value: number): number {
-  return value * Math.PI / 180;
-}
-
-function distanceMeters(previous: RoutePoint, current: RoutePoint): number {
-  const deltaLatitude = toRadians(current.latitude - previous.latitude);
-  const deltaLongitude = toRadians(current.longitude - previous.longitude);
-  const previousLatitude = toRadians(previous.latitude);
-  const currentLatitude = toRadians(current.latitude);
-  const haversine =
-    Math.sin(deltaLatitude / 2) ** 2 +
-    Math.sin(deltaLongitude / 2) ** 2 * Math.cos(previousLatitude) * Math.cos(currentLatitude);
-  return EARTH_RADIUS_METERS * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
-}
-
-function continuesSegment(previous: RoutePoint, current: RoutePoint): boolean {
-  if (current.startsNewSegment) return false;
-  const distance = distanceMeters(previous, current);
-  if (!Number.isFinite(distance) || distance <= 0) return false;
-
-  const previousAt = recordedAtMs(previous);
-  const currentAt = recordedAtMs(current);
-  if (previousAt != null && currentAt != null) {
-    const durationSeconds = (currentAt - previousAt) / 1000;
-    if (!Number.isFinite(durationSeconds) || durationSeconds <= 0) return false;
-    if (distance / durationSeconds > GPS_OUTLIER_MAX_SPEED_MPS) return false;
-  }
-  return true;
-}
-
 function coordinate(point: RoutePoint): RouteMapCoordinate {
   return [point.longitude, point.latitude];
 }
 
 export function buildRouteMapModel(points: RoutePoint[]): RouteMapModel | null {
-  const pointSegments: RoutePoint[][] = [];
-  let currentSegment: RoutePoint[] = [];
-  const finishSegment = () => {
-    if (currentSegment.length >= 2) pointSegments.push(currentSegment);
-    currentSegment = [];
-  };
-
-  for (const point of points) {
-    if (!isValidPoint(point)) {
-      finishSegment();
-      continue;
-    }
-    const previous = currentSegment.at(-1);
-    if (previous && !continuesSegment(previous, point)) finishSegment();
-    currentSegment.push(point);
-  }
-  finishSegment();
-
-  if (pointSegments.length === 0) return null;
-
-  const renderedPoints = pointSegments.flat();
+  const renderedPoints = points.filter(isValidPoint);
+  if (renderedPoints.length < 2) return null;
 
   let minLatitude = renderedPoints[0].latitude;
   let maxLatitude = renderedPoints[0].latitude;
@@ -100,7 +42,7 @@ export function buildRouteMapModel(points: RoutePoint[]): RouteMapModel | null {
   }
 
   return {
-    segments: pointSegments.map((segment) => segment.map(coordinate)),
+    segments: [renderedPoints.map(coordinate)],
     bounds: [[minLongitude, minLatitude], [maxLongitude, maxLatitude]],
     start: coordinate(renderedPoints[0]),
     finish: coordinate(renderedPoints.at(-1)!)
