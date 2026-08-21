@@ -906,10 +906,11 @@ test("route privacy trims the same five percent from both ends as mobile", () =>
   assert.equal(trimRouteForPrivacy(points, false), points);
 });
 
-test("completed ride map preserves route segments, bounds and visible endpoints", () => {
+test("completed ride map connects valid points in order regardless of stored segments", () => {
   const points = [
     { latitude: 55, longitude: 12, recordedAt: "2026-08-02T08:00:00.000Z", elevation: 10, startsNewSegment: false },
     { latitude: 55.001, longitude: 12.001, recordedAt: "2026-08-02T08:01:00.000Z", elevation: 11, startsNewSegment: false },
+    { latitude: Number.NaN, longitude: 12.005, recordedAt: "2026-08-02T08:05:00.000Z", elevation: null, startsNewSegment: false },
     { latitude: 55.01, longitude: 12.01, recordedAt: "2026-08-02T08:10:00.000Z", elevation: 12, startsNewSegment: true },
     { latitude: 55.011, longitude: 12.011, recordedAt: "2026-08-02T08:11:00.000Z", elevation: 13, startsNewSegment: false },
     { latitude: 56, longitude: 13, recordedAt: "2026-08-02T08:12:00.000Z", elevation: 14, startsNewSegment: true }
@@ -917,47 +918,36 @@ test("completed ride map preserves route segments, bounds and visible endpoints"
   const model = buildRouteMapModel(points);
   assert.ok(model);
   assert.deepEqual(model.segments, [
-    [[12, 55], [12.001, 55.001]],
-    [[12.01, 55.01], [12.011, 55.011]]
+    [[12, 55], [12.001, 55.001], [12.01, 55.01], [12.011, 55.011], [13, 56]]
   ]);
-  assert.deepEqual(model.bounds, [[12, 55], [12.011, 55.011]]);
+  assert.deepEqual(model.bounds, [[12, 55], [13, 56]]);
   assert.deepEqual(model.start, [12, 55]);
-  assert.deepEqual(model.finish, [12.011, 55.011]);
+  assert.deepEqual(model.finish, [13, 56]);
   assert.equal(buildRouteMapModel(points.slice(0, 1)), null);
+  assert.equal(buildRouteMapModel([points[0], { ...points[1], longitude: 181 }]), null);
   assert.equal(OPEN_FREE_MAP_STYLE_URL, "https://tiles.openfreemap.org/styles/liberty");
-
-  const invalidGap = buildRouteMapModel([
-    points[0],
-    points[1],
-    { ...points[1], latitude: Number.NaN },
-    points[2],
-    points[3]
-  ]);
-  assert.deepEqual(invalidGap?.segments, [
-    [[12, 55], [12.001, 55.001]],
-    [[12.01, 55.01], [12.011, 55.011]]
-  ]);
 });
 
-test("completed ride map keeps high realistic speeds below 150 km/h and splits faster GPS jumps", () => {
+test("completed ride map does not split visual lines for speeds above 150 km/h", () => {
   const routeMapSource = projectFile("lib/route-map.ts");
   const model = buildRouteMapModel([
     { latitude: 55, longitude: 12, recordedAt: "2026-08-02T08:00:00.000Z", elevation: null, startsNewSegment: false },
-    { latitude: 55.001, longitude: 12, recordedAt: "2026-08-02T08:00:03.000Z", elevation: null, startsNewSegment: false },
-    { latitude: 55.002, longitude: 12, recordedAt: "2026-08-02T08:00:05.000Z", elevation: null, startsNewSegment: false },
-    { latitude: 55.003, longitude: 12, recordedAt: "2026-08-02T08:00:08.000Z", elevation: null, startsNewSegment: false }
+    { latitude: 55.01, longitude: 12, recordedAt: "2026-08-02T08:00:01.000Z", elevation: null, startsNewSegment: false },
+    { latitude: 55.02, longitude: 12, recordedAt: "2026-08-02T07:59:59.000Z", elevation: null, startsNewSegment: false }
   ]);
 
-  assert.ok(routeMapSource.includes("const GPS_OUTLIER_MAX_SPEED_MPS = 150 / 3.6"));
+  ["GPS_OUTLIER_MAX_SPEED_MPS", "distanceMeters", "recordedAtMs", "continuesSegment", "startsNewSegment"].forEach((value) => {
+    assert.equal(routeMapSource.includes(value), false, value);
+  });
   assert.deepEqual(model?.segments, [
-    [[12, 55], [12, 55.001]],
-    [[12, 55.002], [12, 55.003]]
+    [[12, 55], [12, 55.01], [12, 55.02]]
   ]);
 });
 
 test("ride detail map uses the privacy-trimmed route with an accessible SVG fallback", () => {
   const detail = projectFile("app/[locale]/app/history/[historyId]/page.tsx");
   const routeMap = projectFile("components/route-map.tsx");
+  const routePreview = projectFile("components/route-preview.tsx");
   const styles = projectFile("app/globals.css");
 
   assert.ok(detail.includes("const displayRoute = trimRouteForPrivacy"));
@@ -975,6 +965,9 @@ test("ride detail map uses the privacy-trimmed route with an accessible SVG fall
   assert.ok(routeMap.includes('"AttributionControl.ToggleAttribution": attributionLabel'));
   assert.ok(routeMap.includes('"Map.Title": label'));
   assert.ok(routeMap.includes('"line-color": "#FF6A00"'));
+  assert.ok(routePreview.includes("buildRouteMapModel(points)"));
+  assert.ok(routePreview.includes('index === 0 ? "M" : "L"'));
+  assert.equal(routePreview.includes("startsNewSegment"), false);
   assert.match(styles, /\.bike-app-route-map\[data-fullscreen="true"\]\s*\{[^}]*position:\s*fixed/);
   assert.match(styles, /\.bike-app-route-map-close\s*\{[^}]*width:\s*44px;[^}]*height:\s*44px/);
 });
