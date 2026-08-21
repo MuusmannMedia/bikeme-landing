@@ -3,7 +3,7 @@ import type { RoutePoint } from "./app-model";
 export const OPEN_FREE_MAP_STYLE_URL = "https://tiles.openfreemap.org/styles/liberty";
 
 const EARTH_RADIUS_METERS = 6_371_000;
-const GPS_OUTLIER_MAX_SPEED_MPS = 100 / 3.6;
+const GPS_OUTLIER_MAX_SPEED_MPS = 150 / 3.6;
 
 export type RouteMapCoordinate = [longitude: number, latitude: number];
 

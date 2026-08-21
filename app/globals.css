@@ -297,6 +297,13 @@ a {
 .bike-app-hotspot p { min-height: 44px; margin: 0 0 14px; color: var(--app-muted); line-height: 1.5; }
 .bike-app-hotspot a { display: inline-flex; min-height: 44px; align-items: center; color: #d8a6e0; font-weight: 700; }
 .bike-app-detail-actions { margin-top: 24px; }
+.bike-app-delete-dialog { width: min(520px,calc(100% - 32px)); max-width: none; overflow: visible; border: 1px solid rgba(248,113,113,.32); border-radius: 18px; background: #101827; padding: 0; color: var(--app-text); box-shadow: 0 28px 90px rgba(0,0,0,.65); }
+.bike-app-delete-dialog::backdrop { background: rgba(0,0,0,.74); backdrop-filter: blur(4px); }
+.bike-app-delete-dialog form { padding: clamp(22px,5vw,32px); }
+.bike-app-delete-dialog-icon { display: grid; width: 46px; height: 46px; place-items: center; border: 1px solid rgba(248,113,113,.38); border-radius: 999px; background: rgba(127,29,29,.3); color: #fecaca; font-size: 22px; font-weight: 850; }
+.bike-app-delete-dialog h2 { margin: 20px 0 10px; font-size: clamp(22px,4vw,28px); }
+.bike-app-delete-dialog p { margin: 0; color: var(--app-muted); line-height: 1.65; }
+.bike-app-delete-dialog-actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin-top: 26px; }
 .bike-app-search { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 12px; }
 .bike-app-rider-card { display: grid; gap: 18px; }
 .bike-app-rider-card h2 { margin: 0 0 5px; }
@@ -536,6 +543,7 @@ a {
   .bike-app-list-item { align-items: flex-start; flex-direction: column; }
   .bike-app-list-item > .bike-app-actions { width: 100%; }
   .bike-app-list-item > .bike-app-actions .bike-app-button { flex: 1 1 120px; }
+  .bike-app-delete-dialog-actions { grid-template-columns: 1fr; }
   .bike-app-panel { padding: 18px; }
   .bike-app-route { min-height: 210px; }
   .bike-app-route svg { height: 230px; }

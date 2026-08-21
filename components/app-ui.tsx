@@ -70,11 +70,14 @@ export function AppNotice({ locale, code }: { locale: Locale; code?: string | nu
     forbidden: "message.forbidden",
     search: "message.searchError",
     data: "message.dataError",
-    error: "message.error"
+    error: "message.error",
+    historyDeleted: "history.deleted",
+    historyDeleteError: "history.deleteError",
+    historyDeleteInvalid: "history.deleteInvalid"
   };
   const key = keyByCode[code];
   if (!key) return null;
-  const isError = ["invalid", "forbidden", "search", "data", "error"].includes(code);
+  const isError = ["invalid", "forbidden", "search", "data", "error", "historyDeleteError", "historyDeleteInvalid"].includes(code);
   return <div className="bike-app-notice" data-kind={isError ? "error" : "success"} role="status">{getAppText(locale, key)}</div>;
 }
 
