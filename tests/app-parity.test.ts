@@ -514,7 +514,8 @@ test("Status calendar ride links preserve a validated calendar return destinatio
   assert.equal((dashboard.match(/calendarMonth=\{calendarParts\}/g) ?? []).length, 3);
   assert.ok(dashboard.includes("<p>{calendarLabel}</p>"));
   assert.ok(statusPage.includes("parseStatusCalendarMonth(query.calendar)"));
-  assert.ok(detailPage.includes("parseStatusCalendarOrigin(await searchParams)"));
+  assert.ok(detailPage.includes("const query = await searchParams"));
+  assert.ok(detailPage.includes("parseStatusCalendarOrigin(query)"));
   assert.ok(detailPage.includes("calendarOrigin ? buildStatusCalendarReturnPath(locale, calendarOrigin) : `/${locale}/app/history`"));
 });
 
@@ -938,6 +939,22 @@ test("completed ride map preserves route segments, bounds and visible endpoints"
   ]);
 });
 
+test("completed ride map keeps high realistic speeds below 150 km/h and splits faster GPS jumps", () => {
+  const routeMapSource = projectFile("lib/route-map.ts");
+  const model = buildRouteMapModel([
+    { latitude: 55, longitude: 12, recordedAt: "2026-08-02T08:00:00.000Z", elevation: null, startsNewSegment: false },
+    { latitude: 55.001, longitude: 12, recordedAt: "2026-08-02T08:00:03.000Z", elevation: null, startsNewSegment: false },
+    { latitude: 55.002, longitude: 12, recordedAt: "2026-08-02T08:00:05.000Z", elevation: null, startsNewSegment: false },
+    { latitude: 55.003, longitude: 12, recordedAt: "2026-08-02T08:00:08.000Z", elevation: null, startsNewSegment: false }
+  ]);
+
+  assert.ok(routeMapSource.includes("const GPS_OUTLIER_MAX_SPEED_MPS = 150 / 3.6"));
+  assert.deepEqual(model?.segments, [
+    [[12, 55], [12, 55.001]],
+    [[12, 55.002], [12, 55.003]]
+  ]);
+});
+
 test("ride detail map uses the privacy-trimmed route with an accessible SVG fallback", () => {
   const detail = projectFile("app/[locale]/app/history/[historyId]/page.tsx");
   const routeMap = projectFile("components/route-map.tsx");
@@ -1049,6 +1066,66 @@ test("history table keeps its full data contract inside a width-contained scroll
   assert.match(wrapperRule, /\bcontain:\s*inline-size\s*;/);
   assert.match(tableRule, /\bmin-width:\s*720px\s*;/);
   assert.equal(/(?:html|body)\s*\{[\s\S]*?overflow-x:\s*hidden\s*;/.test(styles), false);
+});
+
+test("history deletion is owner-scoped, count-checked and refreshes every dependent view", () => {
+  const actions = projectFile("app/[locale]/app/actions.ts");
+  const start = actions.indexOf("export async function deleteRideHistoryAction");
+  const end = actions.indexOf("export async function sendRideInterestAction", start);
+  const deletion = actions.slice(start, end);
+
+  assert.ok(start >= 0 && end > start);
+  assert.ok(deletion.includes('const context = await getActionContext(formData)'));
+  assert.ok(deletion.includes('const historyId = uuidValue(formData, "historyId")'));
+  assert.ok(deletion.includes('if (!historyId) redirect(withNotice(context.locale, context.returnTo, "historyDeleteInvalid"))'));
+  assert.match(deletion, /from\("ride_history"\)[\s\S]*?\.delete\(\)[\s\S]*?\.eq\("id", historyId\)[\s\S]*?\.eq\("owner_id", context\.userId\)[\s\S]*?\.select\("id"\)/);
+  assert.ok(deletion.includes("(data ?? []).length !== 1"));
+  assert.ok(deletion.includes('redirect(withNotice(context.locale, context.returnTo, "historyDeleteError"))'));
+  assert.ok(deletion.includes("revalidateApp(context.locale, [historyPath, statusPath, detailPath])"));
+  assert.ok(actions.includes('revalidatePath(`/${locale}/app`)'));
+  assert.ok(deletion.includes('redirect(withNotice(context.locale, historyPath, "historyDeleted"))'));
+  ["/app/history", "/app/status"].forEach((path) => assert.ok(deletion.includes(path), path));
+});
+
+test("history deletion dialog is accessible, pending-safe and localized in all seven languages", () => {
+  const detail = projectFile("app/[locale]/app/history/[historyId]/page.tsx");
+  const dialog = projectFile("components/delete-history-ride.tsx");
+  const notices = projectFile("components/app-ui.tsx");
+  const styles = projectFile("app/globals.css");
+  const keys = [
+    "history.delete",
+    "history.deleteTitle",
+    "history.deleteBody",
+    "history.deleteCancel",
+    "history.deleting",
+    "history.deleted",
+    "history.deleteError",
+    "history.deleteInvalid"
+  ] as const;
+
+  keys.forEach((key) => {
+    const row = getAppTranslationRow(key);
+    assert.equal(row.length, 7, key);
+    row.forEach((value) => assert.ok(value.trim().length > 0, key));
+  });
+  assert.ok(detail.includes("<DeleteHistoryRide"));
+  assert.ok(detail.includes("action={deleteRideHistoryAction}"));
+  assert.ok(detail.includes("<AppNotice locale={locale} code={query.notice}"));
+  assert.ok(notices.includes('historyDeleted: "history.deleted"'));
+  assert.ok(notices.includes('historyDeleteError: "history.deleteError"'));
+  assert.ok(dialog.includes("<dialog"));
+  assert.ok(dialog.includes('aria-modal="true"'));
+  assert.ok(dialog.includes("aria-labelledby={titleId}"));
+  assert.ok(dialog.includes("aria-describedby={descriptionId}"));
+  assert.ok(dialog.includes("dialog.showModal()"));
+  assert.ok(dialog.includes("onCancel={handleCancel}"));
+  assert.ok(dialog.includes("cancelButtonRef.current?.focus()"));
+  assert.ok(dialog.includes("triggerButtonRef.current?.focus()"));
+  assert.ok(dialog.includes("submittingRef.current = true"));
+  assert.ok(dialog.includes("useFormStatus()"));
+  assert.ok(dialog.includes("disabled={isPending}"));
+  assert.ok(styles.includes(".bike-app-delete-dialog::backdrop"));
+  assert.ok(styles.includes(".bike-app-button-danger"));
 });
 
 test("synthetic History fixture stays document-contained at release viewports", () => {

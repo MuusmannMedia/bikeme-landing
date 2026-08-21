@@ -389,6 +389,32 @@ export async function removeConnectionAction(formData: FormData): Promise<void> 
   redirectResult(context, "done");
 }
 
+export async function deleteRideHistoryAction(formData: FormData): Promise<void> {
+  const context = await getActionContext(formData);
+  if (!context) redirect(`/${getSafeLocale(formData.get("locale"))}/login`);
+  const historyId = uuidValue(formData, "historyId");
+  if (!historyId) redirect(withNotice(context.locale, context.returnTo, "historyDeleteInvalid"));
+
+  const historyPath = `/${context.locale}/app/history`;
+  const statusPath = `/${context.locale}/app/status`;
+  const detailPath = `${historyPath}/${historyId}`;
+  const { data, error } = await context.client
+    .from("ride_history")
+    .delete()
+    .eq("id", historyId)
+    .eq("owner_id", context.userId)
+    .select("id");
+
+  if (error || (data ?? []).length !== 1) {
+    redirect(withNotice(context.locale, context.returnTo, "historyDeleteError"));
+  }
+
+  // route_coordinates, route_data and zone_distribution are stored on this
+  // same owner-scoped row, matching the iPhone app's deletion behavior.
+  revalidateApp(context.locale, [historyPath, statusPath, detailPath]);
+  redirect(withNotice(context.locale, historyPath, "historyDeleted"));
+}
+
 export async function sendRideInterestAction(formData: FormData): Promise<void> {
   const context = await getActionContext(formData);
   if (!context) redirect(`/${getSafeLocale(formData.get("locale"))}/login`);
