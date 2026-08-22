@@ -331,6 +331,24 @@ test("unknown authenticated app paths delegate to the localized app not-found bo
   ].forEach((path) => assert.ok(projectFile(path).length > 0, path));
 });
 
+test("rider cards emphasize identity and open the preferred-time picker from the full field", () => {
+  const riders = projectFile("app/[locale]/app/riders/page.tsx");
+  const timePicker = projectFile("components/time-picker-input.tsx");
+  const styles = projectFile("app/globals.css");
+
+  assert.ok(riders.includes('import { TimePickerInput } from "@/components/time-picker-input"'));
+  assert.ok(riders.includes('<TimePickerInput name="preferredTime" />'));
+  assert.ok(timePicker.includes('"use client"'));
+  assert.ok(timePicker.includes("input.showPicker()"));
+  assert.ok(timePicker.includes('typeof input.showPicker !== "function"'));
+  assert.ok(timePicker.indexOf("input.showPicker()") < timePicker.indexOf("event.preventDefault()"));
+  assert.ok(timePicker.includes('type="time"'));
+  assert.match(styles, /\.bike-app-rider-connection \.bike-app-avatar\[data-size="large"\][^{]*\{[^}]*width:\s*clamp\(112px,10vw,136px\)/);
+  assert.match(styles, /\.bike-app-rider-connection h3\s*\{[^}]*font-size:\s*clamp\(24px,2vw,30px\)/);
+  assert.match(styles, /\.bike-app-rider-connection h3\s*\{[^}]*overflow-wrap:\s*anywhere\s*;/);
+  assert.match(styles, /\.bike-app-time-picker\s*\{[^}]*cursor:\s*pointer\s*;/);
+});
+
 test("Basic and Pro access matches mobile access semantics", () => {
   assert.equal(hasProAccess("basic", null), false);
   assert.equal(hasProAccess("premium", null), true);
