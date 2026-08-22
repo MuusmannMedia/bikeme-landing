@@ -263,6 +263,13 @@ a {
 .bike-app-choice-card small { display: block; }
 .bike-app-choice-card small { margin-top: 3px; color: var(--app-muted); line-height: 1.35; }
 .bike-app-title-field { display: grid; gap: 9px; min-width: 0; }
+.bike-app-create-fields { align-items: start; }
+.bike-app-create-title,
+.bike-app-create-basics { align-self: start; }
+.bike-app-create-basics,
+.bike-app-create-start,
+.bike-app-create-side { display: grid; gap: 16px; min-width: 0; }
+.bike-app-create-schedule { display: grid; grid-column: 1 / -1; grid-template-columns: repeat(2,minmax(0,1fr)); align-items: start; gap: 16px; min-width: 0; }
 .bike-app-preset-list { display: flex; flex-wrap: wrap; gap: 6px; }
 .bike-app-preset-list button { border: 1px solid rgba(143,168,255,.22); border-radius: 999px; background: rgba(37,48,109,.3); padding: 6px 9px; color: #dce5ff; cursor: pointer; font: inherit; font-size: 11px; }
 .bike-app-preset-list button:hover { border-color: rgba(201,121,209,.6); }
@@ -594,6 +601,7 @@ a {
   .bike-app-grid[data-columns="3"],
   .bike-app-grid[data-columns="4"] { grid-template-columns: 1fr; }
   .bike-app-form-grid { grid-template-columns: 1fr; }
+  .bike-app-create-schedule { grid-column: auto; grid-template-columns: 1fr; }
   .bike-app-choice-grid { grid-template-columns: 1fr; }
   .bike-app-definition { grid-template-columns: 1fr; }
   .bike-app-list-item { align-items: flex-start; flex-direction: column; }
