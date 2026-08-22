@@ -216,7 +216,7 @@ export async function listAuthorizedRides(client: Client, userId: string): Promi
 export async function listHotspots(client: Client): Promise<Hotspot[]> {
   const { data, error } = await client
     .from("ride_hotspots")
-    .select("id,name,description,address,region_label,default_discipline,default_distance_km,default_speed_kmh")
+    .select("id,name,description,address,latitude,longitude,region_label,default_discipline,default_distance_km,default_speed_kmh")
     .eq("is_active", true)
     .order("sort_order", { ascending: true });
   if (error) throw new AppDataError("LOAD_FAILED");
@@ -225,6 +225,8 @@ export async function listHotspots(client: Client): Promise<Hotspot[]> {
     name: String(row.name ?? ""),
     description: nullableString(row.description),
     address: nullableString(row.address),
+    latitude: nullableNumber(row.latitude),
+    longitude: nullableNumber(row.longitude),
     region: String(row.region_label ?? ""),
     defaultDiscipline: row.default_discipline == null ? null : safeDiscipline(row.default_discipline),
     defaultDistanceKm: nullableNumber(row.default_distance_km),
@@ -371,6 +373,19 @@ export async function searchRiders(client: Client, userId: string, query: string
     search_query: normalized,
     result_limit: 30
   });
+  if (error) throw new AppDataError("LOAD_FAILED");
+  return ((data ?? []) as Record<string, unknown>[])
+    .map(normalizeProfile)
+    .filter((profile) => profile.id && profile.id !== userId);
+}
+
+export async function listInviteableRiders(client: Client, userId: string): Promise<RiderProfile[]> {
+  const { data, error } = await client
+    .from("profiles")
+    .select("id,display_name,avatar_url,level_desc,home_region")
+    .neq("id", userId)
+    .order("display_name", { ascending: true, nullsFirst: false })
+    .limit(500);
   if (error) throw new AppDataError("LOAD_FAILED");
   return ((data ?? []) as Record<string, unknown>[])
     .map(normalizeProfile)

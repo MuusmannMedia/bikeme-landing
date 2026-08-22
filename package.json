@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit --incremental false",
     "test:auth": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir node_modules/.cache/bikeme-auth-tests lib/locales.ts lib/auth.ts lib/auth-i18n.ts lib/apple-auth.ts tests/auth-foundation.test.ts && node --test node_modules/.cache/bikeme-auth-tests/tests/auth-foundation.test.js",
-    "test:app": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir node_modules/.cache/bikeme-app-tests lib/locales.ts lib/app-model.ts lib/app-access.ts lib/app-format.ts lib/app-i18n.ts lib/app-status.ts lib/status-format.ts lib/gpx.ts tests/app-parity.test.ts && node --test node_modules/.cache/bikeme-app-tests/tests/app-parity.test.js"
+    "test:app": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir node_modules/.cache/bikeme-app-tests lib/locales.ts lib/app-model.ts lib/app-access.ts lib/app-format.ts lib/app-i18n.ts lib/app-status.ts lib/status-format.ts lib/gpx.ts lib/gpx-import.ts lib/create-ride.ts tests/app-parity.test.ts tests/create-ride.test.ts && node --test node_modules/.cache/bikeme-app-tests/tests/app-parity.test.js node_modules/.cache/bikeme-app-tests/tests/create-ride.test.js"
   },
   "dependencies": {
     "@supabase/ssr": "0.10.0",

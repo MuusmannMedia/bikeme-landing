@@ -12,11 +12,17 @@ function toLocalInputValue(value: string | null | undefined): string {
 export function LocalDateTimeInput({
   name,
   defaultValue,
-  required = true
+  required = true,
+  minimumValue,
+  stepSeconds,
+  invalidMessage
 }: {
   name: string;
   defaultValue?: string | null;
   required?: boolean;
+  minimumValue?: string | null;
+  stepSeconds?: number;
+  invalidMessage?: string;
 }) {
   const [value, setValue] = useState(() => toLocalInputValue(defaultValue));
   const date = value ? new Date(value) : null;
@@ -27,7 +33,15 @@ export function LocalDateTimeInput({
         type="datetime-local"
         value={value}
         required={required}
-        onChange={(event) => setValue(event.target.value)}
+        min={minimumValue ? toLocalInputValue(minimumValue) : undefined}
+        step={stepSeconds}
+        onInvalid={(event) => {
+          if (invalidMessage) event.currentTarget.setCustomValidity(invalidMessage);
+        }}
+        onChange={(event) => {
+          event.currentTarget.setCustomValidity("");
+          setValue(event.target.value);
+        }}
       />
       <input type="hidden" name={name} value={iso} />
     </>
