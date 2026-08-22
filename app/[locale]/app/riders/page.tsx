@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { AppAvatar } from "@/components/app-avatar";
 import { AppEmpty, AppNotice, AppPageHeader, AppPanel } from "@/components/app-ui";
 import { BrowserTimezoneInput } from "@/components/local-date-time-input";
+import { TimePickerInput } from "@/components/time-picker-input";
 import { listConnections, loadViewer, searchRiders } from "@/lib/app-data";
 import { getAppDictionary } from "@/lib/app-i18n";
 import { selectAcceptedConnections } from "@/lib/app-overview";
@@ -96,7 +97,7 @@ export default async function RidersPage({ params, searchParams }: { params: Pro
               <input type="hidden" name="locale" value={locale} /><input type="hidden" name="returnTo" value={returnTo} /><input type="hidden" name="recipientUserId" value={connection.counterpart.id} /><BrowserTimezoneInput />
               <label className="bike-app-field"><span>{t("requests.preferredDate")}</span><select name="timeOption" defaultValue="tomorrow"><option value="today">{t("requests.today")}</option><option value="tomorrow">{t("requests.tomorrow")}</option><option value="this_weekend">{t("requests.weekend")}</option><option value="custom_date">{t("requests.custom")}</option></select></label>
               <label className="bike-app-field"><span>{t("requests.custom")}</span><input name="customDate" type="date" /></label>
-              <label className="bike-app-field"><span>{t("requests.preferredTime")}</span><input name="preferredTime" type="time" /></label>
+              <label className="bike-app-field"><span>{t("requests.preferredTime")}</span><TimePickerInput name="preferredTime" /></label>
               <button className="bike-app-button" type="submit">{t("requests.sendTo")}</button>
             </form>
             <form action={removeConnectionAction}><input type="hidden" name="locale" value={locale} /><input type="hidden" name="returnTo" value={returnTo} /><input type="hidden" name="connectionId" value={connection.id} /><button className="bike-app-button bike-app-button-danger bike-app-button-small" type="submit">{t("common.remove")}</button></form>

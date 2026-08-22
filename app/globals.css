@@ -250,6 +250,7 @@ a {
 .bike-app-field input,
 .bike-app-field select,
 .bike-app-field textarea { width: 100%; min-height: 48px; border: 1px solid rgba(148,163,194,.28); border-radius: 9px; background: #070e1d; color: white; padding: 11px 13px; font: inherit; }
+.bike-app-time-picker { cursor: pointer; }
 .bike-app-field textarea { min-height: 112px; resize: vertical; line-height: 1.5; }
 .bike-app-field input::placeholder,
 .bike-app-field textarea::placeholder { color: #8190ab; }
@@ -368,12 +369,14 @@ a {
 .bike-app-delete-dialog-actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin-top: 26px; }
 .bike-app-search { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 12px; }
 .bike-app-rider-card { display: grid; gap: 18px; }
-.bike-app-rider-card h2 { margin: 0 0 5px; }
+.bike-app-rider-card .bike-app-avatar[data-size="large"],
+.bike-app-rider-connection .bike-app-avatar[data-size="large"] { width: clamp(112px,10vw,136px); height: clamp(112px,10vw,136px); font-size: clamp(36px,3vw,44px); }
+.bike-app-rider-card h2 { margin: 0 0 7px; overflow-wrap: anywhere; font-size: clamp(24px,2vw,30px); font-weight: 750; line-height: 1.15; letter-spacing: -.015em; }
 .bike-app-rider-card p { margin: 0; color: var(--app-muted); }
 .bike-app-rider-details { grid-template-columns: 1fr 1fr; }
 .bike-app-rider-details div:last-child:nth-child(3) { grid-column: 1 / -1; }
 .bike-app-rider-connection { display: grid; gap: 18px; border: 1px solid rgba(148,163,194,.16); border-radius: 14px; background: #0a1222; padding: 19px; }
-.bike-app-rider-connection h3 { margin: 0 0 5px; }
+.bike-app-rider-connection h3 { margin: 0 0 7px; overflow-wrap: anywhere; font-size: clamp(24px,2vw,30px); font-weight: 750; line-height: 1.15; letter-spacing: -.015em; }
 .bike-app-rider-connection p { margin: 0; color: var(--app-muted); }
 .bike-app-interest-form { display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 12px; border-top: 1px solid rgba(148,163,194,.15); padding-top: 17px; }
 .bike-app-interest-form .bike-app-button { grid-column: 1 / -1; }
