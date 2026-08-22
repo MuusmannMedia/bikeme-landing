@@ -189,6 +189,7 @@ test("GPX import matches the mobile limits, normalization and server contract", 
 test("create-ride UI and action wire errors, pending protection and conditional payloads", () => {
   const page = projectFile("app/[locale]/app/rides/new/page.tsx");
   const form = projectFile("components/create-ride-form.tsx");
+  const styles = projectFile("app/globals.css");
   const actions = projectFile("app/[locale]/app/actions.ts");
   const data = projectFile("lib/app-data.ts");
   const meetingMap = projectFile("components/meeting-point-map.tsx");
@@ -212,6 +213,11 @@ test("create-ride UI and action wire errors, pending protection and conditional 
   assert.ok(form.includes("value={moodKey}"));
   assert.ok(form.includes("value={description}"));
   assert.ok(form.includes("required"));
+  assert.ok(form.includes('className="bike-app-form-grid bike-app-create-fields"'));
+  assert.ok(form.includes('className="bike-app-create-start"'));
+  assert.ok(form.includes('className="bike-app-create-schedule"'));
+  assert.ok(styles.includes(".bike-app-create-schedule { display: grid; grid-column: 1 / -1;"));
+  assert.ok(styles.includes(".bike-app-create-schedule { grid-column: auto; grid-template-columns: 1fr; }"));
   assert.ok(form.includes("getRideMoodOptions(locale)"));
   assert.equal(form.includes('value="CITY"'), false);
   assert.equal(form.includes('name="maxParticipants"'), false);

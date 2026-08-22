@@ -373,8 +373,8 @@ export function CreateRideForm({
             </div>
           )}
         </fieldset>
-        <div className="bike-app-form-grid">
-          <div className="bike-app-title-field">
+        <div className="bike-app-form-grid bike-app-create-fields">
+          <div className="bike-app-title-field bike-app-create-title">
             <label className="bike-app-field">
               <span>{t("rides.titleLabel")}</span>
               <input
@@ -403,108 +403,114 @@ export function CreateRideForm({
             </div>
           </div>
 
-          <label className="bike-app-field">
-            <span>{t("rides.discipline")}</span>
-            <select name="discipline" value={discipline} onChange={(event) => setDiscipline(event.target.value as typeof discipline)}>
-              <option value="ROAD">{t("discipline.road")}</option>
-              <option value="GRAVEL">{t("discipline.gravel")}</option>
-              <option value="MTB">{t("discipline.mtb")}</option>
-            </select>
-          </label>
+          <div className="bike-app-create-basics">
+            <label className="bike-app-field">
+              <span>{t("rides.discipline")}</span>
+              <select name="discipline" value={discipline} onChange={(event) => setDiscipline(event.target.value as typeof discipline)}>
+                <option value="ROAD">{t("discipline.road")}</option>
+                <option value="GRAVEL">{t("discipline.gravel")}</option>
+                <option value="MTB">{t("discipline.mtb")}</option>
+              </select>
+            </label>
 
-          <label className="bike-app-field">
-            <span>{t("rides.distanceWithUnit").replace("{unit}", distanceUnit)}</span>
-            <input
-              name="distance"
-              type="number"
-              min="0.1"
-              max={maximumDistance}
-              step="0.1"
-              value={distanceValue}
-              placeholder={t("rides.distancePlaceholder")}
-              required
-              onInvalid={(event) => event.currentTarget.setCustomValidity(t("message.distanceInvalid"))}
-              onChange={(event) => {
-                event.currentTarget.setCustomValidity("");
-                setDistanceValue(event.target.value);
-              }}
-            />
-          </label>
+            <label className="bike-app-field">
+              <span>{t("rides.distanceWithUnit").replace("{unit}", distanceUnit)}</span>
+              <input
+                name="distance"
+                type="number"
+                min="0.1"
+                max={maximumDistance}
+                step="0.1"
+                value={distanceValue}
+                placeholder={t("rides.distancePlaceholder")}
+                required
+                onInvalid={(event) => event.currentTarget.setCustomValidity(t("message.distanceInvalid"))}
+                onChange={(event) => {
+                  event.currentTarget.setCustomValidity("");
+                  setDistanceValue(event.target.value);
+                }}
+              />
+            </label>
+          </div>
 
-          {mode === "PING" ? (
-            <>
+          <div className="bike-app-create-schedule">
+            {mode === "PING" ? (
+              <div className="bike-app-create-start">
+                <label className="bike-app-field">
+                  <span>{t("rides.startMode")}</span>
+                  <select name="pingStartMode" value={startMode} onChange={(event) => setStartMode(event.target.value as RideNowStartMode)}>
+                    <option value="OM">{t("rides.startRelative")}</option>
+                    <option value="KL">{t("rides.startExact")}</option>
+                  </select>
+                </label>
+                {startMode === "OM" ? (
+                  <label className="bike-app-field">
+                    <span>{t("rides.startIn")}</span>
+                    <select name="startOffsetMinutes" value={startOffsetMinutes} onChange={(event) => setStartOffsetMinutes(event.target.value)}>
+                      {rideNowStartOffsets.map((minutes) => (
+                        <option key={minutes} value={minutes}>{t("rides.inMinutes").replace("{minutes}", String(minutes))}</option>
+                      ))}
+                    </select>
+                  </label>
+                ) : (
+                  <label className="bike-app-field">
+                    <span>{t("rides.startAt")}</span>
+                    <select value={pingClockTime} onChange={(event) => setPingClockTime(event.target.value)}>
+                      {clockOptions.map((time) => <option key={time} value={time}>{time}</option>)}
+                    </select>
+                    <input ref={exactStartRef} type="hidden" name="startTimeIso" />
+                  </label>
+                )}
+              </div>
+            ) : (
+              <div className="bike-app-create-start">
+                <label className="bike-app-field">
+                  <span>{t("rides.startLabel")}</span>
+                  <LocalDateTimeInput
+                    name="startTimeIso"
+                    defaultValue={eventStart}
+                    minimumValue={now.toISOString()}
+                    stepSeconds={600}
+                    invalidMessage={t("message.startFuture")}
+                  />
+                </label>
+                <label className="bike-app-field">
+                  <span>{t("rides.durationHours")}</span>
+                  <input
+                    name="durationHours"
+                    type="number"
+                    min="0.01"
+                    step="any"
+                    value={durationHours}
+                    required
+                    onInvalid={(event) => event.currentTarget.setCustomValidity(t("message.durationInvalid"))}
+                    onChange={(event) => {
+                      event.currentTarget.setCustomValidity("");
+                      setDurationHours(event.target.value);
+                    }}
+                  />
+                </label>
+              </div>
+            )}
+
+            <div className="bike-app-create-side">
               <label className="bike-app-field">
-                <span>{t("rides.startMode")}</span>
-                <select name="pingStartMode" value={startMode} onChange={(event) => setStartMode(event.target.value as RideNowStartMode)}>
-                  <option value="OM">{t("rides.startRelative")}</option>
-                  <option value="KL">{t("rides.startExact")}</option>
+                <span>{t("rides.visibilityLabel")}</span>
+                <select
+                  name="visibility"
+                  value={visibility}
+                  onChange={(event) => {
+                    setVisibility(event.target.value as "public" | "private");
+                    setVisibilityTouched(true);
+                  }}
+                >
+                  <option value="public">{t("common.public")}</option>
+                  <option value="private">{t("common.private")}</option>
                 </select>
               </label>
-              {startMode === "OM" ? (
-                <label className="bike-app-field">
-                  <span>{t("rides.startIn")}</span>
-                  <select name="startOffsetMinutes" value={startOffsetMinutes} onChange={(event) => setStartOffsetMinutes(event.target.value)}>
-                    {rideNowStartOffsets.map((minutes) => (
-                      <option key={minutes} value={minutes}>{t("rides.inMinutes").replace("{minutes}", String(minutes))}</option>
-                    ))}
-                  </select>
-                </label>
-              ) : (
-                <label className="bike-app-field">
-                  <span>{t("rides.startAt")}</span>
-                  <select value={pingClockTime} onChange={(event) => setPingClockTime(event.target.value)}>
-                    {clockOptions.map((time) => <option key={time} value={time}>{time}</option>)}
-                  </select>
-                  <input ref={exactStartRef} type="hidden" name="startTimeIso" />
-                </label>
-              )}
-              <p className="bike-app-form-note">{t("rides.rideNowDuration")}</p>
-            </>
-          ) : (
-            <>
-              <label className="bike-app-field">
-                <span>{t("rides.startLabel")}</span>
-                <LocalDateTimeInput
-                  name="startTimeIso"
-                  defaultValue={eventStart}
-                  minimumValue={now.toISOString()}
-                  stepSeconds={600}
-                  invalidMessage={t("message.startFuture")}
-                />
-              </label>
-              <label className="bike-app-field">
-                <span>{t("rides.durationHours")}</span>
-                <input
-                  name="durationHours"
-                  type="number"
-                  min="0.01"
-                  step="any"
-                  value={durationHours}
-                  required
-                  onInvalid={(event) => event.currentTarget.setCustomValidity(t("message.durationInvalid"))}
-                  onChange={(event) => {
-                    event.currentTarget.setCustomValidity("");
-                    setDurationHours(event.target.value);
-                  }}
-                />
-              </label>
-            </>
-          )}
-
-          <label className="bike-app-field">
-            <span>{t("rides.visibilityLabel")}</span>
-            <select
-              name="visibility"
-              value={visibility}
-              onChange={(event) => {
-                setVisibility(event.target.value as "public" | "private");
-                setVisibilityTouched(true);
-              }}
-            >
-              <option value="public">{t("common.public")}</option>
-              <option value="private">{t("common.private")}</option>
-            </select>
-          </label>
+              {mode === "PING" ? <p className="bike-app-form-note">{t("rides.rideNowDuration")}</p> : null}
+            </div>
+          </div>
         </div>
       </div>
 
