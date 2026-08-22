@@ -994,12 +994,21 @@ test("GPX export validates route length, escapes titles and preserves segments",
 
 test("authenticated app source contains no service role, tracking or sensitive logging", () => {
   const appRoot = join(process.cwd(), "app", "[locale]", "app");
-  const sources = [
+  const sourcePaths = [
     ...filesBelow(appRoot).filter((path) => /\.(?:ts|tsx)$/.test(path)),
     ...filesBelow(join(process.cwd(), "components")).filter((path) => /\.(?:ts|tsx)$/.test(path)),
     ...filesBelow(join(process.cwd(), "lib")).filter((path) => /app-(?:data|model|access|format|i18n|overview|status)\.ts$/.test(path))
-  ].map((path) => readFileSync(path, "utf8")).join("\n");
-  ["service_role", "service-role", "participant_live_locations", "last_location", "navigator.geolocation", "push_tokens"].forEach((value) => assert.equal(sources.includes(value), false, value));
+  ];
+  const sources = sourcePaths.map((path) => readFileSync(path, "utf8")).join("\n");
+  const sourcesOutsideExplicitMeetingPicker = sourcePaths
+    .filter((path) => !path.endsWith("meeting-point-map.tsx"))
+    .map((path) => readFileSync(path, "utf8"))
+    .join("\n");
+  ["service_role", "service-role", "participant_live_locations", "last_location", "push_tokens"].forEach((value) => assert.equal(sources.includes(value), false, value));
+  assert.equal(sourcesOutsideExplicitMeetingPicker.includes("navigator.geolocation"), false);
+  const meetingPicker = projectFile("components/meeting-point-map.tsx");
+  assert.ok(meetingPicker.includes("navigator.geolocation.getCurrentPosition"));
+  assert.equal(meetingPicker.includes("watchPosition"), false);
   assert.equal(/\bconsole\.(?:log|info|warn|error|debug)\b/.test(sources), false);
   assert.equal(sources.includes('select("*")'), false);
 });

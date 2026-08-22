@@ -67,6 +67,19 @@ export function AppNotice({ locale, code }: { locale: Locale; code?: string | nu
     updated: "message.updated",
     done: "message.cancelled",
     invalid: "message.invalid",
+    titleTooShort: "message.titleTooShort",
+    titleTooLong: "message.titleTooLong",
+    distanceInvalid: "message.distanceInvalid",
+    startInvalid: "message.startInvalid",
+    startFuture: "message.startFuture",
+    durationInvalid: "message.durationInvalid",
+    meetingInvalid: "message.meetingInvalid",
+    inviteInvalid: "message.inviteInvalid",
+    inviteError: "message.inviteError",
+    createdInviteError: "message.createdInviteError",
+    gpxInvalid: "message.gpxInvalid",
+    createdRouteError: "message.createdRouteError",
+    createdRouteInviteError: "message.createdRouteInviteError",
     forbidden: "message.forbidden",
     search: "message.searchError",
     data: "message.dataError",
@@ -77,7 +90,12 @@ export function AppNotice({ locale, code }: { locale: Locale; code?: string | nu
   };
   const key = keyByCode[code];
   if (!key) return null;
-  const isError = ["invalid", "forbidden", "search", "data", "error", "historyDeleteError", "historyDeleteInvalid"].includes(code);
+  const isError = [
+    "invalid", "titleTooShort", "titleTooLong", "distanceInvalid", "startInvalid", "startFuture", "durationInvalid", "meetingInvalid",
+    "inviteInvalid", "inviteError", "createdInviteError",
+    "gpxInvalid", "createdRouteError", "createdRouteInviteError",
+    "forbidden", "search", "data", "error", "historyDeleteError", "historyDeleteInvalid"
+  ].includes(code);
   return <div className="bike-app-notice" data-kind={isError ? "error" : "success"} role="status">{getAppText(locale, key)}</div>;
 }
 

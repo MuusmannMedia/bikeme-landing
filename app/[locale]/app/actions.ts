@@ -4,6 +4,16 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { getSafeLocale, getSafeReturnPath } from "@/lib/auth";
+import {
+  buildRideNowTitle,
+  distanceToKilometers,
+  isRideMoodKey,
+  rideTitleMaxLength,
+  resolveFreeMeetingLocation,
+  resolveRideSchedule
+} from "@/lib/create-ride";
+import { parseSerializedPlannedRoute } from "@/lib/gpx-import";
+import type { UnitSystem } from "@/lib/app-model";
 import type { Locale } from "@/lib/locales";
 import { getSupabaseEnvironment } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
@@ -12,6 +22,7 @@ const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
 const timePattern = /^([01]\d|2[0-3]):[0-5]\d$/;
 const allowedDisciplines = new Set(["ROAD", "GRAVEL", "MTB", "CITY"]);
+const allowedCreateDisciplines = new Set(["ROAD", "GRAVEL", "MTB"]);
 const allowedVisibility = new Set(["public", "private"]);
 const allowedInterestOptions = new Set(["today", "tomorrow", "this_weekend", "custom_date"]);
 const allowedInterestResponses = new Set(["interested", "maybe", "declined"]);
@@ -24,6 +35,12 @@ type ActionContext = {
   userId: string;
   accessToken: string;
 };
+
+export type CreateRideActionState = { notice: string | null; attempt: number };
+
+function createRideFailure(previousState: CreateRideActionState, notice: string): CreateRideActionState {
+  return { notice, attempt: previousState.attempt + 1 };
+}
 
 function textValue(formData: FormData, key: string, maxLength: number): string | null {
   const value = formData.get(key);
@@ -42,6 +59,14 @@ function optionalTextValue(formData: FormData, key: string, maxLength: number): 
 function uuidValue(formData: FormData, key: string): string | null {
   const value = textValue(formData, key, 36);
   return value && uuidPattern.test(value) ? value : null;
+}
+
+function inviteeIdsValue(formData: FormData, userId: string): string[] | null {
+  const values = formData.getAll("inviteeIds");
+  if (values.length > 500) return null;
+  const inviteeIds = [...new Set(values.map((value) => typeof value === "string" ? value.trim() : ""))];
+  if (inviteeIds.some((id) => !uuidPattern.test(id) || id === userId)) return null;
+  return inviteeIds;
 }
 
 function numberValue(
@@ -196,7 +221,8 @@ async function loadHotspotCoordinates(context: ActionContext, hotspotId: string)
     .eq("id", hotspotId)
     .eq("is_active", true)
     .maybeSingle();
-  if (error || !data) return null;
+  if (error) throw error;
+  if (!data) return null;
   const latitude = Number(data.latitude);
   const longitude = Number(data.longitude);
   if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
@@ -205,6 +231,35 @@ async function loadHotspotCoordinates(context: ActionContext, hotspotId: string)
     longitude,
     address: typeof data.address === "string" && data.address.trim() ? data.address.trim() : String(data.name ?? "")
   };
+}
+
+async function loadCreateRideUnitSystem(context: ActionContext): Promise<UnitSystem> {
+  const { data, error } = await context.client
+    .from("profiles")
+    .select("unit_system")
+    .eq("id", context.userId)
+    .maybeSingle();
+  if (error) throw error;
+  return data?.unit_system === "imperial" ? "imperial" : "metric";
+}
+
+async function validateCreateRideInvitees(context: ActionContext, inviteeIds: string[]): Promise<boolean> {
+  if (inviteeIds.length === 0) return true;
+  const { data, error } = await context.client.from("profiles").select("id").in("id", inviteeIds);
+  if (error) throw error;
+  const foundIds = new Set((data ?? []).map((row) => String(row.id ?? "")));
+  return inviteeIds.every((id) => foundIds.has(id));
+}
+
+async function loadOwnedRideId(context: ActionContext, rideId: string): Promise<{ id: string } | null> {
+  const { data, error } = await context.client
+    .from("rides")
+    .select("id")
+    .eq("id", rideId)
+    .eq("host_id", context.userId)
+    .maybeSingle();
+  if (error) throw error;
+  return data?.id ? { id: String(data.id) } : null;
 }
 
 function rideInput(formData: FormData) {
@@ -226,42 +281,217 @@ function rideInput(formData: FormData) {
   return { title, description, startTime, discipline, visibility, paceText, distanceKm, maxParticipants, durationMinutes };
 }
 
-export async function createRideAction(formData: FormData): Promise<void> {
+function createRideInput(formData: FormData, unitSystem: UnitSystem) {
+  const rawTitle = formData.get("title");
+  const title = typeof rawTitle === "string" ? rawTitle.trim().replace(/\r\n/g, "\n") : "";
+  const rawDescription = formData.get("description");
+  const normalizedDescription = typeof rawDescription === "string"
+    ? rawDescription.trim().replace(/\r\n/g, "\n")
+    : "";
+  const description = normalizedDescription || null;
+  const discipline = textValue(formData, "discipline", 10);
+  const visibility = textValue(formData, "visibility", 10);
+  const rawMoodKey = formData.get("paceText");
+  const moodKey = typeof rawMoodKey === "string" && rawMoodKey.trim() ? rawMoodKey.trim() : null;
+  const distanceValue = numberValue(formData, "distance", 0.1, 500);
+  const distanceKm = distanceValue == null ? null : distanceToKilometers(distanceValue, unitSystem);
+  if (title.length > rideTitleMaxLength) return { ok: false as const, notice: "titleTooLong" };
+  if (title.length < 3) return { ok: false as const, notice: "titleTooShort" };
+  if (normalizedDescription.length > 1000) return { ok: false as const, notice: "invalid" };
+  if (distanceKm == null || distanceKm <= 0 || distanceKm > 500) {
+    return { ok: false as const, notice: "distanceInvalid" };
+  }
+  if (
+    !discipline || !allowedCreateDisciplines.has(discipline) ||
+    !visibility || !allowedVisibility.has(visibility) ||
+    (moodKey != null && !isRideMoodKey(moodKey))
+  ) return { ok: false as const, notice: "invalid" };
+  return {
+    ok: true as const,
+    input: { title, description, discipline, visibility, paceText: moodKey, distanceKm }
+  };
+}
+
+export async function createRideAction(
+  previousState: CreateRideActionState,
+  formData: FormData
+): Promise<CreateRideActionState> {
   const context = await getActionContext(formData);
   if (!context) redirect(`/${getSafeLocale(formData.get("locale"))}/login`);
-  const hotspotId = uuidValue(formData, "hotspotId");
-  const input = rideInput(formData);
-  const type = textValue(formData, "type", 10);
-  if (!hotspotId || !input || (type !== "PING" && type !== "EVENT")) redirectResult(context, "invalid");
-  const hotspot = await loadHotspotCoordinates(context, hotspotId);
-  if (!hotspot) redirectResult(context, "invalid");
-  const expiresAt = new Date(input.startTime.getTime() + (type === "PING" ? 120 : input.durationMinutes) * 60_000);
-  const { data, error } = await context.client
-    .from("rides")
-    .insert({
-      host_id: context.userId,
-      type,
-      status: "ACTIVE",
-      title: input.title,
-      description: input.description,
-      start_time: input.startTime.toISOString(),
-      expires_at: expiresAt.toISOString(),
-      latitude: hotspot.latitude,
-      longitude: hotspot.longitude,
-      meeting_address: hotspot.address,
-      discipline: input.discipline,
-      pace_text: input.paceText,
-      distance_km: input.distanceKm,
-      max_participants: input.maxParticipants,
-      visibility: input.visibility,
-      hotspot_id: hotspotId
+  const createRequestId = uuidValue(formData, "createRequestId");
+  const meetingMode = textValue(formData, "meetingMode", 10);
+  const hotspotId = meetingMode === "hotspot" ? uuidValue(formData, "hotspotId") : null;
+  const meetingAddressValue = formData.get("meetingAddress");
+  const freeMeeting = meetingMode === "map"
+    ? resolveFreeMeetingLocation({
+      latitude: numberValue(formData, "meetingLatitude", -90, 90),
+      longitude: numberValue(formData, "meetingLongitude", -180, 180),
+      address: typeof meetingAddressValue === "string" ? meetingAddressValue : null
     })
-    .select("id")
-    .single();
-  if (error || !data?.id) redirectResult(context, error?.code === "42501" ? "forbidden" : "error");
-  if (input.visibility === "public") await callEdgeFunction(context, "notify_nearby_ride", { rideId: data.id });
+    : null;
+  const inviteeIds = inviteeIdsValue(formData, context.userId);
+  const plannedRouteResult = parseSerializedPlannedRoute(formData.get("plannedRoute"));
+  const type = textValue(formData, "type", 10);
+  const meetingInvalid = meetingMode !== "hotspot" && meetingMode !== "map"
+    || meetingMode === "hotspot" && !hotspotId
+    || meetingMode === "map" && !freeMeeting;
+  if (!createRequestId || meetingInvalid || !inviteeIds || plannedRouteResult === false || (type !== "PING" && type !== "EVENT")) {
+    const notice = meetingInvalid
+      ? "meetingInvalid"
+      : !inviteeIds
+        ? "inviteInvalid"
+        : plannedRouteResult === false
+          ? "gpxInvalid"
+          : "invalid";
+    return createRideFailure(previousState, notice);
+  }
+  const plannedRoute = plannedRouteResult;
+  let unitSystem: UnitSystem;
+  try {
+    unitSystem = await loadCreateRideUnitSystem(context);
+  } catch {
+    return createRideFailure(previousState, "error");
+  }
+  const inputResult = createRideInput(formData, unitSystem);
+  if (!inputResult.ok) return createRideFailure(previousState, inputResult.notice);
+  const input = inputResult.input;
+  const storedTitle = type === "PING" ? buildRideNowTitle(input.title, input.distanceKm, unitSystem) : input.title;
+  if (storedTitle.length > rideTitleMaxLength) return createRideFailure(previousState, "titleTooLong");
+  try {
+    if (!(await validateCreateRideInvitees(context, inviteeIds))) {
+      return createRideFailure(previousState, "inviteInvalid");
+    }
+  } catch {
+    return createRideFailure(previousState, "inviteError");
+  }
+  const rawStartOffset = formData.get("startOffsetMinutes");
+  const startOffsetMinutes = typeof rawStartOffset === "string" ? Number(rawStartOffset) : null;
+  const rawDurationHours = formData.get("durationHours");
+  const durationHours = typeof rawDurationHours === "string" ? Number(rawDurationHours.replace(",", ".")) : null;
+  const pingStartMode = formData.get("pingStartMode");
+  const startTimeIso = formData.get("startTimeIso");
+  const schedule = resolveRideSchedule({
+    type,
+    startMode: typeof pingStartMode === "string" ? pingStartMode : null,
+    startOffsetMinutes,
+    startTimeIso: typeof startTimeIso === "string" ? startTimeIso : null,
+    durationHours
+  });
+  if (!schedule.ok) {
+    const notice = schedule.error === "START_NOT_FUTURE"
+      ? "startFuture"
+      : schedule.error === "INVALID_DURATION"
+        ? "durationInvalid"
+        : "startInvalid";
+    return createRideFailure(previousState, notice);
+  }
+  let meeting = freeMeeting;
+  if (meetingMode === "hotspot") {
+    try {
+      meeting = await loadHotspotCoordinates(context, hotspotId!);
+    } catch {
+      return createRideFailure(previousState, "error");
+    }
+    if (!meeting) return createRideFailure(previousState, "meetingInvalid");
+  }
+  if (!meeting) return createRideFailure(previousState, "meetingInvalid");
+  const expiresAt = new Date(schedule.startTime.getTime() + schedule.durationMinutes * 60_000);
+  let data: { id?: string | null } | null = null;
+  let error: { code?: string } | null = null;
+  try {
+    const createResponse = await context.client
+      .from("rides")
+      .insert({
+        id: createRequestId,
+        host_id: context.userId,
+        type,
+        status: "ACTIVE",
+        title: storedTitle,
+        description: input.description,
+        start_time: schedule.startTime.toISOString(),
+        expires_at: expiresAt.toISOString(),
+        latitude: meeting.latitude,
+        longitude: meeting.longitude,
+        meeting_address: meeting.address,
+        discipline: input.discipline,
+        pace_text: input.paceText,
+        distance_km: input.distanceKm,
+        visibility: input.visibility,
+        hotspot_id: meetingMode === "hotspot" ? hotspotId : null
+      })
+      .select("id")
+      .single();
+    data = createResponse.data as { id?: string | null } | null;
+    error = createResponse.error;
+  } catch {
+    return createRideFailure(previousState, "error");
+  }
+  if (error?.code === "23505") {
+    let existingRide: { id: string } | null;
+    try {
+      existingRide = await loadOwnedRideId(context, createRequestId);
+    } catch {
+      return createRideFailure(previousState, "error");
+    }
+    if (existingRide?.id) {
+      revalidateApp(context.locale, [`/${context.locale}/app/rides`]);
+      redirect(withNotice(context.locale, `/${context.locale}/app/rides/${existingRide.id}`, "created"));
+    }
+  }
+  if (error || !data?.id) {
+    return createRideFailure(previousState, error?.code === "42501" ? "forbidden" : "error");
+  }
+  let routeSaveFailed = false;
+  if (plannedRoute) {
+    try {
+      const routeResponse = await context.client.from("ride_planned_routes").upsert({
+        ride_id: data.id,
+        route_coordinates: plannedRoute.routeCoordinates,
+        point_count: plannedRoute.pointCount,
+        source_type: plannedRoute.sourceType,
+        source_filename: plannedRoute.fileName,
+        source_size_bytes: plannedRoute.fileSizeBytes,
+        bounds: plannedRoute.bounds,
+        created_by: context.userId
+      }, { onConflict: "ride_id" });
+      routeSaveFailed = Boolean(routeResponse.error);
+    } catch {
+      routeSaveFailed = true;
+    }
+  }
+  let inviteSaveFailed = false;
+  if (inviteeIds.length > 0) {
+    let inviteError: { code?: string } | null = null;
+    try {
+      const inviteResponse = await context.client.from("ride_invites").upsert(
+        inviteeIds.map((inviteeId) => ({
+          ride_id: data!.id,
+          host_id: context.userId,
+          invitee_id: inviteeId
+        })),
+        { onConflict: "ride_id,invitee_id", ignoreDuplicates: true }
+      );
+      inviteError = inviteResponse.error;
+    } catch {
+      inviteError = { code: "request_failed" };
+    }
+    inviteSaveFailed = Boolean(inviteError);
+    if (!inviteSaveFailed) {
+      await callEdgeFunction(context, "notify_ride_invite", { rideId: data.id, inviteeUserIds: inviteeIds });
+    }
+  }
+  if (input.visibility === "public") {
+    await callEdgeFunction(context, "notify_nearby_ride", { rideId: data.id });
+  }
   revalidateApp(context.locale, [`/${context.locale}/app/rides`]);
-  redirect(withNotice(context.locale, `/${context.locale}/app/rides/${data.id}`, "created"));
+  const successNotice = routeSaveFailed && inviteSaveFailed
+    ? "createdRouteInviteError"
+    : routeSaveFailed
+      ? "createdRouteError"
+      : inviteSaveFailed
+        ? "createdInviteError"
+        : "created";
+  redirect(withNotice(context.locale, `/${context.locale}/app/rides/${data.id}`, successNotice));
 }
 
 export async function updateRideAction(formData: FormData): Promise<void> {
@@ -486,11 +716,16 @@ export async function convertRideInterestAction(formData: FormData): Promise<voi
   const durationMinutes = numberValue(formData, "durationMinutes", 30, 480);
   const visibility = textValue(formData, "visibility", 10);
   if (
-    !requestId || !hotspotId || !title || !discipline || !allowedDisciplines.has(discipline) ||
+    !requestId || !hotspotId || !title || !discipline || !allowedCreateDisciplines.has(discipline) ||
     !startDate || !datePattern.test(startDate) || !startTime || !timePattern.test(startTime) ||
     !durationMinutes || !visibility || !allowedVisibility.has(visibility)
   ) redirectResult(context, "invalid");
-  const hotspot = await loadHotspotCoordinates(context, hotspotId);
+  let hotspot: Awaited<ReturnType<typeof loadHotspotCoordinates>>;
+  try {
+    hotspot = await loadHotspotCoordinates(context, hotspotId);
+  } catch {
+    redirectResult(context, "error");
+  }
   if (!hotspot) redirectResult(context, "invalid");
   const result = await callEdgeFunction(context, "convert_ride_interest_request", {
     requestId,

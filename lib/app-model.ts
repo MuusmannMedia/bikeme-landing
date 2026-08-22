@@ -101,6 +101,8 @@ export type Hotspot = {
   name: string;
   description: string | null;
   address: string | null;
+  latitude: number | null;
+  longitude: number | null;
   region: string;
   defaultDiscipline: RideDiscipline | null;
   defaultDistanceKm: number | null;
