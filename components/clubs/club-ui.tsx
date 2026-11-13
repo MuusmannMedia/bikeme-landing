@@ -33,7 +33,7 @@ export function ClubHeader({ club, locale, selected }: { club: Club; locale: Loc
   const t = getAppDictionary(locale);
   const base = `/${locale}/app/clubs/${club.id}`;
   return <>
-    <ClubPrivateImages clubId={club.id} locale={locale}/>
+    <ClubPrivateImages clubId={club.id} locale={locale} shape={club.imageShape??"cover"}/>
     <AppPageHeader
       className="bike-app-club-header"
       eyebrow={t("clubs.membersOnly")}

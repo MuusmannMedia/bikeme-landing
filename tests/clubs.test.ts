@@ -75,7 +75,7 @@ test("member-only details read authorized member pages and derive the current ro
   assert.equal(club.role, "owner");
   assert.equal(club.members[200].role, "admin");
   assert.deepEqual(db.calls[0].filters, { id: clubId });
-  assert.equal(db.calls[0].fields, "id,name,description,owner_id");
+  assert.equal(db.calls[0].fields, "id,name,description,owner_id,cover_path,logo_path");
   assert.ok(db.calls.every(call => call.header === "Bearer actor-token"));
 });
 
@@ -280,3 +280,6 @@ test("cross-tab auth invalidation accepts only transition markers without sessio
   assert.equal(clubAuthPhase(JSON.stringify({ phase: "settled", nonce: "test" })), "settled");
   for (const value of [null, "bad JSON", "{}", "null", '{"phase":"ready"}']) assert.equal(clubAuthPhase(value), null);
 });
+
+// Shape comes from the authorized club read, never an image-path cache in the browser.
+test("authorized image layout hint distinguishes cover/logo/empty without exposing paths",async()=>{for(const [cover,logo,shape]of [["private-cover","private-logo","cover"],[null,"private-logo","logo"],[null,null,"none"]]){const db=backend(call=>({data:call.source==="clubs"?{...row,cover_path:cover,logo_path:logo}:[member],error:null}));const club=await createClubReadApi(db.client,"actor").detail(clubId);assert.equal(club.imageShape,shape);assert(!JSON.stringify(club).includes("private-"));assert(!("cover_path" in club));assert(!("logo_path" in club));}});

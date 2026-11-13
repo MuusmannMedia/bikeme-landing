@@ -1,5 +1,7 @@
 "use client";
 
+import {StableAccessRegion} from "./stable-access-region";
+import {createAccessRefresh} from "@/lib/clubs/access-refresh";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { flushSync } from "react-dom";
 
@@ -121,8 +123,9 @@ export function ClubSessionBoundary({ userId, clubId, locale, selected = "detail
       if (store.getSnapshot().data) flushSync(() => store.pause());
       else store.pause();
     };
-    const verify = () => { if (document.visibilityState === "visible") { pause(); void store.verify(); } };
-    const visibility = () => { if (document.visibilityState === "hidden") pause(); else verify(); };
+    const refresh=createAccessRefresh({visible:()=>document.visibilityState==="visible",focused:()=>document.hasFocus(),pause,verify:()=>store.verify()});
+    const verify=()=>refresh.resume();
+    const visibility = () => { if (document.visibilityState === "hidden") refresh.suspend(); else verify(); };
     const restored = (event: PageTransitionEvent) => { if (event.persisted) verify(); };
     const subscription = createClient()?.auth.onAuthStateChange((_event, session) => {
       if (session?.user.id !== userId) {
@@ -141,27 +144,28 @@ export function ClubSessionBoundary({ userId, clubId, locale, selected = "detail
     window.addEventListener(CLUB_AUTH_EVENT, local);
     document.addEventListener("visibilitychange", visibility);
     window.addEventListener("focus", verify);
-    window.addEventListener("pagehide", pause);
+    window.addEventListener("blur", refresh.suspend);
+    window.addEventListener("pagehide", refresh.suspend);
     window.addEventListener("pageshow", restored);
-    const timer = window.setInterval(verify, 60000);
-    verify();
+    const timer = window.setInterval(refresh.check, 60000);
+    refresh.check();
     return () => {
-      store.stop(); subscription?.unsubscribe(); window.clearInterval(timer);
+      refresh.stop(); store.stop(); subscription?.unsubscribe(); window.clearInterval(timer);
       window.removeEventListener("storage", storage);
       window.removeEventListener(CLUB_AUTH_EVENT, local);
       document.removeEventListener("visibilitychange", visibility);
       window.removeEventListener("focus", verify);
-      window.removeEventListener("pagehide", pause);
+      window.removeEventListener("pagehide", refresh.suspend);
+      window.removeEventListener("blur", refresh.suspend);
       window.removeEventListener("pageshow", restored);
     };
   }, [store, userId]);
   const retryHref = `/${locale}/app/clubs${clubId === undefined ? "" : `/${encodeURIComponent(clubId)}${selected === "members" ? "/members" : selected === "rides" || selected === "newRide" ? "/rides" : ""}`}`;
   const ready=state.status === "ready" && state.data;
   return <div data-club-access={state.status} data-club-data={state.data === null ? "empty" : "present"}>
-    {ready ? state.data!.view === "rides" ? <ClubRides club={state.data!.club} data={state.data!.rides} locale={locale} userId={userId} created={created} creation={selected==="newRide"} operation={operation} act={rideAction}/> : <ClubPageContent data={state.data as Exclude<ClubPageData,{view:"rides"}>} locale={locale} selected={selected==="members"?"members":"details"} userId={userId} workflow={workflow} /> :
-      state.status === "access" ? <ClubAccessDenied locale={locale} /> :
+    <StableAccessRegion denied={state.status==='access'||state.status==='auth'} ready={!!ready} fallback={state.status === "access" ? <ClubAccessDenied locale={locale} /> :
       state.status === "error" ? <ClubReadFailure locale={locale} kind={state.error ?? "network"} retryHref={retryHref} onRetry={() => void store.verify()} /> :
-      <div className="bike-app-club-gate" role="status"><p>{t("clubs.loading")}</p></div>}
+      <div className="bike-app-club-gate" role="status"><p>{t("clubs.loading")}</p></div>}>{ready?state.data!.view === "rides" ? <ClubRides club={state.data!.club} data={state.data!.rides} locale={locale} userId={userId} created={created} creation={selected==="newRide"} operation={operation} act={rideAction}/> : <ClubPageContent data={state.data as Exclude<ClubPageData,{view:"rides"}>} locale={locale} selected={selected==="members"?"members":"details"} userId={userId} workflow={workflow} />:null}</StableAccessRegion>
     {selected === "newRide" && clubId && state.status!=="access" && state.status!=="auth" ? <ClubCreateRide userId={userId} clubId={clubId} locale={locale} authorized={!!ready} data={state.data?.view==="rides"?state.data.rides:null}/>:null}
   </div>;
 }

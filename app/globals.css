@@ -708,6 +708,12 @@ a {
 
 /* Private club images use decoded blob URLs, never the shared image cache. */
 .bike-app-club-image { position:relative; overflow:hidden; border-radius:14px; background:#101827; }
+.bike-app-access-region { display:flow-root; overflow-anchor:none; }
+.bike-app-access-placeholder { position:relative; min-height:120px; border-radius:14px; background:linear-gradient(110deg,#101827,#111a2b); }
+.bike-app-access-feedback { position:sticky; top:88px; padding:16px; }
+.bike-app-club-image-header[data-club-images="neutral"] { overflow-anchor:none; }
+.bike-app-image-feedback { position:absolute; inset:0; display:grid; place-content:center; padding:20px; background:#101827; }
+.bike-app-chat-new-slot { min-height:62px; padding-top:12px; }
 .bike-app-club-image-header { position:relative; max-width:720px; margin:0 0 24px; }
 .bike-app-club-image-cover { width:100%; }
 .bike-app-club-image-logo { width:112px; border:1px solid rgba(180,151,213,.35); background:repeating-conic-gradient(#172036 0% 25%,#0d1526 0% 50%) 50% / 16px 16px; }
@@ -716,3 +722,8 @@ a {
 .bike-app-club-crop-preview .bike-app-club-image-logo { width:min(100%,280px); }
 .bike-app-club-form-fields input[type="range"] { width:100%; min-height:44px; accent-color:#a56bc0; }
 @media(max-width:600px) { .bike-app-club-image-header .bike-app-club-image-logo { width:80px; } }
+
+.bike-app-chat-feedback { min-height:3.5em; display:flow-root; }
+.bike-app-chat-feedback > p { margin:0 0 .4em; line-height:1.5; }
+
+.bike-app-chat-status { min-height:4.5em; line-height:1.5; }

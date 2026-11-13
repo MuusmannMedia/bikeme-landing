@@ -17,7 +17,8 @@
     "test:club-chat": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir node_modules/.cache/bikeme-club-chat-tests tests/club-chat.test.ts lib/clubs/chat-api.ts && node --test node_modules/.cache/bikeme-club-chat-tests/tests/club-chat.test.js",
     "test:messages": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir node_modules/.cache/bikeme-message-tests tests/messages.test.ts lib/messages/api.ts && node --test node_modules/.cache/bikeme-message-tests/tests/messages.test.js",
     "test:club-profile": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir node_modules/.cache/bikeme-club-profile-tests tests/club-profile.test.ts && node --test node_modules/.cache/bikeme-club-profile-tests/tests/club-profile.test.js",
-    "test:club-images": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir node_modules/.cache/bikeme-club-image-tests tests/club-images.test.ts && node --test node_modules/.cache/bikeme-club-image-tests/tests/club-images.test.js"
+    "test:club-images": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir node_modules/.cache/bikeme-club-image-tests tests/club-images.test.ts && node --test node_modules/.cache/bikeme-club-image-tests/tests/club-images.test.js",
+    "test:access-refresh": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir node_modules/.cache/bikeme-access-tests tests/access-refresh.test.ts && node --test node_modules/.cache/bikeme-access-tests/tests/access-refresh.test.js"
   },
   "dependencies": {
     "@supabase/ssr": "0.10.0",

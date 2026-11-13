@@ -1,4 +1,5 @@
 "use client";
+import {StableAccessRegion} from "./stable-access-region";
 import {useEffect,useRef,useState} from "react";
 import {AppEmpty,AppPanel} from "../app-ui";
 import {ClubAccessDenied,ClubHeader,ClubReadFailure} from "./club-ui";
@@ -16,9 +17,9 @@ export function ClubContentWorkspace({state,store,userId,clubId,locale,query}:{s
  const editorKey=state.draft?.key,reportId=state.report?.id;
  const ready=state.status==="ready"&&data!==null,locked=state.busy||!!state.pending;
  useEffect(()=>{if(ready&&confirmation)dialog.current?.showModal();},[ready,confirmation]);
- useEffect(()=>{if(ready&&editorKey)editor.current?.focus();else if(ready&&reportId)report.current?.focus();},[ready,editorKey,reportId]);
- useEffect(()=>{const message=state.error??state.notice;if(!ready||state.busy||!message)return;const key=`${state.feedback}:${message}`;if(lastFeedback.current===key)return;const element=document.getElementById(state.error?"content-error":"content-notice");if(element){element.focus();lastFeedback.current=key;}},[ready,state.busy,state.feedback,state.error,state.notice]);
- const restoreFocus=()=>{const id=returnFocus.current;requestAnimationFrame(()=>document.getElementById(id)?.focus());};
+ useEffect(()=>{if(editorKey)editor.current?.focus({preventScroll:true});else if(reportId)report.current?.focus({preventScroll:true});},[editorKey,reportId]);
+ useEffect(()=>{const message=state.error??state.notice;if(!ready||state.busy||!message)return;const key=`${state.feedback}:${message}`;if(lastFeedback.current===key)return;const element=document.getElementById(state.error?"content-error":"content-notice");if(element){element.focus({preventScroll:true});lastFeedback.current=key;}},[ready,state.busy,state.feedback,state.error,state.notice]);
+ const restoreFocus=()=>{const id=returnFocus.current;requestAnimationFrame(()=>document.getElementById(id)?.focus({preventScroll:true}));};
  const close=()=>{store.close();restoreFocus();};
  function confirm(command:ContentCommand,title:ContentTextKey,body:ContentTextKey,focusId:string){returnFocus.current=focusId;setConfirmation({command,title,body,focusId});}
  const command=(type:ContentCommand["type"],extra:object)=>({actorId:userId,clubId,type,...extra}) as ContentCommand;
@@ -46,7 +47,8 @@ export function ClubContentWorkspace({state,store,userId,clubId,locale,query}:{s
  const available=!draftTarget||data?.editorItem?.id===draftTarget||[...(data?.items??[]),...(data?.post?[data.post]:[])].some(item=>item.id===draftTarget);
  const errorKey:ContentTextKey=state.error==="contentRejected"?"contentRejected":state.error==="conflict"?"conflict":state.error==="invalid"?"invalid":state.error==="unavailable"?"unavailable":state.error==="access"||state.error==="auth"||state.error==="blocked"?"access":"network";
  return <div data-club-access={state.status} data-club-data={data?"present":"empty"}>
- {!ready?state.status==="access"?<ClubAccessDenied locale={locale}/>:state.status==="error"?<ClubReadFailure locale={locale} kind="network" retryHref="" onRetry={()=>void store.refresh()}/>:<div className="bike-app-club-gate" role="status">{t("clubs.loading")}</div>:<>
+ <StableAccessRegion denied={state.status==='access'||state.status==='auth'} ready={ready} fallback={state.status==="access"?<ClubAccessDenied locale={locale}/>:state.status==="error"?<ClubReadFailure locale={locale} kind="network" retryHref="" onRetry={()=>void store.refresh()}/>:<div className="bike-app-club-gate" role="status">{t("clubs.loading")}</div>}>
+  {ready&&data?<>
   <ClubHeader club={data.club} locale={locale} selected="posts"/>
   <div className="bike-app-actions">{data.mode!=="posts"?<a className="bike-app-button bike-app-button-secondary" href={`${base}${data.mode==="thread"&&feedQuery()?`?${feedQuery()}`:""}`}>{text("back")}</a>:null}<a className="bike-app-button bike-app-button-secondary" href={`${base}/blocked`}>{text("blocked")}</a>{data.role!=="member"?<a className="bike-app-button bike-app-button-secondary" href={`${base}/moderation`}>{text("moderation")}</a>:null}</div>
   {state.error?<p id="content-error" tabIndex={-1} className="bike-app-content-feedback" role="alert">{text(errorKey)}</p>:null}
@@ -76,6 +78,6 @@ export function ClubContentWorkspace({state,store,userId,clubId,locale,query}:{s
   {data.hasMore?<a className="bike-app-button bike-app-button-secondary bike-app-section-gap" href={nextHref()}>{text("more")}</a>:null}
   {q.has("beforeId")||q.has("afterId")?<a className="bike-app-button bike-app-button-secondary bike-app-section-gap" href={data.mode==="thread"?`${base}/${data.post?.id}${feedQuery()?`?${feedQuery()}`:""}`:data.mode==="reports"?`${base}/moderation${q.get("closed")==="true"?"?closed=true":""}`:base}>{text("first")}</a>:null}
   <dialog ref={dialog} className="bike-app-club-dialog" aria-labelledby="content-confirm" onCancel={e=>{if(state.busy)e.preventDefault();}} onClose={()=>{setConfirmation(null);restoreFocus();}}>{confirmation?<><h2 id="content-confirm">{text(confirmation.title)}{confirmName?`: ${confirmName}`:""}</h2><p>{text(confirmation.body)}</p><div className="bike-app-actions"><button autoFocus className="bike-app-button bike-app-button-secondary" onClick={()=>dialog.current?.close()}>{t("common.cancel")}</button><button disabled={locked} className="bike-app-button bike-app-button-danger" onClick={()=>{const action=confirmation.command;dialog.current?.close();void store.run(action);}}>{text("confirm")}</button></div></>:null}</dialog>
- </>}
+ </>:null}</StableAccessRegion>
  </div>;
 }

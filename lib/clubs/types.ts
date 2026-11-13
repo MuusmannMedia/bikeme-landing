@@ -2,7 +2,7 @@ export type ClubRole = "owner" | "admin" | "member";
 
 // The catalog deliberately has no descriptions, owners or member information.
 export type ClubCatalogEntry = { id: string; name: string };
-export type ClubRow = ClubCatalogEntry & { description: string | null; owner_id: string };
+export type ClubRow = ClubCatalogEntry & { description: string | null; owner_id: string; cover_path?:string|null; logo_path?:string|null };
 export type ClubMember = {
   user_id: string;
   display_name: string | null;
@@ -10,7 +10,8 @@ export type ClubMember = {
   role: ClubRole;
   joined_at: string;
 };
-export type Club = ClubRow & { members: ClubMember[]; memberCount: number; role: ClubRole };
+export type ClubImageShape="cover"|"logo"|"none";
+export type Club = Omit<ClubRow,"cover_path"|"logo_path"> & { imageShape?:ClubImageShape; members: ClubMember[]; memberCount: number; role: ClubRole };
 
 export type ClubReadErrorKind = "auth" | "access" | "unavailable" | "network";
 export class ClubReadError extends Error {

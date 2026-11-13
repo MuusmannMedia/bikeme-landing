@@ -1,4 +1,5 @@
 'use client';
+import {createAccessRefresh} from '@/lib/clubs/access-refresh';
 import {useEffect,useMemo,useSyncExternalStore} from 'react';
 import {flushSync} from 'react-dom';
 import {createChatStore} from '@/lib/clubs/chat-store';
@@ -15,22 +16,22 @@ export function ClubChatBoundary({userId,clubId,locale,initialMessage}:{userId:s
  });return next;},[userId,clubId]);
  const state=useSyncExternalStore(store.subscribe,store.getSnapshot,store.getServerSnapshot);
  useEffect(()=>{
-  store.start();let live=true,lifecycle=0;const pending=new Set<AbortController>();
-  const pause=()=>{lifecycle++;flushSync(()=>store.pause());};
-  const verify=()=>{if(document.visibilityState==='visible'){pause();void store.sync();}};
-  const visibility=()=>document.visibilityState==='hidden'?pause():verify();
+  store.start();let live=true,lifecycle=0,transportLive=false,subscribed=false,signalBusy=false;const pending=new Set<AbortController>();
+  const pause=()=>{lifecycle++;pending.forEach(c=>c.abort());if(store.getSnapshot().data)flushSync(()=>store.pause());else store.pause();};
+  const refresh=createAccessRefresh({visible:()=>document.visibilityState==='visible',focused:()=>document.hasFocus(),pause,verify:async()=>{if(transportLive)store.connection(true,false);await store.sync();}}),verify=()=>refresh.resume();
+  const visibility=()=>document.visibilityState==='hidden'?refresh.suspend():verify();
   const page=(e:PageTransitionEvent)=>{if(e.persisted)verify();};
   const revoke=()=>{lifecycle++;flushSync(()=>store.revoke('auth'));};
   const transition=(phase:string|null)=>{if(phase){revoke();if(phase==='settled')window.location.reload();}};
   const storage=(e:StorageEvent)=>{if(e.key===CLUB_AUTH_EVENT)transition(clubAuthPhase(e.newValue));};
   const local=(e:Event)=>transition((e as CustomEvent<string>).detail);
-  const offline=()=>{lifecycle++;flushSync(()=>store.connection(false));};
-  const signals=async()=>{if(document.visibilityState!=='visible')return;const v=lifecycle,c=new AbortController();pending.add(c);const timer=setTimeout(()=>c.abort(),20000);try{const r=await fetch('/api/clubs/chat?mode=signals',{cache:'no-store',credentials:'same-origin',signal:c.signal});const b=await r.json();if(!live||v!==lifecycle||document.visibilityState!=='visible')return;if(r.status===401||b.userId&&b.userId!==userId){revoke();window.location.reload();return;}if(!r.ok||!Number.isSafeInteger(b.visibilityRevision))throw new ContentError('network');store.signal(b.visibilityRevision);}catch(e){if(live&&v===lifecycle)flushSync(()=>store.fail(e));}finally{clearTimeout(timer);pending.delete(c);}};
+  const offline=()=>{transportLive=false;refresh.suspend();flushSync(()=>store.connection(false));};
+  const signals=async()=>{if(document.visibilityState!=='visible'||!document.hasFocus()||refresh.checking||signalBusy||store.getSnapshot().status!=='ready')return;signalBusy=true;const v=lifecycle,c=new AbortController();pending.add(c);const timer=setTimeout(()=>c.abort(),20000);try{const r=await fetch('/api/clubs/chat?mode=signals',{cache:'no-store',credentials:'same-origin',signal:c.signal});const b=await r.json();if(!live||v!==lifecycle||document.visibilityState!=='visible')return;if(r.status===401||b.userId&&b.userId!==userId){revoke();window.location.reload();return;}if(!r.ok||!Number.isSafeInteger(b.visibilityRevision))throw new ContentError('network');store.signal(b.visibilityRevision);}catch(e){if(live&&v===lifecycle)flushSync(()=>store.fail(e));}finally{clearTimeout(timer);pending.delete(c);signalBusy=false;}};
   const client=createClient(),auth=client?.auth.onAuthStateChange((_event,session)=>{if(session?.user.id!==userId){revoke();window.location.reload();}}).data.subscription;
-  const channel=client?.channel(`club-chat-web-${userId}-${crypto.randomUUID()}`).on('postgres_changes',{event:'INSERT',schema:'public',table:'club_chat_signals',filter:`user_id=eq.${userId}`},()=>void signals()).on('postgres_changes',{event:'UPDATE',schema:'public',table:'club_chat_signals',filter:`user_id=eq.${userId}`},()=>void signals()).subscribe(status=>{if(!live)return;if(document.visibilityState!=='visible'){pause();return;}if(status==='SUBSCRIBED'){lifecycle++;store.connection(true);}else if(['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(status))offline();});
-  window.addEventListener('focus',verify);window.addEventListener('online',verify);window.addEventListener('offline',offline);document.addEventListener('visibilitychange',visibility);window.addEventListener('pagehide',pause);window.addEventListener('pageshow',page);window.addEventListener('storage',storage);window.addEventListener(CLUB_AUTH_EVENT,local);
-  const full=setInterval(verify,60000),poll=setInterval(()=>void signals(),10000);void store.sync();
-  return()=>{live=false;pending.forEach(c=>c.abort());clearInterval(full);clearInterval(poll);auth?.unsubscribe();void channel?.unsubscribe();store.stop();window.removeEventListener('focus',verify);window.removeEventListener('online',verify);window.removeEventListener('offline',offline);document.removeEventListener('visibilitychange',visibility);window.removeEventListener('pagehide',pause);window.removeEventListener('pageshow',page);window.removeEventListener('storage',storage);window.removeEventListener(CLUB_AUTH_EVENT,local);};
+  const channel=client?.channel(`club-chat-web-${userId}-${crypto.randomUUID()}`).on('postgres_changes',{event:'INSERT',schema:'public',table:'club_chat_signals',filter:`user_id=eq.${userId}`},()=>void signals()).on('postgres_changes',{event:'UPDATE',schema:'public',table:'club_chat_signals',filter:`user_id=eq.${userId}`},()=>void signals()).subscribe(status=>{if(!live)return;if(status==='SUBSCRIBED'){const first=!subscribed;subscribed=true;transportLive=true;if(document.visibilityState!=='visible'||!document.hasFocus()){refresh.suspend();return;}store.connection(true,false);if(first&&store.getSnapshot().status==='ready')void signals();else refresh.check();}else if(['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(status))offline();});
+  window.addEventListener('focus',verify);window.addEventListener('blur',refresh.suspend);window.addEventListener('online',refresh.check);window.addEventListener('offline',offline);document.addEventListener('visibilitychange',visibility);window.addEventListener('pagehide',refresh.suspend);window.addEventListener('pageshow',page);window.addEventListener('storage',storage);window.addEventListener(CLUB_AUTH_EVENT,local);
+  const full=setInterval(refresh.check,60000),poll=setInterval(()=>void signals(),10000);refresh.check();
+  return()=>{live=false;refresh.stop();pending.forEach(c=>c.abort());clearInterval(full);clearInterval(poll);auth?.unsubscribe();void channel?.unsubscribe();store.stop();window.removeEventListener('focus',verify);window.removeEventListener('blur',refresh.suspend);window.removeEventListener('online',refresh.check);window.removeEventListener('offline',offline);document.removeEventListener('visibilitychange',visibility);window.removeEventListener('pagehide',refresh.suspend);window.removeEventListener('pageshow',page);window.removeEventListener('storage',storage);window.removeEventListener(CLUB_AUTH_EVENT,local);};
  },[store,userId]);
  if(state.status==='auth'||state.status==='access')return <div data-chat-access={state.status} data-chat-data="empty"><ClubAccessDenied locale={locale}/></div>;
  return <ClubChatWorkspace store={store} state={state} locale={locale} userId={userId} clubId={clubId} initialMessage={initialMessage}/>;
