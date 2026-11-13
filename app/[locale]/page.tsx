@@ -4,9 +4,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AppStoreQrCard } from "@/components/app-store-qr-card";
+import { AndroidTestBanner } from "@/components/android-test-banner";
+import { LocaleSwitcher } from "@/components/locale-switcher";
 import { getAuthDictionary } from "@/lib/auth-i18n";
 import { getDictionary } from "@/lib/i18n";
-import { isLocale, localeLabels, locales, type Locale } from "@/lib/locales";
+import { isLocale, locales, type Locale } from "@/lib/locales";
 import { APP_STORE_URL, CANONICAL_DOMAIN, CONTACT_EMAIL } from "@/lib/site-config";
 
 type LocalePageProps = {
@@ -119,22 +121,11 @@ export default async function LocalePage({ params }: LocalePageProps) {
             >
               {auth.navLogin}
             </Link>
-            <div className="flex max-w-[64vw] items-center gap-1 overflow-x-auto rounded-full border border-white/15 bg-white/[0.04] px-2 py-1 text-xs [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:max-w-none">
-              {locales.map((code) => (
-                <Link
-                  key={code}
-                  href={`/${code}`}
-                  className={`shrink-0 rounded-full px-2 py-1 transition-colors ${
-                    code === locale
-                      ? "bg-[linear-gradient(135deg,rgba(94,127,255,0.9),rgba(128,39,130,0.85))] text-white"
-                      : "text-[var(--ink-soft)] hover:bg-white/10 hover:text-white"
-                  }`}
-                  aria-current={code === locale ? "page" : undefined}
-                >
-                  {localeLabels[code]}
-                </Link>
-              ))}
-            </div>
+            <LocaleSwitcher
+              locale={locale}
+              ariaLabel={t.nav.languageSwitcherLabel}
+              className="max-w-[64vw] sm:max-w-none"
+            />
           </div>
         </div>
         <div className="section-shell flex gap-4 overflow-x-auto pb-3 text-sm text-[var(--ink-soft)] lg:hidden">
@@ -212,6 +203,8 @@ export default async function LocalePage({ params }: LocalePageProps) {
             </div>
           </div>
         </section>
+
+        <AndroidTestBanner locale={locale} copy={t.androidTester.banner} />
 
         <section id="download" className="section-shell scroll-mt-28 pb-20 md:pb-24">
           <div className="glass-panel overflow-hidden rounded-3xl border shadow-[0_32px_80px_-50px_rgba(0,0,0,0.9)]">

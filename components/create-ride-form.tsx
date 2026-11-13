@@ -63,9 +63,8 @@ function CreateRideSubmitButton({
   pendingLabel: string;
 }) {
   const { pending } = useFormStatus();
-  const [clicked, setClicked] = useState(false);
   const clickedRef = useRef(false);
-  const isPending = pending || clicked || blocked;
+  const isPending = pending || blocked;
   return (
     <button
       className="bike-app-button"
@@ -80,7 +79,6 @@ function CreateRideSubmitButton({
           return;
         }
         clickedRef.current = true;
-        setClicked(true);
       }}
     >
       {isPending ? pendingLabel : mode === "PING" ? nowLabel : plannedLabel}
@@ -100,8 +98,9 @@ export function CreateRideForm({
   inviteLoadFailed,
   notice,
   returnTo,
-  unitSystem
+  unitSystem, clubMode=false, suspended=false, submitAction, locked=false, submitLabel
 }: {
+  submitLabel?: string; clubMode?: boolean; suspended?: boolean; locked?: boolean; submitAction?: (state: CreateRideActionState, data: FormData) => Promise<CreateRideActionState>;
   createRequestId: string;
   locale: Locale;
   hotspots: CreateRideHotspot[];
@@ -134,7 +133,7 @@ export function CreateRideForm({
   const [description, setDescription] = useState("");
   const [inviteSearch, setInviteSearch] = useState("");
   const [selectedInviteeIds, setSelectedInviteeIds] = useState<string[]>([]);
-  const [visibility, setVisibility] = useState<"public" | "private">("public");
+  const [visibility, setVisibility] = useState<"public" | "private">(clubMode ? "private" : "public");
   const [visibilityTouched, setVisibilityTouched] = useState(false);
   const [plannedRoute, setPlannedRoute] = useState<ImportedGpxRoute | null>(null);
   const [gpxError, setGpxError] = useState<string | null>(null);
@@ -143,7 +142,7 @@ export function CreateRideForm({
   const [selectedHotspotId, setSelectedHotspotId] = useState(initialHotspot?.id ?? "");
   const [meetingCoordinate, setMeetingCoordinate] = useState<MeetingCoordinate | null>(initialMeetingCoordinate);
   const [meetingAddress, setMeetingAddress] = useState(initialHotspot?.address?.trim() || initialHotspot?.name || "");
-  const [actionState, formAction] = useFormState<CreateRideActionState, FormData>(createRideAction, {
+  const [actionState, formAction] = useFormState<CreateRideActionState, FormData>(submitAction ?? createRideAction, {
     notice: null,
     attempt: 0
   });
@@ -159,6 +158,7 @@ export function CreateRideForm({
     else date.setMinutes(nextMinute, 0, 0);
     return date.toISOString();
   }, [now]);
+  const [eventStartValue,setEventStartValue]=useState(eventStart);
   const [pingClockTime, setPingClockTime] = useState(() => getNextRoundedTenMinuteTimeValue(now));
   const titleSuggestions = useMemo(() => getRideTitleSuggestions(locale), [locale]);
   const moodOptions = useMemo(() => getRideMoodOptions(locale), [locale]);
@@ -214,9 +214,10 @@ export function CreateRideForm({
   };
 
   const handleMapSelect = useCallback((coordinate: MeetingCoordinate) => {
+    if (locked) return;
     setMeetingCoordinate(coordinate);
     setMeetingAddress("");
-  }, []);
+  }, [locked]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     if (mode === "PING" && startMode === "KL") {
@@ -258,8 +259,10 @@ export function CreateRideForm({
     }
   };
 
+  if (suspended) return null;
   return (
     <form action={formAction} className="bike-app-form" onSubmit={handleSubmit}>
+      <fieldset disabled={locked || gpxImporting} className="bike-app-club-form-fields">
       <input type="hidden" name="createRequestId" value={createRequestId} />
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="returnTo" value={returnTo} />
@@ -268,7 +271,7 @@ export function CreateRideForm({
       <BrowserTimezoneInput />
       <AppNotice locale={locale} code={actionState.notice ?? notice} />
 
-      <fieldset className="bike-app-choice-fieldset">
+      {clubMode ? <input type="hidden" name="type" value="EVENT" /> : <fieldset className="bike-app-choice-fieldset">
         <legend>{t("rides.typeLabel")}</legend>
         <div className="bike-app-choice-grid">
           <label className="bike-app-choice-card">
@@ -292,7 +295,7 @@ export function CreateRideForm({
             <span><strong>{t("rides.planned")}</strong><small>{t("rides.plannedHint")}</small></span>
           </label>
         </div>
-      </fieldset>
+      </fieldset>}
 
       <div className="bike-app-form-section">
         <h2>{t("rides.requiredFields")}</h2>
@@ -468,7 +471,8 @@ export function CreateRideForm({
                   <span>{t("rides.startLabel")}</span>
                   <LocalDateTimeInput
                     name="startTimeIso"
-                    defaultValue={eventStart}
+                    defaultValue={eventStartValue}
+                    onValueChange={setEventStartValue}
                     minimumValue={now.toISOString()}
                     stepSeconds={600}
                     invalidMessage={t("message.startFuture")}
@@ -494,7 +498,7 @@ export function CreateRideForm({
             )}
 
             <div className="bike-app-create-side">
-              <label className="bike-app-field">
+              {clubMode ? <input type="hidden" name="visibility" value="private" /> : <label className="bike-app-field">
                 <span>{t("rides.visibilityLabel")}</span>
                 <select
                   name="visibility"
@@ -508,6 +512,7 @@ export function CreateRideForm({
                   <option value="private">{t("common.private")}</option>
                 </select>
               </label>
+              }
               {mode === "PING" ? <p className="bike-app-form-note">{t("rides.rideNowDuration")}</p> : null}
             </div>
           </div>
@@ -525,7 +530,7 @@ export function CreateRideForm({
             </select>
           </label>
         </div>
-        <div className="bike-app-invite-picker">
+        {!clubMode ? <div className="bike-app-invite-picker">
           <div>
             <h3>{t("rides.inviteSearch")}</h3>
             <p>{t("rides.inviteHint")}</p>
@@ -558,6 +563,7 @@ export function CreateRideForm({
             </div>
           ) : <p className="bike-app-form-note">{t("rides.inviteNoResults")}</p>}
         </div>
+        : null}
         <div className="bike-app-gpx-picker">
           <div>
             <h3>{t("rides.gpxImport")}</h3>
@@ -605,13 +611,14 @@ export function CreateRideForm({
         </label>
       </div>
 
+      </fieldset>
       <div className="bike-app-actions">
         <CreateRideSubmitButton
           key={actionState.attempt}
           mode={mode}
           blocked={gpxImporting}
           nowLabel={t("rides.submitNow")}
-          plannedLabel={t("rides.submitPlanned")}
+          plannedLabel={submitLabel ?? t("rides.submitPlanned")}
           pendingLabel={t("rides.creating")}
         />
       </div>

@@ -1,0 +1,9 @@
+node_modules
+.next
+.git
+.env*
+!.env.example
+tests
+review
+supabase
+**/.DS_Store

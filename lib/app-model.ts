@@ -51,6 +51,9 @@ export type RoutePoint = {
 };
 
 export type RideSummary = {
+  clubId?: string | null;
+  clubClosedAt?: string | null;
+  cancelReason?: string | null;
   id: string;
   hostId: string;
   hostName: string | null;

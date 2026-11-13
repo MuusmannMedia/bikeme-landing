@@ -20,6 +20,7 @@ const metadataRoutePrefixes = [
 ] as const;
 
 const exactBypassPaths = new Set([
+  "/nulstil-adgangskode",
   "/robots.txt",
   "/sitemap.xml"
 ]);
@@ -116,5 +117,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"]
+  // Image routes perform their own Origin/auth/RLS checks and byte limits.
+  // Skip Proxy cloning: its 10 MiB buffer truncates valid 25 MiB source files.
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|api/clubs/images).*)"]
 };

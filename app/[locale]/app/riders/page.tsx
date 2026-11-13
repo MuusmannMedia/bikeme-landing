@@ -1,3 +1,4 @@
+import {dmText} from "@/lib/messages/i18n";
 import { notFound } from "next/navigation";
 
 import { AppAvatar } from "@/components/app-avatar";
@@ -69,6 +70,7 @@ export default async function RidersPage({ params, searchParams }: { params: Pro
               return (
                 <article className="bike-app-panel bike-app-rider-card" key={rider.id}>
                   <div className="bike-app-list-main"><AppAvatar name={rider.displayName} url={rider.avatarUrl} size="large" /><div><h2>{rider.displayName ?? "Bike Me"}</h2><p>{rider.region ?? "—"}</p></div></div>
+                  <a className="bike-app-button bike-app-button-secondary" href={`/${locale}/app/messages?peer=${rider.id}`}>{dmText(locale,"start")}</a>
                   <RiderDetails level={rider.level} region={rider.region} about={rider.about} labels={labels} />
                   {!connection ? <form action={sendConnectionAction}><input type="hidden" name="locale" value={locale} /><input type="hidden" name="returnTo" value={returnTo} /><input type="hidden" name="recipientUserId" value={rider.id} /><button className="bike-app-button" type="submit">{t("riders.connect")}</button></form> : <span className="bike-app-chip" data-tone="purple">{connection.state === "accepted" ? t("riders.connected") : t("common.pending")}</span>}
                 </article>
@@ -92,6 +94,7 @@ export default async function RidersPage({ params, searchParams }: { params: Pro
         {accepted.length ? <div className="bike-app-grid" data-columns="2">{accepted.map((connection) => (
           <article className="bike-app-rider-connection" key={connection.id}>
             <div className="bike-app-list-main"><AppAvatar name={connection.counterpart.displayName} url={connection.counterpart.avatarUrl} size="large" /><div><h3>{connection.counterpart.displayName ?? "Bike Me"}</h3><p>{connection.counterpart.region ?? "—"}</p></div></div>
+            <a className="bike-app-button bike-app-button-secondary" href={`/${locale}/app/messages?peer=${connection.counterpart.id}`}>{dmText(locale,"start")}</a>
             <RiderDetails level={connection.counterpart.level} region={connection.counterpart.region} about={connection.counterpart.about} labels={labels} />
             <form action={sendRideInterestAction} className="bike-app-interest-form">
               <input type="hidden" name="locale" value={locale} /><input type="hidden" name="returnTo" value={returnTo} /><input type="hidden" name="recipientUserId" value={connection.counterpart.id} /><BrowserTimezoneInput />

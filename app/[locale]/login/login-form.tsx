@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { announceClubAuthTransition } from "@/lib/clubs/auth-events";
 
 import type { AuthDictionary } from "@/lib/auth-i18n";
 import type { Locale } from "@/lib/locales";
@@ -24,7 +25,11 @@ export function LoginForm({
 
   return (
     <form
-      action={action}
+      action={async (data) => {
+        announceClubAuthTransition("changing");
+        try { await action(data); }
+        finally { announceClubAuthTransition("settled"); }
+      }}
       className="grid gap-4"
       onSubmit={() => setIsSubmitting(true)}
     >

@@ -30,6 +30,75 @@ type LaunchSection = {
   imageAlt: string;
 };
 
+type AndroidTesterSection = {
+  banner: {
+    eyebrow: string;
+    title: string;
+    body: string;
+    cta: string;
+  };
+  page: {
+    metaTitle: string;
+    metaDescription: string;
+    openGraphImageAlt: string;
+    backToHome: string;
+    formHeading: string;
+  };
+  eyebrow: string;
+  title: string;
+  body: string;
+  rewardEyebrow: string;
+  rewardBadge: string;
+  rewardNote: string;
+  formTitle: string;
+  formText: string;
+  requiredNote: string;
+  nameLabel: string;
+  namePlaceholder: string;
+  emailLabel: string;
+  emailPlaceholder: string;
+  emailHint: string;
+  deviceLabel: string;
+  devicePlaceholder: string;
+  versionLabel: string;
+  selectPrompt: string;
+  versionEarlier: string;
+  versionOther: string;
+  versionUnknown: string;
+  frequencyLabel: string;
+  frequencyPrompt: string;
+  frequencyOptions: {
+    daily: string;
+    severalWeekly: string;
+    weekly: string;
+    monthly: string;
+    rarely: string;
+  };
+  commentLabel: string;
+  commentPlaceholder: string;
+  commitmentLabel: string;
+  privacyPrefix: string;
+  privacyLink: string;
+  privacySuffix: string;
+  submissionNote: string;
+  submit: string;
+  submitting: string;
+  technicalError: string;
+  successTitle: string;
+  success: string;
+  honeypotLabel: string;
+  validation: {
+    required: string;
+    invalidName: string;
+    invalidEmail: string;
+    invalidDevice: string;
+    invalidSelection: string;
+    commentTooLong: string;
+    commitmentRequired: string;
+    privacyRequired: string;
+  };
+};
+
 export type Dictionary = {
   meta: {
     title: string;
@@ -41,6 +110,7 @@ export type Dictionary = {
     howItWorks: string;
     screenshots: string;
     faq: string;
+    languageSwitcherLabel: string;
   };
   hero: {
     headline: string;
@@ -56,6 +126,7 @@ export type Dictionary = {
     bullets: string[];
   };
   launch: LaunchSection;
+  androidTester: AndroidTesterSection;
   features: {
     eyebrow: string;
     title: string;
@@ -97,7 +168,8 @@ const dictionaries: Record<Locale, Dictionary> = {
       features: "Features",
       howItWorks: "How it works",
       screenshots: "Screenshots",
-      faq: "FAQ"
+      faq: "FAQ",
+      languageSwitcherLabel: "Choose language"
     },
     hero: {
       headline: "Keep your cycling friends close - and find new riders",
@@ -183,32 +255,32 @@ const dictionaries: Record<Locale, Dictionary> = {
       subtitle: "From meeting points and invitations to ride history and deeper ride insights.",
       items: [
         {
-          image: "/screenshots/app-01.PNG",
+          image: "/screenshots/app-01.png",
           title: "Join the community",
           description: "Create a profile and start building your cycling network."
         },
         {
-          image: "/screenshots/app-02.PNG",
+          image: "/screenshots/app-02.png",
           title: "Map and meeting points",
           description: "See fixed meeting points, nearby rides, and where your next group can start."
         },
         {
-          image: "/screenshots/app-03.PNG",
+          image: "/screenshots/app-03.png",
           title: "Meeting point details",
           description: "Check activity, upcoming rides, and create a ride from a known spot."
         },
         {
-          image: "/screenshots/app-04.PNG",
+          image: "/screenshots/app-04.png",
           title: "Ride Now or plan ahead",
           description: "Choose whether the ride starts soon or is planned for later."
         },
         {
-          image: "/screenshots/app-05.PNG",
+          image: "/screenshots/app-05.png",
           title: "Create and invite",
           description: "Set the ride up and invite the riders you want with you."
         },
         {
-          image: "/screenshots/app-06.PNG",
+          image: "/screenshots/app-06.png",
           title: "Ride title suggestions",
           description: "Pick a clear ride title so the group knows what kind of ride it is."
         },
@@ -287,6 +359,78 @@ const dictionaries: Record<Locale, Dictionary> = {
         }
       ]
     },
+    androidTester: {
+      banner: {
+        eyebrow: "Android early access",
+        title: "Bike Me is coming to Android",
+        body: "Join us in testing the new Bike Me app on your Android phone.",
+        cta: "Join the Android test"
+      },
+      page: {
+        metaTitle: "Join the Android test | Bike Me",
+        metaDescription:
+          "Join the Bike Me Android test and help us test the app on your Android phone.",
+        openGraphImageAlt: "Preview of Bike Me",
+        backToHome: "Back to home",
+        formHeading: "Your tester details"
+      },
+      eyebrow: "Android testers wanted",
+      title: "Test Bike Me for Android – and get 1 year of full access",
+      body:
+        "Do you have an Android phone? Help us test Bike Me before the app is released. As a thank-you for taking part and sharing feedback, active testers receive one year of full access to the entire app.",
+      rewardEyebrow: "A thank-you for active participation",
+      rewardBadge: "1 year of full access",
+      rewardNote:
+        "Full access is granted after you have actively taken part in the test and shared feedback. Signing up does not give immediate access.",
+      formTitle: "Join the Android test",
+      formText: "Complete the form and we will contact you with information about the testing process.",
+      requiredNote: "Fields marked with * are required.",
+      nameLabel: "Name",
+      namePlaceholder: "Your name",
+      emailLabel: "Google Play email",
+      emailPlaceholder: "you@example.com",
+      emailHint: "Use the email address connected to your Google Play account.",
+      deviceLabel: "Phone brand and model",
+      devicePlaceholder: "For example, Google Pixel 9",
+      versionLabel: "Android version",
+      selectPrompt: "Select Android version",
+      versionEarlier: "Android 11 or earlier",
+      versionOther: "Other version",
+      versionUnknown: "I don't know",
+      frequencyLabel: "How often do you cycle? (optional)",
+      frequencyPrompt: "Choose an answer",
+      frequencyOptions: {
+        daily: "Every day or almost every day",
+        severalWeekly: "Several times a week",
+        weekly: "About once a week",
+        monthly: "A few times a month",
+        rarely: "Less often"
+      },
+      commentLabel: "Message or relevant comments (optional)",
+      commentPlaceholder: "Anything we should know about your phone or how you cycle?",
+      commitmentLabel: "I understand that I am expected to install the test version and share feedback.",
+      privacyPrefix: "I have read the ",
+      privacyLink: "privacy policy",
+      privacySuffix: ".",
+      submissionNote:
+        "Submitting this form registers you for the testing process. It does not provide immediate access to the reward.",
+      submit: "Sign up for the Android test",
+      submitting: "Sending your sign-up…",
+      technicalError: "We could not send your sign-up right now. Your information is still in the form, so please try again shortly.",
+      successTitle: "You're signed up",
+      success: "Thank you for signing up! We will contact you at your Google Play email when the Android test is ready.",
+      honeypotLabel: "Company website",
+      validation: {
+        required: "Please complete this field.",
+        invalidName: "Enter a name between 2 and 100 characters.",
+        invalidEmail: "Enter a valid email address.",
+        invalidDevice: "Enter a phone brand and model between 2 and 120 characters.",
+        invalidSelection: "Choose one of the available options.",
+        commentTooLong: "Keep your message under 1,000 characters.",
+        commitmentRequired: "Please confirm that you can install the test version and share feedback.",
+        privacyRequired: "Please confirm that you have read the privacy policy."
+      }
+    },
     footer: {
       tagline: "Bike Me",
       privacy: "Privacy",
@@ -305,7 +449,8 @@ const dictionaries: Record<Locale, Dictionary> = {
       features: "Funktioner",
       howItWorks: "Sådan virker det",
       screenshots: "Skærmbilleder",
-      faq: "FAQ"
+      faq: "FAQ",
+      languageSwitcherLabel: "Vælg sprog"
     },
     hero: {
       headline: "Hold fast i dine cykelvenner - og find nye at køre med",
@@ -391,32 +536,32 @@ const dictionaries: Record<Locale, Dictionary> = {
       subtitle: "Fra mødesteder og invitationer til turhistorik og dybere indsigt.",
       items: [
         {
-          image: "/screenshots/app-01.PNG",
+          image: "/screenshots/app-01.png",
           title: "Bliv en del af fællesskabet",
           description: "Opret din profil og begynd at samle dine cykelbekendtskaber."
         },
         {
-          image: "/screenshots/app-02.PNG",
+          image: "/screenshots/app-02.png",
           title: "Kort og faste mødesteder",
           description: "Se faste mødesteder, ture i nærheden og hvor næste fællestur kan starte."
         },
         {
-          image: "/screenshots/app-03.PNG",
+          image: "/screenshots/app-03.png",
           title: "Detaljer om mødested",
           description: "Se aktivitet, kommende ture og opret en tur fra et kendt spot."
         },
         {
-          image: "/screenshots/app-04.PNG",
+          image: "/screenshots/app-04.png",
           title: "KØR NU eller planlæg frem",
           description: "Vælg om turen starter snart eller planlægges til senere."
         },
         {
-          image: "/screenshots/app-05.PNG",
+          image: "/screenshots/app-05.png",
           title: "Opret og invitér",
           description: "Sæt turen op og invitér de ryttere, du gerne vil have med."
         },
         {
-          image: "/screenshots/app-06.PNG",
+          image: "/screenshots/app-06.png",
           title: "Forslag til turtitel",
           description: "Vælg en tydelig titel, så gruppen ved, hvilken type tur det er."
         },
@@ -495,6 +640,78 @@ const dictionaries: Record<Locale, Dictionary> = {
         }
       ]
     },
+    androidTester: {
+      banner: {
+        eyebrow: "Android early access",
+        title: "Bike Me kommer til Android",
+        body: "Kom og vær med til at teste den nye Bike Me-app på din Android-mobil.",
+        cta: "Tilmeld dig Android-testen"
+      },
+      page: {
+        metaTitle: "Tilmeld dig Android-testen | Bike Me",
+        metaDescription:
+          "Tilmeld dig Bike Mes Android-test, og hjælp os med at teste appen på din Android-mobil.",
+        openGraphImageAlt: "Forhåndsvisning af Bike Me",
+        backToHome: "Tilbage til forsiden",
+        formHeading: "Dine testeroplysninger"
+      },
+      eyebrow: "Android-testere søges",
+      title: "Test Bike Me til Android – og få 1 års fuld adgang",
+      body:
+        "Har du en Android-telefon? Hjælp os med at teste Bike Me, inden appen bliver udgivet. Som tak for din deltagelse og feedback får aktive testere 1 års fuld adgang til hele appen.",
+      rewardEyebrow: "Som tak for din aktive deltagelse",
+      rewardBadge: "1 års fuld adgang",
+      rewardNote:
+        "Den fulde adgang gives, når du aktivt har deltaget i testen og delt feedback. Tilmelding giver ikke øjeblikkelig adgang.",
+      formTitle: "Tilmeld dig Android-testen",
+      formText: "Udfyld formularen, så kontakter vi dig med information om testforløbet.",
+      requiredNote: "Felter markeret med * skal udfyldes.",
+      nameLabel: "Navn",
+      namePlaceholder: "Dit navn",
+      emailLabel: "Google Play-e-mail",
+      emailPlaceholder: "dig@eksempel.dk",
+      emailHint: "Brug den e-mailadresse, der er knyttet til din Google Play-konto.",
+      deviceLabel: "Telefonens mærke og model",
+      devicePlaceholder: "Fx Google Pixel 9",
+      versionLabel: "Android-version",
+      selectPrompt: "Vælg Android-version",
+      versionEarlier: "Android 11 eller ældre",
+      versionOther: "Anden version",
+      versionUnknown: "Det ved jeg ikke",
+      frequencyLabel: "Hvor ofte cykler du? (valgfrit)",
+      frequencyPrompt: "Vælg et svar",
+      frequencyOptions: {
+        daily: "Hver dag eller næsten hver dag",
+        severalWeekly: "Flere gange om ugen",
+        weekly: "Cirka én gang om ugen",
+        monthly: "Et par gange om måneden",
+        rarely: "Sjældnere"
+      },
+      commentLabel: "Kort besked eller relevante kommentarer (valgfrit)",
+      commentPlaceholder: "Er der noget, vi bør vide om din telefon eller dine cykelvaner?",
+      commitmentLabel: "Jeg er indforstået med, at jeg forventes at installere testversionen og dele feedback.",
+      privacyPrefix: "Jeg har læst ",
+      privacyLink: "privatlivspolitikken",
+      privacySuffix: ".",
+      submissionNote:
+        "Når du sender formularen, tilmelder du dig testforløbet. Det giver ikke øjeblikkelig adgang til belønningen.",
+      submit: "Tilmeld mig Android-testen",
+      submitting: "Sender din tilmelding…",
+      technicalError: "Vi kunne ikke sende din tilmelding lige nu. Dine oplysninger står stadig i formularen, så prøv igen om lidt.",
+      successTitle: "Du er tilmeldt",
+      success: "Tak for din tilmelding! Vi kontakter dig på din Google Play-e-mail, når Android-testen er klar.",
+      honeypotLabel: "Virksomhedens hjemmeside",
+      validation: {
+        required: "Udfyld venligst feltet.",
+        invalidName: "Skriv et navn på mellem 2 og 100 tegn.",
+        invalidEmail: "Skriv en gyldig e-mailadresse.",
+        invalidDevice: "Skriv telefonens mærke og model med mellem 2 og 120 tegn.",
+        invalidSelection: "Vælg en af de tilgængelige muligheder.",
+        commentTooLong: "Hold beskeden under 1.000 tegn.",
+        commitmentRequired: "Bekræft, at du kan installere testversionen og dele feedback.",
+        privacyRequired: "Bekræft, at du har læst privatlivspolitikken."
+      }
+    },
     footer: {
       tagline: "Bike Me",
       privacy: "Privatliv",
@@ -513,7 +730,8 @@ const dictionaries: Record<Locale, Dictionary> = {
       features: "Funktionen",
       howItWorks: "So funktioniert's",
       screenshots: "Screenshots",
-      faq: "FAQ"
+      faq: "FAQ",
+      languageSwitcherLabel: "Sprache wählen"
     },
     hero: {
       headline: "Bleib mit deinen Radfreunden verbunden - und finde neue",
@@ -599,32 +817,32 @@ const dictionaries: Record<Locale, Dictionary> = {
       subtitle: "Von Treffpunkten und Einladungen bis zu Fahrtenhistorie und tieferen Einblicken.",
       items: [
         {
-          image: "/screenshots/app-01.PNG",
+          image: "/screenshots/app-01.png",
           title: "Teil der Community werden",
           description: "Erstelle dein Profil und baue dein Radnetzwerk auf."
         },
         {
-          image: "/screenshots/app-02.PNG",
+          image: "/screenshots/app-02.png",
           title: "Karte und feste Treffpunkte",
           description: "Sieh feste Treffpunkte, Fahrten in der Nähe und wo die nächste Gruppe starten kann."
         },
         {
-          image: "/screenshots/app-03.PNG",
+          image: "/screenshots/app-03.png",
           title: "Treffpunktdetails",
           description: "Sieh Aktivität, kommende Fahrten und erstelle eine Fahrt von einem bekannten Ort."
         },
         {
-          image: "/screenshots/app-04.PNG",
+          image: "/screenshots/app-04.png",
           title: "Ride Now oder vorausplanen",
           description: "Wähle, ob die Fahrt bald startet oder für später geplant wird."
         },
         {
-          image: "/screenshots/app-05.PNG",
+          image: "/screenshots/app-05.png",
           title: "Erstellen und einladen",
           description: "Richte die Fahrt ein und lade die Fahrer ein, die du dabeihaben möchtest."
         },
         {
-          image: "/screenshots/app-06.PNG",
+          image: "/screenshots/app-06.png",
           title: "Vorschläge für Fahrttitel",
           description: "Wähle einen klaren Titel, damit die Gruppe weiß, welche Art Fahrt geplant ist."
         },
@@ -703,6 +921,78 @@ const dictionaries: Record<Locale, Dictionary> = {
         }
       ]
     },
+    androidTester: {
+      banner: {
+        eyebrow: "Android-Frühzugang",
+        title: "Bike Me kommt für Android",
+        body: "Teste gemeinsam mit uns die neue Bike Me-App auf deinem Android-Smartphone.",
+        cta: "Für den Android-Test anmelden"
+      },
+      page: {
+        metaTitle: "Für den Android-Test anmelden | Bike Me",
+        metaDescription:
+          "Melde dich für den Android-Test von Bike Me an und hilf uns, die App auf deinem Android-Smartphone zu testen.",
+        openGraphImageAlt: "Vorschau von Bike Me",
+        backToHome: "Zur Startseite",
+        formHeading: "Deine Angaben für den Test"
+      },
+      eyebrow: "Android-Tester gesucht",
+      title: "Teste Bike Me für Android – und erhalte 1 Jahr vollen Zugang",
+      body:
+        "Hast du ein Android-Smartphone? Hilf uns, Bike Me vor der Veröffentlichung zu testen. Als Dank für die aktive Teilnahme und dein Feedback erhältst du ein Jahr lang vollen Zugang zur gesamten App.",
+      rewardEyebrow: "Unser Dank für deine aktive Teilnahme",
+      rewardBadge: "1 Jahr voller Zugang",
+      rewardNote:
+        "Der volle Zugang wird gewährt, nachdem du aktiv am Test teilgenommen und Feedback gegeben hast. Die Anmeldung allein schaltet ihn nicht sofort frei.",
+      formTitle: "Für den Android-Test anmelden",
+      formText: "Fülle das Formular aus. Wir melden uns dann mit Informationen zum Testablauf bei dir.",
+      requiredNote: "Mit * gekennzeichnete Felder sind Pflichtfelder.",
+      nameLabel: "Name",
+      namePlaceholder: "Dein Name",
+      emailLabel: "Google-Play-E-Mail",
+      emailPlaceholder: "du@beispiel.de",
+      emailHint: "Verwende die E-Mail-Adresse, die mit deinem Google-Play-Konto verknüpft ist.",
+      deviceLabel: "Marke und Modell des Smartphones",
+      devicePlaceholder: "Zum Beispiel Google Pixel 9",
+      versionLabel: "Android-Version",
+      selectPrompt: "Android-Version auswählen",
+      versionEarlier: "Android 11 oder älter",
+      versionOther: "Andere Version",
+      versionUnknown: "Ich weiß es nicht",
+      frequencyLabel: "Wie oft fährst du Rad? (optional)",
+      frequencyPrompt: "Antwort auswählen",
+      frequencyOptions: {
+        daily: "Jeden oder fast jeden Tag",
+        severalWeekly: "Mehrmals pro Woche",
+        weekly: "Etwa einmal pro Woche",
+        monthly: "Ein paar Mal pro Monat",
+        rarely: "Seltener"
+      },
+      commentLabel: "Kurze Nachricht oder relevante Hinweise (optional)",
+      commentPlaceholder: "Gibt es etwas, das wir über dein Smartphone oder deine Radfahrgewohnheiten wissen sollten?",
+      commitmentLabel: "Mir ist bewusst, dass von mir erwartet wird, die Testversion zu installieren und Feedback zu geben.",
+      privacyPrefix: "Ich habe die ",
+      privacyLink: "Datenschutzerklärung",
+      privacySuffix: " gelesen.",
+      submissionNote:
+        "Mit dem Absenden meldest du dich für den Testablauf an. Du erhältst dadurch nicht sofort Zugang zur Belohnung.",
+      submit: "Für den Android-Test anmelden",
+      submitting: "Anmeldung wird gesendet…",
+      technicalError: "Deine Anmeldung konnte gerade nicht gesendet werden. Deine Angaben stehen weiterhin im Formular. Bitte versuche es gleich noch einmal.",
+      successTitle: "Du bist angemeldet",
+      success: "Vielen Dank für deine Anmeldung! Wir kontaktieren dich über deine Google-Play-E-Mail, sobald der Android-Test bereit ist.",
+      honeypotLabel: "Unternehmenswebsite",
+      validation: {
+        required: "Bitte fülle dieses Feld aus.",
+        invalidName: "Gib einen Namen mit 2 bis 100 Zeichen ein.",
+        invalidEmail: "Gib eine gültige E-Mail-Adresse ein.",
+        invalidDevice: "Gib Marke und Modell mit 2 bis 120 Zeichen ein.",
+        invalidSelection: "Wähle eine der verfügbaren Optionen.",
+        commentTooLong: "Die Nachricht darf höchstens 1.000 Zeichen lang sein.",
+        commitmentRequired: "Bestätige bitte, dass du die Testversion installieren und Feedback geben kannst.",
+        privacyRequired: "Bestätige bitte, dass du die Datenschutzerklärung gelesen hast."
+      }
+    },
     footer: {
       tagline: "Bike Me",
       privacy: "Datenschutz",
@@ -721,7 +1011,8 @@ const dictionaries: Record<Locale, Dictionary> = {
       features: "Funciones",
       howItWorks: "Cómo funciona",
       screenshots: "Capturas",
-      faq: "FAQ"
+      faq: "FAQ",
+      languageSwitcherLabel: "Elegir idioma"
     },
     hero: {
       headline: "Mantén cerca a tus amigos ciclistas - y encuentra nuevos",
@@ -807,32 +1098,32 @@ const dictionaries: Record<Locale, Dictionary> = {
       subtitle: "De puntos de encuentro e invitaciones a historial de salidas e insights más profundos.",
       items: [
         {
-          image: "/screenshots/app-01.PNG",
+          image: "/screenshots/app-01.png",
           title: "Únete a la comunidad",
           description: "Crea tu perfil y empieza a construir tu red ciclista."
         },
         {
-          image: "/screenshots/app-02.PNG",
+          image: "/screenshots/app-02.png",
           title: "Mapa y puntos de encuentro",
           description: "Ve puntos fijos, salidas cercanas y dónde puede empezar el próximo grupo."
         },
         {
-          image: "/screenshots/app-03.PNG",
+          image: "/screenshots/app-03.png",
           title: "Detalles del punto de encuentro",
           description: "Consulta actividad, próximas salidas y crea una salida desde un lugar conocido."
         },
         {
-          image: "/screenshots/app-04.PNG",
+          image: "/screenshots/app-04.png",
           title: "Ride Now o planificar",
           description: "Elige si la salida empieza pronto o se planifica para más tarde."
         },
         {
-          image: "/screenshots/app-05.PNG",
+          image: "/screenshots/app-05.png",
           title: "Crear e invitar",
           description: "Configura la salida e invita a los ciclistas que quieres llevar contigo."
         },
         {
-          image: "/screenshots/app-06.PNG",
+          image: "/screenshots/app-06.png",
           title: "Sugerencias de título",
           description: "Elige un título claro para que el grupo sepa qué tipo de salida es."
         },
@@ -911,6 +1202,78 @@ const dictionaries: Record<Locale, Dictionary> = {
         }
       ]
     },
+    androidTester: {
+      banner: {
+        eyebrow: "Acceso anticipado para Android",
+        title: "Bike Me llega a Android",
+        body: "Ayúdanos a probar la nueva app de Bike Me en tu móvil Android.",
+        cta: "Inscríbete en la prueba de Android"
+      },
+      page: {
+        metaTitle: "Inscríbete en la prueba de Android | Bike Me",
+        metaDescription:
+          "Inscríbete en la prueba de Bike Me para Android y ayúdanos a probar la app en tu móvil Android.",
+        openGraphImageAlt: "Vista previa de Bike Me",
+        backToHome: "Volver al inicio",
+        formHeading: "Tus datos para la prueba"
+      },
+      eyebrow: "Buscamos testers de Android",
+      title: "Prueba Bike Me para Android y consigue 1 año de acceso completo",
+      body:
+        "¿Tienes un teléfono Android? Ayúdanos a probar Bike Me antes de su lanzamiento. Como agradecimiento por participar activamente y compartir tus comentarios, recibirás un año de acceso completo a toda la aplicación.",
+      rewardEyebrow: "Nuestro agradecimiento por tu participación activa",
+      rewardBadge: "1 año de acceso completo",
+      rewardNote:
+        "El acceso completo se concede después de participar activamente en la prueba y compartir comentarios. Inscribirte no te da acceso inmediato.",
+      formTitle: "Inscríbete en la prueba de Android",
+      formText: "Rellena el formulario y nos pondremos en contacto contigo con información sobre el proceso de prueba.",
+      requiredNote: "Los campos marcados con * son obligatorios.",
+      nameLabel: "Nombre",
+      namePlaceholder: "Tu nombre",
+      emailLabel: "Correo de Google Play",
+      emailPlaceholder: "tu@ejemplo.com",
+      emailHint: "Usa la dirección de correo vinculada a tu cuenta de Google Play.",
+      deviceLabel: "Marca y modelo del teléfono",
+      devicePlaceholder: "Por ejemplo, Google Pixel 9",
+      versionLabel: "Versión de Android",
+      selectPrompt: "Selecciona la versión de Android",
+      versionEarlier: "Android 11 o anterior",
+      versionOther: "Otra versión",
+      versionUnknown: "No lo sé",
+      frequencyLabel: "¿Con qué frecuencia montas en bicicleta? (opcional)",
+      frequencyPrompt: "Elige una respuesta",
+      frequencyOptions: {
+        daily: "Todos o casi todos los días",
+        severalWeekly: "Varias veces por semana",
+        weekly: "Aproximadamente una vez por semana",
+        monthly: "Varias veces al mes",
+        rarely: "Con menor frecuencia"
+      },
+      commentLabel: "Mensaje breve o comentarios relevantes (opcional)",
+      commentPlaceholder: "¿Hay algo que debamos saber sobre tu teléfono o tus hábitos ciclistas?",
+      commitmentLabel: "Entiendo que se espera que instale la versión de prueba y comparta mis comentarios.",
+      privacyPrefix: "He leído la ",
+      privacyLink: "política de privacidad",
+      privacySuffix: ".",
+      submissionNote:
+        "Al enviar el formulario te inscribes en el proceso de prueba. Esto no te da acceso inmediato a la recompensa.",
+      submit: "Inscribirme en la prueba de Android",
+      submitting: "Enviando tu inscripción…",
+      technicalError: "No hemos podido enviar tu inscripción ahora. Tus datos siguen en el formulario; inténtalo de nuevo en unos instantes.",
+      successTitle: "Te has inscrito",
+      success: "¡Gracias por inscribirte! Nos pondremos en contacto contigo en tu correo de Google Play cuando la prueba de Android esté lista.",
+      honeypotLabel: "Sitio web de la empresa",
+      validation: {
+        required: "Completa este campo.",
+        invalidName: "Introduce un nombre de entre 2 y 100 caracteres.",
+        invalidEmail: "Introduce una dirección de correo válida.",
+        invalidDevice: "Introduce una marca y un modelo de entre 2 y 120 caracteres.",
+        invalidSelection: "Elige una de las opciones disponibles.",
+        commentTooLong: "El mensaje debe tener menos de 1.000 caracteres.",
+        commitmentRequired: "Confirma que puedes instalar la versión de prueba y compartir comentarios.",
+        privacyRequired: "Confirma que has leído la política de privacidad."
+      }
+    },
     footer: {
       tagline: "Bike Me",
       privacy: "Privacidad",
@@ -929,7 +1292,8 @@ const dictionaries: Record<Locale, Dictionary> = {
       features: "Funzionalità",
       howItWorks: "Come funziona",
       screenshots: "Screenshot",
-      faq: "FAQ"
+      faq: "FAQ",
+      languageSwitcherLabel: "Scegli la lingua"
     },
     hero: {
       headline: "Resta vicino ai tuoi amici ciclisti - e trovane di nuovi",
@@ -1015,32 +1379,32 @@ const dictionaries: Record<Locale, Dictionary> = {
       subtitle: "Da punti di ritrovo e inviti allo storico uscite e agli insight più dettagliati.",
       items: [
         {
-          image: "/screenshots/app-01.PNG",
+          image: "/screenshots/app-01.png",
           title: "Entra nella community",
           description: "Crea il tuo profilo e inizia a costruire la tua rete ciclistica."
         },
         {
-          image: "/screenshots/app-02.PNG",
+          image: "/screenshots/app-02.png",
           title: "Mappa e punti di ritrovo",
           description: "Vedi punti fissi, uscite vicine e dove può partire il prossimo gruppo."
         },
         {
-          image: "/screenshots/app-03.PNG",
+          image: "/screenshots/app-03.png",
           title: "Dettagli del punto di ritrovo",
           description: "Controlla attività, uscite in arrivo e crea un'uscita da uno spot conosciuto."
         },
         {
-          image: "/screenshots/app-04.PNG",
+          image: "/screenshots/app-04.png",
           title: "Ride Now o pianifica",
           description: "Scegli se l'uscita parte a breve o viene pianificata per dopo."
         },
         {
-          image: "/screenshots/app-05.PNG",
+          image: "/screenshots/app-05.png",
           title: "Crea e invita",
           description: "Imposta l'uscita e invita i ciclisti che vuoi con te."
         },
         {
-          image: "/screenshots/app-06.PNG",
+          image: "/screenshots/app-06.png",
           title: "Suggerimenti per il titolo",
           description: "Scegli un titolo chiaro così il gruppo sa che tipo di uscita è."
         },
@@ -1119,6 +1483,78 @@ const dictionaries: Record<Locale, Dictionary> = {
         }
       ]
     },
+    androidTester: {
+      banner: {
+        eyebrow: "Accesso anticipato Android",
+        title: "Bike Me arriva su Android",
+        body: "Unisciti a noi per testare la nuova app Bike Me sul tuo telefono Android.",
+        cta: "Iscriviti al test Android"
+      },
+      page: {
+        metaTitle: "Iscriviti al test Android | Bike Me",
+        metaDescription:
+          "Iscriviti al test Android di Bike Me e aiutaci a provare l'app sul tuo telefono Android.",
+        openGraphImageAlt: "Anteprima di Bike Me",
+        backToHome: "Torna alla home",
+        formHeading: "I tuoi dati per il test"
+      },
+      eyebrow: "Cerchiamo tester Android",
+      title: "Prova Bike Me per Android e ottieni 1 anno di accesso completo",
+      body:
+        "Hai un telefono Android? Aiutaci a testare Bike Me prima del lancio. Come ringraziamento per la partecipazione attiva e il feedback, riceverai un anno di accesso completo all'intera app.",
+      rewardEyebrow: "Il nostro ringraziamento per la tua partecipazione attiva",
+      rewardBadge: "1 anno di accesso completo",
+      rewardNote:
+        "L'accesso completo viene assegnato dopo aver partecipato attivamente al test e condiviso il feedback. L'iscrizione non dà accesso immediato.",
+      formTitle: "Iscriviti al test Android",
+      formText: "Compila il modulo e ti contatteremo con le informazioni sullo svolgimento del test.",
+      requiredNote: "I campi contrassegnati con * sono obbligatori.",
+      nameLabel: "Nome",
+      namePlaceholder: "Il tuo nome",
+      emailLabel: "E-mail di Google Play",
+      emailPlaceholder: "tu@esempio.it",
+      emailHint: "Usa l'indirizzo e-mail collegato al tuo account Google Play.",
+      deviceLabel: "Marca e modello del telefono",
+      devicePlaceholder: "Ad esempio, Google Pixel 9",
+      versionLabel: "Versione Android",
+      selectPrompt: "Seleziona la versione Android",
+      versionEarlier: "Android 11 o precedente",
+      versionOther: "Altra versione",
+      versionUnknown: "Non lo so",
+      frequencyLabel: "Quanto spesso vai in bicicletta? (facoltativo)",
+      frequencyPrompt: "Scegli una risposta",
+      frequencyOptions: {
+        daily: "Ogni giorno o quasi",
+        severalWeekly: "Più volte alla settimana",
+        weekly: "Circa una volta alla settimana",
+        monthly: "Alcune volte al mese",
+        rarely: "Meno spesso"
+      },
+      commentLabel: "Breve messaggio o commenti utili (facoltativo)",
+      commentPlaceholder: "C'è qualcosa che dovremmo sapere sul tuo telefono o sulle tue abitudini in bici?",
+      commitmentLabel: "Sono consapevole che dovrò installare la versione di test e condividere il mio feedback.",
+      privacyPrefix: "Ho letto l'",
+      privacyLink: "informativa sulla privacy",
+      privacySuffix: ".",
+      submissionNote:
+        "Inviando il modulo ti iscrivi al percorso di test. Questo non dà accesso immediato alla ricompensa.",
+      submit: "Iscrivimi al test Android",
+      submitting: "Invio dell'iscrizione…",
+      technicalError: "Non è stato possibile inviare l'iscrizione. I tuoi dati sono ancora nel modulo: riprova tra poco.",
+      successTitle: "Iscrizione completata",
+      success: "Grazie per esserti iscritto! Ti contatteremo all'e-mail di Google Play quando il test Android sarà pronto.",
+      honeypotLabel: "Sito web dell'azienda",
+      validation: {
+        required: "Compila questo campo.",
+        invalidName: "Inserisci un nome tra 2 e 100 caratteri.",
+        invalidEmail: "Inserisci un indirizzo e-mail valido.",
+        invalidDevice: "Inserisci marca e modello tra 2 e 120 caratteri.",
+        invalidSelection: "Scegli una delle opzioni disponibili.",
+        commentTooLong: "Il messaggio deve contenere meno di 1.000 caratteri.",
+        commitmentRequired: "Conferma di poter installare la versione di test e condividere il feedback.",
+        privacyRequired: "Conferma di aver letto l'informativa sulla privacy."
+      }
+    },
     footer: {
       tagline: "Bike Me",
       privacy: "Privacy",
@@ -1137,7 +1573,8 @@ const dictionaries: Record<Locale, Dictionary> = {
       features: "Fonctionnalités",
       howItWorks: "Comment ça marche",
       screenshots: "Captures",
-      faq: "FAQ"
+      faq: "FAQ",
+      languageSwitcherLabel: "Choisir la langue"
     },
     hero: {
       headline: "Gardez vos amis cyclistes près de vous - et trouvez-en de nouveaux",
@@ -1223,32 +1660,32 @@ const dictionaries: Record<Locale, Dictionary> = {
       subtitle: "Des lieux de rendez-vous et invitations à l'historique des sorties et aux analyses plus détaillées.",
       items: [
         {
-          image: "/screenshots/app-01.PNG",
+          image: "/screenshots/app-01.png",
           title: "Rejoindre la communauté",
           description: "Créez votre profil et commencez à construire votre réseau cycliste."
         },
         {
-          image: "/screenshots/app-02.PNG",
+          image: "/screenshots/app-02.png",
           title: "Carte et lieux de rendez-vous",
           description: "Voyez les points fixes, les sorties proches et où le prochain groupe peut partir."
         },
         {
-          image: "/screenshots/app-03.PNG",
+          image: "/screenshots/app-03.png",
           title: "Détails du lieu de rendez-vous",
           description: "Consultez l'activité, les sorties à venir et créez une sortie depuis un spot connu."
         },
         {
-          image: "/screenshots/app-04.PNG",
+          image: "/screenshots/app-04.png",
           title: "Ride Now ou planification",
           description: "Choisissez si la sortie démarre bientôt ou si elle est prévue plus tard."
         },
         {
-          image: "/screenshots/app-05.PNG",
+          image: "/screenshots/app-05.png",
           title: "Créer et inviter",
           description: "Configurez la sortie et invitez les cyclistes que vous voulez avec vous."
         },
         {
-          image: "/screenshots/app-06.PNG",
+          image: "/screenshots/app-06.png",
           title: "Suggestions de titre",
           description: "Choisissez un titre clair pour que le groupe sache quel type de sortie est prévu."
         },
@@ -1327,6 +1764,78 @@ const dictionaries: Record<Locale, Dictionary> = {
         }
       ]
     },
+    androidTester: {
+      banner: {
+        eyebrow: "Accès anticipé Android",
+        title: "Bike Me arrive sur Android",
+        body: "Rejoignez-nous pour tester la nouvelle application Bike Me sur votre téléphone Android.",
+        cta: "Inscrivez-vous au test Android"
+      },
+      page: {
+        metaTitle: "Inscrivez-vous au test Android | Bike Me",
+        metaDescription:
+          "Inscrivez-vous au test Android de Bike Me et aidez-nous à tester l'application sur votre téléphone Android.",
+        openGraphImageAlt: "Aperçu de Bike Me",
+        backToHome: "Retour à l'accueil",
+        formHeading: "Vos informations pour le test"
+      },
+      eyebrow: "Testeurs Android recherchés",
+      title: "Testez Bike Me sur Android et bénéficiez d'un an d'accès complet",
+      body:
+        "Vous avez un téléphone Android ? Aidez-nous à tester Bike Me avant sa sortie. Pour vous remercier de votre participation active et de vos retours, vous bénéficierez d'un an d'accès complet à toute l'application.",
+      rewardEyebrow: "Pour vous remercier de votre participation active",
+      rewardBadge: "1 an d'accès complet",
+      rewardNote:
+        "L'accès complet est accordé après une participation active au test et le partage de retours. L'inscription ne donne pas un accès immédiat.",
+      formTitle: "Inscrivez-vous au test Android",
+      formText: "Remplissez le formulaire et nous vous contacterons avec les informations sur le déroulement du test.",
+      requiredNote: "Les champs marqués d'un * sont obligatoires.",
+      nameLabel: "Nom",
+      namePlaceholder: "Votre nom",
+      emailLabel: "E-mail Google Play",
+      emailPlaceholder: "vous@exemple.fr",
+      emailHint: "Utilisez l'adresse e-mail associée à votre compte Google Play.",
+      deviceLabel: "Marque et modèle du téléphone",
+      devicePlaceholder: "Par exemple, Google Pixel 9",
+      versionLabel: "Version d'Android",
+      selectPrompt: "Sélectionnez la version d'Android",
+      versionEarlier: "Android 11 ou version antérieure",
+      versionOther: "Autre version",
+      versionUnknown: "Je ne sais pas",
+      frequencyLabel: "À quelle fréquence faites-vous du vélo ? (facultatif)",
+      frequencyPrompt: "Choisissez une réponse",
+      frequencyOptions: {
+        daily: "Tous les jours ou presque",
+        severalWeekly: "Plusieurs fois par semaine",
+        weekly: "Environ une fois par semaine",
+        monthly: "Quelques fois par mois",
+        rarely: "Moins souvent"
+      },
+      commentLabel: "Court message ou remarques utiles (facultatif)",
+      commentPlaceholder: "Y a-t-il quelque chose à savoir sur votre téléphone ou vos habitudes cyclistes ?",
+      commitmentLabel: "Je comprends que je devrai installer la version de test et partager mes retours.",
+      privacyPrefix: "J'ai lu la ",
+      privacyLink: "politique de confidentialité",
+      privacySuffix: ".",
+      submissionNote:
+        "En envoyant ce formulaire, vous vous inscrivez au programme de test. Cela ne donne pas un accès immédiat à la récompense.",
+      submit: "M'inscrire au test Android",
+      submitting: "Envoi de votre inscription…",
+      technicalError: "Nous n'avons pas pu envoyer votre inscription. Vos informations sont toujours dans le formulaire ; veuillez réessayer dans quelques instants.",
+      successTitle: "Votre inscription est enregistrée",
+      success: "Merci pour votre inscription ! Nous vous contacterons à votre adresse e-mail Google Play lorsque le test Android sera prêt.",
+      honeypotLabel: "Site web de l'entreprise",
+      validation: {
+        required: "Veuillez remplir ce champ.",
+        invalidName: "Saisissez un nom de 2 à 100 caractères.",
+        invalidEmail: "Saisissez une adresse e-mail valide.",
+        invalidDevice: "Saisissez une marque et un modèle de 2 à 120 caractères.",
+        invalidSelection: "Choisissez l'une des options proposées.",
+        commentTooLong: "Votre message doit contenir moins de 1 000 caractères.",
+        commitmentRequired: "Confirmez que vous pouvez installer la version de test et partager vos retours.",
+        privacyRequired: "Confirmez avoir lu la politique de confidentialité."
+      }
+    },
     footer: {
       tagline: "Bike Me",
       privacy: "Confidentialité",
@@ -1345,7 +1854,8 @@ const dictionaries: Record<Locale, Dictionary> = {
       features: "Functies",
       howItWorks: "Hoe het werkt",
       screenshots: "Screenshots",
-      faq: "FAQ"
+      faq: "FAQ",
+      languageSwitcherLabel: "Taal kiezen"
     },
     hero: {
       headline: "Houd je fietsvrienden dichtbij - en vind nieuwe",
@@ -1431,32 +1941,32 @@ const dictionaries: Record<Locale, Dictionary> = {
       subtitle: "Van ontmoetingsplekken en uitnodigingen tot ritgeschiedenis en diepere inzichten.",
       items: [
         {
-          image: "/screenshots/app-01.PNG",
+          image: "/screenshots/app-01.png",
           title: "Word deel van de community",
           description: "Maak je profiel aan en begin met het opbouwen van je fietsnetwerk."
         },
         {
-          image: "/screenshots/app-02.PNG",
+          image: "/screenshots/app-02.png",
           title: "Kaart en vaste ontmoetingsplekken",
           description: "Zie vaste plekken, ritten in de buurt en waar je volgende groep kan starten."
         },
         {
-          image: "/screenshots/app-03.PNG",
+          image: "/screenshots/app-03.png",
           title: "Details van ontmoetingsplek",
           description: "Bekijk activiteit, komende ritten en maak een rit vanaf een bekende plek."
         },
         {
-          image: "/screenshots/app-04.PNG",
+          image: "/screenshots/app-04.png",
           title: "Ride Now of vooruit plannen",
           description: "Kies of de rit binnenkort start of later wordt gepland."
         },
         {
-          image: "/screenshots/app-05.PNG",
+          image: "/screenshots/app-05.png",
           title: "Maak en nodig uit",
           description: "Stel de rit in en nodig de fietsers uit die je erbij wilt hebben."
         },
         {
-          image: "/screenshots/app-06.PNG",
+          image: "/screenshots/app-06.png",
           title: "Suggesties voor rittitel",
           description: "Kies een duidelijke titel zodat de groep weet wat voor rit het is."
         },
@@ -1534,6 +2044,78 @@ const dictionaries: Record<Locale, Dictionary> = {
           answer: "Deelnemers krijgen pushmeldingen bij belangrijke updates, ook wanneer een host niet meer kan."
         }
       ]
+    },
+    androidTester: {
+      banner: {
+        eyebrow: "Vroege toegang voor Android",
+        title: "Bike Me komt naar Android",
+        body: "Help mee de nieuwe Bike Me-app op je Android-telefoon te testen.",
+        cta: "Meld je aan voor de Android-test"
+      },
+      page: {
+        metaTitle: "Meld je aan voor de Android-test | Bike Me",
+        metaDescription:
+          "Meld je aan voor de Android-test van Bike Me en help de app op je Android-telefoon te testen.",
+        openGraphImageAlt: "Voorbeeld van Bike Me",
+        backToHome: "Terug naar home",
+        formHeading: "Je gegevens voor de test"
+      },
+      eyebrow: "Android-testers gezocht",
+      title: "Test Bike Me voor Android en krijg 1 jaar volledige toegang",
+      body:
+        "Heb je een Android-telefoon? Help ons Bike Me te testen voordat de app wordt uitgebracht. Als dank voor je actieve deelname en feedback krijg je een jaar volledige toegang tot de hele app.",
+      rewardEyebrow: "Onze dank voor je actieve deelname",
+      rewardBadge: "1 jaar volledige toegang",
+      rewardNote:
+        "De volledige toegang wordt toegekend nadat je actief aan de test hebt deelgenomen en feedback hebt gedeeld. Aanmelden geeft niet direct toegang.",
+      formTitle: "Meld je aan voor de Android-test",
+      formText: "Vul het formulier in. We nemen daarna contact met je op met informatie over het testtraject.",
+      requiredNote: "Velden met een * zijn verplicht.",
+      nameLabel: "Naam",
+      namePlaceholder: "Je naam",
+      emailLabel: "Google Play-e-mailadres",
+      emailPlaceholder: "jij@voorbeeld.nl",
+      emailHint: "Gebruik het e-mailadres dat aan je Google Play-account is gekoppeld.",
+      deviceLabel: "Merk en model van je telefoon",
+      devicePlaceholder: "Bijvoorbeeld Google Pixel 9",
+      versionLabel: "Android-versie",
+      selectPrompt: "Kies je Android-versie",
+      versionEarlier: "Android 11 of ouder",
+      versionOther: "Andere versie",
+      versionUnknown: "Dat weet ik niet",
+      frequencyLabel: "Hoe vaak fiets je? (optioneel)",
+      frequencyPrompt: "Kies een antwoord",
+      frequencyOptions: {
+        daily: "Elke of bijna elke dag",
+        severalWeekly: "Meerdere keren per week",
+        weekly: "Ongeveer één keer per week",
+        monthly: "Een paar keer per maand",
+        rarely: "Minder vaak"
+      },
+      commentLabel: "Kort bericht of relevante opmerkingen (optioneel)",
+      commentPlaceholder: "Is er iets dat we over je telefoon of fietsgewoonten moeten weten?",
+      commitmentLabel: "Ik begrijp dat van mij wordt verwacht dat ik de testversie installeer en feedback deel.",
+      privacyPrefix: "Ik heb het ",
+      privacyLink: "privacybeleid",
+      privacySuffix: " gelezen.",
+      submissionNote:
+        "Door het formulier te verzenden meld je je aan voor het testtraject. Dit geeft niet direct toegang tot de beloning.",
+      submit: "Aanmelden voor de Android-test",
+      submitting: "Je aanmelding wordt verzonden…",
+      technicalError: "We konden je aanmelding nu niet verzenden. Je gegevens staan nog in het formulier; probeer het zo nog eens.",
+      successTitle: "Je bent aangemeld",
+      success: "Bedankt voor je aanmelding! We nemen contact op via je Google Play-e-mailadres wanneer de Android-test klaar is.",
+      honeypotLabel: "Bedrijfswebsite",
+      validation: {
+        required: "Vul dit veld in.",
+        invalidName: "Vul een naam van 2 tot 100 tekens in.",
+        invalidEmail: "Vul een geldig e-mailadres in.",
+        invalidDevice: "Vul een merk en model van 2 tot 120 tekens in.",
+        invalidSelection: "Kies een van de beschikbare opties.",
+        commentTooLong: "Houd je bericht onder de 1.000 tekens.",
+        commitmentRequired: "Bevestig dat je de testversie kunt installeren en feedback kunt delen.",
+        privacyRequired: "Bevestig dat je het privacybeleid hebt gelezen."
+      }
     },
     footer: {
       tagline: "Bike Me",

@@ -63,38 +63,97 @@ const metadataByLocale: Partial<Record<Locale, { title: string; description: str
 const uiByLocale: Partial<Record<Locale, { pageTitle: string; lastUpdated: string; backToHome: string }>> = {
   en: {
     pageTitle: "Privacy Policy for Bike ME",
-    lastUpdated: "Last updated: August 12, 2026",
+    lastUpdated: "Last updated: August 25, 2026",
     backToHome: "Back to home"
   },
   da: {
     pageTitle: "Privatlivspolitik for Bike ME",
-    lastUpdated: "Senest opdateret: 12. august 2026",
+    lastUpdated: "Senest opdateret: 25. august 2026",
     backToHome: "Tilbage til forsiden"
   },
   de: {
     pageTitle: "Datenschutzerklärung für Bike ME",
-    lastUpdated: "Zuletzt aktualisiert: 12. August 2026",
+    lastUpdated: "Zuletzt aktualisiert: 25. August 2026",
     backToHome: "Zur Startseite"
   },
   es: {
     pageTitle: "Política de privacidad de Bike ME",
-    lastUpdated: "Última actualización: 12 de agosto de 2026",
+    lastUpdated: "Última actualización: 25 de agosto de 2026",
     backToHome: "Volver al inicio"
   },
   it: {
     pageTitle: "Informativa sulla privacy di Bike ME",
-    lastUpdated: "Ultimo aggiornamento: 12 agosto 2026",
+    lastUpdated: "Ultimo aggiornamento: 25 agosto 2026",
     backToHome: "Torna alla home"
   },
   fr: {
     pageTitle: "Politique de confidentialité de Bike ME",
-    lastUpdated: "Dernière mise à jour : 12 août 2026",
+    lastUpdated: "Dernière mise à jour : 25 août 2026",
     backToHome: "Retour à l'accueil"
   },
   nl: {
     pageTitle: "Privacybeleid voor Bike ME",
-    lastUpdated: "Laatst bijgewerkt: 12 augustus 2026",
+    lastUpdated: "Laatst bijgewerkt: 25 augustus 2026",
     backToHome: "Terug naar home"
+  }
+};
+
+const androidTestPrivacySectionByLocale: Record<Locale, PrivacySection> = {
+  en: {
+    heading: "Android test applications",
+    paragraphs: [
+      "When you apply for the Android test on our website, we process your name, the email address connected to your Google Play account, phone brand and model, Android version, optional cycling frequency and comments, the page language, the time you acknowledged this privacy policy, the application time and an internal application status. We also ask you to confirm the testing expectations; that confirmation is checked when the form is submitted and is not stored separately.",
+      "We use this information only to assess and administer applications, contact potential testers, provide test instructions, organise feedback and document eligibility for the stated tester reward. To administer the testing process, the application information is sent by email to the responsible administrator through our transactional email provider. The legal basis is GDPR Art. 6(1)(b), steps at your request before participation, and Art. 6(1)(f), our legitimate interest in testing and improving Bike Me. We do not use the application for marketing.",
+      "We delete or anonymise the application when it is no longer necessary for the testing process, including when the relevant test and administration of any tester reward have ended. You may ask us to delete your application sooner by contacting us, unless we are legally required to retain it."
+    ]
+  },
+  da: {
+    heading: "Tilmelding til Android-test",
+    paragraphs: [
+      "Når du tilmelder dig Android-testen på vores hjemmeside, behandler vi dit navn, e-mailadressen til din Google Play-konto, telefonens mærke og model, Android-version, valgfri cykelhyppighed og kommentarer, sidens sprog, tidspunktet for din bekræftelse af privatlivspolitikken, tilmeldingstidspunktet og en intern tilmeldingsstatus. Vi beder dig også bekræfte forventningerne til testen; bekræftelsen kontrolleres ved indsendelse og gemmes ikke særskilt.",
+      "Vi bruger kun oplysningerne til at vurdere og administrere tilmeldinger, kontakte mulige testere, sende testinstruktioner, organisere feedback og dokumentere retten til den oplyste testerbelønning. For at administrere testforløbet sendes tilmeldingsoplysningerne via vores transaktionsmailudbyder til den ansvarlige administrator. Behandlingsgrundlaget er GDPR art. 6, stk. 1, litra b, foranstaltninger på din anmodning før deltagelse, og litra f, vores legitime interesse i at teste og forbedre Bike Me. Tilmeldingen bruges ikke til markedsføring.",
+      "Vi sletter eller anonymiserer tilmeldingen, når den ikke længere er nødvendig for testforløbet, herunder når den relevante test og administrationen af en eventuel testerbelønning er afsluttet. Du kan bede os slette din tilmelding tidligere ved at kontakte os, medmindre vi er retligt forpligtede til at gemme den."
+    ]
+  },
+  de: {
+    heading: "Anmeldungen zum Android-Test",
+    paragraphs: [
+      "Wenn du dich auf unserer Website für den Android-Test anmeldest, verarbeiten wir deinen Namen, die mit deinem Google-Play-Konto verknüpfte E-Mail-Adresse, Marke und Modell des Smartphones, Android-Version, optionale Angaben zur Häufigkeit deiner Radfahrten und Kommentare, die Seitensprache, den Zeitpunkt der Bestätigung dieser Datenschutzerklärung, den Anmeldezeitpunkt und einen internen Anmeldestatus. Außerdem musst du die Testerwartungen bestätigen; diese Bestätigung wird beim Absenden geprüft und nicht gesondert gespeichert.",
+      "Wir verwenden diese Angaben ausschließlich, um Anmeldungen zu prüfen und zu verwalten, mögliche Tester zu kontaktieren, Testanweisungen bereitzustellen, Feedback zu organisieren und den Anspruch auf die genannte Testerbelohnung zu dokumentieren. Zur Verwaltung des Testablaufs werden die Anmeldedaten über unseren Transaktions-E-Mail-Anbieter per E-Mail an den zuständigen Administrator gesendet. Rechtsgrundlage sind Art. 6 Abs. 1 lit. b DSGVO für vorvertragliche Maßnahmen auf deine Anfrage und Art. 6 Abs. 1 lit. f DSGVO, unser berechtigtes Interesse, Bike Me zu testen und zu verbessern. Die Anmeldung wird nicht für Marketing genutzt.",
+      "Wir löschen oder anonymisieren die Anmeldung, sobald sie für den Testablauf nicht mehr erforderlich ist, insbesondere nach Abschluss des betreffenden Tests und der Verwaltung einer möglichen Testerbelohnung. Du kannst uns um eine frühere Löschung bitten, sofern keine gesetzliche Aufbewahrungspflicht besteht."
+    ]
+  },
+  es: {
+    heading: "Inscripciones para la prueba de Android",
+    paragraphs: [
+      "Cuando te inscribes en la prueba de Android en nuestro sitio web, tratamos tu nombre, el correo vinculado a tu cuenta de Google Play, la marca y el modelo del teléfono, la versión de Android, la frecuencia de ciclismo y los comentarios opcionales, el idioma de la página, la hora en que confirmaste esta política de privacidad, la hora de inscripción y un estado interno de la solicitud. También pedimos que confirmes las expectativas de la prueba; esta confirmación se comprueba al enviar el formulario y no se almacena por separado.",
+      "Usamos estos datos únicamente para evaluar y administrar las inscripciones, contactar con posibles testers, facilitar instrucciones, organizar los comentarios y documentar el derecho a la recompensa indicada. Para administrar el proceso de prueba, los datos de la inscripción se envían por correo electrónico al administrador responsable a través de nuestro proveedor de correo transaccional. La base jurídica es el art. 6.1.b del RGPD, medidas solicitadas antes de la participación, y el art. 6.1.f, nuestro interés legítimo en probar y mejorar Bike Me. No usamos la inscripción con fines de marketing.",
+      "Eliminamos o anonimizamos la inscripción cuando deja de ser necesaria para el proceso de prueba, incluido el final de la prueba correspondiente y de la gestión de cualquier recompensa. Puedes pedirnos que la eliminemos antes, salvo que la ley nos obligue a conservarla."
+    ]
+  },
+  it: {
+    heading: "Iscrizioni al test Android",
+    paragraphs: [
+      "Quando ti iscrivi al test Android sul nostro sito, trattiamo il tuo nome, l'indirizzo e-mail collegato al tuo account Google Play, marca e modello del telefono, versione Android, frequenza di utilizzo della bicicletta e commenti facoltativi, lingua della pagina, momento in cui hai confermato questa informativa, data e ora dell'iscrizione e uno stato interno della domanda. Ti chiediamo inoltre di confermare le aspettative del test; la conferma viene verificata all'invio e non viene archiviata separatamente.",
+      "Usiamo questi dati esclusivamente per valutare e gestire le iscrizioni, contattare i potenziali tester, fornire istruzioni, organizzare i feedback e documentare il diritto alla ricompensa indicata. Per gestire il test, i dati dell'iscrizione vengono inviati via e-mail all'amministratore responsabile tramite il nostro fornitore di e-mail transazionali. La base giuridica è l'art. 6, par. 1, lett. b GDPR, misure su tua richiesta prima della partecipazione, e l'art. 6, par. 1, lett. f, il nostro legittimo interesse a testare e migliorare Bike Me. Non usiamo l'iscrizione per il marketing.",
+      "Eliminiamo o rendiamo anonima l'iscrizione quando non è più necessaria per il test, anche dopo la conclusione del test pertinente e della gestione dell'eventuale ricompensa. Puoi chiederci di eliminarla prima, salvo obblighi legali di conservazione."
+    ]
+  },
+  fr: {
+    heading: "Inscriptions au test Android",
+    paragraphs: [
+      "Lorsque vous vous inscrivez au test Android sur notre site, nous traitons votre nom, l'adresse e-mail associée à votre compte Google Play, la marque et le modèle du téléphone, la version d'Android, la fréquence de pratique du vélo et les remarques facultatives, la langue de la page, l'heure de votre confirmation de cette politique, la date de l'inscription et un statut interne. Nous vous demandons aussi de confirmer les attentes du test ; cette confirmation est vérifiée lors de l'envoi et n'est pas conservée séparément.",
+      "Nous utilisons ces informations uniquement pour évaluer et gérer les inscriptions, contacter les testeurs potentiels, fournir les instructions, organiser les retours et documenter le droit à la récompense annoncée. Pour administrer le test, les informations d'inscription sont envoyées par e-mail à l'administrateur responsable par l'intermédiaire de notre fournisseur d'e-mails transactionnels. La base juridique est l'art. 6(1)(b) du RGPD, mesures prises à votre demande avant la participation, et l'art. 6(1)(f), notre intérêt légitime à tester et améliorer Bike Me. L'inscription n'est pas utilisée à des fins commerciales.",
+      "Nous supprimons ou anonymisons l'inscription lorsqu'elle n'est plus nécessaire au test, notamment après la fin du test concerné et de la gestion de toute récompense. Vous pouvez demander sa suppression plus tôt, sauf obligation légale de conservation."
+    ]
+  },
+  nl: {
+    heading: "Aanmeldingen voor de Android-test",
+    paragraphs: [
+      "Wanneer je je via onze website aanmeldt voor de Android-test, verwerken we je naam, het e-mailadres van je Google Play-account, merk en model van je telefoon, Android-versie, optionele fietsfrequentie en opmerkingen, de paginataal, het tijdstip waarop je dit privacybeleid bevestigde, het aanmeldmoment en een interne aanmeldstatus. We vragen ook om de testverwachtingen te bevestigen; die bevestiging wordt bij verzending gecontroleerd en niet apart opgeslagen.",
+      "We gebruiken deze gegevens uitsluitend om aanmeldingen te beoordelen en beheren, mogelijke testers te benaderen, testinstructies te geven, feedback te organiseren en het recht op de genoemde testersbeloning vast te leggen. Om het testtraject te beheren, worden de aanmeldgegevens via onze aanbieder van transactionele e-mail per e-mail naar de verantwoordelijke beheerder gestuurd. De grondslag is art. 6 lid 1 onder b AVG, stappen op jouw verzoek vóór deelname, en art. 6 lid 1 onder f, ons gerechtvaardigde belang om Bike Me te testen en verbeteren. We gebruiken de aanmelding niet voor marketing.",
+      "We verwijderen of anonimiseren de aanmelding zodra deze niet meer nodig is voor het testtraject, waaronder na afronding van de betreffende test en de afhandeling van een eventuele testersbeloning. Je kunt ons vragen de aanmelding eerder te verwijderen, tenzij we deze wettelijk moeten bewaren."
+    ]
   }
 };
 
@@ -967,6 +1026,7 @@ export default async function PrivacyPage({ params }: LocalePageProps) {
   const fallback = uiByLocale.en!;
   const ui = uiByLocale[locale] ?? fallback;
   const privacy = privacyContentByLocale[locale] ?? privacyContentByLocale.en;
+  const sections = [...privacy.sections, androidTestPrivacySectionByLocale[locale]];
 
   return (
     <div className="pb-12">
@@ -1006,9 +1066,9 @@ export default async function PrivacyPage({ params }: LocalePageProps) {
               ))}
             </section>
 
-            {privacy.sections.map((section) => (
+            {sections.map((section) => (
               <section key={section.heading} className="space-y-3">
-                <h2 className="font-display text-2xl font-semibold text-[var(--ink)]">
+                <h2 className="break-words font-display text-2xl font-semibold text-[var(--ink)]">
                   {section.heading}
                 </h2>
                 {section.paragraphs?.map((paragraph) => (

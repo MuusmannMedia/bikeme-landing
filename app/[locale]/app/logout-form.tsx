@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { announceClubAuthTransition } from "@/lib/clubs/auth-events";
 
 import type { AuthDictionary } from "@/lib/auth-i18n";
 import type { Locale } from "@/lib/locales";
@@ -15,7 +16,11 @@ export function LogoutForm({ action, locale, translations }: LogoutFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   return (
-    <form action={action} onSubmit={() => setIsSubmitting(true)}>
+    <form action={async (data) => {
+        announceClubAuthTransition("changing");
+        try { await action(data); }
+        finally { announceClubAuthTransition("settled"); }
+      }} onSubmit={() => setIsSubmitting(true)}>
       <input type="hidden" name="locale" value={locale} />
       <button
         type="submit"

@@ -1,5 +1,7 @@
 "use server";
 
+import { createClubRideApi } from "@/lib/clubs/ride-api";
+import { clubRideHref } from "@/lib/clubs/ride-contract";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -160,6 +162,14 @@ export async function joinRideAction(formData: FormData): Promise<void> {
   if (!context) redirect(`/${getSafeLocale(formData.get("locale"))}/login`);
   const rideId = uuidValue(formData, "rideId");
   if (!rideId) redirectResult(context, "invalid");
+  const scope=await context.client.from("rides").select("club_id,club_closed_at").eq("id",rideId).maybeSingle();
+  if(scope.error || !scope.data || scope.data.club_closed_at) redirectResult(context,"forbidden");
+  if(scope.data.club_id) {
+    try { await createClubRideApi(context.client,context.userId).act({clubId:scope.data.club_id,rideId,action:"join" }); }
+    catch { redirectResult(context,"forbidden"); }
+    redirect(clubRideHref(context.locale,scope.data.club_id,rideId));
+  }
+
   const { error } = await context.client.from("participants").insert({
     ride_id: rideId,
     user_id: context.userId,
@@ -177,6 +187,14 @@ export async function leaveRideAction(formData: FormData): Promise<void> {
   if (!context) redirect(`/${getSafeLocale(formData.get("locale"))}/login`);
   const rideId = uuidValue(formData, "rideId");
   if (!rideId) redirectResult(context, "invalid");
+  const scope=await context.client.from("rides").select("club_id,club_closed_at").eq("id",rideId).maybeSingle();
+  if(scope.error || !scope.data || scope.data.club_closed_at) redirectResult(context,"forbidden");
+  if(scope.data.club_id) {
+    try { await createClubRideApi(context.client,context.userId).act({clubId:scope.data.club_id,rideId,action:"leave" }); }
+    catch { redirectResult(context,"forbidden"); }
+    redirect(clubRideHref(context.locale,scope.data.club_id,rideId));
+  }
+
   const { error } = await context.client
     .from("participants")
     .delete()
@@ -193,6 +211,13 @@ async function updateRideInvite(formData: FormData, accepted: boolean): Promise<
   if (!context) redirect(`/${getSafeLocale(formData.get("locale"))}/login`);
   const rideId = uuidValue(formData, "rideId");
   if (!rideId) redirectResult(context, "invalid");
+  const scope=await context.client.from("rides").select("club_id,club_closed_at").eq("id",rideId).maybeSingle();
+  if(scope.error || !scope.data || scope.data.club_closed_at) redirectResult(context,"forbidden");
+  if(scope.data.club_id) {
+    try {await createClubRideApi(context.client,context.userId).act({clubId:scope.data.club_id,rideId,action:"respond",accept:accepted});}
+    catch {redirectResult(context,"forbidden");}
+    redirect(clubRideHref(context.locale,scope.data.club_id,rideId));
+  }
   const now = new Date().toISOString();
   const { error } = await context.client
     .from("ride_invites")
@@ -318,6 +343,7 @@ export async function createRideAction(
 ): Promise<CreateRideActionState> {
   const context = await getActionContext(formData);
   if (!context) redirect(`/${getSafeLocale(formData.get("locale"))}/login`);
+  if(formData.has("clubId")) return createRideFailure(previousState,"forbidden");
   const createRequestId = uuidValue(formData, "createRequestId");
   const meetingMode = textValue(formData, "meetingMode", 10);
   const hotspotId = meetingMode === "hotspot" ? uuidValue(formData, "hotspotId") : null;
@@ -502,11 +528,12 @@ export async function updateRideAction(formData: FormData): Promise<void> {
   if (!rideId || !input) redirectResult(context, "invalid");
   const { data: current, error: currentError } = await context.client
     .from("rides")
-    .select("type")
+    .select("type,club_id,club_closed_at")
     .eq("id", rideId)
     .eq("host_id", context.userId)
     .maybeSingle();
   if (currentError || !current) redirectResult(context, currentError?.code === "42501" ? "forbidden" : "error");
+  if(current.club_id || current.club_closed_at) redirectResult(context,"forbidden");
   const expiresAt = new Date(input.startTime.getTime() + (current.type === "PING" ? 120 : input.durationMinutes) * 60_000);
   const { error } = await context.client
     .from("rides")
@@ -533,6 +560,14 @@ export async function cancelRideAction(formData: FormData): Promise<void> {
   if (!context) redirect(`/${getSafeLocale(formData.get("locale"))}/login`);
   const rideId = uuidValue(formData, "rideId");
   if (!rideId) redirectResult(context, "invalid");
+  const scope=await context.client.from("rides").select("club_id,club_closed_at").eq("id",rideId).maybeSingle();
+  if(scope.error || !scope.data || scope.data.club_closed_at) redirectResult(context,"forbidden");
+  if(scope.data.club_id) {
+    try { await createClubRideApi(context.client,context.userId).act({clubId:scope.data.club_id,rideId,action:"cancel" }); }
+    catch { redirectResult(context,"forbidden"); }
+    redirect(clubRideHref(context.locale,scope.data.club_id,rideId));
+  }
+
   const { error } = await context.client
     .from("rides")
     .update({ status: "CANCELLED" })
@@ -550,6 +585,14 @@ export async function inviteRiderAction(formData: FormData): Promise<void> {
   const rideId = uuidValue(formData, "rideId");
   const inviteeId = uuidValue(formData, "inviteeId");
   if (!rideId || !inviteeId || inviteeId === context.userId) redirectResult(context, "invalid");
+  const scope=await context.client.from("rides").select("club_id,club_closed_at").eq("id",rideId).maybeSingle();
+  if(scope.error || !scope.data || scope.data.club_closed_at) redirectResult(context,"forbidden");
+  if(scope.data.club_id) {
+    try { await createClubRideApi(context.client,context.userId).act({clubId:scope.data.club_id,rideId,action:"invite",ids:[inviteeId] }); }
+    catch { redirectResult(context,"forbidden"); }
+    redirect(clubRideHref(context.locale,scope.data.club_id,rideId));
+  }
+
   const { data: connection, error: connectionError } = await context.client
     .from("rider_connections")
     .select("id")

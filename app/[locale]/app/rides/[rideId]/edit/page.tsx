@@ -1,4 +1,5 @@
-import { notFound } from "next/navigation";
+import { clubRideHref } from "@/lib/clubs/ride-contract";
+import { notFound, redirect } from "next/navigation";
 
 import { AppPageHeader, AppPanel } from "@/components/app-ui";
 import { LocalDateTimeInput } from "@/components/local-date-time-input";
@@ -16,6 +17,9 @@ export default async function EditRidePage({ params }: { params: Promise<{ local
   const t = getAppDictionary(locale);
   const client = await createClient();
   const viewer = await loadViewer(client);
+  const scope=await client.from("rides").select("club_id,club_closed_at").eq("id",rideId).maybeSingle();
+  if(scope.error || scope.data?.club_closed_at) notFound();
+  if(scope.data?.club_id) redirect(clubRideHref(locale,scope.data.club_id,rideId));
   const ride = await loadRideDetail(client, viewer.userId, rideId).catch(() => null);
   if (!ride || ride.hostId !== viewer.userId) notFound();
   const durationMinutes = ride.expiresAt ? Math.round((Date.parse(ride.expiresAt) - Date.parse(ride.startTime)) / 60_000) : 120;

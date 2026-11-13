@@ -1,3 +1,4 @@
+import {dmText} from "@/lib/messages/i18n";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -22,6 +23,8 @@ export function AppShell({ children, locale, viewer, displayName, t }: AppShellP
   const links = [
     [base, t("nav.overview"), t("nav.overview")],
     [`${base}/rides`, t("nav.rides"), t("nav.rides")],
+    [`${base}/clubs`, t("nav.clubs"), t("nav.clubs")],
+    [`${base}/messages`, dmText(locale,"entry"), dmText(locale,"entry")],
     [`${base}/riders`, t("nav.riders"), t("nav.riders")],
     [`${base}/requests`, t("nav.requests"), t("nav.requests")],
     [`${base}/history`, t("nav.history"), t("nav.history")],

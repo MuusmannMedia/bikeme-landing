@@ -15,32 +15,41 @@ export function LocalDateTimeInput({
   required = true,
   minimumValue,
   stepSeconds,
-  invalidMessage
+  invalidMessage, onValueChange
 }: {
   name: string;
   defaultValue?: string | null;
   required?: boolean;
   minimumValue?: string | null;
   stepSeconds?: number;
-  invalidMessage?: string;
+  invalidMessage?: string; onValueChange?: (iso:string) => void;
 }) {
   const [value, setValue] = useState(() => toLocalInputValue(defaultValue));
   const date = value ? new Date(value) : null;
   const iso = date && Number.isFinite(date.getTime()) ? date.toISOString() : "";
+  const minimum = minimumValue && stepSeconds ? new Date(Math.floor(Date.parse(minimumValue)/(stepSeconds*1000))*stepSeconds*1000).toISOString() : minimumValue;
   return (
     <>
       <input
         type="datetime-local"
         value={value}
         required={required}
-        min={minimumValue ? toLocalInputValue(minimumValue) : undefined}
+        min={minimum ? toLocalInputValue(minimum) : undefined}
         step={stepSeconds}
         onInvalid={(event) => {
           if (invalidMessage) event.currentTarget.setCustomValidity(invalidMessage);
         }}
+        onInput={(event) => {
+          event.currentTarget.setCustomValidity("");
+          setValue(event.currentTarget.value);
+          const next=new Date(event.currentTarget.value);
+          onValueChange?.(Number.isFinite(next.getTime())?next.toISOString():"");
+        }}
         onChange={(event) => {
           event.currentTarget.setCustomValidity("");
-          setValue(event.target.value);
+          setValue(event.currentTarget.value);
+          const next=new Date(event.currentTarget.value);
+          onValueChange?.(Number.isFinite(next.getTime())?next.toISOString():"");
         }}
       />
       <input type="hidden" name={name} value={iso} />

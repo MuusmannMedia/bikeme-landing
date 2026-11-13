@@ -1,3 +1,4 @@
+import { localizedRidePresets } from "./ride-create-i18n";
 import type { UnitSystem } from "./app-model";
 import type { Locale } from "./locales";
 
@@ -84,11 +85,11 @@ const englishTitleSuggestions = [
 
 export function getRideMoodOptions(locale: Locale): { key: RideMoodKey; label: string }[] {
   const labels = locale === "da" ? danishMoodLabels : englishMoodLabels;
-  return rideMoodKeys.map((key) => ({ key, label: labels[key] }));
+  return rideMoodKeys.map((key,index) => ({ key, label: localizedRidePresets[locale]?.moods[index] ?? labels[key] }));
 }
 
 export function getRideTitleSuggestions(locale: Locale): readonly string[] {
-  return locale === "da" ? danishTitleSuggestions : englishTitleSuggestions;
+  return localizedRidePresets[locale]?.titles ?? (locale === "da" ? danishTitleSuggestions : englishTitleSuggestions);
 }
 
 export function isRideMoodKey(value: string): value is RideMoodKey {

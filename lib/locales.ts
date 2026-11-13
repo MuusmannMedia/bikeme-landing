@@ -14,6 +14,16 @@ export const localeLabels: Record<Locale, string> = {
   nl: "NL"
 };
 
+export const localeNames: Record<Locale, string> = {
+  en: "English",
+  da: "Dansk",
+  de: "Deutsch",
+  es: "Español",
+  it: "Italiano",
+  fr: "Français",
+  nl: "Nederlands"
+};
+
 export function isLocale(value: string): value is Locale {
   return locales.includes(value as Locale);
 }

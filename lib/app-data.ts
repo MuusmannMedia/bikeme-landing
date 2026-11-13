@@ -137,11 +137,13 @@ export async function loadViewer(client: Client): Promise<Viewer> {
 async function loadProfilesById(client: Client, ids: string[]): Promise<Map<string, RiderProfile>> {
   const uniqueIds = [...new Set(ids.filter(Boolean))];
   if (uniqueIds.length === 0) return new Map();
-  const { data, error } = await client
-    .from("profiles")
-    .select("id,display_name,avatar_url,level_desc,home_region,about_me")
-    .in("id", uniqueIds);
-  if (error) throw new AppDataError("LOAD_FAILED");
+  const data:Record<string,unknown>[]=[];
+  for(let offset=0;offset<uniqueIds.length;offset+=200) {
+    const response=await client.from("profiles").select("id,display_name,avatar_url,level_desc,home_region,about_me").in("id",uniqueIds.slice(offset,offset+200));
+    if(response.error) throw new AppDataError("LOAD_FAILED");
+    data.push(...(response.data??[]) as Record<string,unknown>[]);
+  }
+
   return new Map(
     ((data ?? []) as Record<string, unknown>[]).map((row) => {
       const profile = normalizeProfile(row);
@@ -150,7 +152,7 @@ async function loadProfilesById(client: Client, ids: string[]): Promise<Map<stri
   );
 }
 
-function normalizeRide(
+export function normalizeRide(
   row: Record<string, unknown>,
   hostName: string | null,
   joinedIds: Set<string>
@@ -161,6 +163,9 @@ function normalizeRide(
     : 0;
   return {
     id: String(row.id ?? ""),
+    clubId: nullableString(row.club_id),
+    clubClosedAt: nullableString(row.club_closed_at),
+    cancelReason: nullableString(row.cancel_reason),
     hostId: String(row.host_id ?? ""),
     hostName,
     type: row.type === "PING" ? "PING" : "EVENT",
@@ -181,7 +186,7 @@ function normalizeRide(
   };
 }
 
-const rideProjection = "id,host_id,type,status,visibility,title,description,start_time,expires_at,discipline,pace_text,distance_km,meeting_address,max_participants,hotspot_id,participants(count)";
+export const rideProjection = "id,club_id,club_closed_at,cancel_reason,host_id,type,status,visibility,title,description,start_time,expires_at,discipline,pace_text,distance_km,meeting_address,max_participants,hotspot_id,participants(count)";
 
 export async function listAuthorizedRides(client: Client, userId: string): Promise<RideSummary[]> {
   const nowIso = new Date().toISOString();
@@ -206,7 +211,7 @@ export async function listAuthorizedRides(client: Client, userId: string): Promi
   const joinedIds = new Set(
     ((joinedResponse.data ?? []) as Record<string, unknown>[]).map((row) => String(row.ride_id ?? ""))
   );
-  return rows.map((row) => normalizeRide(
+  return rows.filter(row => !row.club_closed_at && !row.club_id).map((row) => normalizeRide(
     row,
     profiles.get(String(row.host_id ?? ""))?.displayName ?? null,
     joinedIds
@@ -281,15 +286,17 @@ function normalizeRoute(value: unknown): RoutePoint[] {
   });
 }
 
-export async function loadRideDetail(client: Client, userId: string, rideId: string): Promise<RideDetail> {
+export async function loadRideDetail(client: Client, userId: string, rideId: string, strict = false): Promise<RideDetail> {
   const [rideResponse, joinedResponse, routeResponse, participantResponse, inviteResponse] = await Promise.all([
     client.from("rides").select(rideProjection).eq("id", rideId).maybeSingle(),
     client.from("participants").select("ride_id").eq("ride_id", rideId).eq("user_id", userId).maybeSingle(),
     client.from("ride_planned_routes").select("route_coordinates").eq("ride_id", rideId).maybeSingle(),
-    client.from("participants").select("user_id,role,status,joined_at").eq("ride_id", rideId).order("joined_at"),
-    client.from("ride_invites").select("ride_id,host_id,invitee_id,created_at,accepted_at,declined_at").eq("ride_id", rideId).order("created_at")
+    strict ? allRideRows(offset => client.from("participants").select("user_id,role,status,joined_at").eq("ride_id",rideId).order("joined_at").order("user_id").range(offset,offset+199)) : client.from("participants").select("user_id,role,status,joined_at").eq("ride_id", rideId).order("joined_at"),
+    strict ? allRideRows(offset => client.from("ride_invites").select("ride_id,host_id,invitee_id,created_at,accepted_at,declined_at").eq("ride_id",rideId).order("created_at").order("invitee_id").range(offset,offset+199)) : client.from("ride_invites").select("ride_id,host_id,invitee_id,created_at,accepted_at,declined_at").eq("ride_id", rideId).order("created_at")
   ]);
   if (rideResponse.error || !rideResponse.data) throw new AppDataError(rideResponse.error ? "LOAD_FAILED" : "NOT_FOUND");
+  if (rideRowClosed(rideResponse.data)) throw new AppDataError("NOT_FOUND");
+  if (strict && (joinedResponse.error || routeResponse.error || inviteResponse.error)) throw new AppDataError("LOAD_FAILED");
   if (participantResponse.error) throw new AppDataError("LOAD_FAILED");
   const rideRow = rideResponse.data as unknown as Record<string, unknown>;
   const participantRows = (participantResponse.data ?? []) as Record<string, unknown>[];
@@ -406,12 +413,12 @@ export async function listRideInvites(client: Client, userId: string): Promise<R
   const [profiles, ridesResponse] = await Promise.all([
     loadProfilesById(client, counterpartIds),
     rideIds.length
-      ? client.from("rides").select("id,title,start_time").in("id", rideIds)
+      ? client.from("rides").select("id,title,start_time,club_id,club_closed_at").in("id", rideIds)
       : Promise.resolve({ data: [], error: null })
   ]);
   if (ridesResponse.error) throw new AppDataError("LOAD_FAILED");
   const rides = new Map(((ridesResponse.data ?? []) as Record<string, unknown>[]).map((row) => [String(row.id), row]));
-  return rows.map((row) => {
+  return rows.filter(row => { const ride=rides.get(String(row.ride_id)); return ride && !ride.club_id && !ride.club_closed_at; }).map((row) => {
     const direction = row.invitee_id === userId ? "received" as const : "sent" as const;
     const counterpartId = String(direction === "received" ? row.host_id : row.invitee_id);
     const ride = rides.get(String(row.ride_id ?? ""));
@@ -615,4 +622,16 @@ export async function loadRideHistoryDetail(client: Client, userId: string, hist
     route: route.length > 0 ? route : normalizeRoute(row.route_data),
     zones: normalizeZones(row.zone_distribution)
   };
+}
+
+function rideRowClosed(row: unknown) { return !!(row && typeof row === "object" && "club_closed_at" in row && row.club_closed_at); }
+
+export async function allRideRows(query:(offset:number)=>PromiseLike<{data:unknown;error:unknown}>) {
+ const rows:Record<string,unknown>[]=[];
+ for(let offset=0;;offset+=200) {
+  const result=await query(offset);
+  if(result.error || !Array.isArray(result.data)) throw new AppDataError("LOAD_FAILED");
+  rows.push(...result.data as Record<string,unknown>[]);
+  if(result.data.length<200)return {data:rows,error:null};
+ }
 }
