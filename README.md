@@ -115,8 +115,8 @@ Please provide these production values so placeholders can be replaced:
 
 ## Release boundaries
 
-The visitor profile, visitor ride previews and membership applications are currently restricted to the exact test backend `bcskqapoagflshewvzzc` and blocked when `VERCEL_ENV=production`. Private club profile/image editing has the same restrictions and additionally requires `BIKE_ME_CLUB_PROFILE_EDIT_ENABLED=true`. Club ride push remains opt-in through the server-only `BIKE_ME_CLUB_RIDE_PUSH_ENABLED` variable and should remain unset/false for this candidate.
+Visitor profiles, selected ride previews and membership applications have an independent, server-only `BIKE_ME_CLUB_VISITS_ENABLED=true` production opt-in. It is accepted only with `VERCEL_ENV=production` and the exact production backend `zawilafvdwlnwsdeufts`. It defaults off. The database contracts0070–0075 must first be verified and their four server flags remain separate authoritative stops. Preview/local access remains restricted to the isolated test backend; production can never target that backend.
 
-These guards are intentional. Publishing this commit does not enable those functions in production. Existing private clubs, membership management, rides, posts, chat and direct messages use their existing backend contracts, which must be checked against the target schema before release. Never point a production build at the test backend.
+This visitor switch never enables the private club profile/image editor or web club ride push. Both remain blocked in production even if their separate opt-in variables are accidentally set. Existing private club reads, ordinary club creation and legacy iOS contracts/push are unchanged. No environment or database flag is activated by committing this code.
 
 Local role stations, fixture journals and acceptance screenshots live under ignored `review/` or private temporary directories and are not deployment inputs. `.vercelignore` also excludes backend tooling and tests. Production needs only the existing public Supabase URL/publishable key and the normal authenticated user session; no service-role key belongs in the web deployment.

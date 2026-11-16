@@ -1,10 +1,11 @@
 import "server-only";
+import {clubRidePushEnabled} from "./ride-push-gate";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 // Opt-in server configuration. Kept off in the isolated test run: no real push
 // is sent. Uses the same saved-invitation endpoint/summary as iOS 132.
 export function clubRidePushTransport(client:SupabaseClient,actor:string) {
- if(process.env.BIKE_ME_CLUB_RIDE_PUSH_ENABLED!=="true") return undefined;
+ if(!clubRidePushEnabled(process.env)) return undefined;
  return async (rideId:string,ids:string[]):Promise<boolean>=>{
   const auth=await client.auth.getSession();
   if(auth.error || auth.data.session?.user.id!==actor) return false;

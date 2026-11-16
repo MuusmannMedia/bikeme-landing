@@ -4,7 +4,7 @@ import {createClubProfileApi} from '../profile-api';
 import {createClubMembershipApi} from '../membership-api';
 import {isClubId} from '../types';
 import {VisitError,visitError,type VisitCommand,type VisitProfile,type VisitRide,type VisitSettings,type RideSetting,type MyApplication,type ReviewApplication,type VisitSnapshot,type ManageSnapshot} from './contract';
-export function visitsTestEnabled(env:Readonly<Record<string,string|undefined>>){return env.NEXT_PUBLIC_SUPABASE_URL==='https://bcskqapoagflshewvzzc.supabase.co'&&env.VERCEL_ENV!=='production';}
+export {visitsEnabled} from './gate';
 export function createVisitApi(client:SupabaseClient,actor:string){
  async function rpc<T>(name:string,args:Record<string,unknown>={}):Promise<T>{const c=new AbortController(),timer=setTimeout(()=>c.abort(),20000);try{const r=await client.rpc(name,args).abortSignal(c.signal);if(r.error)throw visitError(r.error);return r.data as T;}finally{clearTimeout(timer);}}
  async function optional<T>(read:()=>Promise<T>,fallback:T):Promise<{value:T;enabled:boolean}>{try{return{value:await read(),enabled:true};}catch(e){if(visitError(e).kind!=='access')throw e;return{value:fallback,enabled:false};}}

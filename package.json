@@ -20,7 +20,8 @@
     "test:club-images": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir .test-build/bikeme-club-image-tests tests/club-images.test.ts && node --test .test-build/bikeme-club-image-tests/tests/club-images.test.js",
     "test:access-refresh": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir .test-build/bikeme-access-tests tests/access-refresh.test.ts && node --test .test-build/bikeme-access-tests/tests/access-refresh.test.js",
     "test:club-visits": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir .test-build/bikeme-visit-tests tests/club-visits.test.ts && node --test .test-build/bikeme-visit-tests/tests/club-visits.test.js",
-    "test:conversation-position": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir .test-build/bikeme-position-tests tests/conversation-position.test.ts && node --test .test-build/bikeme-position-tests/tests/conversation-position.test.js"
+    "test:conversation-position": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir .test-build/bikeme-position-tests tests/conversation-position.test.ts && node --test .test-build/bikeme-position-tests/tests/conversation-position.test.js",
+    "test:signal-readiness": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir .test-build/bikeme-signal-tests tests/realtime-signals.test.ts && node --test .test-build/bikeme-signal-tests/tests/realtime-signals.test.js"
   },
   "dependencies": {
     "@supabase/ssr": "0.10.0",

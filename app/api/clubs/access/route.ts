@@ -1,5 +1,5 @@
 import {loadVisitCatalog} from '@/lib/clubs/visits/catalog';
-import {createVisitApi,visitsTestEnabled} from '@/lib/clubs/visits/api';
+import {createVisitApi,visitsEnabled} from '@/lib/clubs/visits/api';
 import {profileEditingEnabled} from "@/lib/clubs/profile-contract";
 import { createClubRideApi } from "@/lib/clubs/ride-api";
 import { NextRequest, NextResponse } from "next/server";
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
     }
     else {
       const [mine, catalog] = await Promise.all([api.list(), request.nextUrl.searchParams.get("directory")==="mine"?Promise.resolve([]):api.catalog()]);
-      const visits=visitsTestEnabled(process.env)?await loadVisitCatalog(catalog.filter(c=>!mine.some(m=>m.id===c.id)).map(c=>c.id),id=>createVisitApi(client,data.user!.id).profile(id)):{};
+      const visits=visitsEnabled(process.env)?await loadVisitCatalog(catalog.filter(c=>!mine.some(m=>m.id===c.id)).map(c=>c.id),id=>createVisitApi(client,data.user!.id).profile(id)):{};
       snapshot = { view: "directory", mine, catalog, visits, membership: {invitations: await membershipApi.invitations(), pending: [], proposals: [], transfers} };
     }
     return response({ userId: data.user.id, snapshot });
