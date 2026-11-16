@@ -5,6 +5,7 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   globalIgnores([
     ".next/**",
+    ".test-build/**",
     "out/**",
     "build/**",
     "supabase/functions/**",
