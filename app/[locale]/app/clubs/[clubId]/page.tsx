@@ -1,3 +1,6 @@
+import {VisitBoundary} from "@/components/clubs/visits/visitor";
+import {visitsTestEnabled} from "@/lib/clubs/visits/api";
+import {clubReadError} from "@/lib/clubs/types";
 import { notFound } from "next/navigation";
 import { ClubSessionBoundary } from "@/components/clubs/club-session-boundary";
 import { clubPageContext } from "@/lib/clubs/server";
@@ -8,7 +11,8 @@ export const dynamic = "force-dynamic";
 export default async function ClubPage({ params }: { params: Promise<{ locale: string; clubId: string }> }) {
   const { locale, clubId } = await params;
   if (!isLocale(locale)) notFound();
-  const { userId } = await clubPageContext(locale, `/${locale}/app/clubs/${encodeURIComponent(clubId)}`);
+  const { userId, api } = await clubPageContext(locale, `/${locale}/app/clubs/${encodeURIComponent(clubId)}`);
+  if(visitsTestEnabled(process.env)){try{await api.detail(clubId);}catch(error){if(clubReadError(error).kind==="access")return <VisitBoundary key={locale+userId+clubId} userId={userId} clubId={clubId} locale={locale}/>;}}
   // Only route identity crosses the RSC boundary. Authorized club data is read
   // fresh by the client store and can be completely discarded on revocation.
   return <ClubSessionBoundary key={locale + ":" + userId + ":" + clubId + ":details"} userId={userId} locale={locale} clubId={clubId} selected="details" />;

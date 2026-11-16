@@ -3,7 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { ClubReadError, clubReadError, isClubId, type Club, type ClubCatalogEntry, type ClubMember, type ClubRow } from "./types";
 
 const pageSize = 200;
-const fields = "id,name,description,owner_id,cover_path,logo_path";
+const fields = "id,name,description,owner_id,cover_path,logo_path,profile_revision";
 
 // Read-only counterpart of iOS 132's club API. All queries use the actor's
 // captured token and the existing RLS/RPC contracts; no elevated client is used.
@@ -42,7 +42,7 @@ export function createClubReadApi(client: SupabaseClient, userId: string) {
     }])).values()];
     const self = members.find(member => member.user_id === userId);
     if (!self || !["owner", "admin", "member"].includes(self.role)) throw new ClubReadError("access");
-    return { imageShape:row.cover_path?"cover":row.logo_path?"logo":"none", id: row.id, name: row.name, description: row.description, owner_id: row.owner_id, members, memberCount: members.length, role: self.role };
+    return { profileRevision:row.profile_revision, imageShape:row.cover_path?"cover":row.logo_path?"logo":"none", id: row.id, name: row.name, description: row.description, owner_id: row.owner_id, members, memberCount: members.length, role: self.role };
   }
 
   return {

@@ -72,8 +72,8 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
   return (
     <main className="bike-auth-page section-shell flex min-h-[100svh] items-start justify-center py-4 sm:items-center">
       <section className="w-full max-w-[520px]">
-        <div className="rounded-xl border border-white/20 bg-[linear-gradient(135deg,rgba(27,45,76,0.84),rgba(10,18,32,0.94))] p-5 shadow-[0_32px_90px_-45px_rgba(0,0,0,0.95)]">
-          <div className="mb-3 flex flex-col items-center text-center">
+        <div className="bike-card bike-auth-card rounded-xl border border-white/20 bg-[linear-gradient(135deg,rgba(27,45,76,0.84),rgba(10,18,32,0.94))] p-5 shadow-[0_32px_90px_-45px_rgba(0,0,0,0.95)]">
+          <header className="text-center">
             <Image
               src="/brand/bike-me-logo-white.png"
               alt="Bike Me logo"
@@ -91,7 +91,7 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
             <p className="mt-2 max-w-sm leading-relaxed text-[var(--ink-soft)]">
               {translations.loginIntro}
             </p>
-          </div>
+          </header>
 
           <LoginForm
             action={loginAction}

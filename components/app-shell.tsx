@@ -1,3 +1,4 @@
+import {ClubNavScope} from './clubs/visits/nav-scope';
 import {dmText} from "@/lib/messages/i18n";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,7 +24,8 @@ export function AppShell({ children, locale, viewer, displayName, t }: AppShellP
   const links = [
     [base, t("nav.overview"), t("nav.overview")],
     [`${base}/rides`, t("nav.rides"), t("nav.rides")],
-    [`${base}/clubs`, t("nav.clubs"), t("nav.clubs")],
+    [`${base}/clubs/mine`, t("clubs.mine"), t("clubs.mine")],
+    [`${base}/clubs/all`, t("clubs.all"), t("clubs.all")],
     [`${base}/messages`, dmText(locale,"entry"), dmText(locale,"entry")],
     [`${base}/riders`, t("nav.riders"), t("nav.riders")],
     [`${base}/requests`, t("nav.requests"), t("nav.requests")],
@@ -33,7 +35,7 @@ export function AppShell({ children, locale, viewer, displayName, t }: AppShellP
   ].map(([href, label, shortLabel]) => ({ href, label, shortLabel }));
 
   return (
-    <div className="bike-app" lang={locale}>
+    <ClubNavScope><div className="bike-app" lang={locale}>
       <aside className="bike-app-sidebar">
         <Link href={base} className="bike-app-brand" aria-label="Bike Me">
           <Image
@@ -77,6 +79,6 @@ export function AppShell({ children, locale, viewer, displayName, t }: AppShellP
         <div className="bike-app-mobile-nav"><AppNav links={links} /></div>
         <main className="bike-app-content">{children}</main>
       </div>
-    </div>
+    </div></ClubNavScope>
   );
 }

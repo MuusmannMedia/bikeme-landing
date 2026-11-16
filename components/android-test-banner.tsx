@@ -11,7 +11,7 @@ type AndroidTestBannerProps = {
 export function AndroidTestBanner({ locale, copy }: AndroidTestBannerProps) {
   return (
     <section id="android-test" className="section-shell scroll-mt-28 pb-20 md:pb-24" aria-labelledby="android-test-banner-title">
-      <div className="glass-panel relative overflow-hidden rounded-3xl border px-5 py-7 shadow-[0_28px_70px_-48px_rgba(128,39,130,0.9)] sm:px-7 md:py-8 lg:flex lg:items-center lg:justify-between lg:gap-10 lg:px-9">
+      <div className="bike-inset glass-panel relative overflow-hidden rounded-3xl border px-5 py-7 shadow-[0_28px_70px_-48px_rgba(128,39,130,0.9)] sm:px-7 md:py-8 lg:flex lg:items-center lg:justify-between lg:gap-10 lg:px-9">
         <div className="pointer-events-none absolute -right-16 -top-24 h-56 w-56 rounded-full bg-[#802782]/20 blur-3xl" />
         <div className="relative max-w-3xl">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[rgb(147,171,255)]">

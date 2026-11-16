@@ -28,9 +28,9 @@ export function createClubPageGuard<T>(options: {
     pause,
     revoke,
     start() { stopped = false; pause(); },
-    async verify() {
+    async verify(retain = false) {
       if (stopped) return;
-      pause();
+      if(retain) invalidate(); else pause();
       const current = generation;
       const request = new AbortController();
       controller = request;

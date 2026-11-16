@@ -1,3 +1,4 @@
+import {ClubNavigation} from "./club-navigation";
 import {ClubPrivateImages} from "./club-private-images";
 import {chatText} from "@/lib/clubs/chat-i18n";
 import { contentText } from "@/lib/clubs/content-i18n";
@@ -25,28 +26,29 @@ export function ClubAccessDenied({ locale }: { locale: Locale }) {
   const t = getAppDictionary(locale);
   return <>
     <AppPageHeader eyebrow={t("nav.clubs")} title={t("clubs.accessTitle")} intro={t("clubs.accessBody")} />
-    <AppPanel><div className="bike-app-actions"><a className="bike-app-button bike-app-button-secondary" href={`/${locale}/app/clubs`}>{t("clubs.back")}</a><a className="bike-app-button bike-app-button-secondary" href="">{t("common.retry")}</a></div></AppPanel>
+    <AppPanel><div className="bike-app-actions"><a className="bike-app-button bike-app-button-secondary" href={`/${locale}/app/clubs/mine`}>{t("clubs.back")}</a><a className="bike-app-button bike-app-button-secondary" href="">{t("common.retry")}</a></div></AppPanel>
   </>;
 }
 
 export function ClubHeader({ club, locale, selected }: { club: Club; locale: Locale; selected: "details" | "members" | "rides" | "posts" | "chat" }) {
   const t = getAppDictionary(locale);
   const base = `/${locale}/app/clubs/${club.id}`;
-  return <>
-    <ClubPrivateImages clubId={club.id} locale={locale} shape={club.imageShape??"cover"}/>
+  return <section className="bike-app-club-masthead" data-compact={false}>
+    <ClubPrivateImages clubId={club.id} locale={locale} shape={club.imageShape??"cover"} revision={club.profileRevision}/>
     <AppPageHeader
       className="bike-app-club-header"
       eyebrow={t("clubs.membersOnly")}
       title={club.name}
       intro={`${clubRoleLabel(locale, club.role)} · ${(club.memberCount === 1 ? t("clubs.memberCountOne") : t("clubs.memberCount").replace("{count}", new Intl.NumberFormat(locale).format(club.memberCount)))}`}
-      action={<a className="bike-app-button bike-app-button-secondary" href={`/${locale}/app/clubs`}>{t("clubs.back")}</a>}
+      action={<a className="bike-app-button bike-app-button-secondary" href={`/${locale}/app/clubs/mine`}>{t("clubs.back")}</a>}
     />
-    <nav className="bike-app-club-nav" aria-label={t("clubs.details")}>
-      <a href={base} aria-current={selected === "details" ? "page" : undefined}>{t("clubs.details")}</a>
-      <a href={`${base}/members`} aria-current={selected === "members" ? "page" : undefined}>{t("clubs.members")}</a>
-      <a href={`${base}/rides`} aria-current={selected === "rides" ? "page" : undefined}>{clubRideText(locale,"title")}</a>
-      <a href={`${base}/posts`} aria-current={selected === "posts" ? "page" : undefined}>{contentText(locale,"title")}</a>
-      <a href={`${base}/chat`} aria-current={selected === "chat" ? "page" : undefined}>{chatText(locale,"title")}</a>
-    </nav>
-  </>;
+    <ClubNavigation label={t("clubs.details")} selected={selected} links={[
+      {key:"details",href:base,label:t("clubs.details")},
+      {key:"members",href:`${base}/members`,label:t("clubs.members")},
+      {key:"rides",href:`${base}/rides`,label:clubRideText(locale,"title")},
+      {key:"posts",href:`${base}/posts`,label:contentText(locale,"title")},
+      {key:"chat",href:`${base}/chat`,label:chatText(locale,"title")}
+    ]}/>
+
+  </section>;
 }

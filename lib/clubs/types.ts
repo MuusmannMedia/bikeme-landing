@@ -2,7 +2,7 @@ export type ClubRole = "owner" | "admin" | "member";
 
 // The catalog deliberately has no descriptions, owners or member information.
 export type ClubCatalogEntry = { id: string; name: string };
-export type ClubRow = ClubCatalogEntry & { description: string | null; owner_id: string; cover_path?:string|null; logo_path?:string|null };
+export type ClubRow = ClubCatalogEntry & { description: string | null; owner_id: string; cover_path?:string|null; logo_path?:string|null; profile_revision?:number };
 export type ClubMember = {
   user_id: string;
   display_name: string | null;
@@ -11,7 +11,7 @@ export type ClubMember = {
   joined_at: string;
 };
 export type ClubImageShape="cover"|"logo"|"none";
-export type Club = Omit<ClubRow,"cover_path"|"logo_path"> & { imageShape?:ClubImageShape; members: ClubMember[]; memberCount: number; role: ClubRole };
+export type Club = Omit<ClubRow,"cover_path"|"logo_path"> & { imageShape?:ClubImageShape; profileRevision?:number; members: ClubMember[]; memberCount: number; role: ClubRole };
 
 export type ClubReadErrorKind = "auth" | "access" | "unavailable" | "network";
 export class ClubReadError extends Error {
@@ -37,6 +37,6 @@ export function isClubId(value: string): boolean {
 import type { ClubMembershipData } from "./membership-types";
 
 export type ClubPageData =
-  | { view: "directory"; mine: Club[]; catalog: ClubCatalogEntry[]; membership: ClubMembershipData }
+  | { view: "directory"; mine: Club[]; catalog: ClubCatalogEntry[]; visits?:Record<string,import("./visits/contract").VisitProfile>; membership: ClubMembershipData }
   | { view: "rides"; club: Club; rides: import("./ride-api").ClubRideData }
   | { view: "club"; club: Club; profileEditing?: boolean; membership: ClubMembershipData };

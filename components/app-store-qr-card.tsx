@@ -56,7 +56,7 @@ export function AppStoreQrCard({ appStoreUrl, locale }: AppStoreQrCardProps) {
   const copy = qrCopy[locale];
 
   return (
-    <aside className="app-store-qr-card mx-auto w-full max-w-[22rem] rounded-[2rem] border border-white/15 bg-[#080f21]/95 p-5 shadow-[0_28px_70px_-38px_rgba(0,0,0,0.95)] sm:p-6 lg:mx-0">
+    <aside className="bike-inset app-store-qr-card mx-auto w-full max-w-[22rem] rounded-[2rem] border border-white/15 bg-[#080f21]/95 p-5 shadow-[0_28px_70px_-38px_rgba(0,0,0,0.95)] sm:p-6 lg:mx-0">
       <div className="mb-5 flex items-center justify-between gap-3">
         <span className="inline-flex items-center rounded-full border border-[rgba(147,171,255,0.32)] bg-[rgba(94,127,255,0.13)] px-3 py-1.5 text-xs font-semibold text-[rgb(178,197,255)]">
           {copy.availability}

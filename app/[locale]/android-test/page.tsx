@@ -77,7 +77,7 @@ export default async function AndroidTestPage({ params }: AndroidTestPageProps) 
   const copy = dictionary.androidTester;
 
   return (
-    <div className="pb-12">
+    <div className="bike-public pb-12">
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#060b16]/80 backdrop-blur-xl supports-[backdrop-filter]:bg-[#060b16]/70">
         <div className="section-shell flex min-h-20 flex-wrap items-center justify-between gap-x-3 gap-y-3 py-3 sm:flex-nowrap">
           <Link href={`/${locale}`} aria-label="Bike Me" className="order-1 flex items-center">

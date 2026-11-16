@@ -386,7 +386,7 @@ test("the login card is responsive and does not reserve empty error space", () =
   assert.ok(loginPage.includes("items-start"));
   assert.ok(loginPage.includes("sm:items-center"));
   assert.ok(loginPage.includes("py-4"));
-  assert.ok(loginPage.includes("mb-3"));
+  assert.ok(loginPage.includes("bike-card bike-auth-card"));
   assert.ok(loginPage.includes("h-24 w-24"));
   assert.ok(loginForm.includes('className="grid gap-4"'));
   assert.ok(loginForm.includes('aria-describedby={errorMessage ? "login-error" : undefined}'));

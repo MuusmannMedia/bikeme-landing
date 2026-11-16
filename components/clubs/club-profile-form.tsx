@@ -34,8 +34,8 @@ export function ClubProfileForm({userId,clubId,locale}:{userId:string;clubId?:st
  const ready=state.status==='ready',locked=state.busy||!!state.pending;
  return <section data-club-profile-access={state.status} data-club-profile-data={state.profile?'present':'empty'}>
   <AppPageHeader eyebrow="Bike Me" title={t(clubId?'edit':'create')} intro={t(clubId?'editIntro':'intro')}/>
-  <a className="bike-app-button bike-app-button-secondary" href={clubId?`${base}/${clubId}`:base}>{t('cancel')}</a>
-  {clubId&&state.status==='ready'?<a className="bike-app-button bike-app-button-secondary" href={`${base}/${clubId}/images`}>{imageText(locale,'title')}</a>:null}
+  <div className="bike-app-actions"><a className="bike-app-button bike-app-button-secondary" href={clubId?`${base}/${clubId}`:base}>{t('cancel')}</a>
+  {clubId&&state.status==='ready'?<a className="bike-app-button bike-app-button-secondary" href={`${base}/${clubId}/images`}>{imageText(locale,'title')}</a>:null}</div>
   {state.status==='access'||state.status==='auth'?<p role="alert">{t('access')}</p>:state.status==='error'?<div role="alert"><p>{t('network')}</p><button className="bike-app-button" onClick={()=>void store.refresh()}>{t('retry')}</button></div>:!ready?<p role="status">{t('loading')}</p>:<AppPanel title={t(clubId?'edit':'create')} className="bike-app-section-gap">
    {state.error||state.conflict?<p ref={message} tabIndex={-1} role="alert">{t(state.conflict?'conflict':state.pending?'unknown':state.error==='invalid'?'invalid':'network')}</p>:null}
    {state.conflict&&state.profile?<section aria-label={t('current')} className="bike-app-panel bike-app-section-gap"><h3>{t('current')}</h3><strong>{state.profile.name}</strong><p className="bike-app-club-description">{state.profile.description}</p><button type="button" className="bike-app-button bike-app-button-secondary" onClick={()=>{store.rebase();document.getElementById('club-profile-name')?.focus();}}>{t('continue')}</button></section>:null}

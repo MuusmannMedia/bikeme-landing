@@ -1,3 +1,4 @@
+import {searchClubCatalog} from "../lib/clubs/catalog-search";
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -75,7 +76,7 @@ test("member-only details read authorized member pages and derive the current ro
   assert.equal(club.role, "owner");
   assert.equal(club.members[200].role, "admin");
   assert.deepEqual(db.calls[0].filters, { id: clubId });
-  assert.equal(db.calls[0].fields, "id,name,description,owner_id,cover_path,logo_path");
+  assert.equal(db.calls[0].fields, "id,name,description,owner_id,cover_path,logo_path,profile_revision");
   assert.ok(db.calls.every(call => call.header === "Bearer actor-token"));
 });
 
@@ -283,3 +284,16 @@ test("cross-tab auth invalidation accepts only transition markers without sessio
 
 // Shape comes from the authorized club read, never an image-path cache in the browser.
 test("authorized image layout hint distinguishes cover/logo/empty without exposing paths",async()=>{for(const [cover,logo,shape]of [["private-cover","private-logo","cover"],[null,"private-logo","logo"],[null,null,"none"]]){const db=backend(call=>({data:call.source==="clubs"?{...row,cover_path:cover,logo_path:logo}:[member],error:null}));const club=await createClubReadApi(db.client,"actor").detail(clubId);assert.equal(club.imageShape,shape);assert(!JSON.stringify(club).includes("private-"));assert(!("cover_path" in club));assert(!("logo_path" in club));}});
+test('retained club verification keeps the same active payload until proof and purges on failure',async()=>{let calls=0;const d=deferred<{userId:string;snapshot:string}>();const {guard}=guardFor(()=>++calls===1?Promise.resolve({userId:'actor',snapshot:'private'}):d.promise);await guard.verify();const before=guard.getSnapshot();const checking=guard.verify(true);assert.equal(guard.getSnapshot(),before);guard.revoke();d.resolve({userId:'actor',snapshot:'late private'});await checking;assert.equal(guard.getSnapshot().data,null);assert.equal(guard.getSnapshot().status,'auth');guard.stop();});
+test('network error during retained verification is never treated as continued access',async()=>{let fail=false;const {guard}=guardFor(async()=>{if(fail)throw new ClubReadError('network');return{userId:'actor',snapshot:'private'};});await guard.verify();fail=true;await guard.verify(true);assert.equal(guard.getSnapshot().status,'error');assert.equal(guard.getSnapshot().data,null);guard.stop();});
+
+test('separate club navigation marks exactly one destination, including legacy and direct links',async()=>{const{isAppNavActive}=await import('../lib/clubs/navigation');for(const locale of locales){const root=`/${locale}/app/clubs`,mine=root+'/mine',all=root+'/all';for(const path of [root,mine,root+'/'+clubId,root+'/'+clubId+'/chat',root+'/new']){assert.equal(isAppNavActive(path,mine),true,path);assert.equal(isAppNavActive(path,all),false,path);}assert.equal(isAppNavActive(all,all),true);assert.equal(isAppNavActive(all,mine),false);for(const path of [mine,all])assert.equal(getSafeReturnPath(locale,path),path);}});
+
+test("catalog search matches names, accents, casing and all terms without private enrichment",()=>{
+ const clubs=[{id:"1",name:"Vélo Nord"},{id:"2",name:"Grusværk"},{id:"3",name:"Kystlinjen CC"}];
+ assert.deepEqual(searchClubCatalog(clubs,"  NORD velo "),[clubs[0]]);
+ assert.deepEqual(searchClubCatalog(clubs,"CC"),[clubs[2]]);
+ assert.deepEqual(searchClubCatalog(clubs,"missing"),[]);
+ assert.deepEqual(searchClubCatalog(clubs,"  "),clubs);
+ assert.deepEqual(Object.keys(searchClubCatalog(clubs,"velo")[0]),["id","name"]);
+});

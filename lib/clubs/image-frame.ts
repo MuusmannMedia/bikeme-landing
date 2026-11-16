@@ -30,3 +30,11 @@ export function moveClubFrame(frame: ClubImageFrame, viewport: ImageDimensions, 
   return { ...next, x: overflowX ? clamp(frame.x + 2 * dx / overflowX) : 0,
     y: overflowY ? clamp(frame.y + 2 * dy / overflowY) : 0 };
 }
+
+// Web's wider logo slot keeps the native square crop, anchored left at x=0.
+// Positive x also places that crop further right in the available slot.
+export function clubLogoSlot(viewport: ImageDimensions, frame: ClubImageFrame | null) {
+  const width = frame && !frame.whole ? Math.min(viewport.width, viewport.height) : viewport.width;
+  const left = (viewport.width - width) * Math.max(0, Math.min(1, frame?.x ?? 0));
+  return { viewport: { width, height: viewport.height }, left, right: viewport.width - width - left };
+}

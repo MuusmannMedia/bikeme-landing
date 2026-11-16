@@ -43,7 +43,7 @@ export function AppPanel({
 }) {
   const Heading = headingLevel === 3 ? "h3" : "h2";
   return (
-    <section className={`bike-app-panel ${className}`.trim()}>
+    <section className={`bike-app-panel bike-card ${className}`.trim()}>
       {title || action ? (
         <header className="bike-app-panel-header">
           {title ? <Heading>{title}</Heading> : <span />}

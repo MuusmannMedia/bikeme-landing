@@ -1,0 +1,19 @@
+import type {ClubImageFrame} from '../image-frame';
+import {ClubReadError,type Club} from '../types';
+import {ClubError} from '../membership-types';
+import type {ClubProfile} from '../profile-contract';
+export type VisitProfile={id:string;name:string;description:string;revision:number;applications_open:boolean;has_cover:boolean;has_logo:boolean;cover_frame:ClubImageFrame|null;logo_frame:ClubImageFrame|null;member_count:number|null};
+export type VisitRide={id:string;title:string;description:string;area:string;start_time:string;discipline:string;distance_km:number|null;status:string;revision:number};
+export type RideSetting={ride_id:string;revision:number;published:boolean;title:string;body:string;area:string};
+export type ApplicationStatus='pending'|'accepted'|'rejected'|'cancelled'|'expired';
+export type MyApplication={id:string;club_id:string;status:ApplicationStatus;body:string;created_at:string;expires_at:string;resolved_at:string|null};
+export type ReviewApplication={id:string;applicant:string;display_name:string|null;avatar_url:string|null;body:string;created_at:string;expires_at:string};
+export type VisitSettings={club_id:string;revision:number;published:boolean;applications_open:boolean;name?:string;body?:string;cover_path?:string|null;logo_path?:string|null;show_member_count?:boolean};
+export type VisitSnapshot={isMember?:boolean;profile:VisitProfile|null;rides:VisitRide[];applications:MyApplication[];invitation:{invite_id:string;expires_at:string}|null;applicationsEnabled:boolean};
+export type ManageSnapshot={club:Club;privateProfile:ClubProfile;settings:VisitSettings;rides:{id:string;title:string;start_time:string}[];rideSettings:RideSetting[];applications:ReviewApplication[];ridesEnabled:boolean;applicationsEnabled:boolean};
+export type VisitErrorKind='auth'|'access'|'network'|'invalid'|'conflict'|'cooldown'|'rate'|'contentRejected'|'closed'|'image';
+export class VisitError extends Error{constructor(public kind:VisitErrorKind){super(kind);}}
+export function visitError(e:unknown):VisitError{if(e instanceof VisitError)return e;if(e instanceof ClubReadError||e instanceof ClubError)return new VisitError(e.kind==='auth'?'auth':e.kind==='access'?'access':e.kind==='invalid'?'invalid':e.kind==='conflict'?'conflict':'network');const v=e as {code?:string;message?:string};if(v?.message==='BIKEME_CONTENT_REJECTED')return new VisitError('contentRejected');if(v?.message==='CLUB_APPLICATION_COOLDOWN')return new VisitError('cooldown');if(v?.message==='CLUB_APPLICATION_RATE_LIMIT')return new VisitError('rate');if(['CLUB_APPLICATION_CLOSED','CLUB_INVITE_CLOSED','CLUB_INVITE_EXPIRED','CLUB_ALREADY_MEMBER'].includes(v?.message??''))return new VisitError('closed');if(v?.message==='CLUB_INVALID_IMAGE'||v?.message==='CLUB_VISIT_IMAGE_NOT_STAGED')return new VisitError('image');if(['PT409','40001','40P01'].includes(v?.code??''))return new VisitError('conflict');if(['28000','PGRST301','PGRST302'].includes(v?.code??''))return new VisitError('auth');if(v?.code==='42501')return new VisitError('access');if(v?.code==='22023')return new VisitError('invalid');return new VisitError('network');}
+export type VisitCommand={actorId:string;clubId:string;key:string;op:'watch'|'publish'|'hide'|'ridePublish'|'rideHide'|'apply'|'cancel'|'resolve'|'restrict'|'inviteAccept';revision?:number;body?:string;cover?:boolean;logo?:boolean;applications?:boolean;count?:boolean;rideId?:string;title?:string;area?:string;id?:string;accept?:boolean;applicant?:string;restrict?:boolean};
+export type ProfileDraft={body:string;cover:boolean;logo:boolean;applications:boolean;count:boolean;revision:number};
+export type RideDraft={rideId:string;title:string;body:string;area:string;revision:number};

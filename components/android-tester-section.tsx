@@ -130,7 +130,7 @@ export function AndroidTesterSection({ locale, copy }: { locale: Locale; copy: A
         <div className="pointer-events-none absolute -left-24 top-0 h-72 w-72 rounded-full bg-[#5e7fff]/20 blur-3xl" />
         <div className="pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-[#a532a8]/20 blur-3xl" />
 
-        <div className="relative grid gap-10 px-5 py-8 sm:px-8 sm:py-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(30rem,1.1fr)] lg:gap-12 lg:px-10 lg:py-12">
+        <div className="bike-inset bike-layout-grid relative grid gap-10 px-5 py-8 sm:px-8 sm:py-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(30rem,1.1fr)] lg:gap-12 lg:px-10 lg:py-12">
           <div className="flex flex-col lg:py-4">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-[rgb(164,185,255)]">{copy.eyebrow}</p>
             <h1 id="android-test-title" className="mt-4 max-w-[17ch] font-display text-3xl font-semibold leading-tight text-white [text-wrap:balance] md:text-5xl">
@@ -141,14 +141,14 @@ export function AndroidTesterSection({ locale, copy }: { locale: Locale; copy: A
             </p>
             <p className="mt-5 max-w-xl text-lg leading-relaxed text-[var(--ink-soft)]">{copy.body}</p>
 
-            <div className="mt-8 rounded-3xl border border-[rgba(201,121,209,0.42)] bg-[linear-gradient(135deg,rgba(94,127,255,0.16),rgba(128,39,130,0.32))] p-5 sm:p-6">
+            <div className="bike-card mt-8 rounded-3xl border border-[rgba(201,121,209,0.42)] bg-[linear-gradient(135deg,rgba(94,127,255,0.16),rgba(128,39,130,0.32))] p-5 sm:p-6">
               <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[rgb(184,200,255)]">{copy.rewardEyebrow}</p>
               <p className="mt-3 font-display text-3xl font-semibold text-white sm:text-4xl">{copy.rewardBadge}</p>
               <p className="mt-3 leading-relaxed text-[rgb(205,214,238)]">{copy.rewardNote}</p>
             </div>
           </div>
 
-          <div className="rounded-3xl border border-white/15 bg-[#0a1226]/90 p-5 shadow-[0_28px_70px_-44px_rgba(0,0,0,0.95)] backdrop-blur-xl sm:p-7">
+          <div className="bike-card rounded-3xl border border-white/15 bg-[#0a1226]/90 p-5 shadow-[0_28px_70px_-44px_rgba(0,0,0,0.95)] backdrop-blur-xl sm:p-7">
             {state.status === "success" ? (
               <div ref={resultRef} tabIndex={-1} role="status" className="flex min-h-[26rem] flex-col items-center justify-center text-center outline-none">
                 <span className="grid h-16 w-16 place-items-center rounded-full border border-emerald-300/40 bg-emerald-400/15 text-3xl text-emerald-200" aria-hidden="true">✓</span>
@@ -161,34 +161,34 @@ export function AndroidTesterSection({ locale, copy }: { locale: Locale; copy: A
                 <p className="mt-2 leading-relaxed text-[var(--ink-soft)]">{copy.formText}</p>
                 <p className="mt-2 text-sm text-[rgb(163,178,214)]">{copy.requiredNote}</p>
 
-                <form ref={formRef} action={formAction} onSubmit={handleSubmit} noValidate className="mt-6 grid gap-5" aria-labelledby="android-test-form-title" aria-describedby="android-test-submission-note">
+                <form ref={formRef} action={formAction} onSubmit={handleSubmit} noValidate className="bike-public-form grid gap-5" aria-labelledby="android-test-form-title" aria-describedby="android-test-submission-note">
                   <input type="hidden" name="locale" value={locale} />
                   <div className="pointer-events-none absolute -left-[10000px] top-auto h-px w-px overflow-hidden opacity-0" aria-hidden="true" role="presentation">
                     <label htmlFor="android-company-website">{copy.honeypotLabel}</label>
                     <input id="android-company-website" name="companyWebsite" value={honeypot} onChange={(event) => setHoneypot(event.target.value)} tabIndex={-1} autoComplete="off" aria-hidden="true" />
                   </div>
 
-                  <div className="grid gap-5">
-                    <div className="grid gap-2">
+                  <div className="bike-layout-grid grid gap-5">
+                    <div className="bike-public-field grid gap-2">
                       <label className="text-sm font-semibold text-white" htmlFor="android-name">{copy.nameLabel} *</label>
                       <input id="android-name" name="name" value={values.name} onChange={(event) => updateValue("name", event.target.value)} className={fieldClass("name")} placeholder={copy.namePlaceholder} autoComplete="name" minLength={2} maxLength={100} required aria-invalid={Boolean(displayedErrors.name)} aria-describedby={displayedErrors.name ? "android-name-error" : undefined} />
                       <FieldError id="android-name-error" message={errorMessage("name")} />
                     </div>
 
-                    <div className="grid gap-2">
+                    <div className="bike-public-field grid gap-2">
                       <label className="text-sm font-semibold text-white" htmlFor="android-email">{copy.emailLabel} *</label>
                       <input id="android-email" name="email" type="email" inputMode="email" value={values.email} onChange={(event) => updateValue("email", event.target.value)} className={fieldClass("email")} placeholder={copy.emailPlaceholder} autoComplete="email" autoCapitalize="none" spellCheck={false} maxLength={254} required aria-invalid={Boolean(displayedErrors.email)} aria-describedby={`android-email-hint${displayedErrors.email ? " android-email-error" : ""}`} />
                       <p id="android-email-hint" className="text-sm leading-relaxed text-[rgb(158,173,207)]">{copy.emailHint}</p>
                       <FieldError id="android-email-error" message={errorMessage("email")} />
                     </div>
 
-                    <div className="grid gap-2">
+                    <div className="bike-public-field grid gap-2">
                       <label className="text-sm font-semibold text-white" htmlFor="android-device-model">{copy.deviceLabel} *</label>
                       <input id="android-device-model" name="deviceModel" value={values.deviceModel} onChange={(event) => updateValue("deviceModel", event.target.value)} className={fieldClass("deviceModel")} placeholder={copy.devicePlaceholder} minLength={2} maxLength={120} required aria-invalid={Boolean(displayedErrors.deviceModel)} aria-describedby={displayedErrors.deviceModel ? "android-device-error" : undefined} />
                       <FieldError id="android-device-error" message={errorMessage("deviceModel")} />
                     </div>
 
-                    <div className="grid gap-2">
+                    <div className="bike-public-field grid gap-2">
                       <label className="text-sm font-semibold text-white" htmlFor="android-version">{copy.versionLabel} *</label>
                       <select id="android-version" name="androidVersion" value={values.androidVersion} onChange={(event) => updateValue("androidVersion", event.target.value)} className={fieldClass("androidVersion")} required aria-invalid={Boolean(displayedErrors.androidVersion)} aria-describedby={displayedErrors.androidVersion ? "android-version-error" : undefined}>
                         <option value="">{copy.selectPrompt}</option>
@@ -201,7 +201,7 @@ export function AndroidTesterSection({ locale, copy }: { locale: Locale; copy: A
                     </div>
                   </div>
 
-                  <div className="grid gap-2">
+                  <div className="bike-public-field grid gap-2">
                     <label className="text-sm font-semibold text-white" htmlFor="android-frequency">{copy.frequencyLabel}</label>
                     <select id="android-frequency" name="cyclingFrequency" value={values.cyclingFrequency} onChange={(event) => updateValue("cyclingFrequency", event.target.value)} className={fieldClass("cyclingFrequency")} aria-invalid={Boolean(displayedErrors.cyclingFrequency)} aria-describedby={displayedErrors.cyclingFrequency ? "android-frequency-error" : undefined}>
                       <option value="">{copy.frequencyPrompt}</option>
@@ -214,13 +214,13 @@ export function AndroidTesterSection({ locale, copy }: { locale: Locale; copy: A
                     <FieldError id="android-frequency-error" message={errorMessage("cyclingFrequency")} />
                   </div>
 
-                  <div className="grid gap-2">
+                  <div className="bike-public-field grid gap-2">
                     <label className="text-sm font-semibold text-white" htmlFor="android-comment">{copy.commentLabel}</label>
                     <textarea id="android-comment" name="comment" value={values.comment} onChange={(event) => updateValue("comment", event.target.value)} className={`${fieldClass("comment")} min-h-28 resize-y`} placeholder={copy.commentPlaceholder} maxLength={1000} aria-invalid={Boolean(displayedErrors.comment)} aria-describedby={displayedErrors.comment ? "android-comment-error" : undefined} />
                     <FieldError id="android-comment-error" message={errorMessage("comment")} />
                   </div>
 
-                  <div className="grid gap-3">
+                  <div className="bike-layout-grid grid gap-3">
                     <label className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3.5 transition ${displayedErrors.commitment ? "border-[#ff8f8f] bg-red-950/15" : "border-white/15 bg-white/[0.035] hover:border-white/30"}`}>
                       <input name="commitment" type="checkbox" checked={values.commitment} onChange={(event) => updateValue("commitment", event.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 accent-[#a95caf] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(209,161,255)]" required aria-invalid={Boolean(displayedErrors.commitment)} aria-describedby={displayedErrors.commitment ? "android-commitment-error" : undefined} />
                       <span className="text-sm leading-relaxed text-[rgb(218,226,245)]">{copy.commitmentLabel}</span>

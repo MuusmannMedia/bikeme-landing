@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import sharp from 'sharp';
-import {clubImageGeometry,moveClubFrame,initialClubFrame,CLUB_COVER_ASPECT} from '../lib/clubs/image-frame';
+import {clubImageGeometry,clubLogoSlot,moveClubFrame,initialClubFrame,CLUB_COVER_ASPECT} from '../lib/clubs/image-frame';
 import {CLUB_IMAGE_LIMIT,imageFrame,imageCommand,imagePath,type ImageCommand} from '../lib/clubs/image-contract';
 import {normalizeClubImage,validateStoredClubImage} from '../lib/clubs/image-normalize';
 import {createImageStore} from '../lib/clubs/image-store';
@@ -40,3 +40,12 @@ test('existing-source conflict preserves bytes and explicit rebase creates a rep
 test('server permits framing only the current source, never an arbitrary image reference',async()=>{const f=fake(),api=createClubImageApi(f.client,actor,true);await api.save({...command,imageId:null,sourcePath:profile.cover_path});assert.equal(f.writes[0].args.p_cover_path,profile.cover_path);await assert.rejects(api.save({...command,imageId:null,sourcePath:'foreign/path.jpg'}));assert.equal(f.writes.length,1);});
 test('native picker returning during access refresh retains original selection revision',async()=>{const s=setup();await s.refresh();s.pause();await s.choose('cover',new Blob(['picker file']),2);assert.equal(s.getSnapshot().choice?.revision,2);assert.equal(s.getSnapshot().status,'loading');await s.refresh();assert.equal(s.getSnapshot().status,'ready');assert.equal(s.getSnapshot().choice?.revision,2);s.stop();});
 test('truncated JPEG marker runs are classified as invalid images before browser decoding',async()=>{const{imageSourceDimensions}=await import('../lib/clubs/image-browser');assert.throws(()=>imageSourceDimensions(Buffer.from([255,216,255,255,255,255])),e=>e instanceof ClubError&&e.kind==='image');});
+
+test('wide web logo slot starts left and moves right while retaining the native crop',()=>{
+ const bounds={width:240,height:120},f=initialClubFrame();
+ assert.deepEqual(clubLogoSlot(bounds,f),{viewport:{width:120,height:120},left:0,right:120});
+ assert.equal(clubLogoSlot(bounds,{...f,x:.5}).left,60);
+ assert.equal(clubLogoSlot(bounds,{...f,x:1}).left,120);
+ assert.equal(clubLogoSlot(bounds,{...f,x:-1}).left,0);
+ assert.deepEqual(clubLogoSlot(bounds,initialClubFrame(true)),{viewport:bounds,left:0,right:0});
+});

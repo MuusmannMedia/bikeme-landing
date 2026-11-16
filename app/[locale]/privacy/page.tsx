@@ -1029,7 +1029,7 @@ export default async function PrivacyPage({ params }: LocalePageProps) {
   const sections = [...privacy.sections, androidTestPrivacySectionByLocale[locale]];
 
   return (
-    <div className="pb-12">
+    <div className="bike-public pb-12">
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#060b16]/80 backdrop-blur-xl supports-[backdrop-filter]:bg-[#060b16]/70">
         <div className="section-shell flex h-20 items-center justify-between gap-4">
           <Link href={`/${locale}`} aria-label="Bike Me" className="flex items-center">
@@ -1053,13 +1053,13 @@ export default async function PrivacyPage({ params }: LocalePageProps) {
       </header>
 
       <main className="section-shell pt-10 md:pt-14">
-        <article className="glass-panel rounded-3xl border px-6 py-8 text-[var(--ink-soft)] shadow-[0_30px_70px_-44px_rgba(0,0,0,0.9)] md:px-10 md:py-10">
+        <article className="bike-card glass-panel rounded-3xl border px-6 py-8 text-[var(--ink-soft)] shadow-[0_30px_70px_-44px_rgba(0,0,0,0.9)] md:px-10 md:py-10">
           <h1 className="font-display text-3xl font-semibold leading-tight text-[var(--ink)] md:text-4xl">
             {ui.pageTitle}
           </h1>
           <p className="mt-3 text-sm text-[rgb(155,170,206)]">{ui.lastUpdated}</p>
 
-          <div className="mt-8 space-y-7 leading-relaxed">
+          <div className="bike-legal-sections leading-relaxed">
             <section className="space-y-4">
               {privacy.intro.map((paragraph) => (
                 <p key={paragraph}>{renderWithLineBreaks(paragraph)}</p>

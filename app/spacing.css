@@ -1,0 +1,208 @@
+/* Shared layout recipes. Keep geometry separate from colours, borders and access
+   boundaries. New screens should use AppPanel and these same spacing tokens. */
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-section: var(--space-6);
+  --space-layout: var(--space-6);
+  --space-inset: var(--space-6);
+  --space-flow: var(--space-4);
+  --space-field: var(--space-2);
+  --space-actions: var(--space-3);
+  --space-public-section: 80px;
+}
+
+/* A stack owns its gaps: children must not add a second section margin. */
+.bike-stack,
+.bike-app-content,
+.bike-app-access-region,
+[data-visit-management],
+[data-visit-access],
+[data-club-profile-access],
+[data-club-access],
+[data-chat-access],
+[data-dm-access] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-section);
+  min-width: 0;
+}
+:is(.bike-stack,.bike-app-content,.bike-app-access-region,[data-visit-management],[data-visit-access],[data-club-profile-access],[data-club-access],[data-chat-access],[data-dm-access]) > * {
+  margin-block: 0;
+  min-width: 0;
+}
+:is(.bike-stack,.bike-app-content,.bike-app-access-region,[data-visit-management],[data-visit-access],[data-club-profile-access],[data-club-access],[data-chat-access],[data-dm-access]) > :empty { display: none; }
+/* Continuity status/feedback slots intentionally retain their measured space. */
+.bike-app-chat-new-slot:empty,
+.bike-app-chat-feedback:empty { display: block; }
+.bike-app-continuity { min-width: 0; }
+
+.bike-card,
+.bike-app-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-flow);
+  min-width: 0;
+  padding: var(--space-inset);
+}
+:is(.bike-card,.bike-app-panel) > * { margin-block: 0; min-width: 0; }
+:is(.bike-card,.bike-app-panel) > :is(a,button,.bike-app-chip) { align-self: flex-start; }
+.bike-app-panel-header { margin: 0; gap: var(--space-actions); flex-wrap: wrap; align-items: baseline; }
+.bike-app-panel-header > :is(h2,h3) { flex: 1 1 12rem; }
+.bike-app-panel-header > .bike-app-button { flex: 0 1 auto; }
+.bike-app-panel :is(h2,h3), .bike-card :is(h1,h2,h3) { overflow-wrap: anywhere; }
+.bike-app-page-header { gap: var(--space-layout); margin-bottom: var(--space-section); }
+.bike-app-page-header > div:first-child { display: grid; gap: var(--space-field); min-width: 0; }
+.bike-app-page-header h1 { margin: 0; overflow-wrap: anywhere; }
+.bike-app-page-header p:empty { display: none; }
+
+.bike-layout-grid,
+.bike-app-grid,
+.bike-app-club-cards,
+.bike-app-visit-management-grid,
+.bike-app-visit-rides { gap: var(--space-layout); align-items: stretch; }
+.bike-layout-grid > * { min-width: 0; }
+.bike-app-overview-grid { align-items: stretch; }
+.bike-app-grid > .bike-app-panel,
+.bike-app-visit-management-grid > .bike-app-panel { align-self: stretch; }
+/* Taller neighbours create air within a card; forms/actions remain natural. */
+.bike-app-visit-management-grid > .bike-app-panel > form { display: flex; flex: 1; flex-direction: column; }
+.bike-app-visit-management-grid > .bike-app-panel > form > .bike-app-actions:last-child { margin-top: auto; padding-top: var(--space-field); }
+.bike-card > .bike-card-footer,
+.bike-app-ride-card > .bike-app-button:last-child,
+.bike-app-club-card-footer { margin-top: auto; }
+.bike-app-club-card-copy { padding: var(--space-inset); gap: var(--space-flow); }
+.bike-app-club-card-description { display: block; overflow: visible; margin: 0; }
+.bike-app-club-card-footer { padding-top: var(--space-field); }
+.bike-app-hotspot { display: flex; flex-direction: column; gap: var(--space-flow); padding: var(--space-inset); }
+.bike-app-hotspot :is(h3,p) { margin: 0; min-height: 0; }
+.bike-app-hotspot > a:last-child { margin-top: auto; }
+.bike-app-ride-address { min-height: 0; }
+
+.bike-actions,
+.bike-app-actions,
+[data-club-access] .bike-app-actions,
+.bike-app-content-card .bike-app-actions,
+.bike-app-chat-message .bike-app-actions,
+.bike-app-dm-bubble .bike-app-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-actions); }
+.bike-actions > *, .bike-app-actions > * { min-width: 0; max-width: 100%; }
+.bike-app-button,
+.bike-actions > :is(a,button) { height: auto; min-height: 46px; padding-block: var(--space-3); line-height: 1.4; white-space: normal; text-align: center; overflow-wrap: anywhere; }
+.bike-app-list-item { flex-wrap: wrap; gap: var(--space-flow); padding: var(--space-flow); }
+.bike-app-list-main { gap: var(--space-actions); }
+.bike-app-list-item > .bike-app-actions { flex-shrink: 0; }
+.bike-app-list { gap: var(--space-actions); }
+
+.bike-app-form,
+.bike-app-form-grid,
+.bike-app-form-section,
+.bike-app-create-basics,
+.bike-app-create-start,
+.bike-app-create-side,
+.bike-app-create-schedule { gap: var(--space-flow); align-content: start; }
+.bike-app-form > p { margin: 0; }
+.bike-app-field, .bike-app-title-field { gap: var(--space-field); align-content: start; }
+.bike-app-field :is(input,select,textarea) { padding: var(--space-3); font-size: 16px; }
+.bike-app-field :is(span,small), .bike-app-form label { overflow-wrap: anywhere; }
+.bike-app-form-section { padding-top: var(--space-flow); }
+.bike-app-choice-grid, .bike-app-definition { gap: var(--space-flow); }
+.bike-app-choice-card, .bike-app-invite-picker, .bike-app-gpx-picker, .bike-app-rider-connection { padding: var(--space-flow); gap: var(--space-actions); }
+.bike-app-section-gap { margin-top: var(--space-section); }
+.bike-app-content-stack { margin-top: 0; gap: var(--space-flow); }
+.bike-app-content-card { margin-top: 0; padding: var(--space-inset); display: flex; flex-direction: column; gap: var(--space-flow); }
+.bike-app-content-card > * { margin-block: 0; }
+.bike-app-content-feedback, .bike-app-content-privacy, .bike-app-visit-feedback { padding: var(--space-flow); margin-block: 0; }
+.bike-app-notice, .bike-app-empty, .bike-app-club-gate, .bike-app-club-error { margin-block: 0; padding: var(--space-inset); }
+.bike-app-notice, .bike-app-empty, .bike-app-club-error { overflow-wrap: anywhere; }
+.bike-app-club-error { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-flow); }
+.bike-app-club-error p { margin: 0; }
+.bike-app-club-dialog { padding: var(--space-inset); }
+.bike-app-club-administration { margin-top: 0; padding: var(--space-inset); }
+.bike-app-club-administration > summary { margin-bottom: var(--space-flow); }
+.bike-app-club-search { margin-block: 0; }
+[data-club-image-access] { gap: var(--space-section); }
+
+.bike-app-visit-preview { margin-top: 0; }
+.bike-app-visit-preview-copy { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-flow); padding: var(--space-inset); }
+.bike-app-visit-preview-copy > * { margin-block: 0; }
+.bike-app-visit-preview .bike-app-club-image-header { margin-bottom: 0; }
+.bike-app-visit-check { padding-block: 0; gap: var(--space-actions); min-height: 44px; }
+.bike-app-visit-check input { flex-shrink: 0; }
+.bike-app-visit-application, .bike-app-visit-ride, .bike-app-visit-status { padding: var(--space-inset); gap: var(--space-flow); }
+.bike-app-visit-application > div:first-child { display: grid; gap: var(--space-field); }
+.bike-app-visit-application :is(h3,p) { margin: 0; }
+.bike-app-visit-applications { gap: var(--space-flow); }
+.bike-app-visit-ride { display: flex; flex-direction: column; }
+.bike-app-visit-ride :is(h3,p) { margin: 0; }
+[data-visit-access] .bike-app-panel + .bike-app-panel,
+.bike-app-visit-management-grid + .bike-app-panel { margin-top: 0; }
+
+/* Public pages use the same card/field/action recipes, with a larger section
+   rhythm appropriate to the existing landing page. No text has a fixed height. */
+.bike-public main > .section-shell { padding-block: 0 var(--space-public-section); }
+.bike-public main > .section-shell:first-child { padding-top: var(--space-public-section); }
+.bike-public :is(.bike-layout-grid,.bike-actions) { gap: var(--space-layout); }
+.bike-public .bike-actions { gap: var(--space-actions); }
+.bike-public .bike-section-heading { display: grid; gap: var(--space-field); margin-bottom: var(--space-8); }
+.bike-public .bike-section-heading > * { margin: 0; }
+.bike-public .bike-copy { display: grid; gap: var(--space-flow); }
+.bike-public .bike-copy > * { margin-block: 0; }
+.bike-public .bike-card > :is(h2,h3) + p { margin-top: 0; }
+.bike-public .bike-card :is(input,select,textarea) { max-width: 100%; }
+.bike-public .bike-legal-sections { margin-top: var(--space-section); display: grid; gap: var(--space-8); }
+.bike-public .bike-legal-sections section { display: grid; gap: var(--space-flow); }
+.bike-public .bike-legal-sections section > * { margin-block: 0; }
+.bike-auth-card { gap: var(--space-section); }
+.bike-auth-card > header { display: flex; flex-direction: column; align-items: center; gap: var(--space-field); }
+.bike-auth-card > header > * { margin: 0; }
+.bike-auth-card form { display: grid; gap: var(--space-flow); margin: 0; }
+.bike-auth-card form > div:has(> label) { display: grid; gap: var(--space-field); }
+.bike-auth-card form > div:has(> label) > * { margin-block: 0; }
+.bike-auth-card :is(button,input,a) { height: auto; padding-block: var(--space-3); white-space: normal; overflow-wrap: anywhere; }
+.bike-auth-card > a { align-self: stretch; }
+
+@media (max-width: 760px) {
+  :root { --space-inset: var(--space-4); --space-layout: var(--space-4); --space-public-section: 64px; }
+  .bike-app-panel-header { align-items: flex-start; }
+  .bike-app-page-action { min-width: 0; max-width: 100%; }
+  .bike-app-page-header { align-items: flex-start; }
+  .bike-app-visit-management-grid > .bike-app-panel > form > .bike-app-actions:last-child { margin-top: 0; padding-top: 0; }
+  .bike-app-list-item > .bike-app-actions { flex-shrink: 1; }
+  .bike-public > header .section-shell { height: auto; min-height: 80px; flex-wrap: wrap; padding-block: var(--space-actions); }
+}
+
+/* Supporting app screens use the same inset and section rhythm. Charts/maps
+   retain their intentional drawing sizes; their surrounding cards are fluid. */
+.bike-app-stat { padding: var(--space-inset); min-height: 0; }
+.bike-app-stat strong { margin-top: var(--space-field); }
+.bike-app-status-dashboard { display: flex; flex-direction: column; gap: var(--space-section); }
+.bike-app-status-dashboard > * { margin-block: 0; }
+.bike-app-status-hero { padding: var(--space-inset); }
+.bike-app-status-hero-top, .bike-app-request-card > header { gap: var(--space-flow); flex-wrap: wrap; }
+.bike-app-rider-card, .bike-app-request-card, .bike-app-rider-connection { gap: var(--space-flow); }
+.bike-app-interest-form { gap: var(--space-actions); padding-top: var(--space-flow); }
+.bike-app-delete-dialog form { padding: var(--space-inset); }
+.bike-app-delete-dialog-actions { gap: var(--space-actions); margin-top: var(--space-section); }
+.bike-app-content-card .bike-app-actions { margin-top: 0; }
+.bike-public .bike-layout-grid > article { align-self: stretch; }
+.bike-public .bike-card > details { min-width: 0; }
+.bike-inset { padding: var(--space-inset); }
+.bike-public-field { display: grid; gap: var(--space-field); }
+.bike-public-form { display: grid; gap: var(--space-flow); }
+.bike-public-form > * { margin-block: 0; }
+.bike-public-form :is(input,select,textarea) { min-width: 0; }
+.bike-public-form > .bike-layout-grid { gap: var(--space-flow); }
+/* A layout recipe must never make a concealed control visible. */
+.bike-app [hidden], .bike-auth-page [hidden], .bike-public [hidden] { display: none !important; }
+.bike-app-request-card > :is(.bike-app-actions,form):last-child,
+.bike-app-rider-card > :is(.bike-app-actions,form,.bike-app-chip):last-child,
+.bike-app-rider-connection > :is(.bike-app-actions,form):last-child { margin-top: auto; }
+/* Final ownership rule: legacy page/section margins must not add to a stack's
+   gap. Keep card-footer auto margins, which align actions within a taller row. */
+:is(.bike-stack,.bike-app-content,.bike-app-access-region,[data-visit-management],[data-visit-access],[data-club-profile-access],[data-club-access],[data-chat-access],[data-dm-access]) > * { margin-block: 0; }
+.bike-app-panel > .bike-app-section-gap { margin-top: 0; }

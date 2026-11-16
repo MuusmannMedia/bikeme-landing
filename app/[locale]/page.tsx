@@ -87,7 +87,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
   ];
 
   return (
-    <div className="pb-10">
+    <div className="bike-public pb-10">
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#060b16]/80 backdrop-blur-xl supports-[backdrop-filter]:bg-[#060b16]/70">
         <div className="section-shell flex h-20 items-center justify-between gap-2 xl:gap-4">
           <Link href={`/${locale}`} aria-label="Bike Me" className="flex items-center">
@@ -163,7 +163,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
               {t.hero.subheadline}
             </p>
 
-            <div className="animate-fade-up rounded-3xl border border-white/12 bg-white/[0.04] p-5 [animation-delay:180ms]">
+            <div className="bike-card animate-fade-up rounded-3xl border border-white/12 bg-white/[0.04] p-5 [animation-delay:180ms]">
               <p className="font-display text-2xl font-semibold text-[var(--ink)]">
                 {t.hero.payoffTitle}
               </p>
@@ -172,7 +172,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
               </p>
             </div>
 
-            <div className="animate-fade-up flex flex-wrap items-center gap-3 [animation-delay:220ms]">
+            <div className="bike-actions animate-fade-up flex flex-wrap items-center gap-3 [animation-delay:220ms]">
               <a
                 href={APP_STORE_URL}
                 target="_blank"
@@ -208,7 +208,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
 
         <section id="download" className="section-shell scroll-mt-28 pb-20 md:pb-24">
           <div className="glass-panel overflow-hidden rounded-3xl border shadow-[0_32px_80px_-50px_rgba(0,0,0,0.9)]">
-            <div className="grid gap-10 px-5 py-10 md:px-8 md:py-12 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-center lg:gap-12 lg:px-10">
+            <div className="bike-inset bike-layout-grid grid gap-10 px-5 py-10 md:px-8 md:py-12 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-center lg:gap-12 lg:px-10">
               <div className="max-w-3xl space-y-4">
                 <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(147,171,255)]">
                   {t.launch.eyebrow}
@@ -228,7 +228,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
         </section>
 
         <section className="section-shell pb-20 md:pb-24">
-          <div className="glass-panel rounded-3xl border px-5 py-10 shadow-[0_32px_80px_-50px_rgba(0,0,0,0.9)] md:px-6 md:py-11 lg:px-7 lg:py-12">
+          <div className="bike-inset glass-panel rounded-3xl border px-5 py-10 shadow-[0_32px_80px_-50px_rgba(0,0,0,0.9)] md:px-6 md:py-11 lg:px-7 lg:py-12">
             <div className="grid items-start gap-6 lg:grid-cols-[420px_minmax(0,1fr)] lg:gap-4">
               <div className="flex justify-center lg:-ml-2 lg:justify-start">
                 <Image
@@ -253,7 +253,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
                     </li>
                   ))}
                 </ul>
-                <div className="flex flex-wrap items-center gap-3 pt-2">
+                <div className="bike-actions flex flex-wrap items-center gap-3 pt-2">
                   <a
                     href="#how-it-works"
                     className="rounded-full border-2 border-[rgba(143,168,255,0.75)] bg-white/[0.02] px-7 py-3 text-sm font-medium text-[var(--ink)] transition-colors hover:border-[rgba(128,39,130,0.95)] hover:bg-[rgba(128,39,130,0.16)]"
@@ -267,7 +267,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
         </section>
 
         <section id="features" className="section-shell pb-20 md:pb-28">
-          <div className="mb-10 max-w-2xl space-y-3">
+          <div className="bike-section-heading max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(147,171,255)]">
               {t.features.eyebrow}
             </p>
@@ -276,11 +276,11 @@ export default async function LocalePage({ params }: LocalePageProps) {
             </h2>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div className="bike-layout-grid grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {t.features.items.map((feature, index) => (
               <article
                 key={feature.title}
-                className="animate-fade-up glass-panel rounded-3xl border p-6 shadow-[0_20px_60px_-40px_rgba(0,0,0,0.95)]"
+                className="bike-card animate-fade-up glass-panel rounded-3xl border p-6 shadow-[0_20px_60px_-40px_rgba(0,0,0,0.95)]"
                 style={{ animationDelay: `${index * 90}ms` }}
               >
                 <div className="mb-4 inline-flex h-8 min-w-8 items-center justify-center rounded-full border border-white/15 bg-white/[0.05] px-2 text-xs font-semibold text-[rgb(178,197,255)]">
@@ -296,7 +296,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
         </section>
 
         <section id="how-it-works" className="section-shell pb-20 md:pb-28">
-          <div className="mb-10 max-w-2xl space-y-3">
+          <div className="bike-section-heading max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(147,171,255)]">
               {t.howItWorks.eyebrow}
             </p>
@@ -305,11 +305,11 @@ export default async function LocalePage({ params }: LocalePageProps) {
             </h2>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="bike-layout-grid grid gap-4 md:grid-cols-3">
             {t.howItWorks.steps.map((step, index) => (
               <article
                 key={step.title}
-                className="glass-panel rounded-3xl border p-6 shadow-[0_20px_60px_-40px_rgba(0,0,0,0.95)]"
+                className="bike-card glass-panel rounded-3xl border p-6 shadow-[0_20px_60px_-40px_rgba(0,0,0,0.95)]"
               >
                 <p className="mb-4 text-sm font-semibold text-[rgb(147,171,255)]">0{index + 1}</p>
                 <h3 className="mb-2 font-display text-xl font-semibold text-[rgb(209,161,255)]">
@@ -322,7 +322,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
         </section>
 
         <section id="screenshots" className="section-shell pb-20 md:pb-28">
-          <div className="mb-10 max-w-2xl space-y-3">
+          <div className="bike-section-heading max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(147,171,255)]">
               {t.screenshots.eyebrow}
             </p>
@@ -332,11 +332,11 @@ export default async function LocalePage({ params }: LocalePageProps) {
             <p className="text-[var(--ink-soft)]">{t.screenshots.subtitle}</p>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="bike-layout-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {t.screenshots.items.map((item) => (
               <article
                 key={item.image}
-                className="group relative overflow-hidden rounded-3xl border border-white/12 bg-[rgba(9,16,34,0.9)] p-4 shadow-[0_20px_50px_-35px_rgba(0,0,0,0.95)]"
+                className="bike-card group relative overflow-hidden rounded-3xl border border-white/12 bg-[rgba(9,16,34,0.9)] p-4 shadow-[0_20px_50px_-35px_rgba(0,0,0,0.95)]"
               >
                 <div className="overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(to_bottom,rgba(16,27,52,0.95),rgba(10,18,37,0.95))]">
                   <Image
@@ -348,7 +348,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
                     className="h-auto w-full"
                   />
                 </div>
-                <div className="space-y-2 px-1 pt-4">
+                <div className="bike-copy">
                   <h3 className="font-display text-lg font-semibold text-[rgb(209,161,255)]">
                     {item.title}
                   </h3>
@@ -362,7 +362,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
         </section>
 
         <section id="faq" className="section-shell pb-24 md:pb-28">
-          <div className="mb-10 max-w-2xl space-y-3">
+          <div className="bike-section-heading max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(147,171,255)]">
               {t.faq.eyebrow}
             </p>
@@ -375,7 +375,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
             {t.faq.items.map((item) => (
               <details
                 key={item.question}
-                className="group rounded-2xl border border-white/12 bg-[rgba(8,15,31,0.9)] p-5 open:border-[rgba(151,177,255,0.45)]"
+                className="bike-card group rounded-2xl border border-white/12 bg-[rgba(8,15,31,0.9)] p-5 open:border-[rgba(151,177,255,0.45)]"
               >
                 <summary className="cursor-pointer list-none pr-8 font-medium text-[rgb(209,161,255)] marker:hidden">
                   {item.question}
@@ -390,7 +390,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
       <footer className="border-t border-white/10 bg-[#050a15]/75 py-8 backdrop-blur-sm">
         <div className="section-shell flex flex-col gap-4 text-sm text-[var(--ink-soft)] md:flex-row md:items-center md:justify-between">
           <p>© {new Date().getFullYear()} {t.footer.tagline}</p>
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="bike-actions flex flex-wrap items-center gap-4">
             <Link href={`/${locale}/privacy`} className="transition-colors hover:text-white">
               {t.footer.privacy}
             </Link>

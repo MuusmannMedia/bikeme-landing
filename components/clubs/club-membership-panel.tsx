@@ -30,13 +30,15 @@ function ConfirmationDialog({ value, locale, close, accept }: { value: Confirmat
   </dialog>;
 }
 
-export function ClubMembershipPanel({ membership, club, clubs, userId, locale, workflow, scope }: {
-  membership: ClubMembershipData; club?: Club; clubs?: Club[]; userId: string; locale: Locale; workflow: ClubWorkflow; scope: "incoming" | "club" | "members";
+export function ClubMembershipPanel({ membership, club, clubs, userId, locale, workflow, scope, compact=false }: {
+  membership: ClubMembershipData; club?: Club; clubs?: Club[]; userId: string; locale: Locale; workflow: ClubWorkflow; scope: "incoming" | "club" | "members"; compact?:boolean;
 }) {
   const state = useSyncExternalStore(workflow.subscribe, workflow.getSnapshot, workflow.getSnapshot);
   const [confirmation, setConfirmation] = useState<Confirmation | null>(null);
   const t = membershipDictionary(locale), app = getAppDictionary(locale);
   const locked = state.busy || !!state.pending;
+  const rank={owner:0,admin:1,member:2};
+  const orderedMembers=club?[...club.members].sort((a,b)=>rank[a.role]-rank[b.role]||(a.display_name??"").localeCompare(b.display_name??"",locale)||a.user_id.localeCompare(b.user_id)):[];
   const [now, setNow] = useState(Date.now);
   useEffect(() => { const timer=window.setInterval(() => setNow(Date.now()),1000); return () => window.clearInterval(timer); }, []);
   const expires = (value: string) => Date.parse(value) <= now;
@@ -61,16 +63,16 @@ export function ClubMembershipPanel({ membership, club, clubs, userId, locale, w
     </div> : null}
   </AppPanel>;
   return <>
-    {status}
+    {(!compact||state.busy||state.error||state.pending||state.notice)?status:null}
     {scope === "incoming" ? <>
-      <AppPanel title={t("incoming")} className="bike-app-section-gap">
+      {(!compact||membership.invitations.length>0)?<details className="bike-app-club-incoming-item" open={compact?undefined:true}><summary>{t("incoming")} · {membership.invitations.length}</summary><AppPanel>
         {membership.invitations.length === 0 ? <AppEmpty>{t("noneIncoming")}</AppEmpty> : <ul className="bike-app-list">{membership.invitations.map(row=><li className="bike-app-list-item" key={row.invite_id}>
           <div className="bike-app-list-main bike-app-club-copy"><strong>{row.club_name}</strong>{row.club_description ? <p className="bike-app-club-description">{row.club_description}</p> : null}{row.inviter_name ? <span>{row.inviter_name}</span> : null}{deadline(row.expires_at)}</div>
           <div className="bike-app-actions">{action("accept",{action:"respondInvite",id:row.invite_id,accept:true},row.club_name,expires(row.expires_at))}{action("decline",{action:"respondInvite",id:row.invite_id,accept:false},row.club_name,expires(row.expires_at))}</div>
         </li>)}</ul>}
-      </AppPanel>{transfers}
+      </AppPanel></details>:null}{!compact?transfers:membership.transfers.length?<details className="bike-app-club-incoming-item"><summary>{t("ownership")} · {membership.transfers.length}</summary>{transfers}</details>:null}
     </> : club ? <>
-      {scope === "members" ? <AppPanel title={app("clubs.members")}><ul className="bike-app-list">{club.members.map(member=><li key={member.user_id} className="bike-app-list-item">
+      {scope === "members" ? <AppPanel title={app("clubs.members")}><ul className="bike-app-list">{orderedMembers.map(member=><li key={member.user_id} className="bike-app-list-item">
         <div className="bike-app-list-main"><AppAvatar name={member.display_name} url={member.avatar_url}/><strong>{member.display_name || "Bike Me"}</strong><span className="bike-app-chip">{clubRoleLabel(locale,member.role)}</span></div>
         <div className="bike-app-actions">{allowedMemberActions(club,userId,member).map(kind=><span key={kind}>{action(kind,{action:"memberAction",clubId:club.id,targetId:member.user_id,decision:kind},member.display_name || "Bike Me")}</span>)}</div>
       </li>)}</ul></AppPanel> : null}

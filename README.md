@@ -6,7 +6,7 @@ Premium, minimal, localized landing page for Bike Me.
 
 - Next.js (App Router) + TypeScript
 - Tailwind CSS
-- No backend, no heavy UI dependencies
+- Supabase-backed authenticated web app and localized public site
 - Vercel-ready setup
 
 ## Local Development
@@ -109,6 +109,14 @@ Please provide these production values so placeholders can be replaced:
 
 ## Notes
 
-- No backend is included.
+- Shared additive database contracts are in `backend/supabase/migrations/`; see `backend/README.md`. The archived iOS baseline is not a replay queue.
 - No newsletter integration is included.
 - The page uses lightweight CSS animations only (no Framer Motion dependency).
+
+## Release boundaries
+
+The visitor profile, visitor ride previews and membership applications are currently restricted to the exact test backend `bcskqapoagflshewvzzc` and blocked when `VERCEL_ENV=production`. Private club profile/image editing has the same restrictions and additionally requires `BIKE_ME_CLUB_PROFILE_EDIT_ENABLED=true`. Club ride push remains opt-in through the server-only `BIKE_ME_CLUB_RIDE_PUSH_ENABLED` variable and should remain unset/false for this candidate.
+
+These guards are intentional. Publishing this commit does not enable those functions in production. Existing private clubs, membership management, rides, posts, chat and direct messages use their existing backend contracts, which must be checked against the target schema before release. Never point a production build at the test backend.
+
+Local role stations, fixture journals and acceptance screenshots live under ignored `review/` or private temporary directories and are not deployment inputs. `.vercelignore` also excludes backend tooling and tests. Production needs only the existing public Supabase URL/publishable key and the normal authenticated user session; no service-role key belongs in the web deployment.

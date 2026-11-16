@@ -1,6 +1,7 @@
 'use client';
+import {useConversationPosition} from '../use-conversation-position';
 import {StableAccessRegion} from './stable-access-region';
-import {useEffect,useLayoutEffect,useRef,useState} from 'react';
+import {useEffect,useRef,useState} from 'react';
 import {AppPanel,AppEmpty} from '../app-ui';
 import {ClubAccessDenied,ClubHeader} from './club-ui';
 import {dmText} from '@/lib/messages/i18n';
@@ -12,19 +13,17 @@ import {validateChat,type ChatMessage,type ChatCommand} from '@/lib/clubs/chat-c
 import {validateReportDetail} from '@/lib/clubs/content-contract';
 import type {ChatStore,ChatState} from '@/lib/clubs/chat-store';
 import type {Locale} from '@/lib/locales';
-export function ClubChatWorkspace({store,state,locale,userId,clubId,initialMessage}:{store:ChatStore;state:ChatState;locale:Locale;userId:string;clubId:string;initialMessage:string|null}){
+export function ClubChatWorkspace({store,state,locale,userId,clubId,initialMessage,checking=false}:{store:ChatStore;state:ChatState;locale:Locale;userId:string;clubId:string;initialMessage:string|null;checking?:boolean}){
  const text=(key:ChatTextKey)=>chatText(locale,key),ct=(key:ContentTextKey)=>contentText(locale,key),t=getAppDictionary(locale),data=state.data,ready=state.status==='ready'&&!!data,locked=state.busy||!!state.pending||!ready;
- const list=useRef<HTMLDivElement>(null),editor=useRef<HTMLTextAreaElement>(null),dialog=useRef<HTMLDialogElement>(null),reportSelect=useRef<HTMLSelectElement>(null),focusReturn=useRef(''),olderAnchor=useRef<{height:number;top:number}|null>(null),firstContext=useRef(false),scrollSeen=useRef(-1),root=useRef<HTMLDivElement>(null),composerFocused=useRef(false),caret=useRef<[number,number]>([0,0]),reading=useRef<{top:number;bottom:boolean}|null>(null);
+ const editor=useRef<HTMLTextAreaElement>(null),dialog=useRef<HTMLDialogElement>(null),reportSelect=useRef<HTMLSelectElement>(null),focusReturn=useRef(''),firstContext=useRef(false);
  const [confirm,setConfirm]=useState<{command:ChatCommand;title:ContentTextKey;body:string}|null>(null),[report,setReport]=useState<{id:string;destination:'club'|'bikeMe';reason:'spam'|'harassment'|'unsafe'|'other';detail:string}|null>(null),[searchInput,setSearchInput]=useState('');
- useEffect(()=>{const focus=(event:FocusEvent)=>{composerFocused.current=event.target===editor.current;};document.addEventListener('focusin',focus);return()=>document.removeEventListener('focusin',focus);},[]);
- useLayoutEffect(()=>{if(ready&&composerFocused.current&&editor.current){editor.current.focus({preventScroll:true});editor.current.setSelectionRange(...caret.current);}if(ready&&list.current)list.current.scrollTop=reading.current?.bottom===false?reading.current.top:list.current.scrollHeight;},[ready]);
+ const {root,history:list}=useConversationPosition({ready,checking,items:data?.items,scrollRevision:state.scrollRevision});
  const restore=()=>requestAnimationFrame(()=>document.getElementById(focusReturn.current)?.focus({preventScroll:true}));
  useEffect(()=>{if(ready&&confirm)dialog.current?.showModal();},[ready,confirm]);
  useEffect(()=>{if(ready&&report)reportSelect.current?.focus({preventScroll:true});},[ready,report?.id]); // eslint-disable-line react-hooks/exhaustive-deps
  useEffect(()=>{if(state.edit||state.replyId)editor.current?.focus({preventScroll:true});},[state.edit?.id,state.replyId]); // eslint-disable-line react-hooks/exhaustive-deps
  useEffect(()=>{if(ready&&!firstContext.current&&initialMessage){firstContext.current=true;void store.context(initialMessage);}},[ready,initialMessage,store]);
- useEffect(()=>{const viewport=window.visualViewport;const resize=()=>root.current?.style.setProperty('--chat-viewport',`${viewport?.height??window.innerHeight}px`);resize();viewport?.addEventListener('resize',resize);return()=>viewport?.removeEventListener('resize',resize);},[]);
- useLayoutEffect(()=>{const node=list.current;if(!node)return;if(olderAnchor.current&&!state.olderLoading){node.scrollTop=olderAnchor.current.top+node.scrollHeight-olderAnchor.current.height;olderAnchor.current=null;}else if(scrollSeen.current!==state.scrollRevision){scrollSeen.current=state.scrollRevision;if(state.nearBottom)node.scrollTop=node.scrollHeight;}},[state.olderRevision,state.olderLoading,state.scrollRevision,state.nearBottom,ready]);
+ useEffect(()=>{const viewport=window.visualViewport;const resize=()=>root.current?.style.setProperty('--chat-viewport',`${viewport?.height??window.innerHeight}px`);resize();viewport?.addEventListener('resize',resize);return()=>viewport?.removeEventListener('resize',resize);},[root]);
  const openContext=(id:string|null)=>{void store.context(id);const url=new URL(window.location.href);if(id)url.searchParams.set('message',id);else url.searchParams.delete('message');window.history.replaceState(null,'',url.pathname+url.search);};
  const command=(type:ChatCommand['type'],extra:object)=>({actorId:userId,clubId,type,...extra}) as ChatCommand;
  const ask=(c:ChatCommand,title:ContentTextKey,body:string,id:string)=>{focusReturn.current=id;setConfirm({command:c,title,body});};
@@ -49,8 +48,8 @@ export function ClubChatWorkspace({store,state,locale,userId,clubId,initialMessa
    <form className="bike-app-chat-search" onSubmit={e=>{e.preventDefault();if(searchInput.trim())void store.search(searchInput);}}><label className="bike-app-field"><span>{text('search')}</span><input id="chat-search" value={searchInput} onChange={e=>setSearchInput(e.target.value)} placeholder={text('searchHint')}/></label><button className="bike-app-button bike-app-button-secondary" disabled={state.searching||!searchInput.trim()||Array.from(searchInput).length>100}>{text('search')}</button>{state.search?<button type="button" className="bike-app-button bike-app-button-secondary" onClick={()=>{store.clearSearch();setSearchInput('');}}>{text('closeSearch')}</button>:null}</form>
    {state.search?<section aria-label={text('search')} className="bike-app-chat-search-results">{data!.hits.length?data!.hits.map(hit=><article key={hit.id}><strong>{hit.display_name??ct('deletedAuthor')}</strong><p className="bike-app-content-body">{hit.excerpt}</p><button className="bike-app-button bike-app-button-secondary" onClick={()=>openContext(hit.id)}>{text('context')}</button></article>):<p>{state.searching?text('loading'):text('searchEmpty')}</p>}{data!.nextBefore?<button className="bike-app-button bike-app-button-secondary" disabled={state.searching} onClick={()=>void store.search(state.search,data!.nextBefore)}>{text('more')}</button>:null}</section>:null}
    {state.contextId?<section className="bike-app-chat-context" aria-label={text('context')}><h3>{text('context')}</h3><button className="bike-app-button bike-app-button-secondary" onClick={()=>openContext(null)}>{text('back')}</button>{data!.context.length?data!.context.map(m=>message(m,true)):<p>{text(state.contextUnavailable?'unavailable':'contextLoading')}</p>}</section>:null}
-   <div id="chat-history" className="bike-app-chat-scroll" ref={list} role="region" tabIndex={0} aria-label={text('title')} onScroll={e=>{const el=e.currentTarget;const bottom=el.scrollHeight-el.scrollTop-el.clientHeight<90;reading.current={top:el.scrollTop,bottom};store.position(bottom);}}>
-    <div className="bike-app-chat-history">{data!.hasMore?<button className="bike-app-button bike-app-button-secondary" disabled={state.olderLoading} onClick={()=>{if(list.current)olderAnchor.current={height:list.current.scrollHeight,top:list.current.scrollTop};void store.older();}}>{state.olderLoading?text('loading'):text('older')}</button>:<p className="bike-app-muted">{text('beginning')}</p>}</div>
+   <div id="chat-history" className="bike-app-chat-scroll" ref={list} role="region" tabIndex={0} aria-label={text('title')} onScroll={e=>{const el=e.currentTarget;const bottom=el.scrollHeight-el.scrollTop-el.clientHeight<90;store.position(bottom);}}>
+    <div className="bike-app-chat-history">{data!.hasMore?<button className="bike-app-button bike-app-button-secondary" disabled={state.olderLoading} onClick={()=>{void store.older();}}>{state.olderLoading?text('loading'):text('older')}</button>:<p className="bike-app-muted">{text('beginning')}</p>}</div>
     {data!.items.length?[...data!.items].reverse().map(m=>message(m)):<AppEmpty>{text('empty')}</AppEmpty>}
    </div>
    <div className="bike-app-chat-new-slot">{state.newCount?<button className="bike-app-button" onClick={()=>store.bottom()}>{text('new')} ({state.newCount})</button>:null}</div>
@@ -60,14 +59,14 @@ export function ClubChatWorkspace({store,state,locale,userId,clubId,initialMessa
  </>:null}</StableAccessRegion>
  <AppPanel className="bike-app-section-gap" key="persistent-composer">
    <div className="bike-app-chat-composer">
-    <div className="bike-app-chat-feedback">{state.error?<p role="alert">{ct(error)}</p>:null}
+    <div className="bike-app-chat-feedback">{state.error&&state.error!=='network'?<p role="alert">{ct(error)}</p>:null}
     {state.notice?<p role="status">{state.notice==='sent'?text('saved'):ct(state.notice as ContentTextKey)}</p>:null}
     {state.sendState==='unknown'?<p role="alert">{text('unknown')}</p>:state.sendState==='rejected'?<p role="status">{text('rejected')}</p>:null}
     {state.pending?<button className="bike-app-button" disabled={state.busy} onClick={()=>void store.retry()}>{ct('retryAction')}</button>:null}
     </div>
     {state.edit||state.replyId?<StableAccessRegion ready={ready} fallback={null}>{ready?<div className="bike-app-chat-quote"><strong>{text(state.edit?'edit':'quote')}</strong><p className="bike-app-content-body">{targetAvailable?selected?.body:text('unavailable')}</p><button type="button" className="bike-app-button bike-app-button-secondary" disabled={locked} onClick={()=>{store.cancel();restore();}}>{text('cancelReply')}</button></div>:null}</StableAccessRegion>:null}
     {state.conflict?<StableAccessRegion ready={ready} fallback={null}>{ready&&selected?<div className="bike-app-chat-quote"><p>{text('conflict')}</p><strong>{text('latest')} · {selected.version}</strong><p className="bike-app-content-body">{selected.body}</p><button className="bike-app-button bike-app-button-secondary" disabled={locked} onClick={()=>store.rebase()}>{text('rebase')}</button></div>:null}</StableAccessRegion>:null}
-    <form onSubmit={e=>{e.preventDefault();if(valid&&!locked&&targetAvailable&&!state.conflict)void store.submit().then(saved=>{if(saved)editor.current?.focus({preventScroll:true});});}}><label className="bike-app-field"><span>{text('message')}</span><textarea id="chat-composer" ref={editor} rows={3} value={state.draft} readOnly={locked} onSelect={e=>{caret.current=[e.currentTarget.selectionStart,e.currentTarget.selectionEnd];}} onChange={e=>{caret.current=[e.target.selectionStart,e.target.selectionEnd];store.text(e.target.value);}}/></label><div className="bike-app-chat-send"><span className="bike-app-muted">{text('count').replace('{count}',String(Array.from(state.draft).length))}</span><button className="bike-app-button" disabled={!valid||locked||!targetAvailable||state.conflict}>{state.busy?text('sending'):state.edit?t('common.save'):text('send')}</button></div></form>
+    <form onSubmit={e=>{e.preventDefault();if(valid&&!locked&&targetAvailable&&!state.conflict)void store.submit().then(saved=>{if(saved)editor.current?.focus({preventScroll:true});});}}><label className="bike-app-field"><span>{text('message')}</span><textarea id="chat-composer" ref={editor} rows={3} value={state.draft} readOnly={locked} onChange={e=>{store.text(e.target.value);}}/></label><div className="bike-app-chat-send"><span className="bike-app-muted">{text('count').replace('{count}',String(Array.from(state.draft).length))}</span><button className="bike-app-button" disabled={!valid||locked||!targetAvailable||state.conflict}>{state.busy?text('sending'):state.edit?t('common.save'):text('send')}</button></div></form>
    </div>
  </AppPanel>
  </div>;

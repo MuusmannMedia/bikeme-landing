@@ -1,3 +1,10 @@
+"use client";
+import {VisitCatalogCard} from './visits/catalog-card';
+import {visitText} from "@/lib/clubs/visits/i18n";
+import {useState} from "react";
+import {searchClubCatalog} from "@/lib/clubs/catalog-search";
+import {membershipDictionary} from "@/lib/clubs/membership-i18n";
+import {ClubPrivateImages} from "./club-private-images";
 import {imageText} from "@/lib/clubs/image-i18n";
 import {profileText} from "@/lib/clubs/profile-i18n";
 import { AppEmpty, AppPageHeader, AppPanel } from "@/components/app-ui";
@@ -8,42 +15,44 @@ import { getAppDictionary } from "@/lib/app-i18n";
 import type { ClubPageData } from "@/lib/clubs/types";
 import type { Locale } from "@/lib/locales";
 
-export function ClubPageContent({ data, locale, selected, userId, workflow }: { data: Exclude<ClubPageData, {view:"rides"}>; locale: Locale; selected: "details" | "members"; userId: string; workflow: ClubWorkflow }) {
+export function ClubPageContent({ data, locale, selected, userId, workflow, directory = "mine" }: { data: Exclude<ClubPageData, {view:"rides"}>; locale: Locale; selected: "details" | "members"; userId: string; workflow: ClubWorkflow; directory?: "mine" | "all" }) {
+  const [query,setQuery] = useState("");
   const t = getAppDictionary(locale);
   const base = `/${locale}/app/clubs`;
   if (data.view === "directory") {
     const { mine, catalog } = data;
-    const myIds = new Set(mine.map(club => club.id));
+    const memberClubs = new Map(mine.map(club => [club.id,club]));
+    const matches = searchClubCatalog(catalog,query);
     return <>
-    <AppPageHeader eyebrow={t("shell.eyebrow")} title={t("nav.clubs")} intro={t("clubs.intro")} />
-    <a className="bike-app-button" href={`${base}/new`}>{profileText(locale,"create")}</a>
-    <ClubMembershipPanel membership={data.membership} clubs={mine} locale={locale} userId={userId} workflow={workflow} scope="incoming" />
-    <AppPanel title={t("clubs.mine")} className="bike-app-section-gap">
-      {mine.length === 0 ? <AppEmpty>{t("clubs.noClubs")}</AppEmpty> : (
-        <div className="bike-app-grid" data-columns="2">
+      <AppPageHeader eyebrow={t("nav.clubs")} title={t(directory === "mine" ? "clubs.mine" : "clubs.all")} intro={directory === "all" ? t("clubs.catalogHint") : ""}
+        action={directory === "mine" ? <a className="bike-app-button" href={`${base}/new`}>{profileText(locale,"create")}</a> : undefined}/>
+      {directory === "mine" ? <>
+        <div className="bike-app-club-incoming"><ClubMembershipPanel compact membership={data.membership} clubs={mine} locale={locale} userId={userId} workflow={workflow} scope="incoming"/></div>
+        {mine.length === 0 ? <AppEmpty>{t("clubs.noClubs")}</AppEmpty> : <div className="bike-app-club-cards">
           {mine.map(club => <article className="bike-app-club-card" key={club.id}>
-            <span className="bike-app-chip" data-tone="purple">{clubRoleLabel(locale, club.role)}</span>
-            <h3><a href={`${base}/${club.id}`}>{club.name}</a></h3>
-            <p className="bike-app-club-description">{club.description || t("clubs.noDescription")}</p>
-            <div className="bike-app-club-card-footer">
-              <span className="bike-app-muted">{(club.memberCount === 1 ? t("clubs.memberCountOne") : t("clubs.memberCount").replace("{count}", new Intl.NumberFormat(locale).format(club.memberCount)))}</span>
-              <a className="bike-app-button bike-app-button-secondary bike-app-button-small" href={`${base}/${club.id}`}>{t("clubs.open")}<span className="sr-only">: {club.name}</span></a>
+            <div className="bike-app-club-card-media"><ClubPrivateImages clubId={club.id} locale={locale} shape={club.imageShape??"none"} revision={club.profileRevision}/></div>
+            <div className="bike-app-club-card-copy"><span className="bike-app-chip" data-tone="purple">{clubRoleLabel(locale,club.role)}</span>
+              <h2><a href={`${base}/${club.id}`}>{club.name}</a></h2><p className="bike-app-club-card-description">{club.description||t("clubs.noDescription")}</p>
+              <div className="bike-app-club-card-footer"><a className="bike-app-muted bike-app-club-member-link" href={`${base}/${club.id}/members`}><span className="sr-only">{club.name}: </span>{club.memberCount===1?t("clubs.memberCountOne"):t("clubs.memberCount").replace("{count}",new Intl.NumberFormat(locale).format(club.memberCount))}</a><a className="bike-app-button bike-app-button-secondary bike-app-button-small" href={`${base}/${club.id}`}>{t("clubs.open")}<span className="sr-only">: {club.name}</span></a></div>
             </div>
           </article>)}
-        </div>
-      )}
-    </AppPanel>
-    <AppPanel title={t("clubs.catalog")} className="bike-app-section-gap">
-      <p className="bike-app-muted bike-app-club-catalog-hint">{t("clubs.catalogHint")}</p>
-      {catalog.length === 0 ? <AppEmpty>{t("clubs.noCatalog")}</AppEmpty> : (
-        <ul className="bike-app-list">{catalog.map(club => <li className="bike-app-list-item" key={club.id}>
-          <div className="bike-app-list-main"><strong>{club.name}</strong></div>
-          {myIds.has(club.id)
-            ? <a className="bike-app-button bike-app-button-secondary bike-app-button-small" href={`${base}/${club.id}`}>{t("clubs.open")}<span className="sr-only">: {club.name}</span></a>
-            : <span className="bike-app-chip">{t("clubs.membersOnly")}</span>}
-        </li>)}</ul>
-      )}
-    </AppPanel>
+        </div>}
+      </> : <>
+        <form role="search" className="bike-app-club-search bike-app-form" onSubmit={event=>event.preventDefault()}>
+          <label className="bike-app-field" htmlFor="club-catalog-search"><span>{t("clubs.search")}</span><input id="club-catalog-search" type="search" autoComplete="off" value={query} placeholder={t("clubs.searchPlaceholder")} onChange={event=>setQuery(event.target.value)}/></label>
+        </form>
+        <p className="bike-app-muted" role="status" aria-live="polite">{t("clubs.searchCount").replace("{count}",new Intl.NumberFormat(locale).format(matches.length))}</p>
+        {catalog.length === 0 ? <AppEmpty>{t("clubs.noCatalog")}</AppEmpty> : matches.length===0?<AppEmpty>{t("clubs.searchEmpty")}</AppEmpty>:<div className="bike-app-club-cards">
+          {matches.map(entry=>{const club=memberClubs.get(entry.id);if(!club&&data.visits?.[entry.id])return <VisitCatalogCard key={entry.id} entry={entry} actor={userId} locale={locale}/>;return <article className="bike-app-club-card" key={entry.id}>
+            <div className="bike-app-club-card-media">{club?<ClubPrivateImages clubId={club.id} locale={locale} shape={club.imageShape??"none"} revision={club.profileRevision}/>:<div className="bike-app-club-catalog-cover" aria-hidden="true"><span>{Array.from(entry.name)[0]}</span><svg viewBox="0 0 200 100" fill="none"><circle cx="45" cy="65" r="25"/><circle cx="155" cy="65" r="25"/><path d="M45 65 80 25 110 65H45L70 15M80 25h55l20 40M125 10h20"/></svg></div>}</div>
+            <div className="bike-app-club-card-copy"><span className="bike-app-chip" data-tone={club?"purple":undefined}>{club?clubRoleLabel(locale,club.role):t("clubs.membersOnly")}</span>
+              <h2><a href={`${base}/${entry.id}`}>{entry.name}</a></h2>
+              {club?<p className="bike-app-club-card-description">{club.description||t("clubs.noDescription")}</p>:null}
+              {club?<div className="bike-app-club-card-footer"><a className="bike-app-muted bike-app-club-member-link" href={`${base}/${club.id}/members`}><span className="sr-only">{club.name}: </span>{club.memberCount===1?t("clubs.memberCountOne"):t("clubs.memberCount").replace("{count}",new Intl.NumberFormat(locale).format(club.memberCount))}</a><a className="bike-app-button bike-app-button-secondary bike-app-button-small" href={`${base}/${club.id}`}>{t("clubs.open")}<span className="sr-only">: {club.name}</span></a></div>:<div className="bike-app-club-card-footer"><a className="bike-app-button bike-app-button-secondary bike-app-button-small" href={`${base}/${entry.id}`}>{t("clubs.open")}<span className="sr-only">: {entry.name}</span></a></div>}
+            </div>
+          </article>;})}
+        </div>}
+      </>}
     </>;
   }
   const { club } = data;
@@ -55,10 +64,10 @@ export function ClubPageContent({ data, locale, selected, userId, workflow }: { 
   </>;
   return <>
     <ClubHeader club={club} locale={locale} selected="details" />
-    {data.profileEditing?<div className="bike-app-actions bike-app-section-gap"><a className="bike-app-button bike-app-button-secondary" href={`${path}/edit`}>{profileText(locale,"edit")}</a><a className="bike-app-button bike-app-button-secondary" href={`${path}/images`}>{imageText(locale,"title")}</a></div>:null}
+    {data.profileEditing&&club.role!=="member"?<AppPanel title={visitText(locale,"title")}><p>{visitText(locale,"snapshotHint")}</p><a className="bike-app-button" href={`${path}/visitors`}>{visitText(locale,"manage")}</a></AppPanel>:null}
     <div className="bike-app-grid" data-columns="2">
-      <AppPanel title={t("clubs.description")}><p className="bike-app-club-description">{club.description || t("clubs.noDescription")}</p></AppPanel>
-      <AppPanel title={t("clubs.details")}>
+      <AppPanel title={t("clubs.description")} action={data.profileEditing?<a className="bike-app-button bike-app-button-secondary" href={`${path}/edit`}>{profileText(locale,"edit")}</a>:undefined}><p className="bike-app-club-description">{club.description || t("clubs.noDescription")}</p></AppPanel>
+      <AppPanel title={t("clubs.details")} action={data.profileEditing?<a className="bike-app-button bike-app-button-secondary" href={`${path}/images`}>{imageText(locale,"title")}</a>:undefined}>
         <dl className="bike-app-definition">
           <div><dt>{t("clubs.owner")}</dt><dd>{owner?.display_name || "Bike Me"}</dd></div>
           <div><dt>{t("clubs.yourRole")}</dt><dd>{clubRoleLabel(locale, club.role)}</dd></div>
@@ -67,6 +76,6 @@ export function ClubPageContent({ data, locale, selected, userId, workflow }: { 
         <a className="bike-app-button bike-app-button-secondary bike-app-section-gap" href={`${path}/members`}>{t("clubs.members")}</a>
       </AppPanel>
     </div>
-    <ClubMembershipPanel membership={data.membership} club={club} locale={locale} userId={userId} workflow={workflow} scope="club" />
+    <details className="bike-app-club-administration"><summary>{membershipDictionary(locale)("management")}</summary><ClubMembershipPanel membership={data.membership} club={club} locale={locale} userId={userId} workflow={workflow} scope="club" /></details>
   </>;
 }

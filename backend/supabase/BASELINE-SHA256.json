@@ -1,0 +1,250 @@
+[
+  {
+    "file": "0001_mvp_hardening.sql",
+    "sha256": "4fd4c3a6ddc63b4cbd7410fece2da2c70b76beed386cfebcfd51e0bc800bc03c"
+  },
+  {
+    "file": "0002_ping_cancellation_reason.sql",
+    "sha256": "3372911553b68b4c3bcd3d53a099348667c1750e5541057c3f8c7e0b472530f1"
+  },
+  {
+    "file": "0003_ride_meeting_address.sql",
+    "sha256": "4a84ada1f8b69c0a1ec34ba01d127340504685b37a34129e2753686edaed1e44"
+  },
+  {
+    "file": "0004_ride_invites_and_avatars.sql",
+    "sha256": "22ea60d5cdf518e017376413c43f239385f2c0b05b8eafa12db2641803b58858"
+  },
+  {
+    "file": "0005_profile_about_me.sql",
+    "sha256": "d36762110f60383a83966da2bf9fe9c3df291dfdfcfbe3ae94ebd9849b97db9b"
+  },
+  {
+    "file": "0006_push_notifications.sql",
+    "sha256": "fedd05147402b24c1579ba5ff598c51d54723a890785f739f7eeaeaec04ec781"
+  },
+  {
+    "file": "0007_ride_history_route_coordinates.sql",
+    "sha256": "ea8f93a7de371829b4aac3266cf4e1668c0607935df77028cd3af50b00e96fa3"
+  },
+  {
+    "file": "0008_user_access.sql",
+    "sha256": "fbf083398463d5d59362e104931e294d1091ec8e9c4edb92568e726416c08ed5"
+  },
+  {
+    "file": "0009_participants_join_rls_fix.sql",
+    "sha256": "96dcb2e9d82345e8f43c0f2b456c4d9dbbf83d4c37d360c52d5a88495be05bc5"
+  },
+  {
+    "file": "0010_push_notifications_hardening.sql",
+    "sha256": "e78dfcf5815dc6191d67c263f158b3c0c3a3ae287d7f4401fc67df9f3598dd5f"
+  },
+  {
+    "file": "0011_ride_planned_routes.sql",
+    "sha256": "596f674e8b4f1d970fef7780bf019f720a5f664a8dd1c299d94313d3cf5f35bd"
+  },
+  {
+    "file": "0012_phase1_schema_parity_tracking.sql",
+    "sha256": "df5c2ea18ebbcc29dc41dc412afe3867a9d9c5d5ac6a8278187f15cacffc8c03"
+  },
+  {
+    "file": "0013_phase1_premium_enforcement_tracking.sql",
+    "sha256": "70dbfe0c3b1143c7121a73969e7e4b4de6c683d7198b1ad52909b4a9a88b2a55"
+  },
+  {
+    "file": "0014_phase1_close_participants_insert_bypass.sql",
+    "sha256": "34abc6a5764fa3420cf80e0893e2dee4293e771819bf67dfc9a01b7c5655f5b0"
+  },
+  {
+    "file": "0015_profile_unit_system.sql",
+    "sha256": "e81787a8a0109f5aba3b178a3a2ec7b68f18c83837b3901ccae2e1486b9d5c73"
+  },
+  {
+    "file": "0016_rider_reports.sql",
+    "sha256": "0b69b8b20bb075aa395ff834dafdc489d2160f1e11421abcbb54a77337855d83"
+  },
+  {
+    "file": "0017_security_hardening_related_profiles_and_invoker_views.sql",
+    "sha256": "f878d7d99506d1955597ab15fa8a0fa8db6e450a156524ed300e33b335ebd131"
+  },
+  {
+    "file": "0018_security_hardening_warnings_cleanup.sql",
+    "sha256": "09c88ac70c6d8d844afc28f73b17527aee5eac5a23ec7d326af3b2934eb791f1"
+  },
+  {
+    "file": "0019_security_hardening_force_authenticated_policy_roles.sql",
+    "sha256": "616a30f5a5848b1fdec0af54e6c49afa3d6ff65a6cffad870aaa00b927c5d925"
+  },
+  {
+    "file": "0020_set_default_access_level_to_tester_premium.sql",
+    "sha256": "03b61226ec611ce159594807b691491df798a874dfe60bacc4cbf0e9b79423af"
+  },
+  {
+    "file": "0021_profile_physical_data.sql",
+    "sha256": "ce57a9dcf747c09eeee8cb11fa77986182267f05d09c00876da3b8dc766a934f"
+  },
+  {
+    "file": "0022_ride_history_calories.sql",
+    "sha256": "adc72deafb322aa4b41a12f2c57f16600fed0d952c059c490bb57da795c1ebe2"
+  },
+  {
+    "file": "0023_ride_visibility.sql",
+    "sha256": "01025d8b0f2e7c7ec9933d5b4f3120f05f935f8306c18058dc94c8165938a205"
+  },
+  {
+    "file": "0024_private_ride_visibility_rls.sql",
+    "sha256": "28050e573ce444ad840230071b17d8c960609cd372261dbbc22e150bcebd3135"
+  },
+  {
+    "file": "0025_fix_ride_insert_visibility_policy.sql",
+    "sha256": "6a9db28386d4ce2bbdeb5f6e5b1d50e9ee4c72bad0b24f4c88aa346cf6e3062f"
+  },
+  {
+    "file": "0026_fix_actual_insert_rides_policy.sql",
+    "sha256": "b64e3a318a03bf907497dfb78be07e631c214272becd5e08b49129e2128ec6be"
+  },
+  {
+    "file": "0027_founding_rider_beta_access.sql",
+    "sha256": "64b75a2e06e38d07f76e25d919d10a4341a27b0764496bc299477e7fdfed4885"
+  },
+  {
+    "file": "0028_admin_user_overview.sql",
+    "sha256": "0a755500e0c3791a96885b47b35b1b3ab5c5bb3d366caa34ea58dcd241b716ca"
+  },
+  {
+    "file": "0029_ride_hotspots.sql",
+    "sha256": "d05a61a1c07ecf9cbcf5b8abd47be64ab1928f7cda197fc39558000e56c2ce2f"
+  },
+  {
+    "file": "0030_saved_riders.sql",
+    "sha256": "f76141f7a331a43faebccc21df12024d77a367c86fd5060abfe865d47eedd303"
+  },
+  {
+    "file": "0031_rider_connections.sql",
+    "sha256": "8252a3183a01e0e4c8e21b588b5c3e82d1aca918c280bc8002df83362b148cf3"
+  },
+  {
+    "file": "0032_update_ride_hotspot_coordinates.sql",
+    "sha256": "ba14dd8dfe7de84a244a9777f04cd895da1662b473de37f832926a437dd3959d"
+  },
+  {
+    "file": "0033_user_notification_settings.sql",
+    "sha256": "092a10cebac153315ba637b00ce60b2365b7a5c90c1501212f19139b8f903812"
+  },
+  {
+    "file": "0034_ride_interest_requests.sql",
+    "sha256": "e354640cfca597d4940ee4472e5ffcd334ba1d82a0c9619d8d93dfe2a70c660a"
+  },
+  {
+    "file": "0035_ride_interest_request_time.sql",
+    "sha256": "6ef524a5a7f4ef52bcccf38d2aad5cfcb75ea03c9e6f0eef0a999aa657f05d5b"
+  },
+  {
+    "file": "0043_closed_clubs_foundation.sql",
+    "sha256": "ee205ae19645e809d43bcae4d6f25fee68b40ae0d5b0232f56a4c49b8da24dcf"
+  },
+  {
+    "file": "0044_club_pending_invitation_projection.sql",
+    "sha256": "7594fdb777a06e1f4e6b28fcf4c2fc32f6576224335edaee48722c9fc22bb14c"
+  },
+  {
+    "file": "0045_closed_club_rides.sql",
+    "sha256": "19a8d0a546698fc350d1288d50ebd68afbad66b11ab1a31916d51bb8b170f88d"
+  },
+  {
+    "file": "0046_club_ride_invitations.sql",
+    "sha256": "39fd4781f522add985a1cdf9b0e094e15f8bad9a372f32f3d6ca7e4236395aac"
+  },
+  {
+    "file": "0047_saved_ride_invitation_push.sql",
+    "sha256": "0874c22916a17175d9334abcc72379fc76845b73c3fa530218be335d8116fc2b"
+  },
+  {
+    "file": "0048_ride_invite_push_service_lock.sql",
+    "sha256": "ab7c99a8ce52e2baa77dcf47946c45f183703d24ec3179f7b89098933836836d"
+  },
+  {
+    "file": "0049_club_posts_comments_moderation.sql",
+    "sha256": "40644e2ec6d25ad18a6c20c0c326fd3f10967531bf3375b9eb116d0f84d7ca90"
+  },
+  {
+    "file": "0050_club_content_conflict_status.sql",
+    "sha256": "13ab7fe63a56ab70f0f8acab00d027ffc686775d55e51ee9fa37f7543e72dfe0"
+  },
+  {
+    "file": "0051_club_shared_chat.sql",
+    "sha256": "ff5626799fe85aad0b556ac8eb2c08f54edfdfc044b7e4c921169ec9a1e681d5"
+  },
+  {
+    "file": "0052_club_chat_replies.sql",
+    "sha256": "15957c264245e7778ca85a2e396e205bddf101f037b1c101287176b031723bd9"
+  },
+  {
+    "file": "0053_private_conversations.sql",
+    "sha256": "5eeca29e0fa098a07427c8d70bbaef887e331830e86205928e40fa518669e6c3"
+  },
+  {
+    "file": "0054_club_profile_images.sql",
+    "sha256": "6ab5d4d7198a8df79136013472043b9aeab1b9c91001793dfd38f5db4808a038"
+  },
+  {
+    "file": "0055_club_profile_conflict_status.sql",
+    "sha256": "259742a4b549b33fd5ccdfaaff4562717d01f088678d9650ab28cb9e2033829b"
+  },
+  {
+    "file": "0056_club_image_frames.sql",
+    "sha256": "507caa956f55f53b5bdf560ee9e3fd40fb3199028ea49a49809422b1a7cd1913"
+  },
+  {
+    "file": "0057_club_catalog.sql",
+    "sha256": "134b9688960f0c0efed73d90492177beafd7c9a7d359ca836d2dd6847c269cb1"
+  },
+  {
+    "file": "0058_club_chat_search.sql",
+    "sha256": "a02e43efde18cf06fbfd6d64436f13703085f47e03bde7508b0692d0a68dfaee"
+  },
+  {
+    "file": "0059_test_ride_history_metrics_parity.sql",
+    "sha256": "85d5e36f4ab00c5c58af5f7864cbd69e24046f203c5840613dfccac7725f350e"
+  },
+  {
+    "file": "0060_private_rider_recipients.sql",
+    "sha256": "fde785e7b0f74da3949eb1c54a393bb005ccbd4028b0605aff94eff0c94a902a"
+  },
+  {
+    "file": "0061_club_member_proposals.sql",
+    "sha256": "589f21a87c5c06b6a594e9ec897eedd8acf311cf5f930f211dd31c66f1341e2f"
+  },
+  {
+    "file": "0062_private_sender_eligibility.sql",
+    "sha256": "da9d300f03288c69830c1261d08ff1155b8739e1641c01bd2b7c7143ac592542"
+  },
+  {
+    "file": "0063_private_edit_eligibility.sql",
+    "sha256": "92ad72a8797c097cd49eb60e87d3d4170dad11ad9b9e5b006781f0752e07b9be"
+  },
+  {
+    "file": "0064_account_deletion_club_content.sql",
+    "sha256": "a1048d55613f39aaf49dc674f606973f2630c721c7b6905b2b6498d97158e907"
+  },
+  {
+    "file": "0065_bike_me_club_reports.sql",
+    "sha256": "9535b6f4726ac109a89c78bb722a4b26b9a4804c1edbbb64d7acf723acae53ba"
+  },
+  {
+    "file": "0066_club_user_blocks.sql",
+    "sha256": "ca45001010b64b2a9a3b7cda6cf227f3a4b0fedd0ab95039cae1ba75d11e32ba"
+  },
+  {
+    "file": "0067_content_filter.sql",
+    "sha256": "22ee056bb52c11788ea17f8d631febee7b3aa14e3413faf2dda1333fde2407cb"
+  },
+  {
+    "file": "0068_club_thread_deletion.sql",
+    "sha256": "da80282e769f536cc743c08d0cd76002419a0d5f470fbe862ee7611228a13aff"
+  },
+  {
+    "file": "0069_private_conversation_history.sql",
+    "sha256": "61d563d4d224a5cd1804252c915de004fcb59e59814c9128876d24af9673619b"
+  }
+]
