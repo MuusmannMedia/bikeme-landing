@@ -1,8 +1,12 @@
 "use client";
 
+import {fetchClubAccess} from '@/lib/clubs/access-fetch';
+import {visitText} from '@/lib/clubs/visits/i18n';
+import {BatchCatalogContext} from './visits/catalog-batch-provider';
+import type {CatalogProfile} from '@/lib/clubs/visits/catalog-batch-store';
 import {StableAccessRegion} from "./stable-access-region";
 import {AccessContinuity,useAccessContinuity} from "./access-continuity";
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { flushSync } from "react-dom";
 
 import { CLUB_AUTH_EVENT, clubAuthPhase } from "@/lib/clubs/auth-events";
@@ -21,6 +25,7 @@ import { ClubAccessDenied, ClubReadFailure } from "./club-ui";
 export function ClubSessionBoundary({ userId, clubId, locale, selected = "details", rideId, created, directory = "mine" }: {
   userId: string; clubId?: string; locale: Locale; selected?: "details" | "members" | "rides" | "newRide"; rideId?: string; created?: string; directory?: "mine" | "all";
 }) {
+  const catalogStore=useContext(BatchCatalogContext);
   const store = useMemo(() => {
     const guard = createClubPageGuard<ClubPageData>({
       userId,
@@ -30,18 +35,24 @@ export function ClubSessionBoundary({ userId, clubId, locale, selected = "detail
         window.location.reload();
       },
       async read(signal) {
+        const catalogToken=clubId===undefined&&directory==='all'?catalogStore?.directoryReadStarted():undefined;
+        try {
         const query = clubId !== undefined ? `?clubId=${encodeURIComponent(clubId)}${selected === "rides" || selected === "newRide" ? `&view=rides&create=${selected === "newRide"}${rideId ? `&rideId=${encodeURIComponent(rideId)}` : ""}` : ""}` : `?directory=${directory}`;
-        const response = await fetch(`/api/clubs/access${query}`, { cache: "no-store", credentials: "same-origin", signal });
+        const response = await fetchClubAccess(`/api/clubs/access${query}`,signal);
         if (response.status === 401) throw new ClubReadError("auth");
         if (response.status === 403) throw new ClubReadError("access");
+        if (response.status === 429) throw new ClubReadError("quota");
         const latest = await response.json();
         if (!response.ok) throw new ClubReadError(latest.error === "unavailable" ? "unavailable" : "network");
         if (typeof latest.userId !== "string" || latest.snapshot?.view !== (clubId === undefined ? "directory" : selected === "rides" || selected === "newRide" ? "rides" : "club")) throw new ClubReadError("network");
+        if(latest.userId!==userId)throw new ClubReadError('auth');
+        if(catalogToken){if(signal.aborted)catalogStore?.directoryReadFinished(catalogToken);else if(latest.snapshot.view==='directory')catalogStore?.directoryReadFinished(catalogToken,latest.snapshot.visits as Record<string,CatalogProfile|null>,latest.snapshot.catalog.map((c:{id:string})=>c.id));}
         return latest as { userId: string; snapshot: ClubPageData };
+        } catch(error){if(catalogToken)catalogStore?.directoryReadFinished(catalogToken,undefined,undefined,signal.aborted?undefined:error);throw error;}
       }
     });
     return guard;
-  }, [userId, clubId, selected, rideId, directory]);
+  }, [userId, clubId, selected, rideId, directory,catalogStore]);
   const workflow = useMemo(() => createClubWorkflow({
     userId, key: () => crypto.randomUUID(), canAct: () => store.getSnapshot().status === "ready",
     identityLost() { flushSync(() => { store.revoke(); }); window.location.reload(); },
@@ -165,7 +176,7 @@ export function ClubSessionBoundary({ userId, clubId, locale, selected = "detail
   const ready=state.status === "ready" && state.data;
   return <AccessContinuity {...continuity} locale={locale}><div data-club-access={state.status} data-club-data={state.data === null ? "empty" : "present"}>
     <StableAccessRegion denied={state.status==='access'||state.status==='auth'} ready={!!ready} fallback={state.status === "access" ? <ClubAccessDenied locale={locale} /> :
-      state.status === "error" ? <ClubReadFailure locale={locale} kind={state.error ?? "network"} retryHref={retryHref} onRetry={() => void store.verify()} /> :
+      state.status === "error" ? state.error==='quota'?<div role="alert"><p>{visitText(locale,'quota')}</p><button className="bike-app-button bike-app-button-secondary" onClick={()=>void store.verify()}>{t('common.retry')}</button></div>:<ClubReadFailure locale={locale} kind={state.error ?? "network"} retryHref={retryHref} onRetry={() => void store.verify()} /> :
       <div className="bike-app-club-gate" role="status"><p>{t("clubs.loading")}</p></div>}>{ready?state.data!.view === "rides" ? <ClubRides club={state.data!.club} data={state.data!.rides} locale={locale} userId={userId} created={created} creation={selected==="newRide"} operation={operation} act={rideAction}/> : <ClubPageContent data={state.data as Exclude<ClubPageData,{view:"rides"}>} locale={locale} selected={selected==="members"?"members":"details"} userId={userId} workflow={workflow} directory={directory} />:null}</StableAccessRegion>
     {selected === "newRide" && clubId && state.status!=="access" && state.status!=="auth" ? <ClubCreateRide userId={userId} clubId={clubId} locale={locale} authorized={!!ready} data={state.data?.view==="rides"?state.data.rides:null}/>:null}
   </div></AccessContinuity>;

@@ -1,8 +1,10 @@
 "use client";
+import Link from "next/link";
 import {VisitCatalogCard} from './visits/catalog-card';
 import {VisitCatalogProvider} from './visits/catalog-provider';
 import {visitText} from "@/lib/clubs/visits/i18n";
-import {useState} from "react";
+import {useCatalogView} from './visits/catalog-batch-provider';
+import {useEffect,useRef,useState} from "react";
 import {searchClubCatalog} from "@/lib/clubs/catalog-search";
 import {membershipDictionary} from "@/lib/clubs/membership-i18n";
 import {ClubPrivateImages} from "./club-private-images";
@@ -19,7 +21,26 @@ import type { Locale } from "@/lib/locales";
 type Props={ data: Exclude<ClubPageData, {view:"rides"}>; locale: Locale; selected: "details" | "members"; userId: string; workflow: ClubWorkflow; directory?: "mine" | "all" };
 export function ClubPageContent(props:Props){return props.data.view==='directory'&&props.directory==='all'?<VisitCatalogProvider actor={props.userId}><ClubPageContentView {...props}/></VisitCatalogProvider>:<ClubPageContentView {...props}/>;}
 function ClubPageContentView({ data, locale, selected, userId, workflow, directory = "mine" }: Props) {
-  const [query,setQuery] = useState("");
+  const catalog=useCatalogView(data.view==='directory'?Object.fromEntries(data.catalog.filter(c=>Object.hasOwn(data.visits??{},c.id)).map(c=>[c.id,data.visits![c.id]])):{},data.view==='directory'&&directory==='all');
+  const [query,setQuery] = useState(()=>directory==='all'?catalog?.view.query??'':'');
+  const restore=useRef(false);
+  useEffect(()=>{if(!catalog||directory!=='all'||data.view!=='directory')return;
+   const desired=catalog.view.scroll;let restoring=true,leaving=false,stable=0,lastHeight=0,heightStable=0;
+   const save=()=>{if(!restoring&&!leaving)catalog.view.scroll=window.scrollY;};
+   const leave=(event:MouseEvent)=>{const a=(event.target as Element)?.closest('a');if(a&&!event.metaKey&&!event.ctrlKey&&!event.shiftKey&&!event.altKey&&event.button===0&&a.origin===location.origin&&a.pathname!==location.pathname){catalog.view.scroll=window.scrollY;leaving=true;}};
+   window.addEventListener('scroll',save,{passive:true});document.addEventListener('click',leave,true);
+   const timer=setInterval(()=>{
+    if(restore.current)return;const height=document.documentElement.scrollHeight,ready=document.querySelectorAll('[data-visit-card="loading"]').length===0;
+    heightStable=height===lastHeight?heightStable+1:0;lastHeight=height;
+    if(height>=desired+window.innerHeight||ready&&heightStable>=4){
+     const target=Math.min(desired,Math.max(0,height-window.innerHeight));window.scrollTo({left:0,top:target,behavior:'instant'});
+     if(Math.abs(window.scrollY-target)<1)stable++;else stable=0;
+     if(stable>=2){restore.current=true;restoring=false;catalog.view.scroll=window.scrollY;}
+    }
+   },50);
+   return()=>{clearInterval(timer);document.removeEventListener('click',leave,true);window.removeEventListener('scroll',save);};
+  },[catalog,directory,data.view]);
+  function updateQuery(value:string){setQuery(value);if(catalog)catalog.view.query=value;}
   const t = getAppDictionary(locale);
   const base = `/${locale}/app/clubs`;
   if (data.view === "directory") {
@@ -28,30 +49,30 @@ function ClubPageContentView({ data, locale, selected, userId, workflow, directo
     const matches = searchClubCatalog(catalog,query);
     return <>
       <AppPageHeader eyebrow={t("nav.clubs")} title={t(directory === "mine" ? "clubs.mine" : "clubs.all")} intro={directory === "all" ? t("clubs.catalogHint") : ""}
-        action={directory === "mine" ? <a className="bike-app-button" href={`${base}/new`}>{profileText(locale,"create")}</a> : undefined}/>
+        action={directory === "mine" ? <Link prefetch={false} className="bike-app-button" href={`${base}/new`}>{profileText(locale,"create")}</Link> : undefined}/>
       {directory === "mine" ? <>
         <div className="bike-app-club-incoming"><ClubMembershipPanel compact membership={data.membership} clubs={mine} locale={locale} userId={userId} workflow={workflow} scope="incoming"/></div>
         {mine.length === 0 ? <AppEmpty>{t("clubs.noClubs")}</AppEmpty> : <div className="bike-app-club-cards">
           {mine.map(club => <article className="bike-app-club-card" key={club.id}>
             <div className="bike-app-club-card-media"><ClubPrivateImages clubId={club.id} locale={locale} shape={club.imageShape??"none"} revision={club.profileRevision}/></div>
             <div className="bike-app-club-card-copy"><span className="bike-app-chip" data-tone="purple">{clubRoleLabel(locale,club.role)}</span>
-              <h2><a href={`${base}/${club.id}`}>{club.name}</a></h2><p className="bike-app-club-card-description">{club.description||t("clubs.noDescription")}</p>
-              <div className="bike-app-club-card-footer"><a className="bike-app-muted bike-app-club-member-link" href={`${base}/${club.id}/members`}><span className="sr-only">{club.name}: </span>{club.memberCount===1?t("clubs.memberCountOne"):t("clubs.memberCount").replace("{count}",new Intl.NumberFormat(locale).format(club.memberCount))}</a><a className="bike-app-button bike-app-button-secondary bike-app-button-small" href={`${base}/${club.id}`}>{t("clubs.open")}<span className="sr-only">: {club.name}</span></a></div>
+              <h2><Link prefetch={false} href={`${base}/${club.id}`}>{club.name}</Link></h2><p className="bike-app-club-card-description">{club.description||t("clubs.noDescription")}</p>
+              <div className="bike-app-club-card-footer"><Link prefetch={false} className="bike-app-muted bike-app-club-member-link" href={`${base}/${club.id}/members`}><span className="sr-only">{club.name}: </span>{club.memberCount===1?t("clubs.memberCountOne"):t("clubs.memberCount").replace("{count}",new Intl.NumberFormat(locale).format(club.memberCount))}</Link><Link prefetch={false} className="bike-app-button bike-app-button-secondary bike-app-button-small" href={`${base}/${club.id}`}>{t("clubs.open")}<span className="sr-only">: {club.name}</span></Link></div>
             </div>
           </article>)}
         </div>}
       </> : <>
         <form role="search" className="bike-app-club-search bike-app-form" onSubmit={event=>event.preventDefault()}>
-          <label className="bike-app-field" htmlFor="club-catalog-search"><span>{t("clubs.search")}</span><input id="club-catalog-search" type="search" autoComplete="off" value={query} placeholder={t("clubs.searchPlaceholder")} onChange={event=>setQuery(event.target.value)}/></label>
+          <label className="bike-app-field" htmlFor="club-catalog-search"><span>{t("clubs.search")}</span><input id="club-catalog-search" type="search" autoComplete="off" value={query} placeholder={t("clubs.searchPlaceholder")} onChange={event=>updateQuery(event.target.value)}/></label>
         </form>
         <p className="bike-app-muted" role="status" aria-live="polite">{t("clubs.searchCount").replace("{count}",new Intl.NumberFormat(locale).format(matches.length))}</p>
         {catalog.length === 0 ? <AppEmpty>{t("clubs.noCatalog")}</AppEmpty> : matches.length===0?<AppEmpty>{t("clubs.searchEmpty")}</AppEmpty>:<div className="bike-app-club-cards">
-          {matches.map(entry=>{const club=memberClubs.get(entry.id);if(!club&&data.visits?.[entry.id])return <VisitCatalogCard key={entry.id} entry={entry} locale={locale}/>;return <article className="bike-app-club-card" key={entry.id}>
+          {matches.map(entry=>{const club=memberClubs.get(entry.id);if(!club&&Object.hasOwn(data.visits??{},entry.id))return <VisitCatalogCard key={entry.id} entry={entry} locale={locale}/>;return <article className="bike-app-club-card" key={entry.id}>
             <div className="bike-app-club-card-media">{club?<ClubPrivateImages clubId={club.id} locale={locale} shape={club.imageShape??"none"} revision={club.profileRevision}/>:<div className="bike-app-club-catalog-cover" aria-hidden="true"><span>{Array.from(entry.name)[0]}</span><svg viewBox="0 0 200 100" fill="none"><circle cx="45" cy="65" r="25"/><circle cx="155" cy="65" r="25"/><path d="M45 65 80 25 110 65H45L70 15M80 25h55l20 40M125 10h20"/></svg></div>}</div>
             <div className="bike-app-club-card-copy"><span className="bike-app-chip" data-tone={club?"purple":undefined}>{club?clubRoleLabel(locale,club.role):t("clubs.membersOnly")}</span>
-              <h2><a href={`${base}/${entry.id}`}>{entry.name}</a></h2>
+              <h2><Link prefetch={false} href={`${base}/${entry.id}`}>{entry.name}</Link></h2>
               {club?<p className="bike-app-club-card-description">{club.description||t("clubs.noDescription")}</p>:null}
-              {club?<div className="bike-app-club-card-footer"><a className="bike-app-muted bike-app-club-member-link" href={`${base}/${club.id}/members`}><span className="sr-only">{club.name}: </span>{club.memberCount===1?t("clubs.memberCountOne"):t("clubs.memberCount").replace("{count}",new Intl.NumberFormat(locale).format(club.memberCount))}</a><a className="bike-app-button bike-app-button-secondary bike-app-button-small" href={`${base}/${club.id}`}>{t("clubs.open")}<span className="sr-only">: {club.name}</span></a></div>:<div className="bike-app-club-card-footer"><a className="bike-app-button bike-app-button-secondary bike-app-button-small" href={`${base}/${entry.id}`}>{t("clubs.open")}<span className="sr-only">: {entry.name}</span></a></div>}
+              {club?<div className="bike-app-club-card-footer"><Link prefetch={false} className="bike-app-muted bike-app-club-member-link" href={`${base}/${club.id}/members`}><span className="sr-only">{club.name}: </span>{club.memberCount===1?t("clubs.memberCountOne"):t("clubs.memberCount").replace("{count}",new Intl.NumberFormat(locale).format(club.memberCount))}</Link><Link prefetch={false} className="bike-app-button bike-app-button-secondary bike-app-button-small" href={`${base}/${club.id}`}>{t("clubs.open")}<span className="sr-only">: {club.name}</span></Link></div>:<div className="bike-app-club-card-footer"><Link prefetch={false} className="bike-app-button bike-app-button-secondary bike-app-button-small" href={`${base}/${entry.id}`}>{t("clubs.open")}<span className="sr-only">: {entry.name}</span></Link></div>}
             </div>
           </article>;})}
         </div>}

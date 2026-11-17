@@ -1,3 +1,5 @@
+import {visitError} from '@/lib/clubs/visits/contract';
+import {catalogEnabled} from '@/lib/clubs/visits/catalog-server';
 import {loadVisitCatalog} from '@/lib/clubs/visits/catalog';
 import {createVisitApi,visitsEnabled} from '@/lib/clubs/visits/api';
 import {profileEditingEnabled} from "@/lib/clubs/profile-contract";
@@ -40,11 +42,18 @@ export async function GET(request: NextRequest) {
     }
     else {
       const [mine, catalog] = await Promise.all([api.list(), request.nextUrl.searchParams.get("directory")==="mine"?Promise.resolve([]):api.catalog()]);
-      const visits=visitsEnabled(process.env)?await loadVisitCatalog(catalog.filter(c=>!mine.some(m=>m.id===c.id)).map(c=>c.id),id=>createVisitApi(client,data.user!.id).profile(id)):{};
+      let visits={};
+      if(visitsEnabled(process.env)){
+       if(catalogEnabled(process.env)&&request.nextUrl.searchParams.get('directory')!=='mine'){
+        const r=await client.rpc('club_visit_catalog_manifest',{p_ids:null,p_known:{}});if(r.error&&r.error.code!=='42501')throw r.error;
+        visits=r.data?.profiles??{};
+       }else visits=await loadVisitCatalog(catalog.filter(c=>!mine.some(m=>m.id===c.id)).map(c=>c.id),id=>createVisitApi(client,data.user!.id).profile(id));
+      }
       snapshot = { view: "directory", mine, catalog, visits, membership: {invitations: await membershipApi.invitations(), pending: [], proposals: [], transfers} };
     }
     return response({ userId: data.user.id, snapshot });
   } catch (error) {
+    if((error as {code?:string})?.code==='PT429'){const r=response({error:'quota'},429);r.headers.set('Retry-After',String(visitError(error).retryAfter??61));return r;}
     const kind = clubError(error).kind;
     return response({ error: kind }, kind === "auth" ? 401 : kind === "access" ? 403 : 503);
   }

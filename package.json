@@ -22,7 +22,9 @@
     "test:club-visits": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir .test-build/bikeme-visit-tests tests/club-visits.test.ts && node --test .test-build/bikeme-visit-tests/tests/club-visits.test.js",
     "test:conversation-position": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir .test-build/bikeme-position-tests tests/conversation-position.test.ts && node --test .test-build/bikeme-position-tests/tests/conversation-position.test.js",
     "test:signal-readiness": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir .test-build/bikeme-signal-tests tests/realtime-signals.test.ts && node --test .test-build/bikeme-signal-tests/tests/realtime-signals.test.js",
-    "test:visit-catalog": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir .test-build/visit-catalog tests/visit-catalog.test.ts && node --test .test-build/visit-catalog/tests/visit-catalog.test.js"
+    "test:visit-catalog": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir .test-build/visit-catalog tests/visit-catalog.test.ts && node --test .test-build/visit-catalog/tests/visit-catalog.test.js",
+    "test:visit-catalog-batch": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir .test-build/visit-catalog-batch tests/visit-catalog-batch.test.ts && node --test .test-build/visit-catalog-batch/tests/visit-catalog-batch.test.js",
+    "test:club-access-fetch": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir .test-build/club-access-fetch tests/club-access-fetch.test.ts && node --test .test-build/club-access-fetch/tests/club-access-fetch.test.js"
   },
   "dependencies": {
     "@supabase/ssr": "0.10.0",

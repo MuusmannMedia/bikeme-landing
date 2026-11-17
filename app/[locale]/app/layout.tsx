@@ -1,3 +1,5 @@
+import {BatchCatalogProvider} from '@/components/clubs/visits/catalog-batch-provider';
+import {catalogEnabled} from '@/lib/clubs/visits/catalog-server';
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
@@ -40,5 +42,6 @@ export default async function AuthenticatedAppLayout({
   }
   const t = getAppDictionary(locale);
   const displayName = viewer.profile.displayName ?? getAuthDictionary(locale).neutralUserNameFallback;
-  return <AppShell locale={locale} viewer={viewer} displayName={displayName} t={t}>{children}</AppShell>;
+  const shell=<AppShell locale={locale} viewer={viewer} displayName={displayName} t={t}>{children}</AppShell>;
+  return catalogEnabled(process.env)?<BatchCatalogProvider key={viewer.profile.id} actor={viewer.profile.id}>{shell}</BatchCatalogProvider>:shell;
 }

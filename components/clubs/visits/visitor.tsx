@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import {getAppDictionary} from '@/lib/app-i18n';
 import {VisitorNavMarker} from './nav-scope';
 import {useEffect,useState} from 'react';
@@ -17,7 +18,7 @@ export function VisitBoundary({userId,clubId,locale,previewOnly=false}:{userId:s
  async function run(input:Omit<VisitCommand,'actorId'|'clubId'|'key'>){const ok=await store.run({...input,actorId:userId,clubId,key:crypto.randomUUID()});if(ok&&input.op==='apply')setBody('');if(ok&&input.op==='inviteAccept')window.location.assign(`/${locale}/app/clubs/${clubId}`);}
  const latest=snapshot?.applications[0],blocked=s.busy||!!s.pending,remaining=latest?.status==='rejected'&&latest.resolved_at?new Date(latest.resolved_at).getTime()+7*86400000-now:0;
  return <AccessContinuity {...continuity} locale={locale}><div data-visit-access={s.status}>{!previewOnly?<VisitorNavMarker/>:null}
- {!previewOnly?<a className="bike-app-button bike-app-button-secondary bike-app-visit-back" href={`/${locale}/app/clubs/all`}>← {t('back')}</a>:null}
+ {!previewOnly?<Link prefetch={false} className="bike-app-button bike-app-button-secondary bike-app-visit-back" href={`/${locale}/app/clubs/all`}>← {t('back')}</Link>:null}
  <StableAccessRegion ready={s.status==='ready'&&!!snapshot} denied={s.status==='access'||s.status==='auth'} fallback={<AppPanel><p role="status">{s.status==='error'?(s.error==='quota'?t('quota'):getAppDictionary(locale)('clubs.loadError')):t(s.status==='loading'?'loading':'unavailable')}</p><button className="bike-app-button bike-app-button-secondary" onClick={()=>void store.refresh(false)}>{t('reload')}</button></AppPanel>}>
  {snapshot?<>
  {snapshot.profile?<><VisitHero profile={snapshot.profile} cover={s.data!.cover} logo={s.data!.logo} locale={locale}/><AppPanel title={t('title')}><p className="bike-app-club-description">{snapshot.profile.description}</p><p className="bike-app-muted">{t('privateHint')}</p></AppPanel>

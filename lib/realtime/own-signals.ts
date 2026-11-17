@@ -1,6 +1,6 @@
 import type {SupabaseClient,RealtimeChannel} from '@supabase/supabase-js';
 import {createPostgresReadiness} from './postgres-readiness';
-type SignalTable='club_chat_signals'|'private_message_signals';
+type SignalTable='club_chat_signals'|'private_message_signals'|'club_visit_catalog_signals';
 // Never join with the anonymous fallback key while browser auth initializes.
 // Only own revision rows are subscribed; protected content is fetched via BFF.
 export function subscribeOwnSignals(client:SupabaseClient|null,actor:string,topic:string,tables:readonly SignalTable[],o:{ready:()=>void;unavailable:()=>void;change:(row:Record<string,unknown>)=>void}){

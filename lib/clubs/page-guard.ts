@@ -3,7 +3,7 @@ import { ClubReadError, clubReadError } from "./types";
 export type ClubPageState<T> = {
   status: "loading" | "ready" | "error" | "access" | "auth";
   data: T | null;
-  error: "network" | "unavailable" | null;
+  error: "network" | "unavailable" | "quota" | null;
 };
 
 // The only active club-data store. No server-rendered children, router payload,

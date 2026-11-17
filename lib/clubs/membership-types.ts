@@ -12,7 +12,7 @@ export class ClubError extends Error {
 
 export function clubError(error: unknown): ClubError {
   if (error instanceof ClubError) return error;
-  if (error instanceof ClubReadError) return new ClubError(error.kind);
+  if (error instanceof ClubReadError) return new ClubError(error.kind==="quota"?"network":error.kind);
   const code = typeof error === "object" && error && "code" in error ? String(error.code) : "";
   const message = typeof error === "object" && error && "message" in error ? String(error.message) : "";
   if (message === "CLUB_INVALID_IMAGE") return new ClubError("image");

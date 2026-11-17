@@ -1,4 +1,5 @@
 'use client';
+import {BatchCatalogContext} from './catalog-batch-provider';
 import {createContext,useContext,useEffect,useMemo,useRef,useSyncExternalStore,type ReactNode} from 'react';
 import {flushSync} from 'react-dom';
 import {createCatalogStore} from '@/lib/clubs/visits/catalog-store';
@@ -9,7 +10,8 @@ import {subscribeOwnSignals} from '@/lib/realtime/own-signals';
 import {CLUB_AUTH_EVENT,clubAuthPhase} from '@/lib/clubs/auth-events';
 
 const Context=createContext<ReturnType<typeof createCatalogStore>|null>(null);
-export function VisitCatalogProvider({actor,children}:{actor:string;children:ReactNode}){
+export function VisitCatalogProvider({actor,children}:{actor:string;children:ReactNode}){const batch=useContext(BatchCatalogContext);return batch?<>{children}</>:<LegacyCatalogProvider actor={actor}>{children}</LegacyCatalogProvider>;}
+function LegacyCatalogProvider({actor,children}:{actor:string;children:ReactNode}){
  const cleanup=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
  const store=useMemo(()=>{
   const key=`bike-visit-rate:${actor}`;let ledger:CatalogLedger|undefined;
@@ -43,7 +45,7 @@ export function VisitCatalogProvider({actor,children}:{actor:string;children:Rea
  return <Context.Provider value={store}>{children}</Context.Provider>;
 }
 export function useCatalogCard(id:string){
- const store=useContext(Context);if(!store)throw new Error('Missing visit catalog provider');
+ const legacy=useContext(Context),batch=useContext(BatchCatalogContext),store=batch??legacy;if(!store)throw new Error('Missing visit catalog provider');
  const subscribe=useMemo(()=> (f:()=>void)=>store.subscribe(id,f),[store,id]);
  const state=useSyncExternalStore(subscribe,()=>store.snapshot(id),store.serverSnapshot),ref=useRef<HTMLElement|null>(null);
  useEffect(()=>{const element=ref.current;if(!element)return;const observer=new IntersectionObserver(rows=>{for(const row of rows)store.visible(id,row.isIntersecting);},{rootMargin:'0px'});observer.observe(element);return()=>{observer.disconnect();store.visible(id,false);};},[store,id]);
