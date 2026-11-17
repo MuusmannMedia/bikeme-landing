@@ -1,5 +1,6 @@
 import type {Locale} from '../../locales';
 const rows={
+ catalogWaiting:['Loading securely. Pictures may wait for the next quota window.','Indlæser sikkert. Billeder kan afvente næste kvotevindue.','Sicheres Laden. Bilder warten gegebenenfalls auf das nächste Kontingentfenster.','Carga segura. Las imágenes pueden esperar al siguiente período de cuota.','Caricamento sicuro. Le immagini possono attendere la prossima finestra di quota.','Chargement sécurisé. Les images peuvent attendre la prochaine période de quota.','Veilig laden. Afbeeldingen kunnen wachten op het volgende quotavenster.'],
  visible:['Visible to other Bike Me users','Synligt for andre Bike Me-brugere','Für andere Bike Me-Nutzer sichtbar','Visible para otros usuarios de Bike Me','Visibile agli altri utenti Bike Me','Visible par les autres utilisateurs Bike Me','Zichtbaar voor andere Bike Me-gebruikers'],
  title:['Visitor profile','Besøgsprofil','Besucherprofil','Perfil para visitantes','Profilo visitatori','Profil visiteur','Bezoekersprofiel'],
  manage:['Manage visitor access','Administrér besøgsadgang','Besucherzugriff verwalten','Gestionar acceso de visitantes','Gestisci accesso visitatori','Gérer l’accès visiteur','Bezoekerstoegang beheren'],

@@ -1,5 +1,6 @@
 "use client";
 import {VisitCatalogCard} from './visits/catalog-card';
+import {VisitCatalogProvider} from './visits/catalog-provider';
 import {visitText} from "@/lib/clubs/visits/i18n";
 import {useState} from "react";
 import {searchClubCatalog} from "@/lib/clubs/catalog-search";
@@ -15,7 +16,9 @@ import { getAppDictionary } from "@/lib/app-i18n";
 import type { ClubPageData } from "@/lib/clubs/types";
 import type { Locale } from "@/lib/locales";
 
-export function ClubPageContent({ data, locale, selected, userId, workflow, directory = "mine" }: { data: Exclude<ClubPageData, {view:"rides"}>; locale: Locale; selected: "details" | "members"; userId: string; workflow: ClubWorkflow; directory?: "mine" | "all" }) {
+type Props={ data: Exclude<ClubPageData, {view:"rides"}>; locale: Locale; selected: "details" | "members"; userId: string; workflow: ClubWorkflow; directory?: "mine" | "all" };
+export function ClubPageContent(props:Props){return props.data.view==='directory'&&props.directory==='all'?<VisitCatalogProvider actor={props.userId}><ClubPageContentView {...props}/></VisitCatalogProvider>:<ClubPageContentView {...props}/>;}
+function ClubPageContentView({ data, locale, selected, userId, workflow, directory = "mine" }: Props) {
   const [query,setQuery] = useState("");
   const t = getAppDictionary(locale);
   const base = `/${locale}/app/clubs`;
@@ -43,7 +46,7 @@ export function ClubPageContent({ data, locale, selected, userId, workflow, dire
         </form>
         <p className="bike-app-muted" role="status" aria-live="polite">{t("clubs.searchCount").replace("{count}",new Intl.NumberFormat(locale).format(matches.length))}</p>
         {catalog.length === 0 ? <AppEmpty>{t("clubs.noCatalog")}</AppEmpty> : matches.length===0?<AppEmpty>{t("clubs.searchEmpty")}</AppEmpty>:<div className="bike-app-club-cards">
-          {matches.map(entry=>{const club=memberClubs.get(entry.id);if(!club&&data.visits?.[entry.id])return <VisitCatalogCard key={entry.id} entry={entry} actor={userId} locale={locale}/>;return <article className="bike-app-club-card" key={entry.id}>
+          {matches.map(entry=>{const club=memberClubs.get(entry.id);if(!club&&data.visits?.[entry.id])return <VisitCatalogCard key={entry.id} entry={entry} locale={locale}/>;return <article className="bike-app-club-card" key={entry.id}>
             <div className="bike-app-club-card-media">{club?<ClubPrivateImages clubId={club.id} locale={locale} shape={club.imageShape??"none"} revision={club.profileRevision}/>:<div className="bike-app-club-catalog-cover" aria-hidden="true"><span>{Array.from(entry.name)[0]}</span><svg viewBox="0 0 200 100" fill="none"><circle cx="45" cy="65" r="25"/><circle cx="155" cy="65" r="25"/><path d="M45 65 80 25 110 65H45L70 15M80 25h55l20 40M125 10h20"/></svg></div>}</div>
             <div className="bike-app-club-card-copy"><span className="bike-app-chip" data-tone={club?"purple":undefined}>{club?clubRoleLabel(locale,club.role):t("clubs.membersOnly")}</span>
               <h2><a href={`${base}/${entry.id}`}>{entry.name}</a></h2>
