@@ -4,8 +4,9 @@ import {VisitCatalogCard} from './visits/catalog-card';
 import {VisitCatalogProvider} from './visits/catalog-provider';
 import {visitText} from "@/lib/clubs/visits/i18n";
 import {useCatalogView} from './visits/catalog-batch-provider';
-import {useEffect,useRef,useState} from "react";
-import {searchClubCatalog} from "@/lib/clubs/catalog-search";
+import {useContext,useEffect,useRef,useState} from "react";
+import {clubCatalogPage} from '@/lib/clubs/catalog-page';
+import {BatchCatalogContext} from './visits/catalog-batch-provider';
 import {membershipDictionary} from "@/lib/clubs/membership-i18n";
 import {ClubPrivateImages} from "./club-private-images";
 import {imageText} from "@/lib/clubs/image-i18n";
@@ -21,8 +22,11 @@ import type { Locale } from "@/lib/locales";
 type Props={ data: Exclude<ClubPageData, {view:"rides"}>; locale: Locale; selected: "details" | "members"; userId: string; workflow: ClubWorkflow; directory?: "mine" | "all" };
 export function ClubPageContent(props:Props){return props.data.view==='directory'&&props.directory==='all'?<VisitCatalogProvider actor={props.userId}><ClubPageContentView {...props}/></VisitCatalogProvider>:<ClubPageContentView {...props}/>;}
 function ClubPageContentView({ data, locale, selected, userId, workflow, directory = "mine" }: Props) {
-  const catalog=useCatalogView(data.view==='directory'?Object.fromEntries(data.catalog.filter(c=>Object.hasOwn(data.visits??{},c.id)).map(c=>[c.id,data.visits![c.id]])):{},data.view==='directory'&&directory==='all');
-  const [query,setQuery] = useState(()=>directory==='all'?catalog?.view.query??'':'');
+  const batch=useContext(BatchCatalogContext);
+  const [query,setQuery] = useState(()=>directory==='all'?batch?.view.query??'':'');
+  const [page,setPage] = useState(()=>directory==='all'?batch?.view.page??0:0);
+  const windowed=clubCatalogPage(data.view==='directory'?data.catalog:[],query,page);
+  const catalog=useCatalogView(data.view==='directory'?Object.fromEntries(windowed.entries.filter(c=>Object.hasOwn(data.visits??{},c.id)).map(c=>[c.id,data.visits![c.id]])):{},data.view==='directory'&&directory==='all');
   const restore=useRef(false);
   useEffect(()=>{if(!catalog||directory!=='all'||data.view!=='directory')return;
    const desired=catalog.view.scroll;let restoring=true,leaving=false,stable=0,lastHeight=0,heightStable=0;
@@ -40,13 +44,14 @@ function ClubPageContentView({ data, locale, selected, userId, workflow, directo
    },50);
    return()=>{clearInterval(timer);document.removeEventListener('click',leave,true);window.removeEventListener('scroll',save);};
   },[catalog,directory,data.view]);
-  function updateQuery(value:string){setQuery(value);if(catalog)catalog.view.query=value;}
+  function updateQuery(value:string){setQuery(value);setPage(0);if(catalog){catalog.view.query=value;catalog.view.page=0;catalog.view.scroll=0;}}
+  function updatePage(value:number){setPage(value);if(catalog){catalog.view.page=value;catalog.view.scroll=0;}window.scrollTo({top:0,behavior:'instant'});}
   const t = getAppDictionary(locale);
   const base = `/${locale}/app/clubs`;
   if (data.view === "directory") {
     const { mine, catalog } = data;
     const memberClubs = new Map(mine.map(club => [club.id,club]));
-    const matches = searchClubCatalog(catalog,query);
+    const matches = windowed.matches;
     return <>
       <AppPageHeader eyebrow={t("nav.clubs")} title={t(directory === "mine" ? "clubs.mine" : "clubs.all")} intro={directory === "all" ? t("clubs.catalogHint") : ""}
         action={directory === "mine" ? <Link prefetch={false} className="bike-app-button" href={`${base}/new`}>{profileText(locale,"create")}</Link> : undefined}/>
@@ -67,7 +72,7 @@ function ClubPageContentView({ data, locale, selected, userId, workflow, directo
         </form>
         <p className="bike-app-muted" role="status" aria-live="polite">{t("clubs.searchCount").replace("{count}",new Intl.NumberFormat(locale).format(matches.length))}</p>
         {catalog.length === 0 ? <AppEmpty>{t("clubs.noCatalog")}</AppEmpty> : matches.length===0?<AppEmpty>{t("clubs.searchEmpty")}</AppEmpty>:<div className="bike-app-club-cards">
-          {matches.map(entry=>{const club=memberClubs.get(entry.id);if(!club&&Object.hasOwn(data.visits??{},entry.id))return <VisitCatalogCard key={entry.id} entry={entry} locale={locale}/>;return <article className="bike-app-club-card" key={entry.id}>
+          {windowed.entries.map(entry=>{const club=memberClubs.get(entry.id);if(!club&&Object.hasOwn(data.visits??{},entry.id))return <VisitCatalogCard key={entry.id} entry={entry} locale={locale}/>;return <article className="bike-app-club-card" key={entry.id}>
             <div className="bike-app-club-card-media">{club?<ClubPrivateImages clubId={club.id} locale={locale} shape={club.imageShape??"none"} revision={club.profileRevision}/>:<div className="bike-app-club-catalog-cover" aria-hidden="true"><span>{Array.from(entry.name)[0]}</span><svg viewBox="0 0 200 100" fill="none"><circle cx="45" cy="65" r="25"/><circle cx="155" cy="65" r="25"/><path d="M45 65 80 25 110 65H45L70 15M80 25h55l20 40M125 10h20"/></svg></div>}</div>
             <div className="bike-app-club-card-copy"><span className="bike-app-chip" data-tone={club?"purple":undefined}>{club?clubRoleLabel(locale,club.role):t("clubs.membersOnly")}</span>
               <h2><Link prefetch={false} href={`${base}/${entry.id}`}>{entry.name}</Link></h2>
@@ -76,6 +81,7 @@ function ClubPageContentView({ data, locale, selected, userId, workflow, directo
             </div>
           </article>;})}
         </div>}
+        {windowed.pages>1?<nav className="bike-app-actions" aria-label={t("clubs.pages")}><button className="bike-app-button bike-app-button-secondary" disabled={windowed.page===0} onClick={()=>updatePage(windowed.page-1)}>{t("clubs.previous")}</button><span>{windowed.page+1} / {windowed.pages}</span><button className="bike-app-button bike-app-button-secondary" disabled={windowed.page+1>=windowed.pages} onClick={()=>updatePage(windowed.page+1)}>{t("clubs.next")}</button></nav>:null}
       </>}
     </>;
   }

@@ -1,3 +1,4 @@
+import {clubCatalogPage} from '@/lib/clubs/catalog-page';
 import {visitError} from '@/lib/clubs/visits/contract';
 import {catalogEnabled} from '@/lib/clubs/visits/catalog-server';
 import {loadVisitCatalog} from '@/lib/clubs/visits/catalog';
@@ -45,8 +46,9 @@ export async function GET(request: NextRequest) {
       let visits={};
       if(visitsEnabled(process.env)){
        if(catalogEnabled(process.env)&&request.nextUrl.searchParams.get('directory')!=='mine'){
-        const r=await client.rpc('club_visit_catalog_manifest',{p_ids:null,p_known:{}});if(r.error&&r.error.code!=='42501')throw r.error;
-        visits=r.data?.profiles??{};
+        const page=clubCatalogPage(catalog,(request.nextUrl.searchParams.get('catalogQ')??'').slice(0,200),Number(request.nextUrl.searchParams.get('catalogPage')??0));
+        const r=await client.rpc('club_visit_catalog_manifest',{p_ids:page.entries.map(c=>c.id),p_known:{}});if(r.error&&r.error.code!=='42501')throw r.error;
+        visits={...Object.fromEntries(catalog.map(c=>[c.id,null])),...r.data?.profiles};
        }else visits=await loadVisitCatalog(catalog.filter(c=>!mine.some(m=>m.id===c.id)).map(c=>c.id),id=>createVisitApi(client,data.user!.id).profile(id));
       }
       snapshot = { view: "directory", mine, catalog, visits, membership: {invitations: await membershipApi.invitations(), pending: [], proposals: [], transfers} };

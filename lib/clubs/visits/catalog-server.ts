@@ -1,10 +1,11 @@
 import 'server-only';
+import {clubFeatureEnabled} from '../deployment-gate';
 import {createHash,createHmac} from 'node:crypto';
 import sharp from 'sharp';
 import type {SupabaseClient} from '@supabase/supabase-js';
 import {VisitError,visitError} from './contract';
-// This delivery is deliberately test-only. Production activation needs a new gate review.
-export function catalogEnabled(env:NodeJS.ProcessEnv){return env.VERCEL_ENV!=='production'&&env.BIKE_ME_VISIT_CATALOG_ENABLED==='true'&&env.NEXT_PUBLIC_SUPABASE_URL==='https://bcskqapoagflshewvzzc.supabase.co';}
+// Explicit deployment opt-in, exact environment/backend pairing, DB stopflags still apply.
+export function catalogEnabled(env:NodeJS.ProcessEnv){return clubFeatureEnabled(env,'BIKE_ME_VISIT_CATALOG_ENABLED');}
 export async function prepareCatalogImage(client:SupabaseClient,actor:string,club:string,slot:'cover'|'logo',source:string,bytes:Buffer){
  const key=process.env.BIKE_ME_VISIT_CATALOG_SIGNING_KEY;
  if(!catalogEnabled(process.env)||!key||!/^[a-f0-9]{64}$/.test(key))throw new VisitError('image');

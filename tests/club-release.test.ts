@@ -1,0 +1,8 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {clubFeatureEnabled} from '../lib/clubs/deployment-gate';
+import {profileEditingEnabled} from '../lib/clubs/profile-contract';
+import {clubRidePushEnabled} from '../lib/clubs/ride-push-gate';
+import {clubCatalogPage} from '../lib/clubs/catalog-page';
+const production={VERCEL_ENV:'production',NEXT_PUBLIC_SUPABASE_URL:'https://zawilafvdwlnwsdeufts.supabase.co',BIKE_ME_CLUB_PROFILE_EDIT_ENABLED:'true',BIKE_ME_VISIT_CATALOG_ENABLED:'true',BIKE_ME_CLUB_RIDE_PUSH_ENABLED:'true'};
+test('release gates require exact environment, backend and opt-in',()=>{assert(profileEditingEnabled(production));assert(clubFeatureEnabled(production,'BIKE_ME_VISIT_CATALOG_ENABLED'));assert(!profileEditingEnabled({...production,BIKE_ME_CLUB_PROFILE_EDIT_ENABLED:'false'}));assert(!profileEditingEnabled({...production,VERCEL_ENV:'preview'}));assert(!profileEditingEnabled({...production,NEXT_PUBLIC_SUPABASE_URL:'https://bcskqapoagflshewvzzc.supabase.co'}));assert(!clubFeatureEnabled({...production,VERCEL_ENV:'other'},'BIKE_ME_VISIT_CATALOG_ENABLED'));assert(!clubRidePushEnabled(production));});
+test('catalog pages preserve bounded manifests while all names remain searchable',()=>{const rows=Array.from({length:45},(_,i)=>({id:String(i),name:i===44?'Sidste cykelklub':'Klub '+i}));assert.equal(clubCatalogPage(rows,'',0).entries.length,20);assert.equal(clubCatalogPage(rows,'',1).entries[0].id,'20');assert.equal(clubCatalogPage(rows,'',2).entries.length,5);assert.equal(clubCatalogPage(rows,'SIDSTE',0).entries[0].id,'44');assert.equal(clubCatalogPage(rows,'',999).page,2);assert.equal(clubCatalogPage(rows,'ukendt',1).entries.length,0);});

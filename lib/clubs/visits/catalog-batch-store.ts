@@ -15,13 +15,13 @@ export function createBatchCatalogStore(o:{actor:string;manifest:(ids:string[],s
  const patch=(e:E,p:Partial<CatalogState>)=>{e.state={...e.state,...p};e.listeners.forEach(f=>f());};
  const key=(p:CatalogProfile)=>`${p.cover_revision??''}:${p.logo_revision??''}`;
  const current=(g:number)=>!stopped&&g===generation&&!controller.signal.aborted;
- function clear(clearView=false){for(const e of entries.values()){e.profile=null;e.cache=null;patch(e,{...empty,concealed:true});}if(clearView){view.query='';view.scroll=0;}}
+ function clear(clearView=false){for(const e of entries.values()){e.profile=null;e.cache=null;patch(e,{...empty,concealed:true});}if(clearView){view.query='';view.scroll=0;view.page=0;}}
  function reveal(e:E){const p=e.profile;if(!authorized||!connected||suspended||!p)return;if(e.cache?.key===key(p)){
   const data:VisitData={snapshot:{profile:p,rides:[],applications:[],invitation:null,applicationsEnabled:false},cover:p.has_cover?e.cache.cover:null,logo:p.has_logo?e.cache.logo:null};patch(e,{status:'ready',data,waiting:false,concealed:false,error:null});
  }}
  function hide(){authorized=false;for(const e of entries.values())patch(e,{concealed:true});}
  function failure(error:unknown){const k=visitError(error).kind;clear(k==='auth'||k==='access');for(const e of entries.values())patch(e,{status:k==='auth'?'auth':k==='access'?'access':'error',data:null,waiting:false,concealed:false,error:k});if(k==='auth')revoke();}
- const view={query:'',scroll:0};
+ const view={query:'',scroll:0,page:0};
  async function refresh(){if(stopped||suspended||!ids.length)return;if(directoryPending){refreshTimer=setTimeout(()=>void refresh(),100);return;}if(inflight){again=true;return inflight;}
   const g=generation,startedConnected=connected,signal=controller.signal,now=Date.now();while(manifestStamps[0]<now-61000)manifestStamps.shift();
   if(manifestStamps.length>=12){refreshTimer=setTimeout(()=>void refresh(),Math.max(1,manifestStamps[0]+61001-now));return;}

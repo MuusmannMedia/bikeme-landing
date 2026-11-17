@@ -1,5 +1,6 @@
 "use client";
 
+import {clubCatalogPage} from '@/lib/clubs/catalog-page';
 import {fetchClubAccess} from '@/lib/clubs/access-fetch';
 import {visitText} from '@/lib/clubs/visits/i18n';
 import {BatchCatalogContext} from './visits/catalog-batch-provider';
@@ -37,7 +38,7 @@ export function ClubSessionBoundary({ userId, clubId, locale, selected = "detail
       async read(signal) {
         const catalogToken=clubId===undefined&&directory==='all'?catalogStore?.directoryReadStarted():undefined;
         try {
-        const query = clubId !== undefined ? `?clubId=${encodeURIComponent(clubId)}${selected === "rides" || selected === "newRide" ? `&view=rides&create=${selected === "newRide"}${rideId ? `&rideId=${encodeURIComponent(rideId)}` : ""}` : ""}` : `?directory=${directory}`;
+        const query = clubId !== undefined ? `?clubId=${encodeURIComponent(clubId)}${selected === "rides" || selected === "newRide" ? `&view=rides&create=${selected === "newRide"}${rideId ? `&rideId=${encodeURIComponent(rideId)}` : ""}` : ""}` : `?directory=${directory}&catalogQ=${encodeURIComponent(catalogStore?.view.query??'')}&catalogPage=${catalogStore?.view.page??0}`;
         const response = await fetchClubAccess(`/api/clubs/access${query}`,signal);
         if (response.status === 401) throw new ClubReadError("auth");
         if (response.status === 403) throw new ClubReadError("access");
@@ -46,7 +47,7 @@ export function ClubSessionBoundary({ userId, clubId, locale, selected = "detail
         if (!response.ok) throw new ClubReadError(latest.error === "unavailable" ? "unavailable" : "network");
         if (typeof latest.userId !== "string" || latest.snapshot?.view !== (clubId === undefined ? "directory" : selected === "rides" || selected === "newRide" ? "rides" : "club")) throw new ClubReadError("network");
         if(latest.userId!==userId)throw new ClubReadError('auth');
-        if(catalogToken){if(signal.aborted)catalogStore?.directoryReadFinished(catalogToken);else if(latest.snapshot.view==='directory')catalogStore?.directoryReadFinished(catalogToken,latest.snapshot.visits as Record<string,CatalogProfile|null>,latest.snapshot.catalog.map((c:{id:string})=>c.id));}
+        if(catalogToken){if(signal.aborted)catalogStore?.directoryReadFinished(catalogToken);else if(latest.snapshot.view==='directory')catalogStore?.directoryReadFinished(catalogToken,latest.snapshot.visits as Record<string,CatalogProfile|null>,clubCatalogPage(latest.snapshot.catalog,catalogStore?.view.query??'',catalogStore?.view.page??0).entries.map((c:{id:string})=>c.id));}
         return latest as { userId: string; snapshot: ClubPageData };
         } catch(error){if(catalogToken)catalogStore?.directoryReadFinished(catalogToken,undefined,undefined,signal.aborted?undefined:error);throw error;}
       }

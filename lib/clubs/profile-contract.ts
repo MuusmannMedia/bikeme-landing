@@ -1,3 +1,4 @@
+import {clubFeatureEnabled} from './deployment-gate';
 import { ClubError } from './membership-types';
 import { isClubId } from './types';
 export type ClubText={name:string;description:string};
@@ -10,7 +11,7 @@ export function validateClubText(input:ClubText){
 }
 // Server-only environment values are passed by callers. No public feature flag.
 export function profileEditingEnabled(env:Readonly<Record<string,string|undefined>>){
- return env.BIKE_ME_CLUB_PROFILE_EDIT_ENABLED==='true'&&env.NEXT_PUBLIC_SUPABASE_URL==='https://bcskqapoagflshewvzzc.supabase.co'&&env.VERCEL_ENV!=='production';
+ return clubFeatureEnabled(env,'BIKE_ME_CLUB_PROFILE_EDIT_ENABLED');
 }
 export function parseProfileCommand(raw:unknown,actor:string):ProfileCommand{
  if(!raw||typeof raw!=='object'||Array.isArray(raw))throw new ClubError('invalid');
