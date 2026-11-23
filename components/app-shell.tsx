@@ -71,7 +71,7 @@ export function AppShell({ children, locale, viewer, displayName, t }: AppShellP
             profileLinks={profileLinks}
             brand={
               <Link href={base} className="bike-app-brand" aria-label="Bike Me">
-                <Image src="/brand/bike-me-logo-white.png" alt="" width={40} height={40} priority />
+                <Image src="/brand/bike-me-logo-white.png" alt="" width={46} height={46} priority />
                 <strong>Bike Me</strong>
               </Link>
             }

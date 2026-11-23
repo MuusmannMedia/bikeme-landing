@@ -175,7 +175,7 @@ a {
   color: var(--app-text);
   text-decoration: none;
 }
-.bike-app-brand img { width: 38px; height: 38px; border-radius: 50%; }
+.bike-app-brand img { width: 46px; height: 46px; border-radius: 50%; }
 .bike-app-brand strong { font-size: 16px; font-weight: 800; letter-spacing: -.025em; white-space: nowrap; }
 .bike-app-nav { display: flex; align-items: center; gap: 2px; }
 .bike-app-nav-link,
@@ -337,6 +337,7 @@ a {
 @media (max-width: 620px) {
   .bike-app-topbar-inner { gap: 5px; padding-inline: 12px; }
   .bike-app-brand { min-width: 44px; justify-content: center; padding-inline-end: 0; }
+  .bike-app-brand img { width: 44px; height: 44px; }
   .bike-app-brand strong { display: none; }
   .bike-app-topbar-actions { gap: 5px; }
   .bike-app-nav { inset-inline: 12px; width: auto; }
