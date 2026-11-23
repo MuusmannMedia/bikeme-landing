@@ -2,6 +2,8 @@ import {locales,type Locale} from '../locales';
 const rows={
  create:['Create club','Opret klub','Verein erstellen','Crear club','Crea club','Créer un club','Club maken'],
  edit:['Edit club profile','Rediger klubprofil','Vereinsprofil bearbeiten','Editar perfil del club','Modifica profilo del club','Modifier le profil du club','Clubprofiel bewerken'],
+ editClub:['Edit club','Rediger klub','Verein bearbeiten','Editar club','Modifica club','Modifier le club','Club bewerken'],
+ editImages:['Edit cover and logo','Rediger cover og logo','Titelbild und Logo bearbeiten','Editar portada y logotipo','Modifica copertina e logo','Modifier la couverture et le logo','Omslag en logo bewerken'],
  name:['Club name','Klubnavn','Vereinsname','Nombre del club','Nome del club','Nom du club','Clubnaam'],
  description:['Description (optional)','Beskrivelse (valgfri)','Beschreibung (optional)','Descripción (opcional)','Descrizione (facoltativa)','Description (facultative)','Beschrijving (optioneel)'],
  rules:['Name: 2–80 Unicode characters. Description: up to 1,000.','Navn: 2–80 Unicode-tegn. Beskrivelse: højst 1.000.','Name: 2–80 Unicode-Zeichen. Beschreibung: bis zu 1.000.','Nombre: 2–80 caracteres Unicode. Descripción: hasta 1.000.','Nome: 2–80 caratteri Unicode. Descrizione: fino a 1.000.','Nom : 2–80 caractères Unicode. Description : 1 000 maximum.','Naam: 2–80 Unicode-tekens. Beschrijving: maximaal 1.000.'],

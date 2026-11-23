@@ -4,6 +4,7 @@ import sharp from 'sharp';
 import {clubImageGeometry,clubLogoSlot,moveClubFrame,initialClubFrame,CLUB_COVER_ASPECT} from '../lib/clubs/image-frame';
 import {CLUB_IMAGE_LIMIT,imageFrame,imageCommand,imagePath,type ImageCommand} from '../lib/clubs/image-contract';
 import {normalizeClubImage,validateStoredClubImage} from '../lib/clubs/image-normalize';
+import {createClubHeaderImages} from '../lib/clubs/header-images';
 import {createImageStore} from '../lib/clubs/image-store';
 import {createClubImageApi} from '../lib/clubs/image-api';
 import {ClubError} from '../lib/clubs/membership-types';
@@ -48,4 +49,83 @@ test('wide web logo slot starts left and moves right while retaining the native 
  assert.equal(clubLogoSlot(bounds,{...f,x:1}).left,120);
  assert.equal(clubLogoSlot(bounds,{...f,x:-1}).left,0);
  assert.deepEqual(clubLogoSlot(bounds,initialClubFrame(true)),{viewport:bounds,left:0,right:0});
+});
+
+test('club header releases the view during a check and reuses both unchanged object URLs', async () => {
+  const downloads: string[] = [];
+  const revoked: string[] = [];
+  let current = profile, reads = 0, next = 0;
+  const images = createClubHeaderImages({
+    actor, clubId: id,
+    read: async () => { reads++; return { userId: actor, profile: current }; },
+    download: async path => { downloads.push(path); return new Blob([path]); },
+    failure: () => 'network',
+    createUrl: () => 'blob:test-' + ++next,
+    revokeUrl: url => revoked.push(url)
+  });
+  await images.verify();
+  const original = images.getSnapshot().images;
+  images.pause();
+  assert.equal(images.getSnapshot().images, null);
+  assert.deepEqual(revoked, []);
+  await images.verify();
+  assert.equal(reads, 2);
+  assert.deepEqual(images.getSnapshot().images, original);
+  assert.deepEqual(downloads, [profile.cover_path, profile.logo_path]);
+
+  current = { ...profile, cover_path: 'new/cover.jpg', profile_revision: 3 };
+  await images.verify();
+  assert.equal(images.getSnapshot().images?.profile, current);
+  assert.deepEqual(downloads.slice(2), [current.cover_path, current.logo_path]);
+  assert.deepEqual(revoked, ['blob:test-1', 'blob:test-2']);
+  images.revoke();
+  assert.deepEqual(revoked, ['blob:test-1', 'blob:test-2', 'blob:test-3', 'blob:test-4']);
+});
+
+test('club header purges private bytes on membership denial or another account', async () => {
+  let denied = false, anotherUser = false, allocated = 0;
+  const released: string[] = [];
+  const images = createClubHeaderImages({
+    actor, clubId: id,
+    read: async () => {
+      if (denied) throw new ClubError('access');
+      return { userId: anotherUser ? imageId : actor, profile };
+    },
+    download: async () => new Blob(),
+    failure: error => error instanceof ClubError ? error.kind : 'network',
+    createUrl: () => 'blob:test-' + ++allocated,
+    revokeUrl: url => released.push(url)
+  });
+  await images.verify();
+  denied = true;
+  await images.verify();
+  assert.equal(images.getSnapshot().images, null);
+  assert.deepEqual(released, ['blob:test-1', 'blob:test-2']);
+
+  denied = false;
+  await images.verify();
+  anotherUser = true;
+  await images.verify();
+  assert.equal(images.getSnapshot().images, null);
+  assert.deepEqual(released, ['blob:test-1', 'blob:test-2', 'blob:test-3', 'blob:test-4']);
+});
+
+test('club header ignores late image responses after revocation', async () => {
+  const pending = deferred<Blob>(), started = deferred<void>();
+  let urls = 0;
+  const images = createClubHeaderImages({
+    actor, clubId: id,
+    read: async () => ({ userId: actor, profile }),
+    download: async () => { started.resolve(); return pending.promise; },
+    failure: () => 'network',
+    createUrl: () => 'blob:test-' + ++urls,
+    revokeUrl: () => {}
+  });
+  const loading = images.verify();
+  await started.promise;
+  images.revoke();
+  pending.resolve(new Blob(['late']));
+  await loading;
+  assert.equal(urls, 0);
+  assert.equal(images.getSnapshot().images, null);
 });

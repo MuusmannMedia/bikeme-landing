@@ -2,6 +2,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { ClubReadError, clubReadError, isClubId, type Club, type ClubCatalogEntry, type ClubMember, type ClubRow } from "./types";
 
+import { profileEditingEnabled } from "./profile-contract";
+
 const pageSize = 200;
 const fields = "id,name,description,owner_id,cover_path,logo_path,profile_revision";
 
@@ -71,7 +73,11 @@ export function createClubReadApi(client: SupabaseClient, userId: string) {
         .setHeader("Authorization", header).abortSignal(signal).maybeSingle());
       if (error) throw clubReadError(error);
       if (!data) throw new ClubReadError("access");
-      return hydrate(data as unknown as ClubRow, header);
+      const club = await hydrate(data as unknown as ClubRow, header);
+      return {
+        ...club,
+        canEditProfile: profileEditingEnabled(process.env) && (club.role === "owner" || club.role === "admin")
+      };
     }
   };
 }

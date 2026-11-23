@@ -1,5 +1,6 @@
 import {ClubNavigation} from "./club-navigation";
 import {ClubPrivateImages} from "./club-private-images";
+import { profileText } from "@/lib/clubs/profile-i18n";
 import { galleryText } from "@/lib/clubs/gallery-i18n";
 import { contentText } from "@/lib/clubs/content-i18n";
 import { AppPageHeader, AppPanel } from "@/components/app-ui";
@@ -32,14 +33,18 @@ export function ClubAccessDenied({ locale }: { locale: Locale }) {
 export function ClubHeader({ club, locale, selected }: { club: Club; locale: Locale; selected: "details" | "members" | "rides" | "posts" | "chat" | "gallery" }) {
   const t = getAppDictionary(locale);
   const base = `/${locale}/app/clubs/${club.id}`;
+  const canEdit = club.canEditProfile && (club.role === "owner" || club.role === "admin");
   return <section className="bike-app-club-masthead" data-compact={false}>
-    <ClubPrivateImages clubId={club.id} locale={locale} shape={club.imageShape??"cover"} revision={club.profileRevision}/>
+    <ClubPrivateImages header clubId={club.id} locale={locale} shape={club.imageShape??"cover"} revision={club.profileRevision}/>
     <AppPageHeader
       className="bike-app-club-header"
       eyebrow={t("clubs.membersOnly")}
       title={club.name}
       intro={`${clubRoleLabel(locale, club.role)} · ${(club.memberCount === 1 ? t("clubs.memberCountOne") : t("clubs.memberCount").replace("{count}", new Intl.NumberFormat(locale).format(club.memberCount)))}`}
-      action={<a className="bike-app-button bike-app-button-secondary" href={`/${locale}/app/clubs/mine`}>{t("clubs.back")}</a>}
+      action={<div className="bike-app-actions">
+        {canEdit && <a className="bike-app-button" href={`${base}/edit`}>{profileText(locale, "editClub")}</a>}
+        <a className="bike-app-button bike-app-button-secondary" href={`/${locale}/app/clubs/mine`}>{t("clubs.back")}</a>
+      </div>}
     />
     <a className="bike-app-club-about-link" href={base} aria-current={selected==="details"?"page":undefined}>
       {t("clubs.description")} <span aria-hidden="true">›</span>

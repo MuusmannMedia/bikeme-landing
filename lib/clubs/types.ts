@@ -11,7 +11,7 @@ export type ClubMember = {
   joined_at: string;
 };
 export type ClubImageShape="cover"|"logo"|"none";
-export type Club = Omit<ClubRow,"cover_path"|"logo_path"> & { imageShape?:ClubImageShape; profileRevision?:number; members: ClubMember[]; memberCount: number; role: ClubRole };
+export type Club = Omit<ClubRow,"cover_path"|"logo_path"> & { imageShape?:ClubImageShape; profileRevision?:number; canEditProfile?:boolean; members: ClubMember[]; memberCount: number; role: ClubRole };
 
 export type ClubReadErrorKind = "auth" | "access" | "unavailable" | "network" | "quota";
 export class ClubReadError extends Error {

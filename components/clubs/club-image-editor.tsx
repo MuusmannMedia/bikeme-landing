@@ -4,7 +4,6 @@ import {createImageStore} from '@/lib/clubs/image-store';
 import {normalizeImageForBrowser} from '@/lib/clubs/image-browser';
 import {readImageProfile,downloadClubImage} from '@/lib/clubs/image-client';
 import {imageText} from '@/lib/clubs/image-i18n';
-import {getAppDictionary} from '@/lib/app-i18n';
 import {profileText} from '@/lib/clubs/profile-i18n';
 import {ClubError,clubResponseError} from '@/lib/clubs/membership-types';
 import {CLUB_IMAGE_SOURCE_LIMIT,type ImageSlot} from '@/lib/clubs/image-contract';
@@ -25,7 +24,7 @@ export function ClubImageEditor({actor,clubId,locale}:{actor:string;clubId:strin
  const choice=state.choice,locked=state.busy||!!state.pending,selectionKey=choice?(choice.id??choice.sourcePath):null,selectedSlot=choice?.slot;
  useEffect(()=>{if(selectionKey)document.getElementById(selectedSlot==='logo'?'image-whole':'image-zoom')?.focus({preventScroll:true});},[selectionKey,selectedSlot]);
  async function existing(slot:ImageSlot){const path=slot==='cover'?state.profile?.cover_path:state.profile?.logo_path;if(!path||locked)return;await store.chooseExisting(slot,signal=>downloadClubImage(path,actor,signal));}
- return <div data-club-image-access={state.status}><AppPageHeader title={t('title')} intro={t('note')}/><div className="bike-app-actions bike-app-section-gap"><a className="bike-app-button bike-app-button-secondary" href={`/${locale}/app/clubs/${clubId}`}>{p('cancel')}</a><a className="bike-app-button bike-app-button-secondary" href={`/${locale}/app/clubs/${clubId}`}>{getAppDictionary(locale)('common.back')}</a></div>
+ return <div data-club-image-access={state.status}><AppPageHeader title={t('title')} intro={t('note')}/><div className="bike-app-actions bike-app-section-gap"><a className="bike-app-button bike-app-button-secondary" href={`/${locale}/app/clubs/${clubId}`}>{p('cancel')}</a><a className="bike-app-button bike-app-button-secondary" href={`/${locale}/app/clubs/${clubId}/edit`}>{p('edit')}</a></div>
  {/* Neutral file inputs stay mounted during fresh checks, so a native
      picker returning focus cannot detach its change event. Images still unmount. */}
  {state.status!=='auth'&&state.status!=='access'?<div hidden={state.status!=='ready'}> <div className="bike-app-grid" data-columns="2">{(['cover','logo'] as const).map(slot=><AppPanel key={slot} title={t(slot)}><label className="bike-app-field"><span>{t('choose')}</span><input id={"club-image-file-"+slot} type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png" aria-label={t(slot)+' — '+t('choose')} disabled={locked} onClick={()=>{selectionRevision.current[slot]=state.profile?.profile_revision;}} onChange={e=>{const f=e.target.files?.[0];e.target.value='';if(f)void store.choose(slot,f,selectionRevision.current[slot]);}}/></label>{(slot==='cover'?state.profile?.cover_path:state.profile?.logo_path)?<button className="bike-app-button bike-app-button-secondary bike-app-section-gap" disabled={locked} onClick={()=>void existing(slot)}>{t('crop')}</button>:null}</AppPanel>)}</div></div>:null}

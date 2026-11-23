@@ -9,7 +9,6 @@ import {clubCatalogPage} from '@/lib/clubs/catalog-page';
 import {BatchCatalogContext} from './visits/catalog-batch-provider';
 import {membershipDictionary} from "@/lib/clubs/membership-i18n";
 import {ClubPrivateImages} from "./club-private-images";
-import {imageText} from "@/lib/clubs/image-i18n";
 import {profileText} from "@/lib/clubs/profile-i18n";
 import { AppEmpty, AppPageHeader, AppPanel } from "@/components/app-ui";
 import { ClubMembershipPanel } from "./club-membership-panel";
@@ -96,8 +95,8 @@ function ClubPageContentView({ data, locale, selected, userId, workflow, directo
     <ClubHeader club={club} locale={locale} selected="details" />
     {data.profileEditing&&club.role!=="member"?<AppPanel title={visitText(locale,"title")}><p>{visitText(locale,"snapshotHint")}</p><a className="bike-app-button" href={`${path}/visitors`}>{visitText(locale,"manage")}</a></AppPanel>:null}
     <div className="bike-app-grid" data-columns="2">
-      <AppPanel title={t("clubs.description")} action={data.profileEditing?<a className="bike-app-button bike-app-button-secondary" href={`${path}/edit`}>{profileText(locale,"edit")}</a>:undefined}><p className="bike-app-club-description">{club.description || t("clubs.noDescription")}</p></AppPanel>
-      <AppPanel title={t("clubs.details")} action={data.profileEditing?<a className="bike-app-button bike-app-button-secondary" href={`${path}/images`}>{imageText(locale,"title")}</a>:undefined}>
+      <AppPanel title={t("clubs.description")}><p className="bike-app-club-description">{club.description || t("clubs.noDescription")}</p></AppPanel>
+      <AppPanel title={t("clubs.details")}>
         <dl className="bike-app-definition">
           <div><dt>{t("clubs.owner")}</dt><dd>{owner?.display_name || "Bike Me"}</dd></div>
           <div><dt>{t("clubs.yourRole")}</dt><dd>{clubRoleLabel(locale, club.role)}</dd></div>
