@@ -1,4 +1,7 @@
 'use client';
+import {MessageBubble,type MessageAction} from '../messaging/message-bubble';
+import {ReactionScope} from '../messaging/reactions';
+import {messagePresentation} from '@/lib/messages/presentation';
 import {useConversationPosition} from '../use-conversation-position';
 import {StableAccessRegion} from './stable-access-region';
 import {useEffect,useRef,useState} from 'react';
@@ -28,18 +31,18 @@ export function ClubChatWorkspace({store,state,locale,userId,clubId,initialMessa
  const command=(type:ChatCommand['type'],extra:object)=>({actorId:userId,clubId,type,...extra}) as ChatCommand;
  const ask=(c:ChatCommand,title:ContentTextKey,body:string,id:string)=>{focusReturn.current=id;setConfirm({command:c,title,body});};
  const choose=async(id:string,edit=false)=>{focusReturn.current=`chat-${edit?'edit':'reply'}-${id}`;await store.choose(id,edit);editor.current?.focus({preventScroll:true});};
- function message(m:ChatMessage,context=false){return <article className="bike-app-chat-message" key={`${context?'context':'list'}-${m.id}`} data-chat-id={m.id} data-chat-version={m.version}>
-  <div className="bike-app-content-meta"><strong>{m.display_name??ct('deletedAuthor')}</strong><time dateTime={m.created_at}>{formatDateTime(locale,m.created_at)}</time></div>
+ function message(m:ChatMessage,context=false){const own=m.author_id===userId,items=context?data?.context:data?.items,index=items?.findIndex(x=>x.id===m.id)??0,group=messagePresentation(items??[m],Math.max(0,index));const actions:MessageAction[]=own?[{key:'edit',label:t('common.edit'),run:()=>void choose(m.id,true)},{key:'delete',label:ct('delete'),danger:true,run:()=>ask(command('change',{kind:'chat',id:m.id,action:'delete'}),'delete',text('deleteBody'),`chat-menu-${m.id}`)}]:[{key:'reply',label:text('reply'),run:()=>void choose(m.id)},{key:'dm',label:dmText(locale,'start'),disabled:!m.author_id,run:()=>window.location.assign(`/${locale}/app/messages?peer=${m.author_id}`)},{key:'report',label:ct('report'),run:()=>{focusReturn.current=`chat-menu-${m.id}`;setReport({id:m.id,destination:'club',reason:'spam',detail:''});}},{key:'block',label:ct('block'),disabled:!m.author_id,run:()=>ask(command('block',{kind:'chat',id:m.id}),'block',ct('blockBody'),`chat-menu-${m.id}`)}];return <article className="bike-message-row" data-own={own} data-group-start={group.start} key={`${context?'context':'list'}-${m.id}`} data-chat-id={m.id} data-chat-version={m.version}>
+  {group.start?<time className="bike-message-date" dateTime={m.created_at}>{formatDateTime(locale,m.created_at)}</time>:null}
+  {!own&&group.start?<strong className="bike-message-author">{m.display_name??ct('deletedAuthor')}</strong>:null}
+  <MessageBubble id={m.id} own={own} body={m.body} locale={locale} actions={actions} disabled={locked||checking}>
   {m.reply_unavailable?<p className="bike-app-muted">{text('unavailable')}</p>:m.reply?<button className="bike-app-chat-quote" onClick={()=>openContext(m.reply!.id)}><span>{text('quote')} · {m.reply.display_name??ct('deletedAuthor')}</span><br/>{m.reply.deleted?text('deleted'):m.reply.body}</button>:null}
-  <p className="bike-app-content-body">{m.body}</p>
-  <div className="bike-app-actions">{m.author_id&&m.author_id!==userId?<a className="bike-app-button bike-app-button-secondary bike-app-button-small" href={`/${locale}/app/messages?peer=${m.author_id}`}>{dmText(locale,"start")}</a>:null}<button id={`chat-reply-${m.id}`} className="bike-app-button bike-app-button-secondary bike-app-button-small" disabled={locked} onClick={()=>void choose(m.id)}>{text('reply')}</button>
-   {m.author_id===userId?<><button id={`chat-edit-${m.id}`} className="bike-app-button bike-app-button-secondary bike-app-button-small" disabled={locked} onClick={()=>void choose(m.id,true)}>{t('common.edit')}</button><button id={`chat-delete-${m.id}`} className="bike-app-button bike-app-button-secondary bike-app-button-small" disabled={locked} onClick={()=>ask(command('change',{kind:'chat',id:m.id,action:'delete'}),'delete',text('deleteBody'),`chat-delete-${m.id}`)}>{ct('delete')}</button></>:<><button id={`chat-report-${m.id}`} className="bike-app-button bike-app-button-secondary bike-app-button-small" disabled={locked} onClick={()=>{focusReturn.current=`chat-report-${m.id}`;setReport({id:m.id,destination:'club',reason:'spam',detail:''});}}>{ct('report')}</button>{m.author_id?<button id={`chat-block-${m.id}`} className="bike-app-button bike-app-button-secondary bike-app-button-small" disabled={locked} onClick={()=>ask(command('block',{kind:'chat',id:m.id}),'block',ct('blockBody'),`chat-block-${m.id}`)}>{ct('block')}</button>:null}</>}
-  </div>
+  <p className="bike-message-body">{m.body}</p>
+  </MessageBubble>
  </article>;}
  const error:ContentTextKey=state.error==='contentRejected'?'contentRejected':state.error==='conflict'?'conflict':state.error==='invalid'?'invalid':state.error==='access'||state.error==='auth'?'access':state.error==='unavailable'||state.error==='blocked'?'unavailable':'network';
  let valid=false;try{validateChat(state.draft);valid=true;}catch{}let reportValid=false;try{validateReportDetail(report?.detail??'');reportValid=true;}catch{}
  const selected=data?.selected,targetAvailable=(!state.edit&&!state.replyId)||!!selected&&!selected.deleted_at;
- return <div ref={root} data-chat-access={state.status} data-chat-data={data?'present':'empty'}>
+ return <ReactionScope actor={userId} kind="club" scope={clubId} ids={[...(data?.items??[]),...(data?.context??[])].map(m=>m.id)} active={ready&&!checking}><div ref={root} data-chat-access={state.status} data-chat-data={data?'present':'empty'}>
  <StableAccessRegion denied={state.status==='access'||state.status==='auth'} ready={ready} fallback={state.status==='access'?<ClubAccessDenied locale={locale}/>:state.status==='error'?<AppPanel><p role="alert">{text("offline")}</p><button className="bike-app-button" onClick={()=>void store.sync(true)}>{text("retry")}</button></AppPanel>:<p role="status">{text('loading')}</p>}>
   {ready&&data?<>
   <ClubHeader club={data!.club} locale={locale} selected="chat"/>
@@ -69,5 +72,5 @@ export function ClubChatWorkspace({store,state,locale,userId,clubId,initialMessa
     <form onSubmit={e=>{e.preventDefault();if(valid&&!locked&&targetAvailable&&!state.conflict)void store.submit().then(saved=>{if(saved)editor.current?.focus({preventScroll:true});});}}><label className="bike-app-field"><span>{text('message')}</span><textarea id="chat-composer" ref={editor} rows={3} value={state.draft} readOnly={locked} onChange={e=>{store.text(e.target.value);}}/></label><div className="bike-app-chat-send"><span className="bike-app-muted">{text('count').replace('{count}',String(Array.from(state.draft).length))}</span><button className="bike-app-button" disabled={!valid||locked||!targetAvailable||state.conflict}>{state.busy?text('sending'):state.edit?t('common.save'):text('send')}</button></div></form>
    </div>
  </AppPanel>
- </div>;
+ </div></ReactionScope>;
 }

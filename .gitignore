@@ -25,3 +25,6 @@ pnpm-debug.log*
 public/brand/*
 !public/brand/bike-me-logo.png
 !public/brand/bike-me-logo-white.png
+
+# Supabase CLI local metadata
+/supabase/.temp/

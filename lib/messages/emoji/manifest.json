@@ -1,0 +1,131 @@
+{
+  "unicode": "15.1",
+  "cldr": "46",
+  "canonical": 3773,
+  "acceptedForms": 5025,
+  "categories": [
+    "Smileys & Emotion",
+    "People & Body",
+    "Animals & Nature",
+    "Food & Drink",
+    "Travel & Places",
+    "Activities",
+    "Objects",
+    "Symbols",
+    "Flags"
+  ],
+  "coverage": {
+    "da": 3773,
+    "en": 3773,
+    "de": 3773,
+    "es": 3773,
+    "it": 3773,
+    "fr": 3773,
+    "nl": 3773
+  },
+  "dataBytes": 2903680,
+  "sources": [
+    {
+      "file": "emoji-test.txt",
+      "url": "https://www.unicode.org/Public/emoji/15.1/emoji-test.txt",
+      "bytes": 639405,
+      "sha256": "d876ee249aa28eaa76cfa6dfaa702847a8d13b062aa488d465d0395ee8137ed9"
+    },
+    {
+      "file": "LICENSE",
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr/release-46/LICENSE",
+      "bytes": 2033,
+      "sha256": "743308f92225393665b0722b73418b4d4061fd2163e8e9c38b3368904acf19d6"
+    },
+    {
+      "file": "da-annotations.xml",
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr/release-46/common/annotations/da.xml",
+      "bytes": 291419,
+      "sha256": "4e59b94927065125f6b3e36efb77d270af32a0e730ea7d6c23f87436e8c8669f"
+    },
+    {
+      "file": "da-annotationsDerived.xml",
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr/release-46/common/annotationsDerived/da.xml",
+      "bytes": 452930,
+      "sha256": "bee54bdb32f5b2e2e79fb04afb60fbff621efbf2650fee7a7e14203d7edfd90e"
+    },
+    {
+      "file": "en-annotations.xml",
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr/release-46/common/annotations/en.xml",
+      "bytes": 292384,
+      "sha256": "7d491f1782480d50ee953d3943e8a65eacaa4394b41af9e9f89c9be418256ade"
+    },
+    {
+      "file": "en-annotationsDerived.xml",
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr/release-46/common/annotationsDerived/en.xml",
+      "bytes": 494474,
+      "sha256": "461d1578079c5ebc947e506df6b5a55c93f006160e8dff3f05dcf917ce081604"
+    },
+    {
+      "file": "de-annotations.xml",
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr/release-46/common/annotations/de.xml",
+      "bytes": 332676,
+      "sha256": "4cf875e5487f8d542d1c8634edd3a83d3020f15fa7c9d64d98c7b0e265edbb67"
+    },
+    {
+      "file": "de-annotationsDerived.xml",
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr/release-46/common/annotationsDerived/de.xml",
+      "bytes": 507001,
+      "sha256": "1476a74a3d3cfc8880d92b96ac086863a4e37f0a64f695c862a582fa5dbaef2f"
+    },
+    {
+      "file": "es-annotations.xml",
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr/release-46/common/annotations/es.xml",
+      "bytes": 294165,
+      "sha256": "baeb76f846321d3838a93bf63126ea52a35240987f555c6cd87651a01f734955"
+    },
+    {
+      "file": "es-annotationsDerived.xml",
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr/release-46/common/annotationsDerived/es.xml",
+      "bytes": 489198,
+      "sha256": "1779e3aa00cbc56533dc218b735643acf27967c9f4ab6ee58d0a349d9745019c"
+    },
+    {
+      "file": "it-annotations.xml",
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr/release-46/common/annotations/it.xml",
+      "bytes": 368186,
+      "sha256": "08c7220fb41c122ac7ea6583012e53a1538a1acb545dfcbe6d2b4f83493f3c81"
+    },
+    {
+      "file": "it-annotationsDerived.xml",
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr/release-46/common/annotationsDerived/it.xml",
+      "bytes": 574719,
+      "sha256": "1f4e7808261c372524aef50d6ebe6174d869d82ec8afccaf8dae91f9f3e49458"
+    },
+    {
+      "file": "fr-annotations.xml",
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr/release-46/common/annotations/fr.xml",
+      "bytes": 330181,
+      "sha256": "03a8f16c52ef592eb77d56bf9407bb166837cf3ba9d87e53f59e0a963e00bbd9"
+    },
+    {
+      "file": "fr-annotationsDerived.xml",
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr/release-46/common/annotationsDerived/fr.xml",
+      "bytes": 529493,
+      "sha256": "42af059617558844564c232116f9c06a7878028259dc171233e4a167d021f7cf"
+    },
+    {
+      "file": "nl-annotations.xml",
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr/release-46/common/annotations/nl.xml",
+      "bytes": 308842,
+      "sha256": "4775217aa854c0a43faf95db74462d7111d4269c4ed519888493ecee8fbdcda7"
+    },
+    {
+      "file": "nl-annotationsDerived.xml",
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr/release-46/common/annotationsDerived/nl.xml",
+      "bytes": 511634,
+      "sha256": "51fc9d9860fe1a710f6274910d4024f8cca45f81b4ccbb9ce4f6711bc5e2cd42"
+    },
+    {
+      "file": "da-main.xml",
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr/release-46/common/main/da.xml",
+      "bytes": 462743,
+      "sha256": "0965632d45476bac53f9c21bc3f32f530161529635fbf171f44d8d86d5743abb"
+    }
+  ]
+}

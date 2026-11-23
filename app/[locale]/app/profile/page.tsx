@@ -1,3 +1,4 @@
+import {BrowserPushSetting} from "@/components/messaging/push-setting";
 import { notFound } from "next/navigation";
 
 import { AppAvatar } from "@/components/app-avatar";
@@ -31,7 +32,7 @@ export default async function ProfilePage({ params, searchParams }: { params: Pr
           <form action={uploadAvatarAction} className="bike-app-form bike-app-section-gap" encType="multipart/form-data"><input type="hidden" name="locale" value={locale} /><input type="hidden" name="returnTo" value={`/${locale}/app/profile`} /><label className="bike-app-field"><span>{t("profile.avatarHint")}</span><input name="avatar" type="file" accept="image/png,image/jpeg,image/webp" required /></label><button className="bike-app-button bike-app-button-secondary" type="submit">{t("common.save")}</button></form>
         </AppPanel>
         <AppPanel title={t("profile.membership")}>
-          <div className="bike-app-membership"><strong>{accessLabel}</strong><p>{viewer.access.hasPro ? t("access.lockedBody") : t("access.noCheckout")}</p><p>{t("profile.languageHint")}</p><p>{t("profile.pushHint")}</p></div>
+          <div className="bike-app-membership"><strong>{accessLabel}</strong><p>{viewer.access.hasPro ? t("access.lockedBody") : t("access.noCheckout")}</p><p>{t("profile.languageHint")}</p><p>{t("profile.pushHint")}</p><BrowserPushSetting locale={locale}/></div>
         </AppPanel>
       </div>
       <AppPanel title={t("nav.profile")} className="bike-app-section-gap">

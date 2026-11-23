@@ -1,5 +1,7 @@
 "use client";
 
+import {messageText} from "@/lib/messages/web-i18n";
+import {removeBrowserPush} from "@/lib/web-push/browser";
 import { useState } from "react";
 import { announceClubAuthTransition } from "@/lib/clubs/auth-events";
 
@@ -14,13 +16,16 @@ type LogoutFormProps = {
 
 export function LogoutForm({ action, locale, translations }: LogoutFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [pushError,setPushError]=useState(false);
 
   return (
     <form action={async (data) => {
+        try {await removeBrowserPush();setPushError(false);}catch{setPushError(true);setIsSubmitting(false);return;}
         announceClubAuthTransition("changing");
         try { await action(data); }
         finally { announceClubAuthTransition("settled"); }
       }} onSubmit={() => setIsSubmitting(true)}>
+      {pushError?<p role="alert">{messageText(locale,"error")}</p>:null}
       <input type="hidden" name="locale" value={locale} />
       <button
         type="submit"

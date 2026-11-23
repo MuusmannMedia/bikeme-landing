@@ -25,7 +25,8 @@
     "test:visit-catalog": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir .test-build/visit-catalog tests/visit-catalog.test.ts && node --test .test-build/visit-catalog/tests/visit-catalog.test.js",
     "test:visit-catalog-batch": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir .test-build/visit-catalog-batch tests/visit-catalog-batch.test.ts && node --test .test-build/visit-catalog-batch/tests/visit-catalog-batch.test.js",
     "test:club-access-fetch": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir .test-build/club-access-fetch tests/club-access-fetch.test.ts && node --test .test-build/club-access-fetch/tests/club-access-fetch.test.js",
-    "test:club-release": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir .test-build/club-release tests/club-release.test.ts && node --test .test-build/club-release/tests/club-release.test.js"
+    "test:club-release": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir .test-build/club-release tests/club-release.test.ts && node --test .test-build/club-release/tests/club-release.test.js",
+    "test:web-messaging": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --resolveJsonModule --outDir .test-build/web-messaging tests/web-messaging.test.ts && node --test .test-build/web-messaging/tests/web-messaging.test.js"
   },
   "dependencies": {
     "@supabase/ssr": "0.10.0",
@@ -34,12 +35,14 @@
     "next": "16.2.12",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "sharp": "0.34.5"
+    "sharp": "0.34.5",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
+    "@types/web-push": "^3.6.4",
     "autoprefixer": "^10.4.19",
     "eslint": "9.39.5",
     "eslint-config-next": "16.2.12",

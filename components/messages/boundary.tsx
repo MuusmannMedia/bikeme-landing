@@ -18,7 +18,7 @@ export function MessagesBoundary({userId,conversationId,peer,locale}:{userId:str
  const continuity=useAccessContinuity(),bindContinuity=continuity.bind;
  const state=useSyncExternalStore(store.subscribe,store.getSnapshot,store.getServerSnapshot);
  useEffect(()=>{
-  store.start();let live=true,lifecycle=0,signalBusy=false,transportLive=false;const pending=new Set<AbortController>();
+  store.start();const pushed=new URL(window.location.href).searchParams.get('message');if(pushed&&/^[a-f0-9-]{36}$/i.test(pushed))void store.revalidate().then(()=>store.original(pushed));let live=true,lifecycle=0,signalBusy=false,transportLive=false;const pending=new Set<AbortController>();
   const pause=()=>{lifecycle++;flushSync(()=>store.pause());};
   const refresh=bindContinuity(pause,async()=>{if(transportLive)store.connection(true,false);await store.revalidate();},()=>{lifecycle++;pending.forEach(c=>c.abort());}),verify=()=>refresh.resume();
   const visibility=()=>document.visibilityState==='hidden'?refresh.deactivate():verify();

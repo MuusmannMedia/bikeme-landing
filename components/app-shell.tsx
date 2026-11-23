@@ -1,3 +1,4 @@
+import {UnreadProvider} from './messaging/unread-provider';
 import {ClubNavScope} from './clubs/visits/nav-scope';
 import {dmText} from "@/lib/messages/i18n";
 import Image from "next/image";
@@ -35,7 +36,7 @@ export function AppShell({ children, locale, viewer, displayName, t }: AppShellP
   ].map(([href, label, shortLabel]) => ({ href, label, shortLabel }));
 
   return (
-    <ClubNavScope><div className="bike-app" lang={locale}>
+    <UnreadProvider actor={viewer.profile.id}><ClubNavScope><div className="bike-app" lang={locale}>
       <aside className="bike-app-sidebar">
         <Link href={base} className="bike-app-brand" aria-label="Bike Me">
           <Image
@@ -79,6 +80,6 @@ export function AppShell({ children, locale, viewer, displayName, t }: AppShellP
         <div className="bike-app-mobile-nav"><AppNav links={links} /></div>
         <main className="bike-app-content">{children}</main>
       </div>
-    </div></ClubNavScope>
+    </div></ClubNavScope></UnreadProvider>
   );
 }

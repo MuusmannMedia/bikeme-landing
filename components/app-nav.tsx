@@ -1,5 +1,6 @@
 "use client";
 
+import {UnreadBadge} from './messaging/unread-provider';
 import {useVisitorNav} from './clubs/visits/nav-scope';
 import Link from "next/link";
 import {isAppNavActive} from "@/lib/clubs/navigation";
@@ -24,7 +25,7 @@ export function AppNav({ links }: { links: AppNavLink[] }) {
           <a key={link.href} href={link.href} className="bike-app-nav-link" data-active={active ? "true" : "false"} aria-current={active ? "page" : undefined}>
             <span className="bike-app-nav-marker" aria-hidden="true" />
             <span className="bike-app-nav-label">{link.label}</span>
-            <span className="bike-app-nav-short">{link.shortLabel}</span>
+            <span className="bike-app-nav-short">{link.shortLabel}</span>{link.href.endsWith("/messages")?<UnreadBadge locale={link.href.split("/")[1] as import("@/lib/locales").Locale} total/>:null}
           </a>
         );
         return (
@@ -37,7 +38,7 @@ export function AppNav({ links }: { links: AppNavLink[] }) {
           >
             <span className="bike-app-nav-marker" aria-hidden="true" />
             <span className="bike-app-nav-label">{link.label}</span>
-            <span className="bike-app-nav-short">{link.shortLabel}</span>
+            <span className="bike-app-nav-short">{link.shortLabel}</span>{link.href.endsWith("/messages")?<UnreadBadge locale={link.href.split("/")[1] as import("@/lib/locales").Locale} total/>:null}
           </Link>
         );
       })}

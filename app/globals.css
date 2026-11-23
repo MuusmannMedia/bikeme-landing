@@ -837,3 +837,42 @@ a {
 .bike-app-visit-management-grid + .bike-app-panel { margin-top:1.25rem; }
 [data-visit-management] .bike-app-button,
 [data-visit-access] .bike-app-button { max-width:100%;white-space:normal;text-align:center; }
+
+/* Shared build-134 message presentation. Intrinsic bubbles, no persistent actions. */
+.bike-message-row{display:flex;flex-direction:column;align-items:flex-start;margin-block:3px;min-width:0;}
+.bike-message-row[data-own=true]{align-items:flex-end;}
+.bike-message-row[data-group-start=true]{margin-top:14px;}
+.bike-message-date{display:block;align-self:center;color:#aab7cd;font-size:.73rem;margin-bottom:8px;text-align:center;}
+.bike-message-author{font-size:.8rem;color:#d9aeff;margin:0 0 4px 8px;}
+.bike-message-wrap{max-width:min(82%,42rem);width:fit-content;position:relative;min-width:0;}
+.bike-message-bubble{position:relative;padding:9px 14px;border:1px solid #324159;border-radius:17px;background:#111d2c;min-width:2.8rem;}
+.bike-message-wrap[data-own=true] .bike-message-bubble{background:#291d42;border-color:#574073;}
+.bike-message-wrap[data-menu-open=true] .bike-message-bubble{outline:2px solid #d49cff;outline-offset:2px;}
+.bike-message-body{white-space:pre-wrap;overflow-wrap:anywhere;margin:0;line-height:1.45;user-select:text;}
+.bike-message-bubble .bike-app-chat-quote{margin:0 0 6px;padding:6px 9px;max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere;text-align:start;font-size:.85rem;display:block;border-radius:8px;}
+.bike-message-menu-trigger{position:absolute;right:-34px;top:0;min-width:32px;min-height:36px;color:#d9aeff;opacity:0;border-radius:10px;}
+.bike-message-wrap[data-own=true] .bike-message-menu-trigger{right:auto;left:-34px;}
+.bike-message-wrap:hover .bike-message-menu-trigger,.bike-message-wrap:focus-within .bike-message-menu-trigger{opacity:1;}
+.bike-reaction-chips{display:flex;flex-wrap:wrap;gap:3px;justify-content:flex-end;margin: -2px 4px 0;position:relative;}
+.bike-reaction-chip{font-size:.9rem;min-height:32px;min-width:36px;border:1px solid #574073;border-radius:18px;padding:3px 7px;background:#080e18;color:#f2f6ff;}
+.bike-reaction-chip[aria-pressed=true]{background:#42235d;border-color:#d49cff;}
+.bike-message-dialog{position:fixed;inset:0;margin:auto;width:min(440px,calc(100vw - 24px));max-height:85dvh;overflow:auto;background:#0a111d;color:#f2f6ff;border:1px solid #765398;border-radius:20px;padding:18px;overscroll-behavior:contain;}
+.bike-message-dialog::backdrop{background:#0009;}
+.bike-message-close{display:block;margin-left:auto;min-height:44px;min-width:44px;font-size:1.5rem;}
+.bike-message-preview{background:#291d42;border:1px solid #574073;border-radius:14px;padding:10px 14px;margin:12px 0;white-space:pre-wrap;overflow-wrap:anywhere;max-height:28dvh;overflow:auto;user-select:text;}
+.bike-quick-emoji{display:flex;flex-wrap:wrap;gap:2px;justify-content:center;}
+.bike-quick-emoji button,.bike-emoji-grid button{min-width:44px;min-height:44px;font-size:1.65rem;border-radius:10px;}
+.bike-message-menu-actions{display:grid;gap:3px;}
+.bike-message-menu-actions button{text-align:start;min-height:44px;padding:8px 12px;border-radius:8px;color:#d9aeff;}
+.bike-message-menu-actions button[data-danger=true]{color:#ffbac8;}
+.bike-message-dialog button:hover,.bike-message-dialog button:focus-visible{background:#42235d;}
+.bike-message-dialog button:focus-visible,.bike-message-menu-trigger:focus-visible,.bike-reaction-chip:focus-visible{outline:2px solid #d49cff;outline-offset:2px;}
+.bike-emoji-categories{display:flex;gap:6px;overflow:auto;margin-block:12px;}
+.bike-emoji-categories button{white-space:nowrap;min-height:44px;padding:6px 10px;border:1px solid #574073;border-radius:10px;}
+.bike-emoji-categories button[aria-pressed=true]{background:#42235d;}
+.bike-emoji-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:4px;}
+.bike-message-badge{display:inline-flex;align-items:center;justify-content:center;min-width:24px;min-height:24px;padding:2px 6px;margin-inline-start:8px;background:#802782;color:white;border-radius:18px;font-size:.75rem;font-weight:700;}
+.bike-app-dm-row{position:relative;}
+@media(hover:none){.bike-message-menu-trigger{opacity:.65;}}
+@media(max-width:640px){.bike-message-wrap{max-width:85%;}.bike-message-bubble{padding:8px 11px;}.bike-message-dialog{padding:12px;}}
+@media(prefers-reduced-motion:reduce){.bike-message-dialog,.bike-message-wrap{animation:none;transition:none;}}

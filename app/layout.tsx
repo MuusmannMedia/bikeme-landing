@@ -18,6 +18,7 @@ const interHeading = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(CANONICAL_DOMAIN),
+  manifest: "/manifest.webmanifest",
   title: "Bike Me | Now on the App Store",
   description:
     "Download Bike Me for iPhone and start creating rides, inviting riders, and finding cycling routes near you.",

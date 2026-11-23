@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import {messageText} from "@/lib/messages/web-i18n";
+import {removeBrowserPush} from "@/lib/web-push/browser";
 import { announceClubAuthTransition } from "@/lib/clubs/auth-events";
 
 import type { AuthDictionary } from "@/lib/auth-i18n";
@@ -22,10 +24,12 @@ export function LoginForm({
   translations
 }: LoginFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [pushError,setPushError]=useState(false);
 
   return (
     <form
       action={async (data) => {
+        try {await removeBrowserPush();setPushError(false);}catch{setPushError(true);setIsSubmitting(false);return;}
         announceClubAuthTransition("changing");
         try { await action(data); }
         finally { announceClubAuthTransition("settled"); }
@@ -33,6 +37,7 @@ export function LoginForm({
       className="grid gap-4"
       onSubmit={() => setIsSubmitting(true)}
     >
+      {pushError?<p role="alert">{messageText(locale,"error")}</p>:null}
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="returnTo" value={returnTo} />
 

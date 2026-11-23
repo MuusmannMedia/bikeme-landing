@@ -1,0 +1,9 @@
+// GENERATED from lib/web-push/contract.ts; SHA256 e2cbd2b3f0d1a2bc92678f535b12598459353537e9fb9e301edfa857dfb1706f
+import {Buffer} from 'node:buffer';
+// Narrow provider hosts prevent a user-supplied subscription becoming SSRF.
+export function validEndpoint(value:unknown):value is string{if(typeof value!=='string'||value.length>2048)return false;try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&!u.port&&((u.hostname==='fcm.googleapis.com'&&u.pathname.startsWith('/fcm/send/'))||(u.hostname==='updates.push.services.mozilla.com'&&u.pathname.startsWith('/wpush/'))||(u.hostname==='web.push.apple.com'&&u.pathname.startsWith('/')));}catch{return false;}}
+export type BrowserSubscription={endpoint:string;keys:{p256dh:string;auth:string}};
+export function subscription(raw:unknown):BrowserSubscription{const s=raw as BrowserSubscription;const bytes=(x:unknown,n:number)=>typeof x==='string'&&/^[A-Za-z0-9_-]+={0,2}$/.test(x)&&Buffer.from(x,'base64url').length===n;if(!s||!validEndpoint(s.endpoint)||!bytes(s.keys?.p256dh,65)||!bytes(s.keys?.auth,16))throw Error('invalid');return{endpoint:s.endpoint,keys:{p256dh:s.keys.p256dh,auth:s.keys.auth}};}
+export const pushLanguages=['da','en','de','es','it','fr','nl'] as const;
+export const genericPush:Record<string,string>={da:'Du har en ny privat besked.',en:'You have a new private message.',de:'Du hast eine neue private Nachricht.',es:'Tienes un nuevo mensaje privado.',it:'Hai un nuovo messaggio privato.',fr:'Vous avez un nouveau message privé.',nl:'Je hebt een nieuw privébericht.'};
+export function pushTarget(locale:string,conversation:string,message:string){if(!pushLanguages.includes(locale as typeof pushLanguages[number]))locale='en';const id=(s:string)=>/^[a-f0-9-]{36}$/i.test(s);if(!id(conversation)||!id(message))throw Error('invalid');return `/${locale}/app/messages/open?conversation=${conversation}&message=${message}`;}
