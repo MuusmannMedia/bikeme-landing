@@ -191,70 +191,37 @@ test("the authenticated shell owns the one persistent localized create-ride acti
 
 test("mobile profile control keeps its avatar, accessible name and touch target", () => {
   const shell = projectFile("components/app-shell.tsx");
+  const nav = projectFile("components/app-nav.tsx");
   const styles = projectFile("app/globals.css");
-  const viewerRule = styles.match(/\.bike-app-viewer\s*\{([^}]*)\}/)?.[1] ?? "";
-  const mobileStart = styles.indexOf("@media (max-width: 820px)");
-  const mobileEnd = styles.indexOf("@media (max-width: 620px)", mobileStart);
-  const mobileRules = styles.slice(mobileStart, mobileEnd);
 
-  assert.ok(shell.includes('aria-label={t("nav.profile")}'));
-  assert.ok(shell.includes('href={`${base}/profile`}'));
-  assert.ok(shell.includes('<span className="bike-app-viewer-name">{displayName}</span>'));
+  assert.ok(shell.includes('profileLabel={t("nav.profile")}'));
+  assert.ok(shell.includes('href: `${base}/profile`'));
   assert.ok(shell.includes('<AppAvatar name={displayName} url={viewer.profile.avatarUrl} size="small" />'));
-  assert.match(viewerRule, /\bmin-width:\s*44px\s*;/);
-  assert.match(viewerRule, /\bmin-height:\s*44px\s*;/);
-  assert.match(viewerRule, /\bflex:\s*0 0 auto\s*;/);
-  assert.ok(mobileRules.includes(".bike-app-viewer-name { display: none; }"));
-  assert.equal(mobileRules.includes(".bike-app-viewer > span { display: none; }"), false);
-  assert.equal(/\.bike-app-avatar\s*\{[^}]*display:\s*none\s*;/.test(mobileRules), false);
+  assert.ok(nav.includes('aria-label={trigger ? group.label : undefined}'));
+  assert.ok(nav.includes('aria-expanded={expanded}'));
+  assert.match(styles, /\.bike-app-nav-trigger,[\s\S]*?min-height:\s*44px/);
+  assert.match(styles, /\[data-profile="true"\] \.bike-app-nav-trigger \{ min-width: 44px/);
+  assert.ok(styles.includes(".bike-app-viewer-name { display: none; }"));
 });
 
-test("persistent header action and overview cards remain contained at release viewports", () => {
+test("the compact header and overview retain their responsive layout", () => {
   const styles = projectFile("app/globals.css");
-  const mobileRules = styles.slice(styles.lastIndexOf("@media (max-width: 620px)"));
-  const narrowRules = styles.slice(styles.lastIndexOf("@media (max-width: 340px)"));
-  const actionRule = styles.match(/\.bike-app-header-create\s*\{([^}]*)\}/)?.[1] ?? "";
-  const actionGroupRule = styles.match(/\.bike-app-topbar-actions\s*\{([^}]*)\}/)?.[1] ?? "";
-  const languageRule = styles.match(/\.bike-app-language select\s*\{([^}]*)\}/)?.[1] ?? "";
-  const statRule = styles.match(/\.bike-app-stat\s*\{([^}]*)\}/)?.[1] ?? "";
-  const longestCreateLabel = getAppTranslationRow("rides.create")
-    .reduce((longest, value) => value.length > longest.length ? value : longest, "");
+  const actionRule = cssRule(styles, ".bike-app-header-create");
+  const languageRule = cssRule(styles, ".bike-app-language select");
+  const statRule = cssRule(styles, ".bike-app-stat");
 
-  assert.match(actionRule, /\bmin-height:\s*44px\s*;/);
-  assert.match(actionRule, /\bheight:\s*44px\s*;/);
-  assert.match(actionRule, /\bwhite-space:\s*nowrap\s*;/);
-  assert.match(actionGroupRule, /\bmin-width:\s*0\s*;/);
-  assert.match(languageRule, /\bheight:\s*44px\s*;/);
-  assert.match(languageRule, /\bmin-height:\s*44px\s*;/);
-  assert.match(statRule, /\bdisplay:\s*block\s*;/);
-  assert.match(statRule, /\bmin-height:\s*108px\s*;/);
-  assert.ok(mobileRules.includes(".bike-app-topbar { justify-content: space-between; }"));
-  assert.ok(mobileRules.includes(".bike-app-mobile-brand { display: flex; width: 44px;"));
-  assert.ok(mobileRules.includes(".bike-app-mobile-brand span { display: none; }"));
-  assert.ok(mobileRules.includes('.bike-app-grid[data-columns="4"] { grid-template-columns: 1fr; }'));
-  assert.ok(narrowRules.includes(".bike-app-topbar { padding-inline: 12px; }"));
+  assert.match(actionRule, /min-height:\s*44px/);
+  assert.match(actionRule, /white-space:\s*nowrap/);
+  assert.match(languageRule, /height:\s*44px/);
+  assert.ok(styles.includes('.bike-app-nav[data-mobile-open="true"] { display: grid; }'));
+  assert.ok(styles.includes(".bike-app-header-create span:last-child { display: none; }"));
+  assert.ok(styles.includes('.bike-app-grid[data-columns="4"] { grid-template-columns: 1fr; }'));
+  assert.match(statRule, /display:\s*block/);
+  assert.match(statRule, /min-height:\s*108px/);
   getAppTranslationRow("overview.viewMetric").forEach((value) => {
     assert.ok(value.includes("{label}"));
     assert.ok(value.includes("{value}"));
   });
-
-  for (const viewport of [320, 375, 390, 430, 1280]) {
-    const scrollbar = 15;
-    const rootClientWidth = viewport - scrollbar;
-    const topbarPadding = viewport <= 340 ? 12 : viewport <= 820 ? 18 : 38;
-    const contentWidth = rootClientWidth - (2 * topbarPadding);
-    if (viewport <= 620) {
-      const estimatedCreateWidth = (longestCreateLabel.length * (viewport <= 340 ? 6 : 7)) + (viewport <= 340 ? 16 : 20);
-      const languageWidth = viewport <= 340 ? 58 : 62;
-      const profileTargetWidth = 44;
-      const logoTargetWidth = 44;
-      const twoGaps = viewport <= 340 ? 12 : 16;
-      assert.ok(profileTargetWidth >= 44);
-      assert.ok(estimatedCreateWidth + languageWidth + profileTargetWidth + logoTargetWidth + twoGaps <= contentWidth);
-    }
-    assert.equal(rootClientWidth, viewport - scrollbar);
-    assert.ok(contentWidth > 0);
-  }
 });
 
 test("authentication and app pages share one responsive background painter without opaque overlays", () => {
@@ -803,7 +770,6 @@ test("Status typography follows one scoped semantic role matrix", () => {
   assert.match(todayDay, /border-width: 2px/);
   assert.match(todayDay, /color: #f1d4ff/);
   assert.match(cssRule(styles, '.bike-app-calendar-grid > button[data-today="true"]:disabled'), /color: #f1d4ff/);
-  assert.match(styles.slice(styles.indexOf("@media (max-width: 820px)")), /\.bike-app-status-calendar-anchor\s*\{[^}]*scroll-margin-top:\s*132px/);
   const pageEyebrow = cssRule(styles, ".bike-app-eyebrow");
   assert.match(pageEyebrow, /font-size: 11px/);
   assert.match(pageEyebrow, /font-weight: 750/);

@@ -44,6 +44,7 @@ const text = {
   "nav.requests": ["Requests", "Anmodninger", "Anfragen", "Solicitudes", "Richieste", "Demandes", "Verzoeken"],
   "nav.history": ["History", "Historik", "Verlauf", "Historial", "Cronologia", "Historique", "Geschiedenis"],
   "nav.status": ["Status", "Status", "Status", "Estado", "Stato", "Statut", "Status"],
+  "nav.activities": ["My activities", "Mine aktiviteter", "Meine Aktivitäten", "Mis actividades", "Le mie attività", "Mes activités", "Mijn activiteiten"],
   "nav.profile": ["Profile", "Profil", "Profil", "Perfil", "Profilo", "Profil", "Profiel"],
   "nav.publicSite": ["Public website", "Offentlig side", "Öffentliche Website", "Sitio público", "Sito pubblico", "Site public", "Openbare website"],
   "shell.eyebrow": ["Bike Me web", "Bike Me web", "Bike Me Web", "Bike Me web", "Bike Me web", "Bike Me web", "Bike Me web"],

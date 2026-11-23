@@ -1,16 +1,19 @@
-import {UnreadProvider} from './messaging/unread-provider';
-import {ClubNavScope} from './clubs/visits/nav-scope';
-import {dmText} from "@/lib/messages/i18n";
 import Image from "next/image";
 import Link from "next/link";
 
+import { logoutAction } from "@/app/[locale]/app/actions";
+import { LogoutForm } from "@/app/[locale]/app/logout-form";
 import type { AppTextKey } from "@/lib/app-i18n";
 import type { Viewer } from "@/lib/app-model";
+import { getAuthDictionary } from "@/lib/auth-i18n";
 import type { Locale } from "@/lib/locales";
+import { dmText } from "@/lib/messages/i18n";
 
 import { AppAvatar } from "./app-avatar";
 import { AppLanguageSwitcher } from "./app-language-switcher";
 import { AppNav } from "./app-nav";
+import { ClubNavScope } from "./clubs/visits/nav-scope";
+import { UnreadProvider } from "./messaging/unread-provider";
 
 type AppShellProps = {
   children: React.ReactNode;
@@ -22,64 +25,80 @@ type AppShellProps = {
 
 export function AppShell({ children, locale, viewer, displayName, t }: AppShellProps) {
   const base = `/${locale}/app`;
-  const links = [
-    [base, t("nav.overview"), t("nav.overview")],
-    [`${base}/rides`, t("nav.rides"), t("nav.rides")],
-    [`${base}/clubs/mine`, t("clubs.mine"), t("clubs.mine")],
-    [`${base}/clubs/all`, t("clubs.all"), t("clubs.all")],
-    [`${base}/messages`, dmText(locale,"entry"), dmText(locale,"entry")],
-    [`${base}/riders`, t("nav.riders"), t("nav.riders")],
-    [`${base}/requests`, t("nav.requests"), t("nav.requests")],
-    [`${base}/history`, t("nav.history"), t("nav.history")],
-    [`${base}/status`, t("nav.status"), t("nav.status")],
-    [`${base}/profile`, t("nav.profile"), t("nav.profile")]
-  ].map(([href, label, shortLabel]) => ({ href, label, shortLabel }));
+  const items = [
+    { href: base, label: t("nav.overview") },
+    { href: `${base}/rides`, label: t("nav.rides") },
+    {
+      id: "clubs",
+      label: t("nav.clubs"),
+      links: [
+        { href: `${base}/clubs/mine`, label: t("clubs.mine") },
+        { href: `${base}/clubs/all`, label: t("clubs.all") },
+      ],
+    },
+    { href: `${base}/messages`, label: dmText(locale, "entry"), unread: true },
+    {
+      id: "riders",
+      label: t("nav.riders"),
+      links: [
+        { href: `${base}/riders`, label: t("nav.riders") },
+        { href: `${base}/requests`, label: t("nav.requests") },
+      ],
+    },
+    {
+      id: "activities",
+      label: t("nav.activities"),
+      links: [
+        { href: `${base}/history`, label: t("nav.history") },
+        { href: `${base}/status`, label: t("nav.status") },
+      ],
+    },
+  ];
+  const profileLinks = [
+    { href: `${base}/profile`, label: t("nav.profile") },
+    { href: `/${locale}`, label: t("nav.publicSite") },
+  ];
 
   return (
-    <UnreadProvider actor={viewer.profile.id}><ClubNavScope><div className="bike-app" lang={locale}>
-      <aside className="bike-app-sidebar">
-        <Link href={base} className="bike-app-brand" aria-label="Bike Me">
-          <Image
-            src="/brand/bike-me-logo-white.png"
-            alt=""
-            width={1024}
-            height={1024}
-            className="bike-app-logo"
-            priority
+    <UnreadProvider actor={viewer.profile.id}>
+      <ClubNavScope>
+        <div className="bike-app" lang={locale}>
+          <AppNav
+            locale={locale}
+            menuLabel={t("shell.menu")}
+            items={items}
+            profileLabel={t("nav.profile")}
+            profileLinks={profileLinks}
+            brand={
+              <Link href={base} className="bike-app-brand" aria-label="Bike Me">
+                <Image src="/brand/bike-me-logo-white.png" alt="" width={40} height={40} priority />
+                <strong>Bike Me</strong>
+              </Link>
+            }
+            actions={
+              <>
+                <Link
+                  aria-label={t("rides.create")}
+                  className="bike-app-button bike-app-header-create"
+                  href={`${base}/rides/new`}
+                >
+                  <span className="bike-app-create-icon" aria-hidden="true">+</span>
+                  <span>{t("rides.create")}</span>
+                </Link>
+                <AppLanguageSwitcher locale={locale} label={t("shell.language")} />
+              </>
+            }
+            avatar={
+              <>
+                <AppAvatar name={displayName} url={viewer.profile.avatarUrl} size="small" />
+                <span className="bike-app-viewer-name">{displayName}</span>
+              </>
+            }
+            logout={<LogoutForm action={logoutAction} locale={locale} translations={getAuthDictionary(locale)} />}
           />
-          <span>
-            <strong>Bike Me</strong>
-            <small>{t("shell.eyebrow")}</small>
-          </span>
-        </Link>
-        <AppNav links={links} />
-        <Link className="bike-app-public-link" href={`/${locale}`}>{t("nav.publicSite")}</Link>
-      </aside>
-
-      <div className="bike-app-stage">
-        <header className="bike-app-topbar">
-          <Link href={base} className="bike-app-mobile-brand" aria-label="Bike Me">
-            <Image src="/brand/bike-me-logo-white.png" alt="" width={1024} height={1024} priority />
-            <span>Bike Me</span>
-          </Link>
-          <div className="bike-app-topbar-actions">
-            <Link
-              aria-label={t("rides.create")}
-              className="bike-app-button bike-app-header-create"
-              href={`${base}/rides/new`}
-            >
-              {t("rides.create")}
-            </Link>
-            <AppLanguageSwitcher locale={locale} label={t("shell.language")} />
-            <Link aria-label={t("nav.profile")} href={`${base}/profile`} className="bike-app-viewer">
-              <span className="bike-app-viewer-name">{displayName}</span>
-              <AppAvatar name={displayName} url={viewer.profile.avatarUrl} size="small" />
-            </Link>
-          </div>
-        </header>
-        <div className="bike-app-mobile-nav"><AppNav links={links} /></div>
-        <main className="bike-app-content">{children}</main>
-      </div>
-    </div></ClubNavScope></UnreadProvider>
+          <main className="bike-app-content">{children}</main>
+        </div>
+      </ClubNavScope>
+    </UnreadProvider>
   );
 }
