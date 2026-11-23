@@ -6,8 +6,31 @@ export function imageSourceDimensions(bytes:Uint8Array){
  if(bytes[0]===255&&bytes[1]===216){let offset=2;while(offset+4<=bytes.length){if(bytes[offset]!==255)throw new ClubError('image');while(bytes[offset]===255)offset++;if(offset>=bytes.length)throw new ClubError('image');const marker=bytes[offset++];if(marker===217||marker===218)break;if(marker===216||marker===1||(marker>=208&&marker<=215))continue;if(offset+2>bytes.length)throw new ClubError('image');const length=d.getUint16(offset);if(length<2||offset+length>bytes.length)throw new ClubError('image');if([192,193,194,195,197,198,199,201,202,203,205,206,207].includes(marker)&&length>=7)return{height:d.getUint16(offset+3),width:d.getUint16(offset+5)};offset+=length;}}
  throw new ClubError('image');
 }
-export async function normalizeImageForBrowser(file:Blob,slot:ImageSlot,signal:AbortSignal){
- if(!file.size||file.size>CLUB_IMAGE_SOURCE_LIMIT)throw new ClubError('image');const bytes=new Uint8Array(await file.arrayBuffer()),size=imageSourceDimensions(bytes);if(!size.width||!size.height||size.width*size.height>50_000_000)throw new ClubError('image');if(signal.aborted)throw new ClubError('network');
+// Check the source before a browser decoder can repair a truncated file
+// or flatten an animated PNG into an apparently valid static JPEG.
+export function requireCompleteStaticImage(bytes: Uint8Array) {
+ if (bytes[0] === 255 && bytes[1] === 216) {
+  if (bytes.at(-2) !== 255 || bytes.at(-1) !== 217) throw new ClubError("image");
+  return;
+ }
+ const data = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+ for (let offset = 8; offset + 12 <= bytes.length;) {
+  const length = data.getUint32(offset);
+  const type = data.getUint32(offset + 4);
+  const end = offset + 12 + length;
+  if (end > bytes.length || type === 0x6163544c) throw new ClubError("image"); // acTL
+  if (type === 0x49454e44 && length === 0 && end === bytes.length) return; // IEND
+  offset = end;
+ }
+ throw new ClubError("image");
+}
+
+export async function normalizeImageForBrowser(file:Blob,slot:ImageSlot,signal:AbortSignal, options?: {maxBytes:number;maxPixels:number}){
+ if(!file.size||file.size>CLUB_IMAGE_SOURCE_LIMIT)throw new ClubError('image');const bytes=new Uint8Array(await file.arrayBuffer()),size=imageSourceDimensions(bytes);if(!size.width||!size.height||size.width*size.height>(options?.maxPixels??50_000_000))throw new ClubError('image');if(signal.aborted)throw new ClubError('network');
+ if(options)requireCompleteStaticImage(bytes);
  let bitmap:ImageBitmap;try{bitmap=await createImageBitmap(file,{imageOrientation:'from-image'});}catch{throw new ClubError('image');}
- const canvas=document.createElement('canvas');try{const max=slot==='logo'?512:1600,scale=Math.min(1,max/Math.max(bitmap.width,bitmap.height));canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));const c=canvas.getContext('2d');if(!c)throw new ClubError('image');if(slot==='cover'){c.fillStyle='#080e18';c.fillRect(0,0,canvas.width,canvas.height);}c.drawImage(bitmap,0,0,canvas.width,canvas.height);const blob=await new Promise<Blob|null>(r=>canvas.toBlob(r,slot==='logo'?'image/png':'image/jpeg',.85));if(signal.aborted)throw new ClubError('network');if(!blob||blob.size>CLUB_IMAGE_LIMIT)throw new ClubError('image');return blob;}finally{bitmap.close();canvas.width=0;canvas.height=0;}
+ const canvas=document.createElement('canvas');try{const max=slot==='logo'?512:1600,scale=Math.min(1,max/Math.max(bitmap.width,bitmap.height));canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));const c=canvas.getContext('2d');if(!c)throw new ClubError('image');if(slot==='cover'){c.fillStyle='#080e18';c.fillRect(0,0,canvas.width,canvas.height);}c.drawImage(bitmap,0,0,canvas.width,canvas.height);const encode=(quality:number)=>new Promise<Blob|null>(r=>canvas.toBlob(r,slot==='logo'?'image/png':'image/jpeg',quality));
+ let blob=await encode(.85);const limit=options?.maxBytes??CLUB_IMAGE_LIMIT;
+ if(options&&blob&&blob.size>limit)blob=await encode(.64);
+ if(signal.aborted)throw new ClubError('network');if(!blob||blob.size>limit)throw new ClubError('image');return blob;}finally{bitmap.close();canvas.width=0;canvas.height=0;}
 }

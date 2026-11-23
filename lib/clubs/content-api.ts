@@ -17,7 +17,11 @@ export function createClubContentApi(client:SupabaseClient,actor:string,allowCha
   const cursorId=(name:string)=>{const id=q.get(name);if(id&&!isClubId(id))throw new ContentError("invalid");return id;};
   if(snapshot.mode==="reports"){
    if(club.role==="member")throw new ContentError("access");
-   const result=await rpc("club_content_reports_page",{p_club:clubId,p_closed:q.get("closed")==="true",p_before_time:q.get("beforeTime"),p_before_id:cursorId("beforeId"),p_limit:20});
+   const args={p_club:clubId,p_closed:q.get("closed")==="true",p_before_time:q.get("beforeTime"),p_before_id:cursorId("beforeId"),p_limit:20};
+   const result=await rpc("club_gallery_moderation_page",args).catch(error=>{
+    if(contentError(error).kind!=="unavailable")throw error;
+    return rpc("club_content_reports_page",args);
+   });
    if(!Array.isArray(result?.items))throw new ContentError("network");snapshot.reports=result.items.map(projectReport);snapshot.hasMore=result.items.length===20;
   }else if(snapshot.mode==="blocked"){
    const rows=await rpc("club_blocked_users",{});if(!Array.isArray(rows))throw new ContentError("network");snapshot.blocked=rows.map(r=>({id:String(r.id),display_name:typeof r.display_name==="string"?r.display_name:null}));

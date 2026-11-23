@@ -1,7 +1,11 @@
 import type { Club, ClubRole } from "./types";
 export type ContentKind="post"|"comment"|"chat";
 export type ContentItem={kind:ContentKind|"chat";id:string;club_id:string;post_id:string;author_id:string|null;display_name:string|null;body:string;created_at:string;edited_at:string|null;version:number;is_pinned:boolean;comment_count:number};
-export type ContentReport={id:string;club_id:string;target_kind:ContentItem["kind"];target_id:string;reason:string;detail:string;status:"pending"|"removed"|"dismissed";created_at:string;resolved_at:string|null;snapshot:ContentItem;content:ContentItem|null;context:ContentItem[]};
+type ReportMetadata = { id:string;club_id:string;target_id:string;reason:string;detail:string;status:"pending"|"removed"|"dismissed";created_at:string;resolved_at:string|null };
+export type ContentReport = ReportMetadata & (
+ {target_kind:ContentItem["kind"];snapshot:ContentItem;content:ContentItem|null;context:ContentItem[]} |
+ {target_kind:"photo"|"photo_comment";snapshot:{text:string;author:string|null};hasImageEvidence:boolean}
+);
 export type ContentSnapshot={club:Club;role:ClubRole;visibilityRevision:number;mode:"posts"|"thread"|"reports"|"blocked";items:ContentItem[];post:ContentItem|null;reports:ContentReport[];blocked:{id:string;display_name:string|null}[];hasMore:boolean;unavailable:boolean;editorItem:ContentItem|null};
 export type ContentErrorKind="auth"|"access"|"blocked"|"contentRejected"|"invalid"|"unavailable"|"conflict"|"network";
 export class ContentError extends Error {constructor(public readonly kind:ContentErrorKind){super(kind);}}
@@ -34,5 +38,13 @@ export function projectContent(value:unknown):ContentItem {
 export function projectReport(value:unknown):ContentReport {
  const r=value as Record<string,unknown>|null;
  if(!r||typeof r.id!=="string"||!["pending","removed","dismissed"].includes(String(r.status)))throw new ContentError("network");
- return {id:r.id,club_id:String(r.club_id),target_kind:r.target_kind as ContentItem["kind"],target_id:String(r.target_id),reason:String(r.reason),detail:typeof r.detail==="string"?r.detail:"",status:r.status as ContentReport["status"],created_at:String(r.created_at),resolved_at:typeof r.resolved_at==="string"?r.resolved_at:null,snapshot:projectContent(r.snapshot),content:r.content?projectContent(r.content):null,context:Array.isArray(r.context)?r.context.map(projectContent):[]};
+ const metadata:ReportMetadata={id:r.id,club_id:String(r.club_id),target_id:String(r.target_id),reason:String(r.reason),detail:typeof r.detail==="string"?r.detail:"",status:r.status as ReportMetadata["status"],created_at:String(r.created_at),resolved_at:typeof r.resolved_at==="string"?r.resolved_at:null};
+ if(r.target_kind==="photo" || r.target_kind==="photo_comment"){
+  const snapshot=r.snapshot as Record<string,unknown>|null;
+  return {...metadata,target_kind:r.target_kind,hasImageEvidence:r.has_image_evidence===true,snapshot:{
+   text:typeof snapshot?.body==="string"?snapshot.body:"",
+   author:typeof snapshot?.display_name==="string"?snapshot.display_name:null,
+  }};
+ }
+ return {...metadata,target_kind:r.target_kind as ContentItem["kind"],snapshot:projectContent(r.snapshot),content:r.content?projectContent(r.content):null,context:Array.isArray(r.context)?r.context.map(projectContent):[]};
 }

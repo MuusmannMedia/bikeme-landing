@@ -28,7 +28,8 @@
     "test:visit-catalog-batch": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir .test-build/visit-catalog-batch tests/visit-catalog-batch.test.ts && node --test .test-build/visit-catalog-batch/tests/visit-catalog-batch.test.js",
     "test:club-access-fetch": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir .test-build/club-access-fetch tests/club-access-fetch.test.ts && node --test .test-build/club-access-fetch/tests/club-access-fetch.test.js",
     "test:club-release": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir .test-build/club-release tests/club-release.test.ts && node --test .test-build/club-release/tests/club-release.test.js",
-    "test:web-messaging": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --resolveJsonModule --outDir .test-build/web-messaging tests/web-messaging.test.ts && node --test .test-build/web-messaging/tests/web-messaging.test.js"
+    "test:web-messaging": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --resolveJsonModule --outDir .test-build/web-messaging tests/web-messaging.test.ts && node --test .test-build/web-messaging/tests/web-messaging.test.js",
+    "test:club-gallery": "tsc --module commonjs --moduleResolution node --target es2022 --esModuleInterop --strict --skipLibCheck --outDir .test-build/club-gallery tests/club-gallery.test.ts && node --test .test-build/club-gallery/tests/club-gallery.test.js"
   },
   "dependencies": {
     "@supabase/ssr": "0.10.0",

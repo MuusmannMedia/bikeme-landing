@@ -1,5 +1,6 @@
 import {ClubNavigation} from "./club-navigation";
 import {ClubPrivateImages} from "./club-private-images";
+import { galleryText } from "@/lib/clubs/gallery-i18n";
 import { contentText } from "@/lib/clubs/content-i18n";
 import { AppPageHeader, AppPanel } from "@/components/app-ui";
 import { getAppDictionary } from "@/lib/app-i18n";
@@ -28,7 +29,7 @@ export function ClubAccessDenied({ locale }: { locale: Locale }) {
   </>;
 }
 
-export function ClubHeader({ club, locale, selected }: { club: Club; locale: Locale; selected: "details" | "members" | "rides" | "posts" | "chat" }) {
+export function ClubHeader({ club, locale, selected }: { club: Club; locale: Locale; selected: "details" | "members" | "rides" | "posts" | "chat" | "gallery" }) {
   const t = getAppDictionary(locale);
   const base = `/${locale}/app/clubs/${club.id}`;
   return <section className="bike-app-club-masthead" data-compact={false}>
@@ -47,7 +48,8 @@ export function ClubHeader({ club, locale, selected }: { club: Club; locale: Loc
       {key:"rides",href:`${base}/rides`,label:t("clubs.tabs.rides")},
       {key:"posts",href:`${base}/posts`,label:contentText(locale,"title")},
       {key:"chat",href:`${base}/chat`,label:t("clubs.tabs.chat")},
-      {key:"members",href:`${base}/members`,label:t("clubs.members")}
+      {key:"members",href:`${base}/members`,label:t("clubs.members")},
+      {key:"gallery",href:`${base}/gallery`,label:galleryText(locale,"title")}
     ]}/>
 
   </section>;

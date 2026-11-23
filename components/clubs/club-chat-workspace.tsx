@@ -13,17 +13,16 @@ import {contentText,type ContentTextKey} from '@/lib/clubs/content-i18n';
 import {getAppDictionary} from '@/lib/app-i18n';
 import {formatDateTime} from '@/lib/app-format';
 import {validateChat,type ChatMessage,type ChatCommand} from '@/lib/clubs/chat-contract';
-import {validateReportDetail} from '@/lib/clubs/content-contract';
+import {ClubReportForm} from './club-report-form';
 import type {ChatStore,ChatState} from '@/lib/clubs/chat-store';
 import type {Locale} from '@/lib/locales';
 export function ClubChatWorkspace({store,state,locale,userId,clubId,initialMessage,checking=false}:{store:ChatStore;state:ChatState;locale:Locale;userId:string;clubId:string;initialMessage:string|null;checking?:boolean}){
  const text=(key:ChatTextKey)=>chatText(locale,key),ct=(key:ContentTextKey)=>contentText(locale,key),t=getAppDictionary(locale),data=state.data,ready=state.status==='ready'&&!!data,locked=state.busy||!!state.pending||!ready;
- const editor=useRef<HTMLTextAreaElement>(null),dialog=useRef<HTMLDialogElement>(null),reportSelect=useRef<HTMLSelectElement>(null),focusReturn=useRef(''),firstContext=useRef(false);
+ const editor=useRef<HTMLTextAreaElement>(null),dialog=useRef<HTMLDialogElement>(null),focusReturn=useRef(''),firstContext=useRef(false);
  const [confirm,setConfirm]=useState<{command:ChatCommand;title:ContentTextKey;body:string}|null>(null),[report,setReport]=useState<{id:string;destination:'club'|'bikeMe';reason:'spam'|'harassment'|'unsafe'|'other';detail:string}|null>(null),[searchInput,setSearchInput]=useState('');
  const {root,history:list}=useConversationPosition({ready,checking,items:data?.items,scrollRevision:state.scrollRevision});
  const restore=()=>requestAnimationFrame(()=>document.getElementById(focusReturn.current)?.focus({preventScroll:true}));
  useEffect(()=>{if(ready&&confirm)dialog.current?.showModal();},[ready,confirm]);
- useEffect(()=>{if(ready&&report)reportSelect.current?.focus({preventScroll:true});},[ready,report?.id]); // eslint-disable-line react-hooks/exhaustive-deps
  useEffect(()=>{if(state.edit||state.replyId)editor.current?.focus({preventScroll:true});},[state.edit?.id,state.replyId]); // eslint-disable-line react-hooks/exhaustive-deps
  useEffect(()=>{if(ready&&!firstContext.current&&initialMessage){firstContext.current=true;void store.context(initialMessage);}},[ready,initialMessage,store]);
  useEffect(()=>{const viewport=window.visualViewport;const resize=()=>root.current?.style.setProperty('--chat-viewport',`${viewport?.height??window.innerHeight}px`);resize();viewport?.addEventListener('resize',resize);return()=>viewport?.removeEventListener('resize',resize);},[root]);
@@ -40,7 +39,7 @@ export function ClubChatWorkspace({store,state,locale,userId,clubId,initialMessa
   </MessageBubble>
  </article>;}
  const error:ContentTextKey=state.error==='contentRejected'?'contentRejected':state.error==='conflict'?'conflict':state.error==='invalid'?'invalid':state.error==='access'||state.error==='auth'?'access':state.error==='unavailable'||state.error==='blocked'?'unavailable':'network';
- let valid=false;try{validateChat(state.draft);valid=true;}catch{}let reportValid=false;try{validateReportDetail(report?.detail??'');reportValid=true;}catch{}
+ let valid=false;try{validateChat(state.draft);valid=true;}catch{}
  const selected=data?.selected,targetAvailable=(!state.edit&&!state.replyId)||!!selected&&!selected.deleted_at;
  return <ReactionScope actor={userId} kind="club" scope={clubId} ids={[...(data?.items??[]),...(data?.context??[])].map(m=>m.id)} active={ready&&!checking}><div ref={root} data-chat-access={state.status} data-chat-data={data?'present':'empty'}>
  <StableAccessRegion denied={state.status==='access'||state.status==='auth'} ready={ready} fallback={state.status==='access'?<ClubAccessDenied locale={locale}/>:state.status==='error'?<AppPanel><p role="alert">{text("offline")}</p><button className="bike-app-button" onClick={()=>void store.sync(true)}>{text("retry")}</button></AppPanel>:<p role="status">{text('loading')}</p>}>
@@ -57,7 +56,11 @@ export function ClubChatWorkspace({store,state,locale,userId,clubId,initialMessa
    </div>
    <div className="bike-app-chat-new-slot">{state.newCount?<button className="bike-app-button" onClick={()=>store.bottom()}>{text('new')} ({state.newCount})</button>:null}</div>
   </AppPanel>
-  {report?<AppPanel title={ct('report')} className="bike-app-section-gap"><form onSubmit={e=>{e.preventDefault();if(!locked&&reportValid)void store.run(command('report',{...report,kind:'chat'})).then(saved=>{if(saved){setReport(null);restore();}});}}><fieldset disabled={locked} className="bike-app-club-form-fields"><label className="bike-app-field"><span>{ct('report')}</span><select ref={reportSelect} value={report.destination} onChange={e=>setReport({...report,destination:e.target.value as 'club'|'bikeMe'})}><option value="club">{ct('clubReport')}</option><option value="bikeMe">{ct('bikeMeReport')}</option></select></label><p className="bike-app-content-privacy">{ct(report.destination==='club'?'privacyClub':'privacyBikeMe')}</p><label className="bike-app-field"><span>{ct('reason')}</span><select value={report.reason} onChange={e=>setReport({...report,reason:e.target.value as typeof report.reason})}>{(['spam','harassment','unsafe','other'] as const).map(k=><option key={k} value={k}>{ct(k)}</option>)}</select></label><label className="bike-app-field"><span>{ct('detail')}</span><textarea rows={4} value={report.detail} onChange={e=>setReport({...report,detail:e.target.value})}/></label><p>{ct('counter').replace('{count}',String(Array.from(report.detail).length)).replace('{max}','500')}</p></fieldset><div className="bike-app-actions"><button className="bike-app-button" disabled={locked||!reportValid}>{ct(report.destination==='club'?'clubReport':'bikeMeReport')}</button><button type="button" className="bike-app-button bike-app-button-secondary" disabled={locked} onClick={()=>{setReport(null);restore();}}>{t('common.cancel')}</button></div></form></AppPanel>:null}
+  {report?<AppPanel title={ct('report')} className="bike-app-section-gap">
+    <ClubReportForm locale={locale} value={report} locked={locked} onChange={fields=>setReport({...report,...fields})}
+      onSubmit={()=>void store.run(command('report',{...report,kind:'chat'})).then(saved=>{if(saved){setReport(null);restore();}})}
+      onCancel={()=>{setReport(null);restore();}} />
+  </AppPanel>:null}
   <dialog ref={dialog} className="bike-app-club-dialog" aria-labelledby="chat-confirm-title" onCancel={e=>{if(state.busy)e.preventDefault();}} onClose={()=>{setConfirm(null);restore();}}>{confirm?<><h2 id="chat-confirm-title">{ct(confirm.title)}</h2><p>{confirm.body}</p><div className="bike-app-actions"><button autoFocus className="bike-app-button bike-app-button-secondary" onClick={()=>dialog.current?.close()}>{t('common.cancel')}</button><button className="bike-app-button bike-app-button-danger" disabled={locked} onClick={()=>{const c=confirm.command;dialog.current?.close();void store.run(c);}}>{ct('confirm')}</button></div></>:null}</dialog>
  </>:null}</StableAccessRegion>
  <AppPanel className="bike-app-section-gap" key="persistent-composer">
