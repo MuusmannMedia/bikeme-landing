@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Map as MapLibreMap, Marker } from "maplibre-gl";
 
 import { OPEN_FREE_MAP_STYLE_URL } from "@/lib/route-map";
+import { loadMapLibre } from "@/components/maplibre-client";
 
 export type MeetingCoordinate = {
   latitude: number;
@@ -82,7 +83,7 @@ export function MeetingPointMap({
       setReady(false);
     };
 
-    void import("maplibre-gl").then((maplibre) => {
+    void loadMapLibre().then((maplibre) => {
       if (cancelled || !containerRef.current) return;
       moduleRef.current = maplibre;
       const initialCoordinate = initialCoordinateRef.current;

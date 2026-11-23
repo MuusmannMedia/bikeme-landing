@@ -973,7 +973,13 @@ test("ride detail map uses the privacy-trimmed route with an accessible SVG fall
   assert.ok(detail.includes("points={displayRoute}"));
   assert.ok(detail.includes("fallback={<RoutePreview points={displayRoute}"));
   assert.equal(detail.includes("<RouteMap points={ride.route}"), false);
-  assert.ok(routeMap.includes('void import("maplibre-gl")'));
+  assert.ok(routeMap.includes("void loadMapLibre()"));
+  const mapLoader = projectFile("components/maplibre-client.ts");
+  assert.ok(mapLoader.includes('await import("maplibre-gl")'));
+  assert.ok(mapLoader.includes("maplibre.setWorkerUrl("));
+  assert.ok(mapLoader.includes("/maplibre/${version}/maplibre-gl-worker.mjs"));
+  const prepareWorker = projectFile("scripts/prepare-maplibre-worker.cjs");
+  assert.ok(prepareWorker.includes('"maplibre-gl-worker.mjs", "maplibre-gl-shared.mjs"'));
   assert.ok(routeMap.includes('role={fullscreen ? "dialog" : undefined}'));
   assert.ok(routeMap.includes("aria-modal={fullscreen ? true : undefined}"));
   assert.ok(routeMap.includes('event.key === "Escape"'));

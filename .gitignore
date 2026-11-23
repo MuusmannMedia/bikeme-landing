@@ -28,3 +28,6 @@ public/brand/*
 
 # Supabase CLI local metadata
 /supabase/.temp/
+
+# MapLibre ESM worker assets generated from the lockfile
+/public/maplibre/

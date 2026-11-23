@@ -6,6 +6,7 @@ import type { Map as MapLibreMap, Marker, NavigationControl } from "maplibre-gl"
 
 import type { RoutePoint } from "@/lib/app-model";
 import { buildRouteMapModel, OPEN_FREE_MAP_STYLE_URL, type RouteMapModel } from "@/lib/route-map";
+import { loadMapLibre } from "@/components/maplibre-client";
 
 type MapLibreModule = typeof import("maplibre-gl");
 
@@ -121,7 +122,7 @@ export function RouteMap({
       setReady(false);
     };
 
-    void import("maplibre-gl").then((maplibre) => {
+    void loadMapLibre().then((maplibre) => {
       if (cancelled || !containerRef.current) return;
       moduleRef.current = maplibre;
       const map = new maplibre.Map({
