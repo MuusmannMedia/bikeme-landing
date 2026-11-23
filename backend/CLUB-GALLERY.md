@@ -1,6 +1,6 @@
 # Klubgalleriet på Bike Me-web
 
-Galleriet er bygget fra den verificerede produktionsversion `3f97eaefe3ce537f41ae386a2bd19d30e8619503`. Koden og migrationen er klargjort lokalt. Der er ingen produktionsændringer i denne leverance.
+Galleriet er bygget fra den verificerede produktionsversion `3f97eaefe3ce537f41ae386a2bd19d30e8619503`. Det oprindelige galleri er klargjort fra dette grundlag, og migrationerne 0100–0102 er allerede registreret i produktion. Den afgrænsede uploadautorisation er klargjort lokalt til separat godkendelse.
 
 ## Grænser og lager
 
@@ -32,36 +32,39 @@ Fjernelse rydder miniature og galleriadgang. Billedvisningen bevares, mens en ek
 
 Aktive medlemmer kan tilføje og fjerne deres eget like samt kommentere på billeder, de har adgang til. Blokreglerne gælder for billedet, kommentarerne og likeantallet. Kommentaroprettelse bruger klubbens eksisterende indholdsfilter i databasen. Web bevarer teksten ved afvisning. Første webversion tilbyder oprettelse og fjernelse af kommentarer. Kommentarer kan fjernes af deres forfatter eller klubbens ejer/administratorer. Andre aktive medlemmer kan anmelde den enkelte kommentar til klubbens administration eller fortroligt til Bike Me. Sagen gemmer kommentartekst, forfatter, tidspunkt og en reference til billedbeviset. Den bevarer beviset efter kommentarens eller billedets fjernelse med samme slette- og anonymiseringsregler som den eksisterende kø. Afgørelsen om fjernelse i begge køer rammer den anmeldte kommentar. Uploader, ejer og administratorer er de eneste med sletteret på selve fotoet. Fjernelse af et billede rydder dets likes og kommentarer. En eksisterende billedanmeldelse bevarer sit fotobevis efter galleriets eksisterende regler.
 
-## Udrulning efter separat godkendelse
+## Afgrænset identitet for upload
 
-1. Bekræft produktionsprojektet `zawilafvdwlnwsdeufts`, webgrenen og migrationshistorikken igen. Ved denne gennemgang var webcommit `3f97eaefe3ce537f41ae386a2bd19d30e8619503` aktivt, og seneste registrerede migration var `0098`. Kandidatfilerne er `0100_club_gallery.sql`, `0101_club_gallery_discussion.sql` og `0102_club_gallery_comment_reports.sql`, i den rækkefølge. Verificér numrene, før de registreres.
-2. Kør kæden i et afgrænset miljø med det eksisterende tekstfilter og de aktuelle anmeldelsestriggere. Hold galleriwebkoden tilbage, til alle tre trin er anvendt. I produktion køres og registreres kæden i én ydre transaktion. Udelad kun filernes ydre `BEGIN` og `COMMIT`, hvis de samles til den transaktion. Kontrollér migrationsloggen, de nye RPC-rettigheder, klubroller, blokering og de adskilte anmeldelseskøer. Kontrollér også, at appens eksisterende kø fortsat bruger sin hidtidige kontrakt.
-3. Billeder og beviser bruger privat Postgres-lager. Ingen ny Storage-bucket eller Storage-politik. Verificér database- og backupkapacitet ud fra antal klubber og loftet på 256 MiB pr. klub.
-4. Behold `NEXT_PUBLIC_SUPABASE_URL` og `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` for produktionsprojektet. Opret `BIKE_ME_GALLERY_SERVER_KEY` som en miljøafgrænset serverhemmelighed i Vercel for samme Supabase-projekt. Den bruges til uploadreservation, commit og frigivelse. Udrul dernæst releasecommittet som en samlet webversion. Der er ingen appudrulning i dette trin.
-5. Efterkontrollér foto- og kommentaranmeldelser i begge køer, retention efter sletning, likes, kommentarfilter, tidligere medlemmers direkte links og uploadgrænser med godkendte testkonti. Kontrollér særskilt, at support kan hente bevis, og at klubmoderatorer ikke kan se supporthenvendelser.
-6. Ved tilbageførsel genudgives den tidligere webversion, og galleriets Vercel-hemmelighed fjernes. Hvis direktelinks og nye galleriskrivninger også skal stoppes, tilbagekald `EXECUTE` for medlemsvisning, upload, likes, kommentarer og nye anmeldelser fra de relevante `authenticated`- og `service_role`-roller. Bevar de eksisterende moderationsfunktioner, de to bevis-RPC’er og de private sagsdata. Fjern kun migrationsobjekter ved en særskilt, kontrolleret afvikling af allerede indsendte sager.
+Den oprindelige servernøgle blev brugt i tre kald: reservation af plads og kvote, atomisk lagring af de behandlede billedbytes og frigivelse af en ubrugt reservation. De øvrige gallerioperationer bruger allerede brugerens Supabase-session.
 
-Ved et isoleret galleristop kan den gennemgåede webversion blive online, så klubmoderatorer stadig har adgang til deres kø. Følgende begrænser de nye medlemsfunktioner og uploads. De eksisterende klubfunktioner, kø og beviser beholder deres rettigheder.
+Den nye løsning bruger også sessionen til de tre uploadkald. En separat signeringsidentitet i webserveren godkender kun lagring af de bytes, der har passeret Sharp. Signeringsnøglen er hverken et Supabase-API-token eller en databasebruger.
+
+| Ny RPC | Adgang |
+| --- | --- |
+| `club_gallery_upload_reserve(uuid,uuid,text,integer)` | `authenticated`. Aktøren tages fra `auth.uid()`. Det eksisterende medlems-, kvote- og reservationscheck gælder. |
+| `club_gallery_upload_commit(uuid,uuid,uuid,text,text)` | `authenticated` med aktivt medlemskab, egen aktuelle reservation og gyldig HMAC for aktør, klub, upload-ID, reservationsforsøg og de eksakte behandlede bytes. Den eksisterende lagringsfunktion gentager medlems- og reservationskontrollen atomisk. |
+| `club_gallery_upload_release(uuid,uuid)` | `authenticated`. Kan frigive ét eget, uafsluttet reservationsforsøg, også efter medlemsfjernelse. Kaldet giver ingen læseadgang. |
+
+Der oprettes ingen Postgres-rolle, ingen JWT og ingen generelle tabelrettigheder. De eksisterende rå upload-RPC'er får ingen nye kaldere. Læseadgang, sletning, likes, kommentarer og begge anmeldelsesveje bruger fortsat deres eksisterende sessionskontroller. Signeringsnøglen kan ikke bruges som bearer-token og giver ingen adgang til Vault, lagertabeller, andre klubber eller supportanmeldelser.
+
+## Produktion efter separat godkendelse
+
+1. Bekræft igen Supabase-projektet `zawilafvdwlnwsdeufts`, aktivt webcommit og migrationshistorik. `0100`–`0102` er allerede registreret og skal hverken redigeres eller genkøres. Den foreslåede ændring er alene [migration 0103](supabase/migrations/0103_club_gallery_upload_attestation.sql). Kontrollér at nummeret og de tre nye RPC-navne stadig er ledige. Den læsende kontrol har bekræftet `extensions.hmac`, korrekt HMAC-resultat på et offentligt testinput og at medlemmer og anonyme ikke kan læse Vault eller kalde den rå commit-funktion.
+2. Anvend og registrér `0103` atomisk efter godkendelse. Kontrollér de tre nævnte `EXECUTE`-rettigheder til `authenticated`, afvisning af anonyme kald og de eksisterende private tabellers adgang. Der ændres ikke Storage-buckets eller browserpush-konfiguration.
+3. Generér **én ny, tilfældig 32-byte nøgle** kodet som 64 små hextegn, kun til produktionsgalleriet. Lagr samme værdi som `club_gallery_upload_commit_hmac` i Supabase Vault og som følsom `BIKE_ME_GALLERY_UPLOAD_HMAC_KEY` kun til Production i Vercel-projektet `bikeme-landing`. Værdien må ikke indgå i Git, SQL-migrationshistorik, logfiler eller chat. Genbrug ikke en Supabase-nøgle eller en nøgle fra et andet miljø. Den tidligere `BIKE_ME_GALLERY_SERVER_KEY` bruges ikke.
+4. Verificér scoping med dedikerede konti gennem Supabase Data API. Prøv gyldig signatur, falsk og genbrugt signatur, forkert konto, rå commit, anonymt kald, adgang efter medlemsfjernelse, og at supportbeviser stadig er afgrænset. Test derefter upload, oprydning og moderation på et adgangsbeskyttet Vercel-deployment, som bruger Production-miljøet uden at overtage produktionsdomænet.
+5. Udgiv den fastlåste webversion til `www.bikeme.one`, når de afgrænsede produktionsprøver er bestået og produktionsudgivelse er godkendt. Behold den eksisterende app og browserpush-konfiguration.
+
+## Tilbageførsel
+
+Før webdomænet tilbage til den tidligere verificerede Vercel-udgivelse for `3f97eaefe3ce537f41ae386a2bd19d30e8619503`, hvis webudgivelsen skal rulles tilbage. Fjern derefter Vercels gallerivariabel og den konkrete Vault-hemmelighed efter navn og kontrolleret ID. Ved et isoleret uploadstop kan den nuværende webversion fortsætte med læsning og moderation.
 
 ```sql
 BEGIN;
 REVOKE EXECUTE ON FUNCTION
-  public.club_gallery_page(uuid,timestamptz,uuid),
-  public.club_gallery_image(uuid,uuid,boolean),
-  public.club_gallery_discussion(uuid,uuid,timestamptz,uuid),
-  public.club_gallery_remove(uuid,uuid),
-  public.club_gallery_set_like(uuid,uuid,boolean),
-  public.club_gallery_add_comment(uuid,uuid,uuid,text),
-  public.club_gallery_remove_comment(uuid,uuid,uuid),
-  public.club_gallery_report(uuid,uuid,text,text,text),
-  public.club_gallery_report_comment(uuid,uuid,uuid,text,text,text)
-  FROM authenticated;
-REVOKE EXECUTE ON FUNCTION
-  public.club_gallery_reserve(uuid,uuid,uuid,text,integer),
-  public.club_gallery_commit(uuid,uuid,uuid,uuid,jsonb),
-  public.club_gallery_release(uuid,uuid,uuid)
-  FROM service_role;
+  public.club_gallery_upload_reserve(uuid,uuid,text,integer),
+  public.club_gallery_upload_commit(uuid,uuid,uuid,text,text),
+  public.club_gallery_upload_release(uuid,uuid) FROM authenticated;
 COMMIT;
 ```
 
-Hvis selve webversionen skal tilbageføres, bruges den tidligere verificerede Vercel-udgivelse for `3f97eaefe3ce537f41ae386a2bd19d30e8619503`. Den version læser kun den gamle klubkø. Brug den gennemgåede webmoderation i et adgangsbeskyttet miljø til åbne galleri-sager, eller lad den autoriserede supportfunktion håndtere sine egne sager under tilbageførslen.
+Et fuldt galleristop kan desuden tilbagekalde medlems-RPC'erne for galleri, visning, sletning, likes, kommentarer og nye anmeldelser. Bevar migrationshistorik, eksisterende moderation, bevis-RPC'er og private sagsdata. Den tidligere webversion læser den gamle klubkø. Brug den gennemgåede webmoderation i et adgangsbeskyttet miljø til åbne galleri-sager ved tilbageførsel.

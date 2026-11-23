@@ -14,7 +14,7 @@ export const maxDuration = 60;
 
 const status: Record<GalleryErrorCode, number> = {
   auth: 401, access: 403, invalid: 400, image: 422, size: 413, quota: 429,
-  capacity: 413, conflict: 409, busy: 409, unavailable: 404, network: 503, contentRejected: 422,
+  capacity: 413, conflict: 409, busy: 409, unavailable: 404, uploadUnavailable: 503, network: 503, contentRejected: 422,
 };
 const json = (body: object, code = 200) => preventAuthCaching(NextResponse.json(body, { status: code }));
 function failure(error: unknown) {
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     if (request.headers.get("x-gallery-actor") !== userId) throw new GalleryError("auth");
     const mime = request.headers.get("content-type") ?? "";
     if (mime.startsWith("multipart/form-data;")) {
-      await saveGalleryUpload(request, userId, clubId, mime);
+      await saveGalleryUpload(request, client, userId, clubId, mime);
     } else if (mime.startsWith("application/json")) {
       const body = await galleryBody(request, 12_000);
       const command = await new Response(body).json().catch(() => null);

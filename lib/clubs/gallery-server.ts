@@ -1,22 +1,19 @@
 import "server-only";
 
 import { createHash } from "node:crypto";
-import { createClient as createSupabaseClient, type SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type { NextRequest } from "next/server";
 
-import { getSupabaseEnvironment } from "@/lib/supabase/config";
 import { GalleryError, galleryCaption, galleryLimits } from "./gallery-contract";
 import { normalizeGalleryPhoto } from "./gallery-normalize";
 import { imageSourceDimensions, requireCompleteStaticImage } from "./image-browser";
 import { isClubId } from "./types";
+import { signGalleryUpload } from "./gallery-upload-signature";
 
-export function galleryServerClient() {
-  const env = getSupabaseEnvironment();
-  const key = process.env.BIKE_ME_GALLERY_SERVER_KEY?.trim();
-  if (!env || !key) throw new GalleryError("unavailable");
-  return createSupabaseClient(env.url, key, {
-    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
-  });
+function galleryUploadKey() {
+  const key = process.env.BIKE_ME_GALLERY_UPLOAD_HMAC_KEY?.trim();
+  if (!key || !/^[a-f0-9]{64}$/.test(key)) throw new GalleryError("uploadUnavailable");
+  return Buffer.from(key, "hex");
 }
 
 export async function galleryRpc<T>(client: SupabaseClient, fn: string, params: Record<string, unknown>): Promise<T> {
@@ -26,7 +23,7 @@ export async function galleryRpc<T>(client: SupabaseClient, fn: string, params: 
     if (error.message === "BIKEME_CONTENT_REJECTED") throw new GalleryError("contentRejected");
     const kinds = {
       "42501": "access", "28000": "auth", "55000": "access", "22023": "invalid",
-      PT409: "conflict", PT429: "quota", PT413: "capacity", P0002: "unavailable",
+      PT503: "uploadUnavailable", PT409: "conflict", PT429: "quota", PT413: "capacity", P0002: "unavailable",
       PGRST202: "unavailable", PGRST301: "auth",
     } as const;
     throw new GalleryError(kinds[error.code as keyof typeof kinds] ?? "network");
@@ -62,7 +59,8 @@ export async function galleryBody(request: NextRequest, limit: number) {
   }
 }
 
-export async function saveGalleryUpload(request: NextRequest, actor: string, clubId: string, mime: string) {
+export async function saveGalleryUpload(request: NextRequest, client: SupabaseClient, actor: string, clubId: string, mime: string) {
+  const signingKey = galleryUploadKey();
   const body = await galleryBody(request, galleryLimits.request);
   const form = await new Response(body, { headers: { "Content-Type": mime } }).formData().catch(() => {
     throw new GalleryError("invalid");
@@ -90,10 +88,9 @@ export async function saveGalleryUpload(request: NextRequest, actor: string, clu
   const fingerprint = JSON.stringify(bytes.map((file, index) => [
     captions[index], createHash("sha256").update(file).digest("hex"),
   ]));
-  const server = galleryServerClient();
-  const key = { p_actor: actor, p_club: clubId, p_request: requestId };
+  const key = { p_club: clubId, p_request: requestId };
   const reservation = await galleryRpc<{ status: "reserved"; attempt: string } | { status: "committed" }>(
-    server, "club_gallery_reserve", {
+    client, "club_gallery_upload_reserve", {
       ...key, p_count: files.length, p_digest: createHash("sha256").update(fingerprint).digest("hex"),
     },
   );
@@ -112,12 +109,14 @@ export async function saveGalleryUpload(request: NextRequest, actor: string, clu
       });
     }
     if (request.signal.aborted) throw new GalleryError("network");
-    await galleryRpc(server, "club_gallery_commit", { ...attempt, p_photos: photos });
+    const payload = JSON.stringify(photos);
+    const mac = signGalleryUpload({ actor, club: clubId, request: requestId, attempt: reservation.attempt }, payload, signingKey);
+    await galleryRpc(client, "club_gallery_upload_commit", { ...attempt, p_payload: payload, p_mac: mac });
   } catch (error) {
     // If the response was lost after commit this update does nothing.
     // An interrupted process also leaves no files, and its hold expires.
-    await galleryRpc(server, "club_gallery_release", {
-      p_actor: actor, p_request: requestId, p_attempt: reservation.attempt,
+    await galleryRpc(client, "club_gallery_upload_release", {
+      p_request: requestId, p_attempt: reservation.attempt,
     }).catch(() => {});
     throw error;
   }

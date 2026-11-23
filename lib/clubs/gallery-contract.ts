@@ -39,7 +39,7 @@ export type GalleryDiscussion = {
   next: GalleryCursor | null;
 };
 export type GalleryErrorCode = "access" | "auth" | "invalid" | "image" | "size" | "quota" |
-  "capacity" | "busy" | "conflict" | "unavailable" | "network" | "contentRejected";
+  "capacity" | "busy" | "conflict" | "unavailable" | "network" | "contentRejected" | "uploadUnavailable";
 
 export class GalleryError extends Error {
   constructor(public readonly kind: GalleryErrorCode) { super(kind); }

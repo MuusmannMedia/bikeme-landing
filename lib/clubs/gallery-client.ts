@@ -1,7 +1,7 @@
 import { GalleryError, type GalleryErrorCode } from "./gallery-contract";
 
 const galleryErrors = new Set<string>(["access", "auth", "invalid", "image", "size", "quota",
-  "capacity", "busy", "conflict", "unavailable", "network", "contentRejected"]);
+  "capacity", "busy", "conflict", "unavailable", "network", "contentRejected", "uploadUnavailable"]);
 
 export function galleryErrorKind(error: unknown): GalleryErrorCode {
   return error instanceof GalleryError ? error.kind : "network";

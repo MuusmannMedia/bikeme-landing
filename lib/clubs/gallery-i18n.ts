@@ -19,6 +19,7 @@ const messages = {
   empty: ["There are no photos yet.", "Der er endnu ingen billeder.", "Es gibt noch keine Fotos.", "Aún no hay fotos.", "Non ci sono ancora foto.", "Il n’y a pas encore de photos.", "Er zijn nog geen foto’s."],
   more: ["Load more photos", "Hent flere billeder", "Weitere Fotos laden", "Cargar más fotos", "Carica altre foto", "Charger plus de photos", "Meer foto’s laden"],
   loading: ["Loading photos…", "Henter billeder…", "Fotos werden geladen…", "Cargando fotos…", "Caricamento foto…", "Chargement des photos…", "Foto’s laden…"],
+  uploadUnavailable: ["Photo upload is currently unavailable.", "Upload af billeder er midlertidigt utilgængelig.", "Der Foto-Upload ist derzeit nicht verfügbar.", "La subida de fotos no está disponible en este momento.", "Il caricamento delle foto non è al momento disponibile.", "L’envoi de photos est temporairement indisponible.", "Foto’s uploaden is tijdelijk niet beschikbaar."],
   uploading: ["Preparing and uploading photos…", "Forbereder og uploader billeder…", "Fotos werden vorbereitet und hochgeladen…", "Preparando y subiendo fotos…", "Preparazione e caricamento delle foto…", "Préparation et envoi des photos…", "Foto’s voorbereiden en uploaden…"],
   uploaded: ["Photos uploaded.", "Billederne er uploadet.", "Die Fotos wurden hochgeladen.", "Fotos subidas.", "Foto caricate.", "Photos ajoutées.", "Foto’s geüpload."],
   close: ["Close", "Luk", "Schließen", "Cerrar", "Chiudi", "Fermer", "Sluiten"],

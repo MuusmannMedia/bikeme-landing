@@ -301,7 +301,7 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
 
   function errorMessage(error: GalleryErrorCode) {
     switch (error) {
-      case "invalid": case "image": case "size": case "quota": case "capacity": case "busy": return text(error);
+      case "invalid": case "image": case "size": case "quota": case "capacity": case "busy": case "uploadUnavailable": return text(error);
       case "access": case "auth": return ct("access");
       case "unavailable": return ct("unavailable");
       case "conflict": case "contentRejected": return ct(error);

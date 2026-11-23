@@ -90,3 +90,22 @@ test("club moderation receives the comment snapshot and evidence flag without su
   assert.deepEqual(report.snapshot, { text: "saved comment", author: "comment author" });
   assert(!JSON.stringify(report).includes("private"));
 });
+
+test("upload attestation binds the gallery, requester, lease and exact payload", async () => {
+  const { signGalleryUpload } = await import("../lib/clubs/gallery-upload-signature");
+  const key = Buffer.from("ab".repeat(32), "hex");
+  const binding = {
+    actor: "10000000-0000-4000-8000-000000000001",
+    club: "20000000-0000-4000-8000-000000000002",
+    request: "30000000-0000-4000-8000-000000000003",
+    attempt: "40000000-0000-4000-A000-000000000004",
+  };
+  const payload = '[{"caption":"Rødgrød 🚴"}]';
+  const mac = signGalleryUpload(binding, payload, key);
+  assert.match(mac, /^[0-9a-f]{64}$/);
+  assert.equal(signGalleryUpload({ ...binding, attempt: binding.attempt.toLowerCase() }, payload, key), mac);
+  assert.notEqual(signGalleryUpload(binding, payload + " ", key), mac);
+  for (const field of Object.keys(binding) as (keyof typeof binding)[]) {
+    assert.notEqual(signGalleryUpload({ ...binding, [field]: "50000000-0000-4000-8000-000000000005" }, payload, key), mac);
+  }
+});
