@@ -9,7 +9,7 @@ export async function GET(request:NextRequest) {
  try {
   const client=await createClient(),auth=await client.auth.getUser();
   if(auth.error || !auth.data.user) return preventAuthCaching(new NextResponse(null,{status:401}));
-  const data=await createClubRideApi(client,auth.data.user.id).load(request.nextUrl.searchParams.get("clubId")??"",request.nextUrl.searchParams.get("rideId"));
+  const {data}=await createClubRideApi(client,auth.data.user.id).load(request.nextUrl.searchParams.get("clubId")??"",request.nextUrl.searchParams.get("rideId"));
   if(!data.selected) return preventAuthCaching(new NextResponse(null,{status:404}));
   const gpx=buildGpx(data.selected.title,data.selected.route);
   if(!gpx) return preventAuthCaching(new NextResponse(null,{status:404}));

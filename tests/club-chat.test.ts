@@ -42,3 +42,36 @@ test('saved deletion is not labelled as a newly sent message',async()=>{const s=
 test('normal return retains the active snapshot and draft while fetching only cursor changes',async()=>{let slow=false;const d=deferred<{userId:string;snapshot:ChatRead}>(),queries:string[]=[];const s=setup({read:async q=>{queries.push(q.toString());return slow?d.promise:{userId:actor,snapshot:snapshot()};}});await s.sync();s.text('Unsent return');s.position(false);const before=s.getSnapshot();slow=true;const job=s.revalidate();assert.equal(s.getSnapshot().status,'ready');assert.equal(s.getSnapshot().data,before.data);assert.equal(s.getSnapshot().draft,before.draft);assert.equal(queries.at(-1),'after=1');d.resolve({userId:actor,snapshot:{...snapshot([]),cursor:1}});await job;assert.equal(s.getSnapshot().draft,'Unsent return');assert.equal(s.getSnapshot().data?.items.length,1);assert.equal(s.getSnapshot().scrollRevision,before.scrollRevision);s.stop();});
 
 test('own reply selection is refused while preserving draft and authorized messages',async()=>{const s=setup();await s.sync();s.text('Keep my draft');await s.choose(id);assert.equal(s.getSnapshot().replyId,null);assert.equal(s.getSnapshot().draft,'Keep my draft');assert.equal(s.getSnapshot().status,'ready');s.stop();});
+
+test('the chat page uses its authorized RPC and refuses a snapshot if final membership was lost', async () => {
+  const { createClubChatApi } = await import('../lib/clubs/chat-api');
+  const checked = deferred<void>(), roster = deferred<{data: unknown;error: null}>();
+  const calls:string[]=[];
+  const builder=(name:string, result:()=>unknown)=>{
+    const query={
+      select:()=>query,eq:()=>query,setHeader:()=>query,range:()=>query,abortSignal:()=>query,maybeSingle:()=>query,
+      then: (resolve:(value:unknown)=>unknown, reject:(cause:unknown)=>unknown)=>{
+        calls.push(name);
+        return Promise.resolve(result()).then(resolve,reject);
+      },
+    };
+    return query;
+  };
+  const supabase={
+    auth:{getSession:async()=>({data:{session:{user:{id:actor},access_token:'synthetic'}},error:null})},
+    from:(name:string)=>builder(name,()=>name==='clubs'
+      ?{data:{id:club,name:'Synthetic',owner_id:actor},error:null}
+      :{data:{revision:1,visibility_revision:0},error:null}),
+    rpc:(name:string)=>builder(name,()=>{
+      if(name==='club_list_members'){checked.resolve();return roster.promise;}
+      assert.equal(name,'club_chat_page');
+      return {data:{role:'owner',items:[message],cursor:1,has_more:false},error:null};
+    })
+  } as never;
+  const result=createClubChatApi(supabase,actor).read(club,new URLSearchParams());
+  const denial=assert.rejects(result,{kind:'access'});
+  await checked.promise;
+  assert.deepEqual(calls,['club_chat_signals','club_chat_page','club_chat_signals','clubs','club_list_members']);
+  roster.resolve({data:[],error:null});
+  await denial;
+});

@@ -17,27 +17,59 @@ export function createClubRideApi(client: SupabaseClient, actor: string, notify?
     return result;
   }
   async function result<T>(query: PromiseLike<{data:T;error:unknown}>): Promise<T> { const r=await query; if(r.error) throw clubError(r.error); return r.data; }
+  async function upcomingRides(clubId: string) {
+    const rows: Record<string, unknown>[] = [];
+    const now = new Date().toISOString();
+    for (let offset = 0; ; offset += 200) {
+      const page = await result(client.from("rides").select(rideProjection)
+        .eq("club_id", clubId).is("club_closed_at", null).eq("status", "ACTIVE")
+        .gt("start_time", now).order("start_time").order("id").range(offset, offset + 199));
+      rows.push(...(page ?? []) as unknown as Record<string, unknown>[]);
+      if (!page || page.length < 200) return rows;
+    }
+  }
+
   return {
-    async load(clubId: string, selectedId: string | null, creation=false): Promise<ClubRideData> {
-      const membership=await club(clubId);
-      const viewer=await loadViewer(client);
-      const rows: Record<string,unknown>[]=[];
-      for(let offset=0;;offset+=200) {
-        const page=await result(client.from("rides").select(rideProjection).eq("club_id",clubId).is("club_closed_at",null).eq("status","ACTIVE").gt("start_time",new Date().toISOString()).order("start_time").order("id").range(offset,offset+199));
-        rows.push(...(page??[]) as unknown as Record<string,unknown>[]); if(!page || page.length<200) break;
+    async load(clubId: string, selectedId: string | null, creation = false) {
+      // The viewer reads only their own profile and access. The club reads
+      // still wait for initial membership and retain the final recheck.
+      const [viewer, [rows, joined, invitations, hotspots]] = await Promise.all([
+        loadViewer(client),
+        club(clubId).then(() => Promise.all([
+          upcomingRides(clubId),
+          allRideRows(offset => client.from("participants").select("ride_id")
+            .eq("user_id", actor).order("ride_id").range(offset, offset + 199)),
+          allRideRows(offset => client.from("ride_invites").select("ride_id")
+            .eq("invitee_id", actor).is("accepted_at", null).is("declined_at", null)
+            .order("ride_id").range(offset, offset + 199)),
+          creation ? listHotspots(client) : []
+        ]))
+      ]);
+      let selected: RideDetail | null = null;
+      let selectedUnavailable = false;
+      if (selectedId) {
+        try { selected = await ride(clubId, selectedId); }
+        catch (error) {
+          if (error instanceof ClubError && error.kind === "rideUnavailable") selectedUnavailable = true;
+          else throw error;
+        }
       }
-      const joined=(await allRideRows(offset=>client.from("participants").select("ride_id").eq("user_id",actor).order("ride_id").range(offset,offset+199))).data;
-      const ids=new Set((joined??[]).map(r=>String(r.ride_id)));
-      let selected: RideDetail|null=null, selectedUnavailable=false;
-      if(selectedId) {
-        try { selected=await ride(clubId,selectedId); }
-        catch(error) { if(error instanceof ClubError && error.kind === "rideUnavailable") selectedUnavailable=true; else throw error; }
-      }
-      const invitations=await allRideRows(offset=>client.from("ride_invites").select("ride_id").eq("invitee_id",actor).is("accepted_at",null).is("declined_at",null).order("ride_id").range(offset,offset+199));
-      const rideIds=new Set(rows.map(r=>r.id));
-      // Recheck membership after the payload is assembled, not only before it.
-      await club(clubId);
-      return {invitedIds:invitations.data.map(r=>String(r.ride_id)).filter(id=>rideIds.has(id)),viewer,rides:rows.map(row=>normalizeRide(row,membership.members.find(m=>m.user_id===row.host_id)?.display_name??null,ids)),selected,selectedUnavailable,hotspots:creation?await listHotspots(client):[],units:viewer.profile.unitSystem};
+
+      // Recheck membership after the payload is assembled, and use that
+      // authorized roster for the header as well as the ride list.
+      const membership = await club(clubId);
+      const joinedIds = new Set(joined.data.map(row => String(row.ride_id)));
+      const rideIds = new Set(rows.map(row => row.id));
+      const data: ClubRideData = {
+        invitedIds: invitations.data.map(row => String(row.ride_id)).filter(id => rideIds.has(id)),
+        viewer,
+        rides: rows.map(row => normalizeRide(row, membership.members.find(member => member.user_id === row.host_id)?.display_name ?? null, joinedIds)),
+        selected,
+        selectedUnavailable,
+        hotspots,
+        units: viewer.profile.unitSystem
+      };
+      return { club: membership, data };
     },
     async create(form: FormData) {
       const viewer=await loadViewer(client);

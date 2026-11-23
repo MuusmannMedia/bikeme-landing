@@ -30,19 +30,27 @@ export async function GET(request: NextRequest) {
     const api = createClubReadApi(client, data.user.id);
     const membershipApi = createClubMembershipApi(client, data.user.id);
     if(clubId && request.nextUrl.searchParams.get("view")==="rides") {
-      const club=await api.detail(clubId);
-      const rides=await createClubRideApi(client,data.user.id).load(clubId,request.nextUrl.searchParams.get("rideId"),request.nextUrl.searchParams.get("create")==="true");
+      const { club, data: rides } = await createClubRideApi(client, data.user.id).load(
+        clubId, request.nextUrl.searchParams.get("rideId"), request.nextUrl.searchParams.get("create") === "true"
+      );
       return response({userId:data.user.id,snapshot:{view:"rides",club,rides}});
     }
-    const transfers = await membershipApi.ownershipTransfers();
     let snapshot: ClubPageData;
     if (clubId !== null) {
-      const club = await api.detail(clubId);
-      const [pending, proposals] = await Promise.all([club.role === "member" ? Promise.resolve([]) : membershipApi.pendingInvitations(clubId), membershipApi.proposals(clubId)]);
+      const [club, transfers] = await Promise.all([api.detail(clubId), membershipApi.ownershipTransfers()]);
+      const [pending, proposals] = await Promise.all([
+        club.role === "member" ? [] : membershipApi.pendingInvitations(clubId),
+        membershipApi.proposals(clubId)
+      ]);
       snapshot = { view: "club", club, profileEditing: profileEditingEnabled(process.env) && club.role !== "member", membership: { invitations: [], pending, proposals, transfers: transfers.filter(t => t.club_id === clubId) } };
     }
     else {
-      const [mine, catalog] = await Promise.all([api.list(), request.nextUrl.searchParams.get("directory")==="mine"?Promise.resolve([]):api.catalog()]);
+      const [mine, catalog, invitations, transfers] = await Promise.all([
+        api.list(),
+        request.nextUrl.searchParams.get("directory") === "mine" ? [] : api.catalog(),
+        membershipApi.invitations(),
+        membershipApi.ownershipTransfers()
+      ]);
       let visits={};
       if(visitsEnabled(process.env)){
        if(catalogEnabled(process.env)&&request.nextUrl.searchParams.get('directory')!=='mine'){
@@ -51,7 +59,7 @@ export async function GET(request: NextRequest) {
         visits={...Object.fromEntries(catalog.map(c=>[c.id,null])),...r.data?.profiles};
        }else visits=await loadVisitCatalog(catalog.filter(c=>!mine.some(m=>m.id===c.id)).map(c=>c.id),id=>createVisitApi(client,data.user!.id).profile(id));
       }
-      snapshot = { view: "directory", mine, catalog, visits, membership: {invitations: await membershipApi.invitations(), pending: [], proposals: [], transfers} };
+      snapshot = { view: "directory", mine, catalog, visits, membership: {invitations, pending: [], proposals: [], transfers} };
     }
     return response({ userId: data.user.id, snapshot });
   } catch (error) {

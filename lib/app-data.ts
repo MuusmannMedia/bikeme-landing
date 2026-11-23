@@ -79,11 +79,7 @@ function normalizeViewerProfile(userId: string, row: Record<string, unknown> | n
   };
 }
 
-export async function loadViewer(client: Client): Promise<Viewer> {
-  const { data: userData, error: userError } = await client.auth.getUser();
-  if (userError || !userData.user) throw new AppDataError("UNAUTHENTICATED");
-  const userId = userData.user.id;
-
+async function loadViewerProfile(client: Client, userId: string) {
   const profileBaseFields = ["id", "display_name", "avatar_url", "bike_type", "level_desc", "home_region"];
   const profileOptionalFields = ["about_me", "unit_system", "height_cm", "weight_kg", "ftp", "hide_start_end"];
   let profileFields = [...profileBaseFields, ...profileOptionalFields];
@@ -102,7 +98,17 @@ export async function loadViewer(client: Client): Promise<Viewer> {
     else profileFields = profileFields.filter((field) => !missing.includes(field));
   }
 
-  const [accessResponse, founderResponse] = await Promise.all([
+  if (profileFailed || !profileData) throw new AppDataError("LOAD_FAILED");
+  return profileData;
+}
+
+export async function loadViewer(client: Client): Promise<Viewer> {
+  const { data: userData, error: userError } = await client.auth.getUser();
+  if (userError || !userData.user) throw new AppDataError("UNAUTHENTICATED");
+  const userId = userData.user.id;
+
+  const [profileRow, accessResponse, founderResponse] = await Promise.all([
+    loadViewerProfile(client, userId),
     client
       .from("user_access")
       .select("access_level,access_expires_at")
@@ -115,9 +121,6 @@ export async function loadViewer(client: Client): Promise<Viewer> {
       .maybeSingle()
   ]);
 
-  if (profileFailed || !profileData) throw new AppDataError("LOAD_FAILED");
-
-  const profileRow = profileData;
   const accessRow = accessResponse.error
     ? null
     : accessResponse.data as Record<string, unknown> | null;
