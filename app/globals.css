@@ -1080,6 +1080,8 @@ a {
   max-height: 92dvh;
   overflow: auto;
 }
+[data-gallery-concealed] { visibility: hidden; }
+.bike-app-gallery-dialog-content { display: contents; }
 .bike-app-gallery-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
 .bike-app-gallery-dialog-header h2 { margin: 0; }
 .bike-app-gallery-full {
@@ -1101,16 +1103,18 @@ a {
 }
 
 .bike-app-gallery-discussion { border-top: 1px solid var(--app-border); padding-top: 14px; margin-top: 16px; }
-.bike-app-gallery-discussion-heading, .bike-app-gallery-like, .bike-app-gallery-comment-meta {
+.bike-app-gallery-discussion-heading, .bike-app-gallery-comment-meta {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 8px 12px;
 }
 .bike-app-gallery-discussion-heading { justify-content: space-between; }
+.bike-app-gallery-like button { white-space: nowrap; }
 .bike-app-gallery-like button[aria-pressed="true"] { color: #f6c6ff; border-color: #b16dc7; }
 .bike-app-gallery-comment-form { display: grid; gap: 8px; margin-top: 12px; }
 .bike-app-gallery-comment-form button { justify-self: start; }
+.bike-app-gallery-comment-form button[data-empty="true"] { opacity: .55; cursor: default; }
 .bike-app-gallery-comments { list-style: none; padding: 0; }
 .bike-app-gallery-comments li { border-top: 1px solid var(--app-border); padding: 12px 0; }
 .bike-app-gallery-comment-meta time { font-size: .875rem; color: var(--app-muted); }

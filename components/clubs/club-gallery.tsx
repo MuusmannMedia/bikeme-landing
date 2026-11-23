@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
 import { flushSync } from "react-dom";
 
 import { AppEmpty, AppPanel } from "@/components/app-ui";
@@ -35,8 +35,10 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
   const endpoint = `/api/clubs/gallery?clubId=${club.id}`;
 
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
-  const [checking, setChecking] = useState(true);
+  const [paging, setPaging] = useState(false);
   const [concealed, setConcealed] = useState(false);
+  const [accessVersion, setAccessVersion] = useState(0);
+  const [discussionVersion, setDiscussionVersion] = useState(0);
   const [loadError, setLoadError] = useState<GalleryErrorCode | null>(null);
   const [upload, setUpload] = useState<UploadForm>(emptyUpload);
   const [task, setTask] = useState<"upload" | "report" | "remove" | null>(null);
@@ -52,19 +54,41 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
   const actionController = useRef<AbortController | null>(null);
   const requestedPages = useRef(1);
   const confirmed = useRef(false);
+  const identityInvalidated = useRef(false);
+  const suspended = useRef(false);
   const retryBody = useRef<FormData | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
+  const gallery = useRef<HTMLDivElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
   const returnFocus = useRef<HTMLElement | null>(null);
+  const pausedFocus = useRef<HTMLElement | null>(null);
   const selectionVersion = useRef(0);
 
   const selectedIndex = snapshot?.photos.findIndex(photo => photo.id === selectedId) ?? -1;
   const selected = snapshot?.photos[selectedIndex];
   const previous = snapshot?.photos[selectedIndex - 1];
   const next = snapshot?.photos[selectedIndex + 1];
-  const canGoNext = Boolean(next || (snapshot?.next && !checking));
+  const canGoNext = Boolean(next || (snapshot?.next && !paging));
   const canDisplay = Boolean(snapshot && !concealed && !loadError);
+  const dialogConcealed = concealed || (dialogMode === "view" && accessVersion !== discussionVersion);
+
+  const denyAccess = useCallback((kind: "auth" | "access") => {
+    if (kind === "auth") identityInvalidated.current = true;
+    confirmed.current = false;
+    loadController.current?.abort();
+    loadController.current = null;
+    actionController.current?.abort();
+    retryBody.current = null;
+    pausedFocus.current = null;
+    returnFocus.current = null;
+    setSnapshot(null);
+    setPaging(false);
+    setSelectedId(null);
+    setReportedComment(null);
+    setUpload(emptyUpload);
+    setLoadError(kind);
+  }, []);
 
   const readPage = useCallback(async (cursor: GalleryCursor | null, signal: AbortSignal) => {
     const query = new URLSearchParams();
@@ -77,12 +101,16 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
   }, [endpoint, userId]);
 
   const refresh = useCallback(async (more = false, advanceFrom?: string) => {
-    if (loadController.current) return;
+    if (identityInvalidated.current || suspended.current || document.hidden) return;
+    if (loadController.current) {
+      if (!more) return;
+      loadController.current.abort();
+    }
     const version = selectionVersion.current;
     const controller = new AbortController();
     loadController.current = controller;
     const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(30_000)]);
-    setChecking(true);
+    if (more) setPaging(true);
     try {
       const count = requestedPages.current + (more ? 1 : 0);
       let view = await readPage(null, signal);
@@ -90,7 +118,7 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
         const next = await readPage(view.next, signal);
         view = { ...next, photos: [...view.photos, ...next.photos] };
       }
-      if (controller.signal.aborted) return;
+      if (controller.signal.aborted || document.hidden) return;
       requestedPages.current = count;
       confirmed.current = true;
       setSnapshot(view);
@@ -105,45 +133,51 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
     } catch (error) {
       if (controller.signal.aborted) return;
       const kind = galleryErrorKind(error);
-      confirmed.current = false;
-      setSnapshot(null);
-      setSelectedId(null);
-      setLoadError(kind);
       if (kind === "auth" || kind === "access") {
-        actionController.current?.abort();
-        setUpload(emptyUpload);
-        retryBody.current = null;
+        denyAccess(kind);
+      } else {
+        confirmed.current = false;
+        setSnapshot(null);
+        setSelectedId(null);
+        setLoadError(kind);
       }
     } finally {
       if (loadController.current === controller) {
         loadController.current = null;
-        setChecking(false);
+        if (more) setPaging(false);
       }
     }
-  }, [readPage]);
+  }, [denyAccess, readPage]);
 
   useEffect(() => {
     const client = createClient();
     const pause = () => {
+      suspended.current = true;
       loadController.current?.abort();
       loadController.current = null;
-      if (confirmed.current) flushSync(() => setConcealed(true));
+      if (!confirmed.current) return;
+      const active = document.activeElement;
+      if (active instanceof HTMLElement && (dialog.current?.contains(active) || gallery.current?.contains(active))) {
+        pausedFocus.current = active;
+      }
+      flushSync(() => {
+        setPaging(false);
+        setConcealed(true);
+        setAccessVersion(value => value + 1);
+        // A pending report may quote a comment that is no longer visible on return.
+        setDialogMode(mode => mode === "report" ? "view" : mode);
+        setReportedComment(null);
+      });
     };
-    const verify = () => { if (document.visibilityState === "visible") void refresh(); };
+    const verify = () => {
+      if (document.hidden) return;
+      suspended.current = false;
+      void refresh();
+    };
     const invalidate = () => { pause(); verify(); };
     const show = () => document.visibilityState === "visible" ? verify() : pause();
     const onPageShow = (event: PageTransitionEvent) => { if (event.persisted) verify(); };
-    const identityLost = () => {
-      pause();
-      actionController.current?.abort();
-      retryBody.current = null;
-      flushSync(() => {
-        setSnapshot(null);
-        setSelectedId(null);
-        setUpload(emptyUpload);
-        setLoadError("auth");
-      });
-    };
+    const identityLost = () => flushSync(() => denyAccess("auth"));
     const onAuth = (event: Event) => {
       const phase = (event as CustomEvent<string>).detail;
       if (phase) identityLost();
@@ -189,13 +223,32 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
       window.removeEventListener(CLUB_AUTH_EVENT, onAuth);
       document.removeEventListener("visibilitychange", show);
     };
-  }, [refresh, userId]);
+  }, [denyAccess, refresh, userId]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const element = dialog.current;
-    if (canDisplay && selected && element && !element.open) element.showModal();
-    if ((!canDisplay || !selected) && element?.open) element.close();
-  }, [canDisplay, selected]);
+    if (!element) return;
+    if (!selected) {
+      if (element.open) element.close();
+    } else {
+      if (dialogConcealed) return;
+      if (!element.open) element.showModal();
+    }
+    if (concealed) return;
+    const active = pausedFocus.current;
+    pausedFocus.current = null;
+    if (active?.isConnected && (document.activeElement === document.body || document.activeElement === element)) {
+      active.focus({ preventScroll: true });
+    }
+  }, [concealed, dialogConcealed, selected]);
+
+  const discussionReadFailed = useCallback((kind: GalleryErrorCode) => {
+    if (kind === "auth" || kind === "access") denyAccess(kind);
+    if (kind === "unavailable") {
+      setSelectedId(null);
+      void refresh();
+    }
+  }, [denyAccess, refresh]);
 
   function setFiles(files: File[]) {
     setFeedback(files.length > galleryLimits.batch ? "invalid" : null);
@@ -209,12 +262,13 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
     returnFocus.current = button;
     selectionVersion.current++;
     setDialogMode("view");
+    setDiscussionVersion(accessVersion);
     setFeedback(null);
     setSelectedId(photo.id);
   }
 
   function browsePhoto(direction: -1 | 1) {
-    if (!selected || dialogMode !== "view" || task) return;
+    if (!selected || dialogMode !== "view" || dialogConcealed || task) return;
     const target = direction === -1 ? previous : next;
     if (target) {
       selectionVersion.current++;
@@ -232,7 +286,7 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
   }
 
   async function submit(kind: NonNullable<typeof task>, body: () => Promise<BodyInit>) {
-    if (actionController.current || !canDisplay || checking) return;
+    if (actionController.current || !canDisplay) return;
     const controller = new AbortController();
     actionController.current = controller;
     setTask(kind);
@@ -259,6 +313,7 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
       if (kind !== "report") {
         loadController.current?.abort();
         loadController.current = null;
+        setPaging(false);
         await refresh();
       }
     } catch (error) {
@@ -269,6 +324,7 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
         if (["access", "auth", "unavailable"].includes(kind)) {
           loadController.current?.abort();
           loadController.current = null;
+          setPaging(false);
           await refresh();
         }
       }
@@ -312,53 +368,56 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
   if (loadError === "access" || loadError === "auth") return <ClubAccessDenied locale={locale} />;
 
   return <>
-    {canDisplay && snapshot ? <ClubHeader club={{ ...club, role: snapshot.role }} locale={locale} selected="gallery" /> : null}
-    <AppPanel title={text("title")} className="bike-app-gallery">
-      {canDisplay && snapshot?.role !== "member" ? <a className="bike-app-button bike-app-button-secondary"
-        href={`/${locale}/app/clubs/${club.id}/posts/moderation`}>{ct("moderation")}</a> : null}
-      {!canDisplay ? <div role={loadError ? "alert" : "status"}>
-        <p>{loadError ? errorMessage(loadError) : text("loading")}</p>
-        {loadError ? <button type="button" className="bike-app-button" onClick={() => void refresh()}>{t("common.retry")}</button> : null}
-      </div> : <>
-        <details className="bike-app-gallery-upload">
-          <summary>{text("add")}</summary>
-          <form onSubmit={uploadPhotos} className="bike-app-gallery-form">
-            <label className="bike-app-field">
-              <span>{text("choose")}</span>
-              <input ref={fileInput} type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png" multiple
-                disabled={Boolean(task) || uploadRetry} onChange={event => setFiles(Array.from(event.currentTarget.files ?? []))} />
-            </label>
-            {upload.files.map((file, index) => <label className="bike-app-field" key={index}>
-              <span>{file.name} · {text("caption")}</span>
-              <input value={upload.captions[index]} maxLength={galleryLimits.caption} disabled={Boolean(task) || uploadRetry}
-                onChange={event => {
-                  retryBody.current = null;
-                  const caption = event.currentTarget.value;
-                  setUpload(previous => ({ ...previous, captions: previous.captions.map((value, i) => i === index ? caption : value) }));
-                }} />
-            </label>)}
-            <button type="submit" className="bike-app-button" disabled={!upload.files.length || Boolean(task) || checking}>
-              {task === "upload" ? text("uploading") : text("add")}
-            </button>
-          </form>
-        </details>
-        {!selected && feedback ? <p role="alert">{errorMessage(feedback)}</p> : null}
-        {notice ? <p role="status">{notice === "upload" ? text("uploaded") : ct(notice)}</p> : null}
-        {snapshot?.photos.length ? <ul className="bike-app-gallery-grid">
-          {snapshot.photos.map(photo => <li key={photo.id}>
-            <button type="button" aria-haspopup="dialog" className="bike-app-gallery-tile"
-              aria-label={photo.caption || `${text("photo")} · ${text("uploader").replace("{name}", photo.uploader ?? ct("deletedAuthor"))}`}
-              onClick={event => showPhoto(photo, event.currentTarget)}>
-              {/* Cookie-authenticated bytes stay out of the optimizer and shared caches. */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={galleryImageUrl(club.id, photo.id, "thumbnail")} alt="" loading="lazy" decoding="async" />
-            </button>
-          </li>)}
-        </ul> : <AppEmpty>{text("empty")}</AppEmpty>}
-        {snapshot?.next ? <button type="button" className="bike-app-button bike-app-button-secondary"
-          disabled={checking} onClick={() => void refresh(true)}>{checking ? text("loading") : text("more")}</button> : null}
-      </>}
-    </AppPanel>
+    {/* Keep the mounted gallery and its scroll footprint while access is rechecked. */}
+    <div ref={gallery} data-gallery-concealed={concealed || undefined} inert={concealed}>
+      {snapshot ? <ClubHeader club={{ ...club, role: snapshot.role }} locale={locale} selected="gallery" /> : null}
+      <AppPanel title={text("title")} className="bike-app-gallery">
+        {snapshot && snapshot.role !== "member" ? <a className="bike-app-button bike-app-button-secondary"
+          href={`/${locale}/app/clubs/${club.id}/posts/moderation`}>{ct("moderation")}</a> : null}
+        {!snapshot ? <div role={loadError ? "alert" : "status"}>
+          <p>{loadError ? errorMessage(loadError) : text("loading")}</p>
+          {loadError ? <button type="button" className="bike-app-button" onClick={() => void refresh()}>{t("common.retry")}</button> : null}
+        </div> : <>
+          <details className="bike-app-gallery-upload">
+            <summary>{text("add")}</summary>
+            <form onSubmit={uploadPhotos} className="bike-app-gallery-form">
+              <label className="bike-app-field">
+                <span>{text("choose")}</span>
+                <input ref={fileInput} type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png" multiple
+                  disabled={Boolean(task) || uploadRetry} onChange={event => setFiles(Array.from(event.currentTarget.files ?? []))} />
+              </label>
+              {upload.files.map((file, index) => <label className="bike-app-field" key={index}>
+                <span>{file.name} · {text("caption")}</span>
+                <input value={upload.captions[index]} maxLength={galleryLimits.caption} disabled={Boolean(task) || uploadRetry}
+                  onChange={event => {
+                    retryBody.current = null;
+                    const caption = event.currentTarget.value;
+                    setUpload(previous => ({ ...previous, captions: previous.captions.map((value, i) => i === index ? caption : value) }));
+                  }} />
+              </label>)}
+              <button type="submit" className="bike-app-button" disabled={!upload.files.length || Boolean(task)}>
+                {task === "upload" ? text("uploading") : text("add")}
+              </button>
+            </form>
+          </details>
+          {!selected && feedback ? <p role="alert">{errorMessage(feedback)}</p> : null}
+          {notice ? <p role="status">{notice === "upload" ? text("uploaded") : ct(notice)}</p> : null}
+          {snapshot?.photos.length ? <ul className="bike-app-gallery-grid">
+            {snapshot.photos.map(photo => <li key={photo.id}>
+              <button type="button" aria-haspopup="dialog" className="bike-app-gallery-tile"
+                aria-label={photo.caption || `${text("photo")} · ${text("uploader").replace("{name}", photo.uploader ?? ct("deletedAuthor"))}`}
+                onClick={event => showPhoto(photo, event.currentTarget)}>
+                {/* Cookie-authenticated bytes stay out of the optimizer and shared caches. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={galleryImageUrl(club.id, photo.id, "thumbnail")} alt="" loading="lazy" decoding="async" />
+              </button>
+            </li>)}
+          </ul> : <AppEmpty>{text("empty")}</AppEmpty>}
+          {snapshot?.next ? <button type="button" className="bike-app-button bike-app-button-secondary"
+            disabled={paging} onClick={() => void refresh(true)}>{paging ? text("loading") : text("more")}</button> : null}
+        </>}
+      </AppPanel>
+    </div>
 
     <dialog ref={dialog} className="bike-app-club-dialog bike-app-gallery-dialog" aria-labelledby="gallery-photo-title"
       onKeyDown={event => {
@@ -376,7 +435,8 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
         setFeedback(null);
         requestAnimationFrame(() => returnFocus.current?.focus({ preventScroll: true }));
       }}>
-      {selected && canDisplay ? <>
+      {selected ? <div className="bike-app-gallery-dialog-content"
+        data-gallery-concealed={dialogConcealed || undefined} inert={dialogConcealed}>
         <div className="bike-app-gallery-dialog-header">
           <h2 id="gallery-photo-title">{dialogMode === "report" ? text(reportedComment ? "reportComment" : "report") : dialogMode === "remove" ? text("remove") : text("photo")}</h2>
           <button type="button" ref={closeButton} className="bike-app-button bike-app-button-secondary" disabled={Boolean(task)}
@@ -401,16 +461,18 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
           {selected.caption ? <p className="bike-app-content-body">{selected.caption}</p> : null}
           <p className="bike-app-muted">{text("uploader").replace("{name}", selected.uploader ?? ct("deletedAuthor"))}</p>
           <div className="bike-app-actions">
-            {!selected.own ? <button type="button" className="bike-app-button bike-app-button-secondary" disabled={checking}
+            {!selected.own ? <button type="button" className="bike-app-button bike-app-button-secondary"
               onClick={() => openReport(null)}>{text("report")}</button> : null}
-            {selected.own || snapshot?.role === "owner" || snapshot?.role === "admin" ? <button type="button" className="bike-app-button bike-app-button-danger" disabled={checking}
+            {selected.own || snapshot?.role === "owner" || snapshot?.role === "admin" ? <button type="button" className="bike-app-button bike-app-button-danger"
               onClick={() => { setDialogMode("remove"); closeButton.current?.focus(); }}>{text("remove")}</button> : null}
           </div>
           <ClubGalleryDiscussion key={selected.id} endpoint={endpoint} photoId={selected.id} locale={locale}
-            userId={userId} galleryVersion={snapshot} locked={checking || Boolean(task)} onReport={openReport} />
+            userId={userId} galleryVersion={snapshot} concealed={concealed} accessVersion={accessVersion}
+            onChecked={setDiscussionVersion} onReadFailed={discussionReadFailed}
+            locked={dialogConcealed || Boolean(task)} onReport={openReport} />
         </> : dialogMode === "report" ? <>
           {reportedComment ? <blockquote className="bike-app-content-body">{reportedComment.body}</blockquote> : null}
-          <ClubReportForm photo locale={locale} value={reportFields} locked={Boolean(task) || checking}
+          <ClubReportForm photo locale={locale} value={reportFields} locked={Boolean(task)}
             onChange={setReportFields} onCancel={() => { setReportedComment(null); setDialogMode("view"); closeButton.current?.focus(); }}
             onSubmit={() => void submit("report", async () => JSON.stringify(reportedComment
               ? { type: "reportComment", id: selected.id, commentId: reportedComment.id, ...reportFields }
@@ -421,11 +483,12 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
           <div className="bike-app-actions">
             <button type="button" className="bike-app-button bike-app-button-secondary" disabled={Boolean(task)}
               onClick={() => { setDialogMode("view"); closeButton.current?.focus(); }}>{t("common.cancel")}</button>
-            <button type="button" className="bike-app-button bike-app-button-danger" disabled={Boolean(task) || checking}
+            <button type="button" className="bike-app-button bike-app-button-danger" disabled={Boolean(task)}
               onClick={() => void submit("remove", async () => JSON.stringify({ type: "remove", id: selected.id }))}>{text("remove")}</button>
           </div>
         </>}
-      </> : null}
+      </div> : null}
+      {selected && dialogConcealed ? <span className="sr-only" role="status">{text("loading")}</span> : null}
     </dialog>
   </>;
 }

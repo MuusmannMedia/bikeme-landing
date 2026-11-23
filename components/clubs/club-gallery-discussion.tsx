@@ -15,13 +15,19 @@ type Command = { type: "like"; liked: boolean } |
   { type: "comment"; commentId: string; body: string } |
   { type: "removeComment"; commentId: string };
 
-export function ClubGalleryDiscussion({ endpoint, photoId, locale, userId, galleryVersion, locked, onReport }: {
+export function ClubGalleryDiscussion({
+  endpoint, photoId, locale, userId, galleryVersion, concealed, accessVersion, locked, onChecked, onReadFailed, onReport,
+}: {
   endpoint: string;
   photoId: string;
   locale: Locale;
   userId: string;
   galleryVersion: GalleryPage | null;
+  concealed: boolean;
+  accessVersion: number;
   locked: boolean;
+  onChecked: (version: number) => void;
+  onReadFailed: (error: GalleryErrorCode) => void;
   onReport: (comment: GalleryComment) => void;
 }) {
   const t = getAppDictionary(locale);
@@ -40,6 +46,7 @@ export function ClubGalleryDiscussion({ endpoint, photoId, locale, userId, galle
   const pendingComment = useRef<{ commentId: string; body: string } | null>(null);
 
   useEffect(() => {
+    if (concealed) return;
     const controller = new AbortController();
     const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(20_000)]);
     async function load() {
@@ -65,15 +72,20 @@ export function ClubGalleryDiscussion({ endpoint, photoId, locale, userId, galle
       } catch (error) {
         if (!controller.signal.aborted) {
           setDiscussion(null);
-          setReadError(galleryErrorKind(error));
+          const kind = galleryErrorKind(error);
+          setReadError(kind);
+          onReadFailed(kind);
         }
       } finally {
-        if (!controller.signal.aborted) setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+          onChecked(accessVersion);
+        }
       }
     }
     queueMicrotask(() => { if (!controller.signal.aborted) void load(); });
     return () => controller.abort();
-  }, [endpoint, galleryVersion, pageCount, photoId, revision, userId]);
+  }, [accessVersion, concealed, endpoint, galleryVersion, onChecked, onReadFailed, pageCount, photoId, revision, userId]);
 
   useEffect(() => () => mutation.current?.abort(), []);
 
@@ -128,11 +140,13 @@ export function ClubGalleryDiscussion({ endpoint, photoId, locale, userId, galle
       <h3>{text("comments")}</h3>
       {discussion ? <div className="bike-app-gallery-like">
         <button type="button" className="bike-app-button bike-app-button-secondary"
-          aria-pressed={discussion.liked} disabled={disabled}
+          aria-pressed={discussion.liked} aria-disabled={disabled}
           onClick={() => void send({ type: "like", liked: !discussion.liked })}>
-          <span aria-hidden="true">{discussion.liked ? "♥" : "♡"}</span> {text("like")}
+          <span>
+            <span aria-hidden="true">{discussion.liked ? "♥" : "♡"}</span>{" "}
+            <span aria-live="polite">{discussion.likeCount}</span>{" · "}{text("like")}
+          </span>
         </button>
-        <span aria-live="polite" aria-label={`${text("like")}: ${discussion.likeCount}`}>{discussion.likeCount}</span>
       </div> : null}
     </div>
     {readError ? <div>
@@ -151,10 +165,12 @@ export function ClubGalleryDiscussion({ endpoint, photoId, locale, userId, galle
       }}>
         <label className="bike-app-field">
           <span>{ct("comment")}</span>
-          <textarea rows={2} value={draft} disabled={locked || saving}
+          <textarea rows={2} value={draft} readOnly={locked || saving}
             onChange={event => setDraft(event.target.value)} />
         </label>
-        <button type="submit" className="bike-app-button" disabled={disabled || !body}>{text("sendComment")}</button>
+        <button type="submit" className="bike-app-button" aria-disabled={disabled || !body} data-empty={!body}>
+          {text("sendComment")}
+        </button>
       </form>
       {discussion.comments.length ? <ul className="bike-app-gallery-comments">
         {discussion.comments.map(comment => <li key={comment.id}>
@@ -165,20 +181,20 @@ export function ClubGalleryDiscussion({ endpoint, photoId, locale, userId, galle
           <p className="bike-app-content-body">{comment.body}</p>
           <div className="bike-app-actions">
             {comment.reportable && confirmId !== comment.id ? <button type="button"
-              className="bike-app-button bike-app-button-secondary" disabled={disabled}
-              onClick={() => onReport(comment)}>{text("reportComment")}</button> : null}
+              className="bike-app-button bike-app-button-secondary" aria-disabled={disabled}
+              onClick={() => { if (!disabled) onReport(comment); }}>{text("reportComment")}</button> : null}
             {comment.removable ? confirmId === comment.id ? <>
-              <button type="button" className="bike-app-button bike-app-button-danger" disabled={disabled}
+              <button type="button" className="bike-app-button bike-app-button-danger" aria-disabled={disabled}
                 onClick={() => void send({ type: "removeComment", commentId: comment.id })}>{text("deleteComment")}</button>
-              <button type="button" className="bike-app-button bike-app-button-secondary" disabled={saving}
-                onClick={() => setConfirmId(null)}>{t("common.cancel")}</button>
-            </> : <button type="button" className="bike-app-button bike-app-button-secondary" disabled={disabled}
-              onClick={() => setConfirmId(comment.id)}>{text("deleteComment")}</button> : null}
+              <button type="button" className="bike-app-button bike-app-button-secondary" aria-disabled={saving}
+                onClick={() => { if (!saving) setConfirmId(null); }}>{t("common.cancel")}</button>
+            </> : <button type="button" className="bike-app-button bike-app-button-secondary" aria-disabled={disabled}
+              onClick={() => { if (!disabled) setConfirmId(comment.id); }}>{text("deleteComment")}</button> : null}
           </div>
         </li>)}
       </ul> : <p className="bike-app-muted">{text("noComments")}</p>}
-      {discussion.next ? <button type="button" className="bike-app-button bike-app-button-secondary" disabled={disabled}
-        onClick={() => setPageCount(value => value + 1)}>{text("moreComments")}</button> : null}
+      {discussion.next ? <button type="button" className="bike-app-button bike-app-button-secondary" aria-disabled={disabled}
+        onClick={() => { if (!disabled) setPageCount(value => value + 1); }}>{text("moreComments")}</button> : null}
     </> : null}
   </section>;
 }
