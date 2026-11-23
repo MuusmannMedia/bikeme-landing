@@ -21,6 +21,8 @@ const text = {
   "clubs.noClubs": ["You are not a member of any clubs yet.", "Du er endnu ikke medlem af nogen klubber.", "Du bist noch in keinem Club Mitglied.", "Aún no eres miembro de ningún club.", "Non fai ancora parte di alcun club.", "Vous n’êtes encore membre d’aucun club.", "Je bent nog geen lid van een club."],
   "clubs.noCatalog": ["There are no clubs in the catalog yet.", "Der er endnu ingen klubber i kataloget.", "Der Clubkatalog ist noch leer.", "Aún no hay clubes en el catálogo.", "Non ci sono ancora club nel catalogo.", "Le catalogue ne contient pas encore de clubs.", "Er staan nog geen clubs in de catalogus."],
   "clubs.details": ["Club details", "Klubdetaljer", "Clubdetails", "Detalles del club", "Dettagli del club", "Détails du club", "Clubgegevens"],
+  "clubs.tabs.rides": ["Rides", "Ture", "Ausfahrten", "Salidas", "Uscite", "Sorties", "Ritten"],
+  "clubs.tabs.chat": ["Chat", "Chat", "Chat", "Chat", "Chat", "Discussion", "Chat"],
   "clubs.members": ["Members", "Medlemmer", "Mitglieder", "Miembros", "Membri", "Membres", "Leden"],
   "clubs.memberCount": ["{count} members", "{count} medlemmer", "{count} Mitglieder", "{count} miembros", "{count} membri", "{count} membres", "{count} leden"],
   "clubs.memberCountOne": ["1 member", "1 medlem", "1 Mitglied", "1 miembro", "1 membro", "1 membre", "1 lid"],

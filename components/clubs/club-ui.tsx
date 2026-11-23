@@ -1,8 +1,6 @@
 import {ClubNavigation} from "./club-navigation";
 import {ClubPrivateImages} from "./club-private-images";
-import {chatText} from "@/lib/clubs/chat-i18n";
 import { contentText } from "@/lib/clubs/content-i18n";
-import { clubRideText } from "@/lib/clubs/ride-i18n";
 import { AppPageHeader, AppPanel } from "@/components/app-ui";
 import { getAppDictionary } from "@/lib/app-i18n";
 import type { Club, ClubReadErrorKind, ClubRole } from "@/lib/clubs/types";
@@ -42,12 +40,14 @@ export function ClubHeader({ club, locale, selected }: { club: Club; locale: Loc
       intro={`${clubRoleLabel(locale, club.role)} · ${(club.memberCount === 1 ? t("clubs.memberCountOne") : t("clubs.memberCount").replace("{count}", new Intl.NumberFormat(locale).format(club.memberCount)))}`}
       action={<a className="bike-app-button bike-app-button-secondary" href={`/${locale}/app/clubs/mine`}>{t("clubs.back")}</a>}
     />
-    <ClubNavigation label={t("clubs.details")} selected={selected} links={[
-      {key:"details",href:base,label:t("clubs.details")},
-      {key:"members",href:`${base}/members`,label:t("clubs.members")},
-      {key:"rides",href:`${base}/rides`,label:clubRideText(locale,"title")},
+    <a className="bike-app-club-about-link" href={base} aria-current={selected==="details"?"page":undefined}>
+      {t("clubs.description")} <span aria-hidden="true">›</span>
+    </a>
+    <ClubNavigation label={t("clubs.pages")} selected={selected} links={[
+      {key:"rides",href:`${base}/rides`,label:t("clubs.tabs.rides")},
       {key:"posts",href:`${base}/posts`,label:contentText(locale,"title")},
-      {key:"chat",href:`${base}/chat`,label:chatText(locale,"title")}
+      {key:"chat",href:`${base}/chat`,label:t("clubs.tabs.chat")},
+      {key:"members",href:`${base}/members`,label:t("clubs.members")}
     ]}/>
 
   </section>;
