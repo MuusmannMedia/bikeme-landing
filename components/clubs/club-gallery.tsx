@@ -32,10 +32,15 @@ const emptyUpload: UploadForm = { files: [], captions: [] };
 
 function createGalleryViewer(clubId: string, userId: string) {
   let viewSize: GalleryViewSize | undefined;
+  let supportsAvif: Promise<boolean> | undefined;
   const photoCache = createGalleryPhotoCache({
     async read(id, signal, background) {
       const size = viewSize ?? galleryViewSize(innerWidth, innerHeight, devicePixelRatio);
-      const response = await fetch(`${galleryImageUrl(clubId, id, "full")}&view=${size.width}x${size.height}`, {
+      supportsAvif ??= typeof ImageDecoder === "undefined" ? Promise.resolve(false) :
+        ImageDecoder.isTypeSupported("image/avif").catch(() => false);
+      const format = await supportsAvif ? "&format=avif" : "";
+      signal.throwIfAborted();
+      const response = await fetch(`${galleryImageUrl(clubId, id, "full")}&view=${size.width}x${size.height}${format}`, {
         cache: "no-store", credentials: "same-origin", signal,
         priority: background ? "low" : "high",
         headers: { "X-Gallery-Actor": userId },
@@ -45,7 +50,7 @@ function createGalleryViewer(clubId: string, userId: string) {
         throw new GalleryError("network");
       }
       const blob = await response.blob();
-      if (!["image/jpeg", "image/webp"].includes(blob.type) || !blob.size || blob.size > galleryLimits.full) throw new GalleryError("image");
+      if (!["image/jpeg", "image/webp", "image/avif"].includes(blob.type) || !blob.size || blob.size > galleryLimits.full) throw new GalleryError("image");
       return blob;
     },
   });

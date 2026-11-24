@@ -41,7 +41,12 @@ test("the private viewer resizes to the device pixel box without cropping or rep
   assert.equal(fitted.mime, "image/webp");
   assert.deepEqual([meta.width, meta.height], [768, 576]);
   assert(fitted.bytes.length < original.length);
-  assert.equal((await fitGalleryPhotoForView(original, { width: 1600, height: 1600 })).bytes, original);
+  const avif = await fitGalleryPhotoForView(original, size, "avif");
+  const avifMeta = await sharp(avif.bytes).metadata();
+  assert.equal(avif.mime, "image/avif");
+  assert.deepEqual([avifMeta.width, avifMeta.height], [meta.width, meta.height]);
+  assert(avif.bytes.length < original.length);
+  assert.equal((await fitGalleryPhotoForView(original, { width: 1600, height: 1600 }, "avif")).bytes, original);
 });
 
 test("gallery meets byte limits with high-entropy content", async () => {

@@ -43,8 +43,10 @@ function cursor(query: URLSearchParams) {
 }
 
 export async function GET(request: NextRequest) {
+  const start = performance.now();
   try {
     const { client, userId, clubId } = await context(request);
+    const sessionMs = performance.now() - start;
     const query = request.nextUrl.searchParams;
     const id = query.get("id");
     const variant = query.get("variant");
@@ -65,14 +67,25 @@ export async function GET(request: NextRequest) {
       const view = query.get("view");
       if (view !== null && variant !== "full") throw new GalleryError("invalid");
       const size = view === null ? null : parseGalleryViewSize(view);
+      const rpcAt = performance.now();
       const encoded = variant === "evidence"
         ? await galleryRpc<string>(client, "club_gallery_evidence", { p_club: clubId, p_report: id })
         : await galleryRpc<string>(client, "club_gallery_image", { p_club: clubId, p_photo: id, p_thumbnail: variant === "thumbnail" });
       if (!encoded) throw new GalleryError("unavailable");
+      const rpcMs = performance.now() - rpcAt;
+      const imageAt = performance.now();
       const original = Buffer.from(encoded, "base64");
-      const image = size ? await fitGalleryPhotoForView(original, size) : { bytes: original, mime: "image/jpeg" };
+      const format = query.get("format") === "avif" ? "avif" : "webp";
+      const image = size ? await fitGalleryPhotoForView(original, size, format) : { bytes: original, mime: "image/jpeg" };
+      const imageMs = performance.now() - imageAt;
+      const timings = [sessionMs, rpcMs, imageMs].map(value => value.toFixed(2));
       return preventAuthCaching(new NextResponse(new Uint8Array(image.bytes), {
-        headers: { "Content-Type": image.mime, "X-Content-Type-Options": "nosniff", "Cross-Origin-Resource-Policy": "same-origin" },
+        headers: {
+          "Content-Type": image.mime, "X-Content-Type-Options": "nosniff", "Cross-Origin-Resource-Policy": "same-origin",
+          ...(variant === "full" && process.env.BIKE_ME_GALLERY_TIMING === "1" ? {
+            "Server-Timing": `session;dur=${timings[0]}, membership_read;dur=${timings[1]}, image;dur=${timings[2]}`,
+          } : {}),
+        },
       }));
     }
 
