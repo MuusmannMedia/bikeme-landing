@@ -43,11 +43,34 @@ function FramedImage({url,frame,slot,label}:{url:string|null;frame:ClubImageFram
  return <div ref={container} className={`bike-app-club-image bike-app-club-image-${slot}`} style={{aspectRatio:slot==='cover'?CLUB_COVER_ASPECT:2}}><div style={{position:'absolute',inset:0,left:logoSlot?.left??0,right:logoSlot?.right??0,overflow:'hidden',borderRadius:'inherit'}}>{url?<img key={url} src={url} alt={label} onLoad={e=>setSize({url,width:e.currentTarget.naturalWidth,height:e.currentTarget.naturalHeight})} style={geometry?{position:'absolute',width:geometry.width,height:geometry.height,left:geometry.left,top:geometry.top,maxWidth:'none'}:{width:'100%',height:'100%',objectFit:slot==='logo'?'contain':'cover',objectPosition:slot==='logo'?'left center':undefined}}/>:null}</div></div>;
 }
 const HeaderImages = createContext<{ clubId: string; store: ClubHeaderImages; authorized: boolean } | null>(null);
+const HeaderCache = createContext<{ clubId: string; actor: string; store: ClubHeaderImages } | null>(null);
+
+export function ClubHeaderImageCache({actor,clubId,children}:{actor:string;clubId:string;children:ReactNode}){
+ const store=useMemo(()=>createClubHeaderImages({
+  actor, clubId, read: readImageProfile, download: downloadClubImage, failure: error => clubError(error).kind
+ }),[actor,clubId]);
+ useLayoutEffect(()=>{
+  store.start();
+  const revoke=()=>flushSync(()=>store.revoke());
+  const storage=(event:StorageEvent)=>{if(event.key===CLUB_AUTH_EVENT&&clubAuthPhase(event.newValue))revoke();};
+  const auth=createClient()?.auth.onAuthStateChange((_event,session)=>{
+   if(session?.user.id!==actor)queueMicrotask(revoke);
+  }).data.subscription;
+  window.addEventListener(CLUB_AUTH_EVENT,revoke);
+  window.addEventListener('storage',storage);
+  return()=>{
+   auth?.unsubscribe();
+   window.removeEventListener(CLUB_AUTH_EVENT,revoke);
+   window.removeEventListener('storage',storage);
+   store.revoke();
+  };
+ },[store,actor]);
+ return <HeaderCache.Provider value={{actor,clubId,store}}>{children}</HeaderCache.Provider>;
+}
 
 export function useClubHeaderImages(actor: string, clubId?: string) {
- return useMemo(() => clubId ? createClubHeaderImages({
-  actor, clubId, read: readImageProfile, download: downloadClubImage, failure: error => clubError(error).kind
- }) : null, [actor, clubId]);
+ const cache=useContext(HeaderCache);
+ return cache?.clubId===clubId&&cache?.actor===actor?cache.store:null;
 }
 
 export function ClubHeaderImagesScope({clubId,store,authorized,children}:{
@@ -68,15 +91,11 @@ export function ClubPrivateImages({header,...props}:ImageProps & {header?:boolea
 
 function RetainedHeaderImages({locale,shape,revision,store,authorized}:ImageProps & {store:ClubHeaderImages;authorized:boolean}){
  const state=useSyncExternalStore(store.subscribe,store.getSnapshot,store.getServerSnapshot);
- const checkedRevision=useRef<number|undefined>();
  const current=state.images?.profile.profile_revision;
  const stale=revision!==undefined && current!==undefined && current<revision;
- useEffect(()=>{
-  if(authorized && stale && checkedRevision.current!==revision){
-   checkedRevision.current=revision;
-   void store.verify();
-  }
- },[authorized,stale,revision,store]);
+ useLayoutEffect(()=>{
+  if(authorized)store.confirm(revision);
+ },[authorized,revision,store]);
  if(!authorized || stale || !state.images)return <ImagePlaceholder shape={shape}>{authorized && state.status==='error'
   ? <div className="bike-app-muted" role="status">{imageText(locale,'unavailable')} <button className="bike-app-button bike-app-button-secondary" onClick={()=>void store.verify()}>{imageText(locale,'retry')}</button></div>
   : null}</ImagePlaceholder>;

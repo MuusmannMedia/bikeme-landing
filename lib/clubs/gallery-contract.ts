@@ -1,4 +1,4 @@
-import type { ClubRole } from "./types";
+import type { ClubImageShape, ClubRole } from "./types";
 
 export const galleryLimits = {
   page: 24,
@@ -23,7 +23,7 @@ export type GalleryPhoto = {
   height: number;
 };
 export type GalleryCursor = { time: string; id: string };
-export type GalleryPage = { role: ClubRole; photos: GalleryPhoto[]; next: GalleryCursor | null };
+export type GalleryPage = { role: ClubRole; photos: GalleryPhoto[]; next: GalleryCursor | null; profileRevision?: number; imageShape?: ClubImageShape };
 export type GalleryComment = {
   id: string;
   author: string | null;

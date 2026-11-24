@@ -1,4 +1,5 @@
 import {ClubNavigation} from "./club-navigation";
+import Link from "next/link";
 import {ClubPrivateImages} from "./club-private-images";
 import { profileText } from "@/lib/clubs/profile-i18n";
 import { galleryText } from "@/lib/clubs/gallery-i18n";
@@ -46,9 +47,9 @@ export function ClubHeader({ club, locale, selected }: { club: Club; locale: Loc
         <a className="bike-app-button bike-app-button-secondary" href={`/${locale}/app/clubs/mine`}>{t("clubs.back")}</a>
       </div>}
     />
-    <a className="bike-app-club-about-link" href={base} aria-current={selected==="details"?"page":undefined}>
+    <Link prefetch={false} className="bike-app-club-about-link" href={base} aria-current={selected==="details"?"page":undefined}>
       {t("clubs.description")} <span aria-hidden="true">›</span>
-    </a>
+    </Link>
     <ClubNavigation label={t("clubs.pages")} selected={selected} links={[
       {key:"rides",href:`${base}/rides`,label:t("clubs.tabs.rides")},
       {key:"posts",href:`${base}/posts`,label:contentText(locale,"title")},

@@ -20,6 +20,7 @@ export function createClubHeaderImages(options: {
   let state = waiting;
   let retained: Images | null = null;
   let pending: AbortController | null = null;
+  let job: Promise<void> | null = null;
   let stopped = false;
 
   function publish(next: State) {
@@ -31,6 +32,7 @@ export function createClubHeaderImages(options: {
   function pause() {
     pending?.abort();
     pending = null;
+    job = null;
     publish(waiting);
   }
 
@@ -46,11 +48,16 @@ export function createClubHeaderImages(options: {
     clear();
   }
 
-  async function verify() {
-    if (stopped) return;
-    pause();
+  function verify() {
+    if (stopped) return Promise.resolve();
+    if (job) return job;
     const request = new AbortController();
     pending = request;
+    job = load(request);
+    return job;
+  }
+
+  async function load(request: AbortController) {
     const timer = setTimeout(() => request.abort(), 25_000);
     const current = () => {
       if (pending !== request) return false;
@@ -91,10 +98,16 @@ export function createClubHeaderImages(options: {
       const kind = options.failure(error);
       if (kind === "auth") revoke();
       else if (kind === "access") clear();
-      else publish({ status: "error", images: null });
+      else {
+        clear();
+        publish({ status: "error", images: null });
+      }
     } finally {
       clearTimeout(timer);
-      if (pending === request) pending = null;
+      if (pending === request) {
+        pending = null;
+        job = null;
+      }
     }
   }
 
@@ -106,6 +119,18 @@ export function createClubHeaderImages(options: {
       return () => { listeners.delete(listener); };
     },
     start() { stopped = false; },
+    prepare() {
+      if (!retained && state.status === "waiting") void verify();
+    },
+    confirm(revision: number | undefined) {
+      if (stopped) return;
+      // The caller has freshly authenticated the same club and actor.
+      if (retained && revision === retained.profile.profile_revision) {
+        if (state.images !== retained) publish({ status: "ready", images: retained });
+        return;
+      }
+      void verify();
+    },
     pause,
     clear,
     revoke,

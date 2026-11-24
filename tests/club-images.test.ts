@@ -129,3 +129,50 @@ test('club header ignores late image responses after revocation', async () => {
   assert.equal(urls, 0);
   assert.equal(images.getSnapshot().images, null);
 });
+
+test('one header lookup serves overlapping reads and a fresh matching revision restores the retained URLs', async () => {
+  const result = deferred<{ userId: string; profile: typeof profile }>();
+  let reads = 0;
+  const images = createClubHeaderImages({
+    actor, clubId: id,
+    read: () => { reads++; return result.promise; },
+    download: async path => new Blob([path]),
+    failure: () => 'network',
+    createUrl: () => 'blob:fixture',
+    revokeUrl: () => {}
+  });
+  images.prepare();
+  const first = images.verify();
+  assert.equal(images.verify(), first);
+  result.resolve({ userId: actor, profile });
+  await first;
+  const initial = images.getSnapshot().images;
+  images.pause();
+  images.prepare();
+  assert.equal(images.getSnapshot().images, null);
+  images.confirm(profile.profile_revision);
+  assert.equal(images.getSnapshot().images, initial);
+  assert.equal(reads, 1);
+});
+
+test('a failed image confirmation releases retained URLs', async () => {
+  const revoked: string[] = [];
+  let broken = false;
+  const images = createClubHeaderImages({
+    actor, clubId: id,
+    read: async () => {
+      if (broken) throw new Error('network');
+      return { userId: actor, profile };
+    },
+    download: async () => new Blob(),
+    failure: () => 'network',
+    createUrl: () => 'blob:fixture',
+    revokeUrl: url => revoked.push(url)
+  });
+  await images.verify();
+  broken = true;
+  await images.verify();
+  assert.equal(images.getSnapshot().status, 'error');
+  assert.equal(images.getSnapshot().images, null);
+  assert.equal(revoked.length, 2);
+});

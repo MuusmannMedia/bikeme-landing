@@ -20,15 +20,15 @@ export function ClubChatBoundary({userId,clubId,locale,initialMessage}:{userId:s
  const images=useClubHeaderImages(userId,clubId);
  const state=useSyncExternalStore(store.subscribe,store.getSnapshot,store.getServerSnapshot);
  useEffect(()=>{
-  store.start();images?.start();
+  store.start();
   const stopImageAccess=store.subscribe(()=>{
    const {status}=store.getSnapshot();
    if(status==='auth')images?.revoke();
-   if(status==='access')images?.clear();
+   if(status==='access'||status==='error')images?.clear();
   });
   let live=true,lifecycle=0,transportLive=false,signalBusy=false,catchUpAfterCheck=false;const pending=new Set<AbortController>();
-  const pause=()=>{images?.pause();lifecycle++;pending.forEach(c=>c.abort());if(store.getSnapshot().data)flushSync(()=>store.pause());else store.pause();};
-  const refresh=bindContinuity(pause,async()=>{void images?.verify();if(transportLive)store.connection(true,false);await store.revalidate();if(catchUpAfterCheck){catchUpAfterCheck=false;setTimeout(()=>{if(live)void signals(true);},0);}},()=>{images?.pause();lifecycle++;pending.forEach(c=>c.abort());}),verify=()=>refresh.resume();
+  const pause=()=>{if(document.hidden)images?.pause();lifecycle++;pending.forEach(c=>c.abort());if(store.getSnapshot().data)flushSync(()=>store.pause());else store.pause();};
+  const refresh=bindContinuity(pause,async()=>{images?.prepare();if(transportLive)store.connection(true,false);await store.revalidate();if(catchUpAfterCheck){catchUpAfterCheck=false;setTimeout(()=>{if(live)void signals(true);},0);}},()=>{if(document.hidden)images?.pause();lifecycle++;pending.forEach(c=>c.abort());}),verify=()=>refresh.resume();
   const visibility=()=>document.visibilityState==='hidden'?refresh.deactivate():verify();
   const page=(e:PageTransitionEvent)=>{if(e.persisted)verify();};
   const revoke=()=>{lifecycle++;flushSync(()=>store.revoke('auth'));};
@@ -38,11 +38,11 @@ export function ClubChatBoundary({userId,clubId,locale,initialMessage}:{userId:s
   const offline=()=>{transportLive=false;refresh.suspend();flushSync(()=>store.connection(false));};
   const signals=async(onlyIfChanged=false)=>{if(document.visibilityState!=='visible'||!document.hasFocus()||refresh.checking||signalBusy||store.getSnapshot().status!=='ready')return;signalBusy=true;const v=lifecycle,c=new AbortController();pending.add(c);const timer=setTimeout(()=>c.abort(),20000);try{const r=await fetch('/api/clubs/chat?mode=signals',{cache:'no-store',credentials:'same-origin',signal:c.signal});const b=await r.json();if(!live||v!==lifecycle||document.visibilityState!=='visible')return;if(r.status===401||b.userId&&b.userId!==userId){revoke();window.location.reload();return;}if(!r.ok||!Number.isSafeInteger(b.visibilityRevision))throw new ContentError('network');const data=store.getSnapshot().data;if(!onlyIfChanged||!data||data.visibilityRevision!==b.visibilityRevision||data.signalRevision!==b.signalRevision)store.signal(b.visibilityRevision);}catch(e){if(live&&v===lifecycle)flushSync(()=>store.fail(e));}finally{clearTimeout(timer);pending.delete(c);signalBusy=false;}};
   const client=createClient(),auth=client?.auth.onAuthStateChange((_event,session)=>{if(session?.user.id!==userId){revoke();window.location.reload();}}).data.subscription;
-  const stopSignals=subscribeOwnSignals(client,userId,'own-signals-'+crypto.randomUUID(),['club_chat_signals'],{ready:()=>{if(!live)return;transportLive=true;if(document.visibilityState!=='visible'||!document.hasFocus()){refresh.deactivate();return;}store.connection(true,false);if(refresh.checking){catchUpAfterCheck=true;return;}void store.revalidate();},unavailable:()=>{if(live)offline();},change:()=>void signals()});
+  const stopSignals=subscribeOwnSignals(client,userId,'own-signals-'+crypto.randomUUID(),['club_chat_signals'],{ready:()=>{if(!live)return;transportLive=true;if(document.hidden||!document.hasFocus())return;store.connection(true,false);if(refresh.checking){catchUpAfterCheck=true;return;}void signals(true);},unavailable:()=>{if(live){transportLive=false;store.connection(false,false);}},change:()=>void signals()});
   window.addEventListener('focus',verify);window.addEventListener('blur',refresh.deactivate);window.addEventListener('online',refresh.check);window.addEventListener('offline',offline);document.addEventListener('visibilitychange',visibility);window.addEventListener('pagehide',refresh.suspend);window.addEventListener('pageshow',page);window.addEventListener('storage',storage);window.addEventListener(CLUB_AUTH_EVENT,local);
   const full=setInterval(refresh.check,60000),poll=setInterval(()=>void signals(),10000);refresh.check();
-  return()=>{live=false;stopSignals();refresh.stop();stopImageAccess();images?.revoke();pending.forEach(c=>c.abort());clearInterval(full);clearInterval(poll);auth?.unsubscribe();store.stop();window.removeEventListener('focus',verify);window.removeEventListener('blur',refresh.deactivate);window.removeEventListener('online',refresh.check);window.removeEventListener('offline',offline);document.removeEventListener('visibilitychange',visibility);window.removeEventListener('pagehide',refresh.suspend);window.removeEventListener('pageshow',page);window.removeEventListener('storage',storage);window.removeEventListener(CLUB_AUTH_EVENT,local);};
+  return()=>{live=false;stopSignals();refresh.stop();stopImageAccess();pending.forEach(c=>c.abort());clearInterval(full);clearInterval(poll);auth?.unsubscribe();store.stop();window.removeEventListener('focus',verify);window.removeEventListener('blur',refresh.deactivate);window.removeEventListener('online',refresh.check);window.removeEventListener('offline',offline);document.removeEventListener('visibilitychange',visibility);window.removeEventListener('pagehide',refresh.suspend);window.removeEventListener('pageshow',page);window.removeEventListener('storage',storage);window.removeEventListener(CLUB_AUTH_EVENT,local);};
  },[store,userId,bindContinuity,images]);
  if(state.status==='auth'||state.status==='access')return <div data-chat-access={state.status} data-chat-data="empty"><ClubAccessDenied locale={locale}/></div>;
- return <ClubHeaderImagesScope clubId={clubId} store={images} authorized={state.status==='ready'&&!continuity.checking&&!continuity.concealed}><AccessContinuity {...continuity} locale={locale}><ClubChatWorkspace checking={continuity.checking||continuity.concealed} store={store} state={state} locale={locale} userId={userId} clubId={clubId} initialMessage={initialMessage}/></AccessContinuity></ClubHeaderImagesScope>;
+ return <ClubHeaderImagesScope clubId={clubId} store={images} authorized={state.status==='ready'&&!continuity.concealed}><AccessContinuity {...continuity} locale={locale}><ClubChatWorkspace checking={continuity.checking||continuity.concealed} store={store} state={state} locale={locale} userId={userId} clubId={clubId} initialMessage={initialMessage}/></AccessContinuity></ClubHeaderImagesScope>;
 }

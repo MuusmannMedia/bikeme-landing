@@ -68,12 +68,20 @@ export async function GET(request: NextRequest) {
       }));
     }
 
-    const { items: rows, role } = await galleryRpc<{ items: GalleryPhoto[]; role: ClubRole }>(client, "club_gallery_page", {
-      p_club: clubId, ...cursor(query),
-    });
+    const [{ items: rows, role }, { data: profile, error: profileError }] = await Promise.all([
+      galleryRpc<{ items: GalleryPhoto[]; role: ClubRole }>(client, "club_gallery_page", {
+        p_club: clubId, ...cursor(query),
+      }),
+      client.from("clubs").select("profile_revision,cover_path,logo_path").eq("id", clubId).maybeSingle(),
+    ]);
+    if (profileError) throw new GalleryError("network");
+    if (!profile) throw new GalleryError("access");
     const photos = rows.slice(0, galleryLimits.page);
     const tail = photos.at(-1);
-    return json({ userId, role, photos, next: tail && rows.length > photos.length ? { time: tail.createdAt, id: tail.id } : null });
+    return json({
+      userId, role, photos, profileRevision: profile.profile_revision,
+      imageShape: profile.cover_path ? "cover" : profile.logo_path ? "logo" : "none",
+      next: tail && rows.length > photos.length ? { time: tail.createdAt, id: tail.id } : null });
   } catch (error) {
     return failure(error);
   }
