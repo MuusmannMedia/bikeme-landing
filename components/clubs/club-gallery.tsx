@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import { flushSync } from "react-dom";
 
 import { AppEmpty, AppPanel } from "@/components/app-ui";
@@ -13,6 +13,7 @@ import {
 } from "@/lib/clubs/gallery-contract";
 import { galleryErrorKind, galleryResponse } from "@/lib/clubs/gallery-client";
 import { galleryText, type GalleryTextKey } from "@/lib/clubs/gallery-i18n";
+import { createGalleryPhotoCache } from "@/lib/clubs/gallery-photo-cache";
 import { normalizeImageForBrowser } from "@/lib/clubs/image-browser";
 import type { Club } from "@/lib/clubs/types";
 import type { Locale } from "@/lib/locales";
@@ -35,6 +36,23 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
   const ct = (key: Parameters<typeof contentText>[1]) => contentText(locale, key);
   const endpoint = `/api/clubs/gallery?clubId=${club.id}`;
   const images = useClubHeaderImages(userId, club.id);
+  const photoCache = useMemo(() => createGalleryPhotoCache({
+    async read(id, signal, background) {
+      const response = await fetch(galleryImageUrl(club.id, id, "full"), {
+        cache: "no-store", credentials: "same-origin", signal,
+        priority: background ? "low" : "high",
+        headers: { "X-Gallery-Actor": userId },
+      });
+      if (!response.ok) {
+        await galleryResponse(response, userId);
+        throw new GalleryError("network");
+      }
+      const blob = await response.blob();
+      if (blob.type !== "image/jpeg" || !blob.size || blob.size > galleryLimits.full) throw new GalleryError("image");
+      return blob;
+    },
+  }), [club.id, userId]);
+  const assets = useSyncExternalStore(photoCache.subscribe, photoCache.getSnapshot, photoCache.getServerSnapshot);
 
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [paging, setPaging] = useState(false);
@@ -71,15 +89,19 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
   const selected = snapshot?.photos[selectedIndex];
   const previous = snapshot?.photos[selectedIndex - 1];
   const next = snapshot?.photos[selectedIndex + 1];
+  const photoAsset = selectedId ? assets.get(selectedId) : undefined;
+  const imageAuthFailure = [...assets.values()].find(asset => asset.status === "error" &&
+    (asset.error === "auth" || asset.error === "access"));
   const canGoNext = Boolean(next || (snapshot?.next && !paging));
-  const canDisplay = Boolean(snapshot && !concealed && !loadError);
-  const dialogConcealed = concealed || (dialogMode === "view" && accessVersion !== discussionVersion);
+  const canDisplay = Boolean(snapshot && !concealed && !loadError && !imageAuthFailure);
+  const dialogConcealed = concealed || Boolean(imageAuthFailure) || (dialogMode === "view" && accessVersion !== discussionVersion);
 
   const denyAccess = useCallback((kind: "auth" | "access") => {
     if (kind === "auth") {
       identityInvalidated.current = true;
       images?.revoke();
     } else images?.clear();
+    photoCache.clear();
     confirmed.current = false;
     loadController.current?.abort();
     loadController.current = null;
@@ -93,7 +115,27 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
     setReportedComment(null);
     setUpload(emptyUpload);
     setLoadError(kind);
-  }, [images]);
+  }, [images, photoCache]);
+
+  useEffect(() => photoCache.subscribe(() => {
+    for (const asset of photoCache.getSnapshot().values()) {
+      if (asset.status === "error" && (asset.error === "auth" || asset.error === "access")) {
+        denyAccess(asset.error);
+        break;
+      }
+    }
+  }), [denyAccess, photoCache]);
+
+  const canReadPhoto = canDisplay && dialogMode === "view";
+  const previousId = previous?.id;
+  const nextId = next?.id;
+  const photoReady = photoAsset?.status === "ready";
+  useEffect(() => {
+    if (!canReadPhoto || !selectedId || document.hidden) return;
+    photoCache.select([selectedId, nextId, previousId].filter((id): id is string => Boolean(id)));
+    void photoCache.load(selectedId);
+    if (photoReady && nextId) void photoCache.load(nextId, true);
+  }, [canReadPhoto, nextId, photoCache, photoReady, previousId, selectedId]);
 
   const readPage = useCallback(async (cursor: GalleryCursor | null, signal: AbortSignal) => {
     const query = new URLSearchParams();
@@ -127,6 +169,7 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
       if (controller.signal.aborted || document.hidden) return;
       requestedPages.current = count;
       confirmed.current = true;
+      photoCache.reconcile(new Set(view.photos.map(photo => photo.id)));
       setSnapshot(view);
       setLoadError(null);
       setConcealed(false);
@@ -144,6 +187,7 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
       } else {
         confirmed.current = false;
         images?.clear();
+        photoCache.clear();
         setSnapshot(null);
         setSelectedId(null);
         setLoadError(kind);
@@ -154,13 +198,14 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
         if (more) setPaging(false);
       }
     }
-  }, [denyAccess, images, readPage]);
+  }, [denyAccess, images, photoCache, readPage]);
 
   useEffect(() => {
     const client = createClient();
     const pause = () => {
       suspended.current = true;
       images?.pause();
+      photoCache.pause();
       loadController.current?.abort();
       loadController.current = null;
       if (!confirmed.current) return;
@@ -222,6 +267,7 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
       loadController.current?.abort();
       loadController.current = null;
       actionController.current?.abort();
+      photoCache.clear();
       window.removeEventListener("focus", verify);
       window.removeEventListener("online", verify);
       window.removeEventListener("offline", pause);
@@ -231,7 +277,7 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
       window.removeEventListener(CLUB_AUTH_EVENT, onAuth);
       document.removeEventListener("visibilitychange", show);
     };
-  }, [denyAccess, images, refresh, userId]);
+  }, [denyAccess, images, photoCache, refresh, userId]);
 
   useLayoutEffect(() => {
     const element = dialog.current;
@@ -354,7 +400,11 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
         const normalized = await normalizeImageForBrowser(file, "cover", actionController.current!.signal, {
           maxBytes: galleryLimits.browserInput,
           maxPixels: galleryLimits.pixels,
-        }).catch(() => { throw new GalleryError("image"); });
+          maxEdge: galleryLimits.browserEdge,
+        }).catch(error => {
+          if (error instanceof GalleryError) throw error;
+          throw new GalleryError("image");
+        });
         form.append("photo", normalized, "photo.jpg");
         form.append("caption", caption);
       }
@@ -377,7 +427,8 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
 
   return <>
     {/* Keep the mounted gallery and its scroll footprint while access is rechecked. */}
-    <div ref={gallery} data-gallery-concealed={concealed || undefined} inert={concealed}>
+    <div ref={gallery} data-gallery-concealed={concealed || Boolean(imageAuthFailure) || undefined}
+      inert={concealed || Boolean(imageAuthFailure)}>
       {snapshot ? <ClubHeaderImagesScope clubId={club.id} store={images} authorized={canDisplay}>
         <ClubHeader club={{ ...club, role: snapshot.role, imageShape: snapshot.imageShape, profileRevision: snapshot.profileRevision }}
           locale={locale} selected="gallery" />
@@ -440,6 +491,7 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
       }}
       onCancel={event => { if (task) event.preventDefault(); }}
       onClose={() => {
+        photoCache.pause();
         selectionVersion.current++;
         setSelectedId(null);
         setReportedComment(null);
@@ -455,9 +507,21 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
         </div>
         {feedback ? <p role="alert">{errorMessage(feedback)}</p> : null}
         {dialogMode === "view" ? <>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="bike-app-gallery-full" src={galleryImageUrl(club.id, selected.id, "full")}
-            width={selected.width} height={selected.height} alt={selected.caption || text("photo")} />
+          {photoAsset?.status === "ready" ? (
+            // eslint-disable-next-line @next/next/no-img-element -- This private image is held as a blob URL in this tab.
+            <img className="bike-app-gallery-full" src={photoAsset.url}
+              width={selected.width} height={selected.height} alt={selected.caption || text("photo")} />
+          ) : <div className="bike-app-gallery-photo-placeholder"
+            style={{
+              aspectRatio: selected.width / selected.height,
+              width: `min(100%, ${selected.width}px, ${61 * selected.width / selected.height}dvh)`,
+            }}>
+            {photoAsset?.status === "error" ? <>
+              <p role="alert">{errorMessage(photoAsset.error)}</p>
+              <button type="button" className="bike-app-button bike-app-button-secondary"
+                onClick={() => void photoCache.retry(selected.id)}>{t("common.retry")}</button>
+            </> : <p role="status">{text("loading")}</p>}
+          </div>}
           <div className="bike-app-gallery-browse">
             <button type="button" className="bike-app-button bike-app-button-secondary"
               aria-keyshortcuts="ArrowLeft" aria-label={text("previousPhoto")} aria-disabled={!previous}

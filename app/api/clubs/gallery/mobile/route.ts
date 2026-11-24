@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     if (!data.user || data.user.id !== request.headers.get("x-gallery-actor")) {
       throw new GalleryError("auth");
     }
-    await saveGalleryUpload(request, client, data.user.id, club, mime);
+    await saveGalleryUpload(request, client, data.user.id, club, mime, "mobile");
     return json({ userId: data.user.id });
   } catch (error) {
     const kind = error instanceof GalleryError ? error.kind : "network";

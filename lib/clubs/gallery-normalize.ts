@@ -27,8 +27,8 @@ export async function normalizeGalleryPhoto(bytes: Uint8Array, deadline = perfor
     let full = await encode(1600, 83);
     if (full.data.length > galleryLimits.full) full = await encode(1600, 64);
     if (full.data.length > galleryLimits.full) full = await encode(1280, 55);
-    let thumb = await encode(360, 77);
-    if (thumb.data.length > galleryLimits.thumbnail) thumb = await encode(320, 55);
+    let thumb = await encode(galleryLimits.thumbnailEdge, 77);
+    if (thumb.data.length > galleryLimits.thumbnail) thumb = await encode(224, 55);
     if (full.data.length > galleryLimits.full || thumb.data.length > galleryLimits.thumbnail) throw new GalleryError("size");
     remainingSeconds(deadline);
     return { image: full.data, thumbnail: thumb.data, width: full.info.width, height: full.info.height };

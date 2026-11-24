@@ -59,9 +59,14 @@ export async function galleryBody(request: NextRequest, limit: number) {
   }
 }
 
-export async function saveGalleryUpload(request: NextRequest, client: SupabaseClient, actor: string, clubId: string, mime: string) {
+export async function saveGalleryUpload(
+  request: NextRequest, client: SupabaseClient, actor: string, clubId: string, mime: string, source: "web" | "mobile",
+) {
+  const web = source === "web";
   const signingKey = galleryUploadKey();
-  const body = await galleryBody(request, galleryLimits.request);
+  const body = await galleryBody(request, web
+    ? galleryLimits.batch * galleryLimits.browserInput + 16_384
+    : galleryLimits.request);
   const form = await new Response(body, { headers: { "Content-Type": mime } }).formData().catch(() => {
     throw new GalleryError("invalid");
   });
@@ -73,6 +78,7 @@ export async function saveGalleryUpload(request: NextRequest, client: SupabaseCl
   if (typeof requestId !== "string" || !isClubId(requestId) || !files.length ||
       files.length > galleryLimits.batch || files.length !== captions.length) throw new GalleryError("invalid");
   if (!files.every(file => file instanceof File && file.size > 0)) throw new GalleryError("image");
+  if (web && files.some(file => file.size > galleryLimits.browserInput)) throw new GalleryError("size");
   if (files.reduce((sum, file) => sum + file.size, 0) > galleryLimits.input) throw new GalleryError("size");
 
   const bytes = await Promise.all(files.map(async file => new Uint8Array(await file.arrayBuffer())));
@@ -81,7 +87,9 @@ export async function saveGalleryUpload(request: NextRequest, client: SupabaseCl
       const size = imageSourceDimensions(file);
       requireCompleteStaticImage(file);
       if (!size.width || !size.height || size.width * size.height > galleryLimits.pixels) throw new GalleryError("image");
-    } catch {
+      if (web && Math.max(size.width, size.height) > galleryLimits.browserEdge) throw new GalleryError("size");
+    } catch (error) {
+      if (error instanceof GalleryError) throw error;
       throw new GalleryError("image");
     }
   }

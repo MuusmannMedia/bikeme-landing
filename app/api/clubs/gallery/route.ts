@@ -59,6 +59,8 @@ export async function GET(request: NextRequest) {
     }
     if (id || variant) {
       if (!id || !isClubId(id) || !["thumbnail", "full", "evidence"].includes(variant ?? "")) throw new GalleryError("invalid");
+      const expectedActor = request.headers.get("x-gallery-actor");
+      if (expectedActor !== null && expectedActor !== userId) throw new GalleryError("auth");
       const encoded = variant === "evidence"
         ? await galleryRpc<string>(client, "club_gallery_evidence", { p_club: clubId, p_report: id })
         : await galleryRpc<string>(client, "club_gallery_image", { p_club: clubId, p_photo: id, p_thumbnail: variant === "thumbnail" });
@@ -96,7 +98,7 @@ export async function POST(request: NextRequest) {
     if (request.headers.get("x-gallery-actor") !== userId) throw new GalleryError("auth");
     const mime = request.headers.get("content-type") ?? "";
     if (mime.startsWith("multipart/form-data;")) {
-      await saveGalleryUpload(request, client, userId, clubId, mime);
+      await saveGalleryUpload(request, client, userId, clubId, mime, "web");
     } else if (mime.startsWith("application/json")) {
       const body = await galleryBody(request, 12_000);
       const command = await new Response(body).json().catch(() => null);

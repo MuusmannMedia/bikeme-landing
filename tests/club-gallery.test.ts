@@ -7,6 +7,7 @@ import { GalleryError, galleryCaption, galleryLimits } from "../lib/clubs/galler
 import { normalizeGalleryPhoto } from "../lib/clubs/gallery-normalize";
 import { requireCompleteStaticImage } from "../lib/clubs/image-browser";
 import { galleryText } from "../lib/clubs/gallery-i18n";
+import { createGalleryPhotoCache } from "../lib/clubs/gallery-photo-cache";
 import { projectReport } from "../lib/clubs/content-contract";
 import { locales } from "../lib/locales";
 
@@ -21,7 +22,7 @@ test("gallery normalizes orientation and produces bounded JPEGs without metadata
   assert.equal(full.format, "jpeg");
   assert.equal(full.exif, undefined);
   assert.equal(full.orientation, undefined);
-  assert.equal(thumbnail.height, 360);
+  assert.equal(thumbnail.height, galleryLimits.thumbnailEdge);
   assert.equal(thumbnail.exif, undefined);
   assert(photo.image.length <= galleryLimits.full);
   assert(photo.thumbnail.length <= galleryLimits.thumbnail);
@@ -63,6 +64,58 @@ test("captions and the gallery label use the existing language structure", () =>
   assert.throws(() => galleryCaption("🚴".repeat(281)), GalleryError);
   assert.equal(galleryText("da", "title"), "Galleri");
   for (const locale of locales) assert(galleryText(locale, "reportSupport").trim());
+});
+
+test("gallery keeps nearby images and a bounded window of completed reads", async () => {
+  const fetched: string[] = [];
+  const revoked: string[] = [];
+  let created = 0;
+  const cache = createGalleryPhotoCache({
+    read: async id => { fetched.push(id); return new Blob([id]); },
+    createUrl: () => `blob:fixture-${++created}`,
+    revokeUrl: url => revoked.push(url),
+    decode: async () => {},
+  });
+  cache.select(["a", "b"]);
+  await cache.load("a");
+  await cache.load("b", true);
+  cache.select(["b", "c", "a"]);
+  await cache.load("b");
+  await cache.load("c", true);
+  cache.select(["c", "d", "b"]);
+  await cache.load("d", true);
+  cache.select(["d", "e", "c"]);
+  await cache.load("e", true);
+  await cache.load("outside", true);
+  assert.deepEqual(fetched, ["a", "b", "c", "d", "e"]);
+  assert.equal(cache.getSnapshot().size, 4);
+  assert.deepEqual(revoked, ["blob:fixture-1"]);
+  cache.reconcile(new Set(["b", "c", "d"]));
+  assert.equal(cache.getSnapshot().has("e"), false);
+  cache.clear();
+  assert.equal(cache.getSnapshot().size, 0);
+  assert.equal(revoked.length, 5);
+});
+
+test("a decode that returns after revocation cannot restore a private image", async () => {
+  let finish = () => {};
+  let start = () => {};
+  const started = new Promise<void>(resolve => { start = resolve; });
+  const revoked: string[] = [];
+  const cache = createGalleryPhotoCache({
+    read: async () => new Blob(["image"]),
+    createUrl: () => "blob:fixture",
+    revokeUrl: url => revoked.push(url),
+    decode: () => new Promise<void>(resolve => { finish = resolve; start(); }),
+  });
+  cache.select(["visible"]);
+  const loading = cache.load("visible");
+  await started;
+  cache.clear();
+  finish();
+  await loading;
+  assert.equal(cache.getSnapshot().size, 0);
+  assert.deepEqual(revoked, ["blob:fixture"]);
 });
 
 test("the club queue projects captions and author names without confidential fields", () => {

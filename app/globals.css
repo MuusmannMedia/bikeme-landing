@@ -1094,6 +1094,17 @@ a {
   object-fit: contain;
   border-radius: 10px;
 }
+.bike-app-gallery-photo-placeholder {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  margin-inline: auto;
+  min-height: 84px;
+  max-height: 61dvh;
+  border-radius: 10px;
+  background: var(--app-panel-soft);
+  text-align: center;
+}
 .bike-app-gallery-browse { display: flex; justify-content: space-between; gap: 8px; margin-top: 12px; }
 .bike-app-gallery-browse button { min-width: 44px; min-height: 44px; }
 .bike-app-gallery-browse button[aria-disabled="true"] { opacity: .45; cursor: default; }

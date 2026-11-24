@@ -1,4 +1,5 @@
 import {ClubError} from './membership-types';
+import {GalleryError} from './gallery-contract';
 import {CLUB_IMAGE_SOURCE_LIMIT,CLUB_IMAGE_LIMIT,type ImageSlot} from './image-contract';
 export function imageSourceDimensions(bytes:Uint8Array){
  const d=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
@@ -25,12 +26,72 @@ export function requireCompleteStaticImage(bytes: Uint8Array) {
  throw new ClubError("image");
 }
 
-export async function normalizeImageForBrowser(file:Blob,slot:ImageSlot,signal:AbortSignal, options?: {maxBytes:number;maxPixels:number}){
- if(!file.size||file.size>CLUB_IMAGE_SOURCE_LIMIT)throw new ClubError('image');const bytes=new Uint8Array(await file.arrayBuffer()),size=imageSourceDimensions(bytes);if(!size.width||!size.height||size.width*size.height>(options?.maxPixels??50_000_000))throw new ClubError('image');if(signal.aborted)throw new ClubError('network');
- if(options)requireCompleteStaticImage(bytes);
- let bitmap:ImageBitmap;try{bitmap=await createImageBitmap(file,{imageOrientation:'from-image'});}catch{throw new ClubError('image');}
- const canvas=document.createElement('canvas');try{const max=slot==='logo'?512:1600,scale=Math.min(1,max/Math.max(bitmap.width,bitmap.height));canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));const c=canvas.getContext('2d');if(!c)throw new ClubError('image');if(slot==='cover'){c.fillStyle='#080e18';c.fillRect(0,0,canvas.width,canvas.height);}c.drawImage(bitmap,0,0,canvas.width,canvas.height);const encode=(quality:number)=>new Promise<Blob|null>(r=>canvas.toBlob(r,slot==='logo'?'image/png':'image/jpeg',quality));
- let blob=await encode(.85);const limit=options?.maxBytes??CLUB_IMAGE_LIMIT;
- if(options&&blob&&blob.size>limit)blob=await encode(.64);
- if(signal.aborted)throw new ClubError('network');if(!blob||blob.size>limit)throw new ClubError('image');return blob;}finally{bitmap.close();canvas.width=0;canvas.height=0;}
+export async function normalizeImageForBrowser(
+ file: Blob, slot: ImageSlot, signal: AbortSignal,
+ options?: { maxBytes: number; maxPixels: number; maxEdge: number },
+) {
+ if (!file.size || file.size > CLUB_IMAGE_SOURCE_LIMIT) throw new ClubError('image');
+ const bytes = new Uint8Array(await file.arrayBuffer());
+ const size = imageSourceDimensions(bytes);
+ if (!size.width || !size.height || size.width * size.height > (options?.maxPixels ?? 50_000_000)) {
+  throw new ClubError('image');
+ }
+ signal.throwIfAborted();
+
+ // A small JPEG can travel as-is. Sharp still validates, orients and strips it.
+ if (options) {
+  requireCompleteStaticImage(bytes);
+  if (bytes[0] === 255 && bytes[1] === 216 && file.size <= options.maxBytes &&
+      Math.max(size.width, size.height) <= options.maxEdge) {
+   return file.type === 'image/jpeg' ? file : file.slice(0, file.size, 'image/jpeg');
+  }
+ }
+
+ let bitmap: ImageBitmap;
+ try { bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+ catch { throw new ClubError('image'); }
+
+ const canvas = document.createElement('canvas');
+ const limit = options?.maxBytes ?? CLUB_IMAGE_LIMIT;
+ const edge = options?.maxEdge ?? (slot === 'logo' ? 512 : 1600);
+ const type = slot === 'logo' ? 'image/png' : 'image/jpeg';
+ try {
+  const draw = (longest: number) => {
+   const scale = Math.min(1, longest / Math.max(bitmap.width, bitmap.height));
+   canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+   canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+   const context = canvas.getContext('2d');
+   if (!context) throw new ClubError('image');
+   if (slot === 'cover') {
+    context.fillStyle = '#080e18';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+   }
+   if (options) context.imageSmoothingQuality = 'high';
+   context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  };
+  const encode = async (quality: number) => {
+   signal.throwIfAborted();
+   const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, type, quality));
+   signal.throwIfAborted();
+   if (!blob || blob.type !== type) throw new ClubError('image');
+   return blob;
+  };
+
+  draw(edge);
+  let blob = await encode(options ? .82 : .85);
+  if (options && blob.size > limit) {
+   blob = await encode(.72);
+   for (const scale of [.8, .64]) {
+    if (blob.size <= limit) break;
+    draw(Math.floor(edge * scale));
+    blob = await encode(.76);
+   }
+  }
+  if (blob.size > limit) throw options ? new GalleryError('size') : new ClubError('image');
+  return blob;
+ } finally {
+  bitmap.close();
+  canvas.width = 0;
+  canvas.height = 0;
+ }
 }

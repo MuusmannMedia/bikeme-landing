@@ -6,10 +6,12 @@ export const galleryLimits = {
   batch: 5,
   caption: 280,
   full: 500_000,
-  thumbnail: 90_000,
+  thumbnail: 45_000,
+  thumbnailEdge: 256,
   input: 3_500_000,
   request: 4_000_000,
-  browserInput: 700_000,
+  browserInput: 400_000,
+  browserEdge: 1600,
   pixels: 24_000_000,
 } as const;
 
