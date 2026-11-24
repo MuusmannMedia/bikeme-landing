@@ -83,12 +83,12 @@ export function createGalleryPhotoCache(options: {
       subscribers.add(listener);
       return () => { subscribers.delete(listener); };
     },
-    select(ids: readonly string[], foregroundOnly = false) {
+    select(ids: readonly string[], keepLoading?: readonly string[]) {
       const last = nearby[0];
       nearby = ids;
       const current = ids[0];
       trim((id, entry) => entry.status === "ready" || (nearby.includes(id) &&
-        !(foregroundOnly && id !== current && entry.status === "loading") &&
+        !(keepLoading && entry.status === "loading" && !keepLoading.includes(id)) &&
         !(id === current && last !== current && entry.status === "error" && entry.error === "network")));
       const entry = entries.get(current);
       if (entry?.status === "ready") {
@@ -97,10 +97,10 @@ export function createGalleryPhotoCache(options: {
       }
     },
     load,
-    warm() {
+    warm(limit = backgroundLimit) {
       let pending = [...entries.values()].filter(entry => entry.status === "loading").length;
       for (const id of nearby) {
-        if (pending >= backgroundLimit) break;
+        if (pending >= limit) break;
         if (entries.has(id)) continue;
         pending++;
         void load(id, true);

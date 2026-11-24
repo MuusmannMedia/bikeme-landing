@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { validateContent, validateReportDetail } from "@/lib/clubs/content-contract";
-import { GalleryError, galleryLimits, type GalleryPhoto, type GalleryDiscussion, type GalleryErrorCode } from "@/lib/clubs/gallery-contract";
+import { GalleryError, galleryLimits, parseGalleryViewSize, type GalleryPhoto, type GalleryDiscussion, type GalleryErrorCode } from "@/lib/clubs/gallery-contract";
+import { fitGalleryPhotoForView } from "@/lib/clubs/gallery-normalize";
 import { galleryBody, galleryRpc, saveGalleryUpload } from "@/lib/clubs/gallery-server";
 import { isClubRequestOrigin } from "@/lib/clubs/request-origin";
 import { isClubId, type ClubRole } from "@/lib/clubs/types";
@@ -61,12 +62,17 @@ export async function GET(request: NextRequest) {
       if (!id || !isClubId(id) || !["thumbnail", "full", "evidence"].includes(variant ?? "")) throw new GalleryError("invalid");
       const expectedActor = request.headers.get("x-gallery-actor");
       if (expectedActor !== null && expectedActor !== userId) throw new GalleryError("auth");
+      const view = query.get("view");
+      if (view !== null && variant !== "full") throw new GalleryError("invalid");
+      const size = view === null ? null : parseGalleryViewSize(view);
       const encoded = variant === "evidence"
         ? await galleryRpc<string>(client, "club_gallery_evidence", { p_club: clubId, p_report: id })
         : await galleryRpc<string>(client, "club_gallery_image", { p_club: clubId, p_photo: id, p_thumbnail: variant === "thumbnail" });
       if (!encoded) throw new GalleryError("unavailable");
-      return preventAuthCaching(new NextResponse(new Uint8Array(Buffer.from(encoded, "base64")), {
-        headers: { "Content-Type": "image/jpeg", "X-Content-Type-Options": "nosniff", "Cross-Origin-Resource-Policy": "same-origin" },
+      const original = Buffer.from(encoded, "base64");
+      const image = size ? await fitGalleryPhotoForView(original, size) : { bytes: original, mime: "image/jpeg" };
+      return preventAuthCaching(new NextResponse(new Uint8Array(image.bytes), {
+        headers: { "Content-Type": image.mime, "X-Content-Type-Options": "nosniff", "Cross-Origin-Resource-Policy": "same-origin" },
       }));
     }
 

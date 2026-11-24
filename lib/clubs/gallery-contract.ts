@@ -15,6 +15,22 @@ export const galleryLimits = {
   pixels: 24_000_000,
 } as const;
 
+export type GalleryViewSize = { width: number; height: number };
+const maxViewEdge = 1600;
+
+export function galleryViewSize(viewportWidth: number, viewportHeight: number, pixelRatio: number): GalleryViewSize {
+  // Round up in device pixels and allow for the entire dialog, including its padding.
+  const edge = (cssPixels: number) => Math.min(maxViewEdge, Math.max(64, Math.ceil(cssPixels * pixelRatio / 64) * 64));
+  return { width: edge(Math.min(780, viewportWidth - 24)), height: edge(viewportHeight * .61) };
+}
+
+export function parseGalleryViewSize(value: string): GalleryViewSize {
+  if (!/^[1-9]\d{1,3}x[1-9]\d{1,3}$/.test(value)) throw new GalleryError("invalid");
+  const [width, height] = value.split("x").map(Number);
+  if (width < 64 || height < 64 || width > maxViewEdge || height > maxViewEdge) throw new GalleryError("invalid");
+  return { width, height };
+}
+
 export type GalleryPhoto = {
   id: string;
   createdAt: string;

@@ -8,8 +8,8 @@ import { getAppDictionary } from "@/lib/app-i18n";
 import { CLUB_AUTH_EVENT, clubAuthPhase } from "@/lib/clubs/auth-events";
 import { contentText } from "@/lib/clubs/content-i18n";
 import {
-  GalleryError, galleryCaption, galleryImageUrl, galleryLimits,
-  type GalleryComment, type GalleryCursor, type GalleryErrorCode, type GalleryPage, type GalleryPhoto,
+  GalleryError, galleryCaption, galleryImageUrl, galleryLimits, galleryViewSize,
+  type GalleryComment, type GalleryCursor, type GalleryErrorCode, type GalleryPage, type GalleryPhoto, type GalleryViewSize,
 } from "@/lib/clubs/gallery-contract";
 import { galleryErrorKind, galleryResponse } from "@/lib/clubs/gallery-client";
 import { galleryText, type GalleryTextKey } from "@/lib/clubs/gallery-i18n";
@@ -30,15 +30,12 @@ type UploadForm = { files: File[]; captions: string[] };
 type GalleryDialogMode = "view" | "report" | "remove";
 const emptyUpload: UploadForm = { files: [], captions: [] };
 
-export function ClubGallery({ club, locale, userId }: { club: Club; locale: Locale; userId: string }) {
-  const t = getAppDictionary(locale);
-  const text = (key: GalleryTextKey) => galleryText(locale, key);
-  const ct = (key: Parameters<typeof contentText>[1]) => contentText(locale, key);
-  const endpoint = `/api/clubs/gallery?clubId=${club.id}`;
-  const images = useClubHeaderImages(userId, club.id);
-  const photoCache = useMemo(() => createGalleryPhotoCache({
+function createGalleryViewer(clubId: string, userId: string) {
+  let viewSize: GalleryViewSize | undefined;
+  const photoCache = createGalleryPhotoCache({
     async read(id, signal, background) {
-      const response = await fetch(galleryImageUrl(club.id, id, "full"), {
+      const size = viewSize ?? galleryViewSize(innerWidth, innerHeight, devicePixelRatio);
+      const response = await fetch(`${galleryImageUrl(clubId, id, "full")}&view=${size.width}x${size.height}`, {
         cache: "no-store", credentials: "same-origin", signal,
         priority: background ? "low" : "high",
         headers: { "X-Gallery-Actor": userId },
@@ -48,12 +45,39 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
         throw new GalleryError("network");
       }
       const blob = await response.blob();
-      if (blob.type !== "image/jpeg" || !blob.size || blob.size > galleryLimits.full) throw new GalleryError("image");
+      if (!["image/jpeg", "image/webp"].includes(blob.type) || !blob.size || blob.size > galleryLimits.full) throw new GalleryError("image");
       return blob;
     },
-  }), [club.id, userId]);
+  });
+  return {
+    photoCache,
+    resizeView() {
+      const size = galleryViewSize(innerWidth, innerHeight, devicePixelRatio);
+      if (!viewSize) viewSize = size;
+      else if (size.width > viewSize.width || size.height > viewSize.height) {
+        viewSize = { width: Math.max(size.width, viewSize.width), height: Math.max(size.height, viewSize.height) };
+        photoCache.clear();
+      }
+    },
+  };
+}
+
+export function ClubGallery({ club, locale, userId }: { club: Club; locale: Locale; userId: string }) {
+  const t = getAppDictionary(locale);
+  const text = (key: GalleryTextKey) => galleryText(locale, key);
+  const ct = (key: Parameters<typeof contentText>[1]) => contentText(locale, key);
+  const endpoint = `/api/clubs/gallery?clubId=${club.id}`;
+  const images = useClubHeaderImages(userId, club.id);
+  const { photoCache, resizeView } = useMemo(() => createGalleryViewer(club.id, userId), [club.id, userId]);
   const assets = useSyncExternalStore(photoCache.subscribe, photoCache.getSnapshot, photoCache.getServerSnapshot);
   const [visiblePhotoIds, setVisiblePhotoIds] = useState<string[]>([]);
+  const [firstThumbnailReady, setFirstThumbnailReady] = useState(false);
+
+  useEffect(() => {
+    resizeView();
+    window.addEventListener("resize", resizeView);
+    return () => window.removeEventListener("resize", resizeView);
+  }, [resizeView]);
 
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [paging, setPaging] = useState(false);
@@ -137,21 +161,19 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
     const visible = new Set<Element>();
     const update = () => {
       const group = cards.filter(card => visible.has(card)).slice(0, 3);
-      // Let the little thumbnails paint before full photos compete for bandwidth.
-      const ready = group.every(card => {
-        const thumbnail = card.querySelector("img");
-        return thumbnail?.complete && thumbnail.naturalWidth > 0;
-      });
-      const ids = ready ? group.flatMap(card => card.dataset.galleryPhotoId ?? []) : [];
+      // Give the first visible photo a head start, with one low-priority transfer until its thumbnail paints.
+      const thumbnail = group[0]?.querySelector("img");
+      setFirstThumbnailReady(Boolean(thumbnail?.complete && thumbnail.naturalWidth));
+      const ids = group.flatMap(card => card.dataset.galleryPhotoId ?? []);
       setVisiblePhotoIds(old => old.length === ids.length && old.every((id, i) => id === ids[i]) ? old : ids);
     };
     const observer = new IntersectionObserver(entries => {
       for (const entry of entries) {
-        if (entry.isIntersecting && entry.intersectionRatio >= .35) visible.add(entry.target);
+        if (entry.isIntersecting && entry.intersectionRatio >= .15) visible.add(entry.target);
         else visible.delete(entry.target);
       }
       update();
-    }, { threshold: .35 });
+    }, { threshold: .15 });
     grid.addEventListener("load", update, true);
     cards.forEach(card => observer.observe(card));
     return () => {
@@ -164,16 +186,20 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
     if (!canDisplay || document.hidden) return;
     if (!selectedId) {
       photoCache.select(visiblePhotoIds);
-      photoCache.warm();
+      photoCache.warm(firstThumbnailReady ? 2 : 1);
       return;
     }
     if (dialogMode !== "view" || !photos || selectedIndex < 0) return;
     const nearby = [1, -1, 2, -2].flatMap(offset => photos[selectedIndex + offset]?.id ?? []);
     const selectedReady = assets.get(selectedId)?.status === "ready";
-    photoCache.select([selectedId, ...nearby], !selectedReady);
+    // While the selected image arrives, keep at most one already-started adjacent transfer.
+    const pendingNeighbor = [next?.id, previous?.id].find(id => id && assets.get(id)?.status === "loading");
+    const keepLoading = pendingNeighbor ? [selectedId, pendingNeighbor] : [selectedId];
+    photoCache.select([selectedId, ...nearby], selectedReady ? undefined : keepLoading);
     if (selectedReady) photoCache.warm();
     else void photoCache.load(selectedId);
-  }, [assets, canDisplay, dialogMode, photoCache, photos, selectedId, selectedIndex, visiblePhotoIds]);
+  }, [assets, canDisplay, dialogMode, firstThumbnailReady, next?.id, photoCache, photos, previous?.id,
+    selectedId, selectedIndex, visiblePhotoIds]);
 
   const readPage = useCallback(async (cursor: GalleryCursor | null, signal: AbortSignal) => {
     const query = new URLSearchParams();

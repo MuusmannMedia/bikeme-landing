@@ -3,8 +3,8 @@ import { randomBytes } from "node:crypto";
 import test from "node:test";
 import sharp from "sharp";
 
-import { GalleryError, galleryCaption, galleryLimits } from "../lib/clubs/gallery-contract";
-import { normalizeGalleryPhoto } from "../lib/clubs/gallery-normalize";
+import { GalleryError, galleryCaption, galleryLimits, galleryViewSize, parseGalleryViewSize } from "../lib/clubs/gallery-contract";
+import { fitGalleryPhotoForView, normalizeGalleryPhoto } from "../lib/clubs/gallery-normalize";
 import { requireCompleteStaticImage } from "../lib/clubs/image-browser";
 import { galleryText } from "../lib/clubs/gallery-i18n";
 import { createGalleryPhotoCache } from "../lib/clubs/gallery-photo-cache";
@@ -26,6 +26,22 @@ test("gallery normalizes orientation and produces bounded JPEGs without metadata
   assert.equal(thumbnail.exif, undefined);
   assert(photo.image.length <= galleryLimits.full);
   assert(photo.thumbnail.length <= galleryLimits.thumbnail);
+});
+
+test("the private viewer resizes to the device pixel box without cropping or replacing the original", async () => {
+  const size = galleryViewSize(390, 844, 2);
+  assert.deepEqual(size, { width: 768, height: 1088 });
+  assert.deepEqual(parseGalleryViewSize("768x1088"), size);
+  assert.throws(() => parseGalleryViewSize("768x1601"), GalleryError);
+  assert.throws(() => parseGalleryViewSize("0x1088"), GalleryError);
+  const original = await sharp({ create: { width: 1600, height: 1200, channels: 3, background: "#26356c" } })
+    .jpeg().toBuffer();
+  const fitted = await fitGalleryPhotoForView(original, size);
+  const meta = await sharp(fitted.bytes).metadata();
+  assert.equal(fitted.mime, "image/webp");
+  assert.deepEqual([meta.width, meta.height], [768, 576]);
+  assert(fitted.bytes.length < original.length);
+  assert.equal((await fitGalleryPhotoForView(original, { width: 1600, height: 1600 })).bytes, original);
 });
 
 test("gallery meets byte limits with high-entropy content", async () => {
@@ -99,7 +115,7 @@ test("gallery keeps nearby images and a bounded window of completed reads", asyn
   assert.equal(revoked.length, 6);
 });
 
-test("gallery warms only two visible photos at a time and frees the connection for a cold selection", async () => {
+test("gallery starts one early read and keeps at most one adjacent read during a cold selection", async () => {
   const requests: { id: string; signal: AbortSignal; background: boolean }[] = [];
   const responses = new Map<string, (blob: Blob) => void>();
   const cache = createGalleryPhotoCache({
@@ -112,11 +128,14 @@ test("gallery warms only two visible photos at a time and frees the connection f
     decode: async () => {},
   });
   cache.select(["a", "b", "c"]);
+  cache.warm(1);
+  assert.deepEqual(requests.map(request => request.id), ["a"]);
   cache.warm();
   cache.warm();
   assert.deepEqual(requests.map(request => request.id), ["a", "b"]);
-  cache.select(["c", "b", "a"], true);
-  assert(requests.every(request => request.signal.aborted));
+  cache.select(["c", "b", "a"], ["c", "b"]);
+  assert(requests[0].signal.aborted);
+  assert.equal(requests[1].signal.aborted, false);
   const selected = cache.load("c");
   assert.equal(requests.at(-1)?.background, false);
   responses.get("a")?.(new Blob());
@@ -126,7 +145,7 @@ test("gallery warms only two visible photos at a time and frees the connection f
   assert.equal(cache.getSnapshot().get("c")?.status, "ready");
   assert.equal(cache.getSnapshot().has("a"), false);
   cache.warm();
-  assert.deepEqual(requests.slice(-2).map(request => request.id), ["b", "a"]);
+  assert.deepEqual(requests.map(request => request.id), ["a", "b", "c", "a"]);
   cache.clear();
 });
 

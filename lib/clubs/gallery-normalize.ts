@@ -1,6 +1,6 @@
 import sharp from "sharp";
 
-import { GalleryError, galleryLimits } from "./gallery-contract";
+import { GalleryError, galleryLimits, type GalleryViewSize } from "./gallery-contract";
 import { decodeClubImage } from "./image-normalize";
 
 const remainingSeconds = (deadline: number) => {
@@ -35,5 +35,20 @@ export async function normalizeGalleryPhoto(bytes: Uint8Array, deadline = perfor
   } catch (error) {
     if (error instanceof GalleryError) throw error;
     throw new GalleryError("image");
+  }
+}
+
+export async function fitGalleryPhotoForView(original: Buffer, size: GalleryViewSize) {
+  const source = { bytes: original, mime: "image/jpeg" };
+  try {
+    const image = sharp(original, { limitInputPixels: galleryLimits.pixels });
+    const { width, height } = await image.metadata();
+    if (!width || !height || Math.min(size.width / width, size.height / height) >= .92) return source;
+    const resized = await image.resize({ ...size, fit: "inside", withoutEnlargement: true })
+      .webp({ quality: 89, effort: 1 }).timeout({ seconds: 2 }).toBuffer();
+    return resized.length < original.length ? { bytes: resized, mime: "image/webp" } : source;
+  } catch {
+    // An unavailable or unhelpful derivative must not make an existing photo unreadable.
+    return source;
   }
 }
