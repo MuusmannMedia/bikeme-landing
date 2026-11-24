@@ -1151,8 +1151,8 @@ html:has(.bike-app-gallery-dialog[open][data-gallery-expanded]) { overflow: hidd
   top: max(12px, env(safe-area-inset-top));
   right: max(12px, env(safe-area-inset-right));
 }
-.bike-app-gallery-expanded-previous,
-.bike-app-gallery-expanded-next {
+/* Keep the arrow hit targets fixed through the shared button press state. */
+.bike-app-gallery-expanded > :is(.bike-app-gallery-expanded-previous, .bike-app-gallery-expanded-next) {
   top: 50%;
   transform: translateY(-50%);
   padding-inline: 8px;
