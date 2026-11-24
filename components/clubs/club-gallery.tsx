@@ -131,6 +131,7 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
   const returnFocus = useRef<HTMLElement | null>(null);
   const pausedFocus = useRef<HTMLElement | null>(null);
   const selectionVersion = useRef(0);
+  const expandedSwipe = useRef<{ id: number; x: number; y: number; version: number } | null>(null);
 
   const selectedIndex = snapshot?.photos.findIndex(photo => photo.id === selectedId) ?? -1;
   const selected = snapshot?.photos[selectedIndex];
@@ -658,28 +659,52 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
         data-gallery-concealed={dialogConcealed || undefined} inert={dialogConcealed}>
         {expanded ? <div className="bike-app-gallery-expanded">
           <h2 id="gallery-expanded-title" className="sr-only">{text("photo")}</h2>
-          {visibleExpandedPhoto && visibleExpandedAsset?.status === "ready" ? (
-            // eslint-disable-next-line @next/next/no-img-element -- The private image stays in this tab.
-            <img className="bike-app-gallery-expanded-image" src={visibleExpandedAsset.url}
-              width={visibleExpandedPhoto.width} height={visibleExpandedPhoto.height}
-              alt={visibleExpandedPhoto.caption || text("photo")} />
-          ) : null}
+          <div className="bike-app-gallery-expanded-stage">
+            {visibleExpandedPhoto && visibleExpandedAsset?.status === "ready" ? (
+              // eslint-disable-next-line @next/next/no-img-element -- The private image stays in this tab.
+              <img className="bike-app-gallery-expanded-image" src={visibleExpandedAsset.url}
+                width={visibleExpandedPhoto.width} height={visibleExpandedPhoto.height}
+                alt={visibleExpandedPhoto.caption || text("photo")}
+                onPointerDown={event => {
+                  if (event.pointerType !== "touch") return;
+                  expandedSwipe.current = event.isPrimary && !dialogConcealed
+                    ? { id: event.pointerId, x: event.clientX, y: event.clientY, version: selectionVersion.current }
+                    : null;
+                }}
+                onPointerCancel={event => {
+                  if (expandedSwipe.current?.id === event.pointerId) expandedSwipe.current = null;
+                }}
+                onPointerUp={event => {
+                  const start = expandedSwipe.current;
+                  if (!start || start.id !== event.pointerId) return;
+                  expandedSwipe.current = null;
+                  if (start.version !== selectionVersion.current) return;
+                  const dx = event.clientX - start.x;
+                  const dy = event.clientY - start.y;
+                  if (Math.abs(dx) >= 40 && Math.abs(dx) >= 1.5 * Math.abs(dy)) {
+                    browsePhoto(dx < 0 ? 1 : -1);
+                  }
+                }} />
+            ) : null}
+            {expandedAsset?.status === "error" ?
+              <div className="bike-app-gallery-expanded-status">
+                <p role="alert">{errorMessage(expandedAsset.error)}</p>
+                <button type="button" className="bike-app-button bike-app-button-secondary"
+                  onClick={() => void expandedCache.retry(selected.id)}>{t("common.retry")}</button>
+              </div> : expandedAsset?.status !== "ready" ?
+                <p className={visibleExpandedAsset?.status === "ready" ? "sr-only" : "bike-app-gallery-expanded-status"} role="status">{text("loading")}</p> :
+                <p className="sr-only" aria-live="polite">{selected.caption || text("photo")}</p>}
+          </div>
           <button type="button" ref={expandedCloseButton} className="bike-app-button bike-app-gallery-expanded-close"
             aria-label={text("closeLarge")} onClick={closeExpanded}>{text("close")}</button>
-          <button type="button" className="bike-app-button bike-app-gallery-expanded-previous"
-            aria-keyshortcuts="ArrowLeft" aria-label={text("previousPhoto")} aria-disabled={!previous}
-            onClick={() => browsePhoto(-1)}>←</button>
-          <button type="button" className="bike-app-button bike-app-gallery-expanded-next"
-            aria-keyshortcuts="ArrowRight" aria-label={text("nextPhoto")} aria-disabled={!canGoNext}
-            onClick={() => browsePhoto(1)}>→</button>
-          {expandedAsset?.status === "error" ?
-            <div className="bike-app-gallery-expanded-status">
-              <p role="alert">{errorMessage(expandedAsset.error)}</p>
-              <button type="button" className="bike-app-button bike-app-button-secondary"
-                onClick={() => void expandedCache.retry(selected.id)}>{t("common.retry")}</button>
-            </div> : expandedAsset?.status !== "ready" ?
-              <p className={visibleExpandedAsset?.status === "ready" ? "sr-only" : "bike-app-gallery-expanded-status"} role="status">{text("loading")}</p> :
-              <p className="sr-only" aria-live="polite">{selected.caption || text("photo")}</p>}
+          <div className="bike-app-gallery-expanded-controls">
+            <button type="button" className="bike-app-button bike-app-gallery-expanded-previous"
+              aria-keyshortcuts="ArrowLeft" aria-label={text("previousPhoto")} aria-disabled={!previous}
+              onClick={() => browsePhoto(-1)}>←</button>
+            <button type="button" className="bike-app-button bike-app-gallery-expanded-next"
+              aria-keyshortcuts="ArrowRight" aria-label={text("nextPhoto")} aria-disabled={!canGoNext}
+              onClick={() => browsePhoto(1)}>→</button>
+          </div>
         </div> : null}
         <div hidden={expanded}>
           <div className="bike-app-gallery-dialog-header">

@@ -1128,7 +1128,17 @@ html:has(.bike-app-gallery-dialog[open][data-gallery-expanded]) { overflow: hidd
   width: 100%;
   height: 100%;
   display: grid;
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
   place-items: center;
+}
+.bike-app-gallery-expanded-stage {
+  grid-area: 1 / 1;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
 }
 .bike-app-gallery-expanded-image {
   position: absolute;
@@ -1136,8 +1146,11 @@ html:has(.bike-app-gallery-dialog[open][data-gallery-expanded]) { overflow: hidd
   width: 100%;
   height: 100%;
   object-fit: contain;
+  touch-action: pan-y pinch-zoom;
 }
-.bike-app-gallery-expanded > button {
+.bike-app-gallery-expanded-controls { display: contents; }
+.bike-app-gallery-expanded-close,
+.bike-app-gallery-expanded-controls > button {
   position: absolute;
   min-width: 44px;
   min-height: 44px;
@@ -1145,14 +1158,15 @@ html:has(.bike-app-gallery-dialog[open][data-gallery-expanded]) { overflow: hidd
   background: rgb(17 24 39 / 92%);
   color: #fff;
 }
-.bike-app-gallery-expanded > button:hover { background: #412250; }
-.bike-app-gallery-expanded > button[aria-disabled="true"] { opacity: .55; cursor: default; }
+.bike-app-gallery-expanded-close:hover,
+.bike-app-gallery-expanded-controls > button:hover { background: #412250; }
+.bike-app-gallery-expanded-controls > button[aria-disabled="true"] { opacity: .55; cursor: default; }
 .bike-app-gallery-expanded-close {
   top: max(12px, env(safe-area-inset-top));
   right: max(12px, env(safe-area-inset-right));
 }
 /* Keep the arrow hit targets fixed through the shared button press state. */
-.bike-app-gallery-expanded > :is(.bike-app-gallery-expanded-previous, .bike-app-gallery-expanded-next) {
+.bike-app-gallery-expanded-controls > :is(.bike-app-gallery-expanded-previous, .bike-app-gallery-expanded-next) {
   top: 50%;
   transform: translateY(-50%);
   padding-inline: 8px;
@@ -1168,6 +1182,33 @@ html:has(.bike-app-gallery-dialog[open][data-gallery-expanded]) { overflow: hidd
   border-radius: 10px;
   text-align: center;
   background: #111827;
+}
+@media (max-width: 640px), (pointer: coarse) and (max-height: 640px) {
+  .bike-app-gallery-expanded {
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    row-gap: 8px;
+    padding: max(8px, env(safe-area-inset-top)) env(safe-area-inset-right)
+      max(8px, env(safe-area-inset-bottom)) env(safe-area-inset-left);
+  }
+  .bike-app-gallery-expanded-stage { grid-area: 2 / 1; }
+  .bike-app-gallery-expanded-close {
+    position: static;
+    grid-area: 1 / 1;
+    justify-self: end;
+    margin-inline-end: 12px;
+  }
+  .bike-app-gallery-expanded-controls {
+    grid-area: 3 / 1;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding-inline: 12px;
+  }
+  .bike-app-gallery-expanded-controls > :is(.bike-app-gallery-expanded-previous, .bike-app-gallery-expanded-next) {
+    position: static;
+    transform: none;
+    touch-action: manipulation;
+  }
 }
 .bike-app-gallery-photo-placeholder {
   display: grid;
