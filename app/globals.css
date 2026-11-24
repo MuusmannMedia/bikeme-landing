@@ -1094,6 +1094,81 @@ a {
   object-fit: contain;
   border-radius: 10px;
 }
+.bike-app-gallery-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.bike-app-gallery-expand-image {
+  display: block;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: zoom-in;
+  border-radius: 10px;
+}
+html:has(.bike-app-gallery-dialog[open][data-gallery-expanded]) { overflow: hidden; }
+.bike-app-gallery-dialog[data-gallery-expanded] {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  overflow: hidden;
+  background: #080e18;
+}
+.bike-app-gallery-expanded {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+.bike-app-gallery-expanded-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.bike-app-gallery-expanded > button {
+  position: absolute;
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid #8b7593;
+  background: rgb(17 24 39 / 92%);
+  color: #fff;
+}
+.bike-app-gallery-expanded > button:hover { background: #412250; }
+.bike-app-gallery-expanded > button[aria-disabled="true"] { opacity: .55; cursor: default; }
+.bike-app-gallery-expanded-close {
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+}
+.bike-app-gallery-expanded-previous,
+.bike-app-gallery-expanded-next {
+  top: 50%;
+  transform: translateY(-50%);
+  padding-inline: 8px;
+  font-size: 1.25rem;
+}
+.bike-app-gallery-expanded-previous { left: max(12px, env(safe-area-inset-left)); }
+.bike-app-gallery-expanded-next { right: max(12px, env(safe-area-inset-right)); }
+.bike-app-gallery-expanded-status {
+  position: relative;
+  max-width: min(70%, 380px);
+  margin: 0;
+  padding: 12px;
+  border-radius: 10px;
+  text-align: center;
+  background: #111827;
+}
 .bike-app-gallery-photo-placeholder {
   display: grid;
   align-content: center;

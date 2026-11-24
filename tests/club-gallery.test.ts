@@ -49,6 +49,13 @@ test("the private viewer resizes to the device pixel box without cropping or rep
   assert.equal((await fitGalleryPhotoForView(original, { width: 1600, height: 1600 }, "avif")).bytes, original);
 });
 
+test("the enlarged viewer requests the viewport in device pixels up to the original size limit", () => {
+  assert.deepEqual(galleryViewSize(1280, 900, 1, true), { width: 1280, height: 960 });
+  assert.deepEqual(galleryViewSize(390, 660, 2, true), { width: 832, height: 1344 });
+  assert.deepEqual(galleryViewSize(1920, 1080, 2, true), { width: 1600, height: 1600 });
+  assert.deepEqual(galleryViewSize(1280, 900, 1), { width: 832, height: 576 });
+});
+
 test("gallery meets byte limits with high-entropy content", async () => {
   const raw = randomBytes(1600 * 1400 * 3);
   const source = await sharp(raw, { raw: { width: 1600, height: 1400, channels: 3 } }).jpeg({ quality: 95 }).toBuffer();

@@ -22,6 +22,8 @@ const messages = {
   uploadUnavailable: ["Photo upload is currently unavailable.", "Upload af billeder er midlertidigt utilgængelig.", "Der Foto-Upload ist derzeit nicht verfügbar.", "La subida de fotos no está disponible en este momento.", "Il caricamento delle foto non è al momento disponibile.", "L’envoi de photos est temporairement indisponible.", "Foto’s uploaden is tijdelijk niet beschikbaar."],
   uploading: ["Preparing and uploading photos…", "Forbereder og uploader billeder…", "Fotos werden vorbereitet und hochgeladen…", "Preparando y subiendo fotos…", "Preparazione e caricamento delle foto…", "Préparation et envoi des photos…", "Foto’s voorbereiden en uploaden…"],
   uploaded: ["Photos uploaded.", "Billederne er uploadet.", "Die Fotos wurden hochgeladen.", "Fotos subidas.", "Foto caricate.", "Photos ajoutées.", "Foto’s geüpload."],
+  showLarge: ["Enlarge", "Vis stort", "Groß anzeigen", "Ampliar", "Ingrandisci", "Agrandir", "Vergroten"],
+  closeLarge: ["Close enlarged view", "Luk stor visning", "Großansicht schließen", "Cerrar vista ampliada", "Chiudi vista ingrandita", "Fermer la vue agrandie", "Grote weergave sluiten"],
   close: ["Close", "Luk", "Schließen", "Cerrar", "Chiudi", "Fermer", "Sluiten"],
   remove: ["Remove photo", "Fjern billede", "Foto entfernen", "Eliminar foto", "Rimuovi foto", "Retirer la photo", "Foto verwijderen"],
   confirmRemove: ["Remove this photo from the gallery?", "Vil du fjerne billedet fra galleriet?", "Dieses Foto aus der Galerie entfernen?", "¿Eliminar esta foto de la galería?", "Rimuovere questa foto dalla galleria?", "Retirer cette photo de la galerie ?", "Deze foto uit de galerij verwijderen?"],

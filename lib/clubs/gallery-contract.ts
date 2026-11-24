@@ -18,10 +18,11 @@ export const galleryLimits = {
 export type GalleryViewSize = { width: number; height: number };
 const maxViewEdge = 1600;
 
-export function galleryViewSize(viewportWidth: number, viewportHeight: number, pixelRatio: number): GalleryViewSize {
+export function galleryViewSize(viewportWidth: number, viewportHeight: number, pixelRatio: number, expanded = false): GalleryViewSize {
   // Round up in device pixels and allow for the entire dialog, including its padding.
   const edge = (cssPixels: number) => Math.min(maxViewEdge, Math.max(64, Math.ceil(cssPixels * pixelRatio / 64) * 64));
-  return { width: edge(Math.min(780, viewportWidth - 24)), height: edge(viewportHeight * .61) };
+  return expanded ? { width: edge(viewportWidth), height: edge(viewportHeight) } :
+    { width: edge(Math.min(780, viewportWidth - 24)), height: edge(viewportHeight * .61) };
 }
 
 export function parseGalleryViewSize(value: string): GalleryViewSize {
