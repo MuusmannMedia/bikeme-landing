@@ -53,6 +53,7 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
     },
   }), [club.id, userId]);
   const assets = useSyncExternalStore(photoCache.subscribe, photoCache.getSnapshot, photoCache.getServerSnapshot);
+  const [visiblePhotoIds, setVisiblePhotoIds] = useState<string[]>([]);
 
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [paging, setPaging] = useState(false);
@@ -79,6 +80,7 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
   const retryBody = useRef<FormData | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   const gallery = useRef<HTMLDivElement>(null);
+  const photoGrid = useRef<HTMLUListElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
   const returnFocus = useRef<HTMLElement | null>(null);
@@ -126,16 +128,52 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
     }
   }), [denyAccess, photoCache]);
 
-  const canReadPhoto = canDisplay && dialogMode === "view";
-  const previousId = previous?.id;
-  const nextId = next?.id;
-  const photoReady = photoAsset?.status === "ready";
+  const photos = snapshot?.photos;
+  const observingGrid = canDisplay && selectedId === null;
   useEffect(() => {
-    if (!canReadPhoto || !selectedId || document.hidden) return;
-    photoCache.select([selectedId, nextId, previousId].filter((id): id is string => Boolean(id)));
-    void photoCache.load(selectedId);
-    if (photoReady && nextId) void photoCache.load(nextId, true);
-  }, [canReadPhoto, nextId, photoCache, photoReady, previousId, selectedId]);
+    const grid = photoGrid.current;
+    if (!observingGrid || !grid || !photos?.length || typeof IntersectionObserver === "undefined") return;
+    const cards = [...grid.querySelectorAll<HTMLButtonElement>("[data-gallery-photo-id]")];
+    const visible = new Set<Element>();
+    const update = () => {
+      const group = cards.filter(card => visible.has(card)).slice(0, 3);
+      // Let the little thumbnails paint before full photos compete for bandwidth.
+      const ready = group.every(card => {
+        const thumbnail = card.querySelector("img");
+        return thumbnail?.complete && thumbnail.naturalWidth > 0;
+      });
+      const ids = ready ? group.flatMap(card => card.dataset.galleryPhotoId ?? []) : [];
+      setVisiblePhotoIds(old => old.length === ids.length && old.every((id, i) => id === ids[i]) ? old : ids);
+    };
+    const observer = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (entry.isIntersecting && entry.intersectionRatio >= .35) visible.add(entry.target);
+        else visible.delete(entry.target);
+      }
+      update();
+    }, { threshold: .35 });
+    grid.addEventListener("load", update, true);
+    cards.forEach(card => observer.observe(card));
+    return () => {
+      grid.removeEventListener("load", update, true);
+      observer.disconnect();
+    };
+  }, [observingGrid, photos]);
+
+  useEffect(() => {
+    if (!canDisplay || document.hidden) return;
+    if (!selectedId) {
+      photoCache.select(visiblePhotoIds);
+      photoCache.warm();
+      return;
+    }
+    if (dialogMode !== "view" || !photos || selectedIndex < 0) return;
+    const nearby = [1, -1, 2, -2].flatMap(offset => photos[selectedIndex + offset]?.id ?? []);
+    const selectedReady = assets.get(selectedId)?.status === "ready";
+    photoCache.select([selectedId, ...nearby], !selectedReady);
+    if (selectedReady) photoCache.warm();
+    else void photoCache.load(selectedId);
+  }, [assets, canDisplay, dialogMode, photoCache, photos, selectedId, selectedIndex, visiblePhotoIds]);
 
   const readPage = useCallback(async (cursor: GalleryCursor | null, signal: AbortSignal) => {
     const query = new URLSearchParams();
@@ -464,9 +502,9 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
           </details>
           {!selected && feedback ? <p role="alert">{errorMessage(feedback)}</p> : null}
           {notice ? <p role="status">{notice === "upload" ? text("uploaded") : ct(notice)}</p> : null}
-          {snapshot?.photos.length ? <ul className="bike-app-gallery-grid">
+          {snapshot?.photos.length ? <ul ref={photoGrid} className="bike-app-gallery-grid">
             {snapshot.photos.map(photo => <li key={photo.id}>
-              <button type="button" aria-haspopup="dialog" className="bike-app-gallery-tile"
+              <button type="button" aria-haspopup="dialog" className="bike-app-gallery-tile" data-gallery-photo-id={photo.id}
                 aria-label={photo.caption || `${text("photo")} · ${text("uploader").replace("{name}", photo.uploader ?? ct("deletedAuthor"))}`}
                 onClick={event => showPhoto(photo, event.currentTarget)}>
                 {/* Cookie-authenticated bytes stay out of the optimizer and shared caches. */}

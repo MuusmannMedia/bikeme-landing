@@ -86,15 +86,48 @@ test("gallery keeps nearby images and a bounded window of completed reads", asyn
   await cache.load("d", true);
   cache.select(["d", "e", "c"]);
   await cache.load("e", true);
+  cache.select(["e", "f", "d"]);
+  await cache.load("f", true);
   await cache.load("outside", true);
-  assert.deepEqual(fetched, ["a", "b", "c", "d", "e"]);
-  assert.equal(cache.getSnapshot().size, 4);
+  assert.deepEqual(fetched, ["a", "b", "c", "d", "e", "f"]);
+  assert.equal(cache.getSnapshot().size, 5);
   assert.deepEqual(revoked, ["blob:fixture-1"]);
   cache.reconcile(new Set(["b", "c", "d"]));
   assert.equal(cache.getSnapshot().has("e"), false);
   cache.clear();
   assert.equal(cache.getSnapshot().size, 0);
-  assert.equal(revoked.length, 5);
+  assert.equal(revoked.length, 6);
+});
+
+test("gallery warms only two visible photos at a time and frees the connection for a cold selection", async () => {
+  const requests: { id: string; signal: AbortSignal; background: boolean }[] = [];
+  const responses = new Map<string, (blob: Blob) => void>();
+  const cache = createGalleryPhotoCache({
+    read(id, signal, background) {
+      requests.push({ id, signal, background });
+      return new Promise(resolve => { responses.set(id, resolve); });
+    },
+    createUrl: () => "blob:fixture",
+    revokeUrl: () => {},
+    decode: async () => {},
+  });
+  cache.select(["a", "b", "c"]);
+  cache.warm();
+  cache.warm();
+  assert.deepEqual(requests.map(request => request.id), ["a", "b"]);
+  cache.select(["c", "b", "a"], true);
+  assert(requests.every(request => request.signal.aborted));
+  const selected = cache.load("c");
+  assert.equal(requests.at(-1)?.background, false);
+  responses.get("a")?.(new Blob());
+  responses.get("b")?.(new Blob());
+  responses.get("c")?.(new Blob());
+  await selected;
+  assert.equal(cache.getSnapshot().get("c")?.status, "ready");
+  assert.equal(cache.getSnapshot().has("a"), false);
+  cache.warm();
+  assert.deepEqual(requests.slice(-2).map(request => request.id), ["b", "a"]);
+  cache.clear();
 });
 
 test("a decode that returns after revocation cannot restore a private image", async () => {
