@@ -297,3 +297,28 @@ test("catalog search matches names, accents, casing and all terms without privat
  assert.deepEqual(searchClubCatalog(clubs,"  "),clubs);
  assert.deepEqual(Object.keys(searchClubCatalog(clubs,"velo")[0]),["id","name"]);
 });
+
+test("a calendar access denial clears the club and discards an older verification", async () => {
+  let calls = 0;
+  const pending = deferred<{ userId: string; snapshot: string }>();
+  const { guard } = guardFor(async () => {
+    calls += 1;
+    if (calls === 2) return pending.promise;
+    return { userId: "actor", snapshot: calls === 1 ? "old" : "new membership" };
+  });
+  await guard.verify();
+  const verifying = guard.verify(true);
+  guard.deny();
+  assert.equal(guard.getSnapshot().status, "access");
+  assert.equal(guard.getSnapshot().data, null);
+  pending.resolve({ userId: "actor", snapshot: "late private content" });
+  await verifying;
+  assert.equal(guard.getSnapshot().status, "access");
+  assert.equal(guard.getSnapshot().data, null);
+  await guard.verify();
+  assert.equal(guard.getSnapshot().data, "new membership");
+  guard.revoke();
+  guard.deny();
+  assert.equal(guard.getSnapshot().status, "auth");
+  guard.stop();
+});

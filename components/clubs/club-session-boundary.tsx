@@ -9,7 +9,7 @@ import {StableAccessRegion} from "./stable-access-region";
 import {ClubHeaderImagesScope,useClubHeaderImages} from "./club-private-images";
 import {AccessContinuity,useAccessContinuity} from "./access-continuity";
 import {VisitBoundary} from "./visits/visitor";
-import { useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { flushSync } from "react-dom";
 
 import { CLUB_AUTH_EVENT, clubAuthPhase } from "@/lib/clubs/auth-events";
@@ -25,8 +25,8 @@ import { ClubCreateRide } from "./club-create-ride";
 import { ClubPageContent } from "./club-page-content";
 import { ClubAccessDenied, ClubReadFailure } from "./club-ui";
 
-export function ClubSessionBoundary({ userId, clubId, locale, selected = "details", rideId, created, directory = "mine", allowVisitor = false }: {
-  userId: string; clubId?: string; locale: Locale; selected?: "details" | "members" | "rides" | "newRide"; rideId?: string; created?: string; directory?: "mine" | "all"; allowVisitor?: boolean;
+export function ClubSessionBoundary({ userId, clubId, locale, selected = "details", rideId, created, calendarDay, directory = "mine", allowVisitor = false }: {
+  userId: string; clubId?: string; locale: Locale; selected?: "details" | "members" | "rides" | "newRide"; rideId?: string; created?: string; calendarDay?: string; directory?: "mine" | "all"; allowVisitor?: boolean;
 }) {
   const catalogStore=useContext(BatchCatalogContext);
   const store = useMemo(() => {
@@ -185,13 +185,21 @@ export function ClubSessionBoundary({ userId, clubId, locale, selected = "detail
       window.removeEventListener("pageshow", restored);
     };
   }, [store, userId, bindContinuity, images]);
+  const calendarAccessLost = useCallback((auth: boolean) => {
+    if (auth) {
+      flushSync(() => store.revoke());
+      window.location.reload();
+    } else {
+      flushSync(() => store.deny());
+    }
+  }, [store]);
   const retryHref = `/${locale}/app/clubs${clubId === undefined ? "" : `/${encodeURIComponent(clubId)}${selected === "members" ? "/members" : selected === "rides" || selected === "newRide" ? "/rides" : ""}`}`;
   const ready=state.status === "ready" && state.data;
   if (allowVisitor && clubId && state.status === "access") return <VisitBoundary userId={userId} clubId={clubId} locale={locale} />;
   return <ClubHeaderImagesScope clubId={clubId} store={images} authorized={!!ready&&!continuity.concealed}><AccessContinuity {...continuity} locale={locale}><div data-club-access={state.status} data-club-data={state.data === null ? "empty" : "present"}>
     <StableAccessRegion denied={state.status==='access'||state.status==='auth'} ready={!!ready} fallback={state.status === "access" ? <ClubAccessDenied locale={locale} /> :
       state.status === "error" ? state.error==='quota'?<div role="alert"><p>{visitText(locale,'quota')}</p><button className="bike-app-button bike-app-button-secondary" onClick={()=>void store.verify()}>{t('common.retry')}</button></div>:<ClubReadFailure locale={locale} kind={state.error ?? "network"} retryHref={retryHref} onRetry={() => void store.verify()} /> :
-      <div className="bike-app-club-gate" role="status"><p>{t("clubs.loading")}</p></div>}>{ready?state.data!.view === "rides" ? <ClubRides club={state.data!.club} data={state.data!.rides} locale={locale} userId={userId} created={created} creation={selected==="newRide"} operation={operation} act={rideAction}/> : <ClubPageContent data={state.data as Exclude<ClubPageData,{view:"rides"}>} locale={locale} selected={selected==="members"?"members":"details"} userId={userId} workflow={workflow} directory={directory} />:null}</StableAccessRegion>
-    {selected === "newRide" && clubId && state.status!=="access" && state.status!=="auth" ? <ClubCreateRide userId={userId} clubId={clubId} locale={locale} authorized={!!ready} data={state.data?.view==="rides"?state.data.rides:null}/>:null}
+      <div className="bike-app-club-gate" role="status"><p>{t("clubs.loading")}</p></div>}>{ready?state.data!.view === "rides" ? <ClubRides club={state.data!.club} data={state.data!.rides} locale={locale} userId={userId} created={created} creation={selected==="newRide"} operation={operation} act={rideAction} onAccessLost={calendarAccessLost} calendarDay={calendarDay}/> : <ClubPageContent data={state.data as Exclude<ClubPageData,{view:"rides"}>} locale={locale} selected={selected==="members"?"members":"details"} userId={userId} workflow={workflow} directory={directory} />:null}</StableAccessRegion>
+    {selected === "newRide" && clubId && state.status!=="access" && state.status!=="auth" ? <ClubCreateRide userId={userId} clubId={clubId} locale={locale} authorized={!!ready} calendarDay={calendarDay} data={state.data?.view==="rides"?state.data.rides:null}/>:null}
   </div></AccessContinuity></ClubHeaderImagesScope>;
 }

@@ -6,7 +6,7 @@ import { clubRideHref } from "@/lib/clubs/ride-contract";
 import { clubRideText } from "@/lib/clubs/ride-i18n";
 import type { Locale } from "@/lib/locales";
 import type { ClubRideData } from "@/lib/clubs/ride-api";
-export function ClubCreateRide({userId,clubId,locale,authorized,data}: {userId:string;clubId:string;locale:Locale;authorized:boolean;data:ClubRideData|null}) {
+export function ClubCreateRide({userId,clubId,locale,authorized,data,calendarDay}: {userId:string;clubId:string;locale:Locale;authorized:boolean;data:ClubRideData|null;calendarDay?:string}) {
   const [id]=useState(()=>crypto.randomUUID());
   const intent=useRef<FormData|null>(null), busy=useRef(false), active=useRef(true), permission=useRef(authorized);
   useEffect(()=>{permission.current=authorized;},[authorized]);
@@ -27,7 +27,7 @@ export function ClubCreateRide({userId,clubId,locale,authorized,data}: {userId:s
         if(response.status===503 || !["invalid","access","rideUnavailable"].includes(result.error)) throw Error("uncertain");
         intent.current=null;setLocked(false);setMessage("error");
       } else if(result.ok && result.rideId===id && result.clubId===clubId) {
-        window.location.assign(`${clubRideHref(locale,clubId,id)}&created=${result.routeFailed?"routeFailed":"created"}`);
+        window.location.assign(`${clubRideHref(locale,clubId,id)}${calendarDay ? "&date=" + encodeURIComponent(calendarDay) : ""}&created=${result.routeFailed?"routeFailed":"created"}`);
       } else throw Error("uncertain");
     } catch { if(active.current) setMessage("uncertain"); }
     finally {clearTimeout(timer);busy.current=false;}
@@ -35,6 +35,6 @@ export function ClubCreateRide({userId,clubId,locale,authorized,data}: {userId:s
   }
   return <>
     {authorized ? <><h2>{clubRideText(locale,"create")}</h2><p className="bike-app-muted">{clubRideText(locale,"private")}</p>{message ? <p role="alert">{clubRideText(locale,message)}</p>:null}</>:null}
-    <CreateRideForm createRequestId={id} locale={locale} hotspots={data?.hotspots??[]} initialType="EVENT" inviteableRiders={[]} inviteLoadFailed={false} returnTo={`${clubRideHref(locale,clubId)}/new`} unitSystem={data?.units??"metric"} clubMode submitLabel={clubRideText(locale,locked?"retry":"create")} suspended={!authorized} locked={locked} submitAction={submit}/>
+    <CreateRideForm createRequestId={id} locale={locale} hotspots={data?.hotspots??[]} initialType="EVENT" initialDate={calendarDay} inviteableRiders={[]} inviteLoadFailed={false} returnTo={`${clubRideHref(locale,clubId)}/new`} unitSystem={data?.units??"metric"} clubMode submitLabel={clubRideText(locale,locked?"retry":"create")} suspended={!authorized} locked={locked} submitAction={submit}/>
   </>;
 }

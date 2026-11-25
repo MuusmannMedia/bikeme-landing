@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { AppEmpty, AppPanel } from "../app-ui";
-import { RideCard } from "../ride-card";
+import { AppPanel } from "../app-ui";
+import { ClubCalendar } from "./club-calendar";
 import { RideDetailContent } from "../ride-detail-content";
 import { ClubHeader } from "./club-ui";
 import type { Club } from "@/lib/clubs/types";
@@ -12,7 +12,7 @@ import { clubRideAvailable, clubRideHref, type RideInviteResult } from "@/lib/cl
 import { clubRideText } from "@/lib/clubs/ride-i18n";
 export type ClubRideIntent={actorId:string;clubId:string;rideId:string;action:string;ids?:string[];accept?:boolean};
 export type ClubRideActionState={busy:boolean;intent:ClubRideIntent|null;message:string|null;results:RideInviteResult[]};
-export function ClubRides({club,data,locale,userId,creation,created,operation,act}: {club:Club;data:ClubRideData;locale:Locale;userId:string;creation:boolean;created?:string;operation:ClubRideActionState;act:(input:ClubRideIntent)=>Promise<void>}) {
+export function ClubRides({club,data,locale,userId,creation,created,operation,act,onAccessLost,calendarDay}: {club:Club;data:ClubRideData;locale:Locale;userId:string;creation:boolean;created?:string;operation:ClubRideActionState;act:(input:ClubRideIntent)=>Promise<void>;onAccessLost:(auth:boolean)=>void;calendarDay?:string}) {
   const t=getAppDictionary(locale), text=(key:Parameters<typeof clubRideText>[1])=>clubRideText(locale,key);
   const ride=data.selected,base=clubRideHref(locale,club.id);
   const [selection,setSelection]=useState<string[]>([]), [clock,setClock]=useState(()=>Date.now());
@@ -31,7 +31,7 @@ export function ClubRides({club,data,locale,userId,creation,created,operation,ac
     {ride ? <>
       <p className="bike-app-actions"><span className="bike-app-chip" data-tone="purple">{club.name}</span><span className="bike-app-chip">{text(status)}</span></p>
       {!available?<p role="status">{text("unavailable")}</p>:null}
-      <RideDetailContent ride={ride} viewer={data.viewer} locale={locale} clubMode backHref={base} actions={available?<>
+      <RideDetailContent ride={ride} viewer={data.viewer} locale={locale} clubMode backHref={calendarDay ? base+"?date="+encodeURIComponent(calendarDay) : base} actions={available?<>
         {ride.hostId===userId?<button ref={trigger} className="bike-app-button bike-app-button-danger" disabled={blocked} onClick={()=>dialog.current?.showModal()}>{t("rides.cancelRide")}</button>:<>
           {ownInvite&&!ownInvite.acceptedAt&&!ownInvite.declinedAt?<><p>{text("invitation")}</p><button className="bike-app-button" disabled={blocked} onClick={()=>void send("respond",{accept:true})}>{text("accept")}</button><button className="bike-app-button bike-app-button-secondary" disabled={blocked} onClick={()=>void send("respond",{accept:false})}>{text("decline")}</button></>:<button className="bike-app-button" disabled={blocked} onClick={()=>void send(ride.joined?"leave":"join")}>{t(ride.joined?"common.leave":"common.join")}</button>}
         </>}
@@ -45,8 +45,8 @@ export function ClubRides({club,data,locale,userId,creation,created,operation,ac
       })}</ul><button className="bike-app-button bike-app-section-gap" disabled={!selection.length} onClick={()=>void send("invite",{ids:selection})}>{text("send")}</button></fieldset></AppPanel>:null}
     </>:<>
       {data.selectedUnavailable?<p role="status">{text("unavailable")}</p>:null}
-      <div className="bike-app-actions"><p className="bike-app-muted">{text("intro")}</p><a className="bike-app-button" href={`${base}/new`}>{text("create")}</a></div>
-      {data.rides.length?<div className="bike-app-grid bike-app-section-gap" data-columns="2">{data.rides.map(r=><RideCard key={r.id} ride={r} invited={data.invitedIds?.includes(r.id) ?? false} locale={locale} units={data.units} t={t}/>)}</div>:<AppPanel className="bike-app-section-gap"><AppEmpty>{text("empty")}</AppEmpty></AppPanel>}
+      <ClubCalendar clubId={club.id} userId={userId} locale={locale} miles={data.units==="imperial"} onAccessLost={onAccessLost}
+        initialDay={calendarDay} />
     </>}
     </>}
   </>;

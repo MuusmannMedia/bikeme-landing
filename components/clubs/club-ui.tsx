@@ -1,3 +1,4 @@
+import { calendarText } from "@/lib/clubs/calendar-i18n";
 import {ClubNavigation} from "./club-navigation";
 import Link from "next/link";
 import {ClubPrivateImages} from "./club-private-images";
@@ -35,8 +36,9 @@ export function ClubHeader({ club, locale, selected }: { club: Club; locale: Loc
   const t = getAppDictionary(locale);
   const base = `/${locale}/app/clubs/${club.id}`;
   const canEdit = club.canEditProfile && (club.role === "owner" || club.role === "admin");
-  return <section className="bike-app-club-masthead" data-compact={false}>
-    <ClubPrivateImages header clubId={club.id} locale={locale} shape={club.imageShape??"cover"} revision={club.profileRevision}/>
+  const images = <ClubPrivateImages header clubId={club.id} locale={locale} shape={club.imageShape??"cover"} revision={club.profileRevision}/>;
+  return <section className="bike-app-club-masthead" data-compact={selected === "rides"} data-calendar={selected === "rides"}>
+    {selected === "rides" ? <div className="bike-app-club-calendar-cover">{images}</div> : images}
     <AppPageHeader
       className="bike-app-club-header"
       eyebrow={t("clubs.membersOnly")}
@@ -51,7 +53,7 @@ export function ClubHeader({ club, locale, selected }: { club: Club; locale: Loc
       {t("clubs.description")} <span aria-hidden="true">›</span>
     </Link>
     <ClubNavigation label={t("clubs.pages")} selected={selected} links={[
-      {key:"rides",href:`${base}/rides`,label:t("clubs.tabs.rides")},
+      {key:"rides",href:`${base}/rides`,label:calendarText(locale).title},
       {key:"posts",href:`${base}/posts`,label:contentText(locale,"title")},
       {key:"chat",href:`${base}/chat`,label:t("clubs.tabs.chat")},
       {key:"members",href:`${base}/members`,label:t("clubs.members")},

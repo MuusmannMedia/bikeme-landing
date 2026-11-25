@@ -27,6 +27,11 @@ export function createClubPageGuard<T>(options: {
     getServerSnapshot: () => empty,
     pause,
     revoke,
+    deny() {
+      if (stopped) return;
+      invalidate();
+      update({ status: "access", data: null, error: null });
+    },
     start() { stopped = false; pause(); },
     async verify(retain = false) {
       if (stopped) return;

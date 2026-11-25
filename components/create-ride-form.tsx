@@ -1,5 +1,7 @@
 "use client";
 
+import { calendarDate as localCalendarDateAsKey, localCalendarDate } from "@/lib/clubs/calendar";
+
 import { useCallback, useId, useMemo, useRef, useState, type FormEvent } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 
@@ -92,6 +94,7 @@ export function CreateRideForm({
   hotspots,
   initialHotspotId,
   initialType,
+  initialDate,
   initialDiscipline = "ROAD",
   initialDistanceKm,
   inviteableRiders,
@@ -106,6 +109,7 @@ export function CreateRideForm({
   hotspots: CreateRideHotspot[];
   initialHotspotId?: string;
   initialType: RideCreateType;
+  initialDate?: string;
   initialDiscipline?: "ROAD" | "GRAVEL" | "MTB";
   initialDistanceKm?: number | null;
   inviteableRiders: CreateRideInvitee[];
@@ -151,13 +155,15 @@ export function CreateRideForm({
   const titleSuggestionsId = useId();
   const now = useMemo(() => new Date(), []);
   const eventStart = useMemo(() => {
+    const prefilled = initialDate && localCalendarDate(initialDate, "09:00");
     const date = new Date(now);
+    if (prefilled && initialDate !== localCalendarDateAsKey(now)) return prefilled.toISOString();
     date.setSeconds(0, 0);
     const nextMinute = Math.ceil((date.getMinutes() + 1) / 10) * 10;
     if (nextMinute >= 60) date.setHours(date.getHours() + 1, 0, 0, 0);
     else date.setMinutes(nextMinute, 0, 0);
     return date.toISOString();
-  }, [now]);
+  }, [initialDate, now]);
   const [eventStartValue,setEventStartValue]=useState(eventStart);
   const [pingClockTime, setPingClockTime] = useState(() => getNextRoundedTenMinuteTimeValue(now));
   const titleSuggestions = useMemo(() => getRideTitleSuggestions(locale), [locale]);
