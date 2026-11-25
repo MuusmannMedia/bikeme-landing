@@ -15,5 +15,9 @@ export default async function ClubLayout({ children, params }: {
   const session = await readClubSession();
   if (!session) return children;
   const { userId } = session;
-  return <ClubHeaderImageCache key={userId + clubId} actor={userId} clubId={clubId}>{children}</ClubHeaderImageCache>;
+  return (
+    <ClubHeaderImageCache key={userId + clubId} actor={userId} clubId={clubId}>
+      <div className="bike-app-club-page">{children}</div>
+    </ClubHeaderImageCache>
+  );
 }
