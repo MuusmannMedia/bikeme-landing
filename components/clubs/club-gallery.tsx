@@ -542,7 +542,7 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
         const caption = galleryCaption(upload.captions[index]);
         const normalized = await normalizeImageForBrowser(file, "cover", actionController.current!.signal, {
           maxBytes: galleryLimits.browserInput,
-          maxPixels: galleryLimits.pixels,
+          maxSourcePixels: galleryLimits.browserSourcePixels,
           maxEdge: galleryLimits.browserEdge,
         }).catch(error => {
           if (error instanceof GalleryError) throw error;

@@ -11,6 +11,7 @@ export const galleryLimits = {
   input: 3_500_000,
   request: 4_000_000,
   browserInput: 400_000,
+  browserSourcePixels: 64_000_000,
   browserEdge: 1600,
   pixels: 24_000_000,
 } as const;

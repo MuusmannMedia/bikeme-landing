@@ -5,7 +5,7 @@ import sharp from "sharp";
 
 import { GalleryError, galleryCaption, galleryLimits, galleryViewSize, parseGalleryViewSize } from "../lib/clubs/gallery-contract";
 import { fitGalleryPhotoForView, normalizeGalleryPhoto } from "../lib/clubs/gallery-normalize";
-import { requireCompleteStaticImage } from "../lib/clubs/image-browser";
+import { normalizeImageForBrowser, readGalleryImageHeader, requireCompleteStaticImage } from "../lib/clubs/image-browser";
 import { galleryText } from "../lib/clubs/gallery-i18n";
 import { createGalleryPhotoCache } from "../lib/clubs/gallery-photo-cache";
 import { projectReport } from "../lib/clubs/content-contract";
@@ -83,7 +83,36 @@ test("the browser rejects truncated input and animated PNG before converting it"
   assert.throws(() => requireCompleteStaticImage(jpeg.subarray(0, -2)));
   assert.throws(() => requireCompleteStaticImage(png.subarray(0, -12)));
   const animationControl = Buffer.from("000000086163544c000000020000000000000000", "hex");
-  assert.throws(() => requireCompleteStaticImage(Buffer.concat([png.subarray(0, 33), animationControl, png.subarray(33)])));
+  const animation = Buffer.concat([png.subarray(0, 33), animationControl, png.subarray(33)]);
+  assert.throws(() => requireCompleteStaticImage(animation));
+  const signal = new AbortController().signal;
+  for (const invalid of [jpeg.subarray(0, -2), png.subarray(0, -12), animation]) {
+    await assert.rejects(readGalleryImageHeader(new Blob([new Uint8Array(invalid)]), signal));
+  }
+});
+
+test("gallery inspects a 48 megapixel original in slices before browser decoding", async () => {
+  const source = sharp({ create: { width: 8000, height: 6000, channels: 3, background: "#26356c" } });
+  const jpeg = await source.clone().jpeg().toBuffer();
+  const png = await source.png().toBuffer();
+  const signal = new AbortController().signal;
+  for (const [bytes, isJpeg] of [[jpeg, true], [png, false]] as const) {
+    const file = new Blob([new Uint8Array(bytes)]);
+    Object.defineProperty(file, "arrayBuffer", { value: async () => assert.fail("read the whole original") });
+    assert.deepEqual(await readGalleryImageHeader(file, signal), { width: 8000, height: 6000, jpeg: isJpeg });
+  }
+
+  const oversized = Buffer.from(jpeg);
+  const marker = oversized.indexOf(Buffer.from([0xff, 0xc0]));
+  assert(marker >= 0);
+  oversized.writeUInt16BE(8001, marker + 5);
+  await assert.rejects(normalizeImageForBrowser(new Blob([new Uint8Array(oversized)]), "cover", signal, {
+    maxBytes: galleryLimits.browserInput,
+    maxSourcePixels: galleryLimits.browserSourcePixels,
+    maxEdge: galleryLimits.browserEdge,
+  }), { message: "image" });
+  const aborted = AbortSignal.abort();
+  await assert.rejects(readGalleryImageHeader(new Blob([new Uint8Array(jpeg)]), aborted), { name: "AbortError" });
 });
 
 test("captions and the gallery label use the existing language structure", () => {

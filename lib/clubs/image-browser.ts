@@ -1,10 +1,13 @@
 import {ClubError} from './membership-types';
 import {GalleryError} from './gallery-contract';
 import {CLUB_IMAGE_SOURCE_LIMIT,CLUB_IMAGE_LIMIT,type ImageSlot} from './image-contract';
+const pngSignature = [137, 80, 78, 71, 13, 10, 26, 10];
+const jpegSizeMarker = (marker: number) =>
+ [192, 193, 194, 195, 197, 198, 199, 201, 202, 203, 205, 206, 207].includes(marker);
 export function imageSourceDimensions(bytes:Uint8Array){
  const d=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
- if([137,80,78,71,13,10,26,10].every((v,i)=>bytes[i]===v)&&bytes.length>=24)return{width:d.getUint32(16),height:d.getUint32(20)};
- if(bytes[0]===255&&bytes[1]===216){let offset=2;while(offset+4<=bytes.length){if(bytes[offset]!==255)throw new ClubError('image');while(bytes[offset]===255)offset++;if(offset>=bytes.length)throw new ClubError('image');const marker=bytes[offset++];if(marker===217||marker===218)break;if(marker===216||marker===1||(marker>=208&&marker<=215))continue;if(offset+2>bytes.length)throw new ClubError('image');const length=d.getUint16(offset);if(length<2||offset+length>bytes.length)throw new ClubError('image');if([192,193,194,195,197,198,199,201,202,203,205,206,207].includes(marker)&&length>=7)return{height:d.getUint16(offset+3),width:d.getUint16(offset+5)};offset+=length;}}
+ if(pngSignature.every((v,i)=>bytes[i]===v)&&bytes.length>=24)return{width:d.getUint32(16),height:d.getUint32(20)};
+ if(bytes[0]===255&&bytes[1]===216){let offset=2;while(offset+4<=bytes.length){if(bytes[offset]!==255)throw new ClubError('image');while(bytes[offset]===255)offset++;if(offset>=bytes.length)throw new ClubError('image');const marker=bytes[offset++];if(marker===217||marker===218)break;if(marker===216||marker===1||(marker>=208&&marker<=215))continue;if(offset+2>bytes.length)throw new ClubError('image');const length=d.getUint16(offset);if(length<2||offset+length>bytes.length)throw new ClubError('image');if(jpegSizeMarker(marker)&&length>=7)return{height:d.getUint16(offset+3),width:d.getUint16(offset+5)};offset+=length;}}
  throw new ClubError('image');
 }
 // Check the source before a browser decoder can repair a truncated file
@@ -26,25 +29,74 @@ export function requireCompleteStaticImage(bytes: Uint8Array) {
  throw new ClubError("image");
 }
 
+export async function readGalleryImageHeader(file: Blob, signal: AbortSignal) {
+ // Walk container offsets without first copying a potentially large original.
+ async function read(offset: number, bytes: number) {
+  signal.throwIfAborted();
+  const data = new DataView(await file.slice(offset, offset + bytes).arrayBuffer());
+  signal.throwIfAborted();
+  if (data.byteLength !== bytes) throw new ClubError('image');
+  return data;
+ }
+ const prefix = await read(0, 8);
+ const sectionLimit = 65_536;
+ if (prefix.getUint16(0) === 0xffd8) {
+  const end = await read(file.size - 2, 2);
+  if (end.getUint16(0) !== 0xffd9) throw new ClubError('image');
+  let offset = 2;
+  for (let count = 0; count < sectionLimit && offset + 4 <= file.size; count++) {
+   const tag = await read(offset, 4);
+   if (tag.getUint8(0) !== 255) break;
+   const marker = tag.getUint8(1);
+   if (marker === 217 || marker === 218) break;
+   if (marker === 255) { offset++; continue; }
+   if (marker === 216 || marker === 1 || (marker >= 208 && marker <= 215)) {
+    offset += 2;
+    continue;
+   }
+   const length = tag.getUint16(2);
+   if (length < 2 || offset + 2 + length > file.size) break;
+   if (jpegSizeMarker(marker) && length >= 7) {
+    const size = await read(offset + 5, 4);
+    return { width: size.getUint16(2), height: size.getUint16(0), jpeg: true };
+   }
+   offset += 2 + length;
+  }
+ } else if (pngSignature.every((value, index) => prefix.getUint8(index) === value)) {
+  const header = await read(8, 16);
+  if (header.getUint32(0) !== 13 || header.getUint32(4) !== 0x49484452) throw new ClubError('image'); // IHDR
+  let offset = 8;
+  for (let count = 0; count < sectionLimit && offset + 12 <= file.size; count++) {
+   const tag = await read(offset, 8);
+   const length = tag.getUint32(0);
+   const type = tag.getUint32(4);
+   offset += 12 + length;
+   if (offset > file.size || type === 0x6163544c) break; // acTL
+   if (type === 0x49454e44 && length === 0 && offset === file.size) {
+    return { width: header.getUint32(8), height: header.getUint32(12), jpeg: false };
+   }
+  }
+ }
+ throw new ClubError('image');
+}
+
 export async function normalizeImageForBrowser(
  file: Blob, slot: ImageSlot, signal: AbortSignal,
- options?: { maxBytes: number; maxPixels: number; maxEdge: number },
+ options?: { maxBytes: number; maxSourcePixels: number; maxEdge: number },
 ) {
- if (!file.size || file.size > CLUB_IMAGE_SOURCE_LIMIT) throw new ClubError('image');
- const bytes = new Uint8Array(await file.arrayBuffer());
- const size = imageSourceDimensions(bytes);
- if (!size.width || !size.height || size.width * size.height > (options?.maxPixels ?? 50_000_000)) {
+ if (!file.size || (!options && file.size > CLUB_IMAGE_SOURCE_LIMIT)) throw new ClubError('image');
+ const size = options
+  ? await readGalleryImageHeader(file, signal)
+  : imageSourceDimensions(new Uint8Array(await file.arrayBuffer()));
+ if (!size.width || !size.height || size.width * size.height > (options?.maxSourcePixels ?? 50_000_000)) {
   throw new ClubError('image');
  }
  signal.throwIfAborted();
 
  // A small JPEG can travel as-is. Sharp still validates, orients and strips it.
- if (options) {
-  requireCompleteStaticImage(bytes);
-  if (bytes[0] === 255 && bytes[1] === 216 && file.size <= options.maxBytes &&
-      Math.max(size.width, size.height) <= options.maxEdge) {
-   return file.type === 'image/jpeg' ? file : file.slice(0, file.size, 'image/jpeg');
-  }
+ if (options && 'jpeg' in size && size.jpeg && file.size <= options.maxBytes &&
+     Math.max(size.width, size.height) <= options.maxEdge) {
+  return file.type === 'image/jpeg' ? file : file.slice(0, file.size, 'image/jpeg');
  }
 
  let bitmap: ImageBitmap;
