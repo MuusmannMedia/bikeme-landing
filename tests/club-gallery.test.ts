@@ -96,10 +96,10 @@ test("gallery inspects a 48 megapixel original in slices before browser decoding
   const jpeg = await source.clone().jpeg().toBuffer();
   const png = await source.png().toBuffer();
   const signal = new AbortController().signal;
-  for (const [bytes, isJpeg] of [[jpeg, true], [png, false]] as const) {
+  for (const bytes of [jpeg, png]) {
     const file = new Blob([new Uint8Array(bytes)]);
     Object.defineProperty(file, "arrayBuffer", { value: async () => assert.fail("read the whole original") });
-    assert.deepEqual(await readGalleryImageHeader(file, signal), { width: 8000, height: 6000, jpeg: isJpeg });
+    assert.deepEqual(await readGalleryImageHeader(file, signal), { width: 8000, height: 6000 });
   }
 
   const oversized = Buffer.from(jpeg);

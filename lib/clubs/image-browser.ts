@@ -58,7 +58,7 @@ export async function readGalleryImageHeader(file: Blob, signal: AbortSignal) {
    if (length < 2 || offset + 2 + length > file.size) break;
    if (jpegSizeMarker(marker) && length >= 7) {
     const size = await read(offset + 5, 4);
-    return { width: size.getUint16(2), height: size.getUint16(0), jpeg: true };
+    return { width: size.getUint16(2), height: size.getUint16(0) };
    }
    offset += 2 + length;
   }
@@ -73,7 +73,7 @@ export async function readGalleryImageHeader(file: Blob, signal: AbortSignal) {
    offset += 12 + length;
    if (offset > file.size || type === 0x6163544c) break; // acTL
    if (type === 0x49454e44 && length === 0 && offset === file.size) {
-    return { width: header.getUint32(8), height: header.getUint32(12), jpeg: false };
+    return { width: header.getUint32(8), height: header.getUint32(12) };
    }
   }
  }
@@ -92,12 +92,6 @@ export async function normalizeImageForBrowser(
   throw new ClubError('image');
  }
  signal.throwIfAborted();
-
- // A small JPEG can travel as-is. Sharp still validates, orients and strips it.
- if (options && 'jpeg' in size && size.jpeg && file.size <= options.maxBytes &&
-     Math.max(size.width, size.height) <= options.maxEdge) {
-  return file.type === 'image/jpeg' ? file : file.slice(0, file.size, 'image/jpeg');
- }
 
  let bitmap: ImageBitmap;
  try { bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
@@ -129,11 +123,13 @@ export async function normalizeImageForBrowser(
    return blob;
   };
 
+  signal.throwIfAborted();
   draw(edge);
   let blob = await encode(options ? .82 : .85);
   if (options && blob.size > limit) {
    blob = await encode(.72);
-   for (const scale of [.8, .64]) {
+   // JPEG encoders differ across browsers, especially on very detailed images.
+   for (const scale of [.8, .64, .5, .4]) {
     if (blob.size <= limit) break;
     draw(Math.floor(edge * scale));
     blob = await encode(.76);
