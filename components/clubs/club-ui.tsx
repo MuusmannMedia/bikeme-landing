@@ -36,9 +36,8 @@ export function ClubHeader({ club, locale, selected }: { club: Club; locale: Loc
   const t = getAppDictionary(locale);
   const base = `/${locale}/app/clubs/${club.id}`;
   const canEdit = club.canEditProfile && (club.role === "owner" || club.role === "admin");
-  const images = <ClubPrivateImages header clubId={club.id} locale={locale} shape={club.imageShape??"cover"} revision={club.profileRevision}/>;
-  return <section className="bike-app-club-masthead" data-compact={selected === "rides"} data-calendar={selected === "rides"}>
-    {selected === "rides" ? <div className="bike-app-club-calendar-cover">{images}</div> : images}
+  return <section className="bike-app-club-masthead">
+    <ClubPrivateImages header clubId={club.id} locale={locale} shape={club.imageShape??"cover"} revision={club.profileRevision}/>
     <AppPageHeader
       className="bike-app-club-header"
       eyebrow={t("clubs.membersOnly")}
