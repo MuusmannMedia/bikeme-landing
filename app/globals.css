@@ -390,6 +390,7 @@ a {
 .bike-app-club-page .bike-app-panel:not(:is(.bike-app-panel, .bike-app-club-administration, dialog) *) {
   box-shadow: var(--app-active-edge), var(--app-panel-shadow);
 }
+.bike-app-club-page .bike-app-club-masthead:has(> .bike-app-club-nav),
 .bike-app-club-page .bike-app-club-administration,
 .bike-app-club-page .bike-app-content-stack > .bike-app-content-card:not(.bike-app-panel *) {
   box-shadow: var(--app-active-edge);
