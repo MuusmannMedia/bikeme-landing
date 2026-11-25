@@ -44,14 +44,14 @@ export function ClubHeader({ club, locale, selected }: { club: Club; locale: Loc
       title={club.name}
       intro={`${clubRoleLabel(locale, club.role)} · ${(club.memberCount === 1 ? t("clubs.memberCountOne") : t("clubs.memberCount").replace("{count}", new Intl.NumberFormat(locale).format(club.memberCount)))}`}
       action={<div className="bike-app-actions">
+        <Link prefetch={false} className="bike-app-button bike-app-button-secondary" href={base} aria-current={selected === "details" ? "page" : undefined}>
+          {t("clubs.description")}
+        </Link>
         {canEdit && <a className="bike-app-button" href={`${base}/edit`}>{profileText(locale, "editClub")}</a>}
         <Link prefetch={false} className="bike-app-button bike-app-button-secondary" href={`${base}/preview`}>{t("clubs.viewClub")}</Link>
         <a className="bike-app-button bike-app-button-secondary" href={`/${locale}/app/clubs/mine`}>{t("clubs.back")}</a>
       </div>}
     />
-    <Link prefetch={false} className="bike-app-club-about-link" href={base} aria-current={selected==="details"?"page":undefined}>
-      {t("clubs.description")} <span aria-hidden="true">›</span>
-    </Link>
     <ClubNavigation label={t("clubs.pages")} selected={selected} links={[
       {key:"rides",href:`${base}/rides`,label:calendarText(locale).title},
       {key:"posts",href:`${base}/posts`,label:contentText(locale,"title")},
