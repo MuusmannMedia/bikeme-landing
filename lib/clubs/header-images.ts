@@ -1,7 +1,6 @@
 import type { ClubProfile } from "./profile-contract";
-import type { ImageSlot } from "./image-contract";
 
-type Images = { profile: ClubProfile; cover: string | null; logo: string | null };
+type Images = { profile: ClubProfile; logo: string | null };
 type State = { status: "waiting" | "ready" | "error"; images: Images | null };
 
 export function createClubHeaderImages(options: {
@@ -38,7 +37,6 @@ export function createClubHeaderImages(options: {
 
   function clear() {
     pause();
-    if (retained?.cover) revokeUrl(retained.cover);
     if (retained?.logo) revokeUrl(retained.logo);
     retained = null;
   }
@@ -74,22 +72,17 @@ export function createClubHeaderImages(options: {
       }
 
       const previous = retained;
-      const sameRevision = previous?.profile.profile_revision === profile.profile_revision;
-      function readSlot(slot: ImageSlot) {
-        const path = profile[`${slot}_path`];
-        if (!path) return null;
-        if (sameRevision && previous?.profile[`${slot}_path`] === path && previous[slot]) return previous[slot];
-        return options.download(path, options.actor, request.signal);
-      }
-      const [cover, logo] = await Promise.all([readSlot("cover"), readSlot("logo")]);
+      const path = profile.logo_path;
+      const sameLogo = previous?.profile.profile_revision === profile.profile_revision && previous.profile.logo_path === path;
+      const logo = sameLogo && previous.logo
+        ? previous.logo
+        : path ? await options.download(path, options.actor, request.signal) : null;
       if (!current()) return;
 
       const next = {
         profile,
-        cover: typeof cover === "string" ? cover : cover && createUrl(cover),
         logo: typeof logo === "string" ? logo : logo && createUrl(logo)
       };
-      if (previous?.cover && previous.cover !== next.cover) revokeUrl(previous.cover);
       if (previous?.logo && previous.logo !== next.logo) revokeUrl(previous.logo);
       retained = next;
       publish({ status: "ready", images: next });

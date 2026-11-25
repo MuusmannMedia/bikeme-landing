@@ -8,17 +8,20 @@ export function AppPageHeader({
   title,
   intro,
   action,
+  leading,
   className = ""
 }: {
   eyebrow?: string;
   title: string;
   intro: string;
   action?: React.ReactNode;
+  leading?: React.ReactNode;
   className?: string;
 }) {
   return (
     <header className={`bike-app-page-header ${className}`.trim()}>
-      <div>
+      {leading}
+      <div className={leading ? "bike-app-page-heading" : undefined}>
         {eyebrow ? <p className="bike-app-eyebrow">{eyebrow}</p> : null}
         <h1>{title}</h1>
         <p>{intro}</p>

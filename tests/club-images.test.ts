@@ -51,7 +51,7 @@ test('wide web logo slot starts left and moves right while retaining the native 
  assert.deepEqual(clubLogoSlot(bounds,initialClubFrame(true)),{viewport:bounds,left:0,right:0});
 });
 
-test('club header releases the view during a check and reuses both unchanged object URLs', async () => {
+test('club header downloads only the logo, hides it during checks and reuses the same revision', async () => {
   const downloads: string[] = [];
   const revoked: string[] = [];
   let current = profile, reads = 0, next = 0;
@@ -71,15 +71,19 @@ test('club header releases the view during a check and reuses both unchanged obj
   await images.verify();
   assert.equal(reads, 2);
   assert.deepEqual(images.getSnapshot().images, original);
-  assert.deepEqual(downloads, [profile.cover_path, profile.logo_path]);
+  assert.deepEqual(downloads, [profile.logo_path]);
 
-  current = { ...profile, cover_path: 'new/cover.jpg', profile_revision: 3 };
+  current = { ...profile, cover_path: 'new/cover.jpg', logo_path: 'new/logo.png', profile_revision: 3 };
   await images.verify();
   assert.equal(images.getSnapshot().images?.profile, current);
-  assert.deepEqual(downloads.slice(2), [current.cover_path, current.logo_path]);
-  assert.deepEqual(revoked, ['blob:test-1', 'blob:test-2']);
+  assert.deepEqual(downloads, [profile.logo_path, current.logo_path]);
+  assert.deepEqual(revoked, ['blob:test-1']);
+  current = { ...current, logo_path: null, profile_revision: 4 };
+  await images.verify();
+  assert.equal(images.getSnapshot().images?.logo, null);
+  assert.deepEqual(downloads, [profile.logo_path, 'new/logo.png']);
   images.revoke();
-  assert.deepEqual(revoked, ['blob:test-1', 'blob:test-2', 'blob:test-3', 'blob:test-4']);
+  assert.deepEqual(revoked, ['blob:test-1', 'blob:test-2']);
 });
 
 test('club header purges private bytes on membership denial or another account', async () => {
@@ -100,14 +104,14 @@ test('club header purges private bytes on membership denial or another account',
   denied = true;
   await images.verify();
   assert.equal(images.getSnapshot().images, null);
-  assert.deepEqual(released, ['blob:test-1', 'blob:test-2']);
+  assert.deepEqual(released, ['blob:test-1']);
 
   denied = false;
   await images.verify();
   anotherUser = true;
   await images.verify();
   assert.equal(images.getSnapshot().images, null);
-  assert.deepEqual(released, ['blob:test-1', 'blob:test-2', 'blob:test-3', 'blob:test-4']);
+  assert.deepEqual(released, ['blob:test-1', 'blob:test-2']);
 });
 
 test('club header ignores late image responses after revocation', async () => {
@@ -174,5 +178,5 @@ test('a failed image confirmation releases retained URLs', async () => {
   await images.verify();
   assert.equal(images.getSnapshot().status, 'error');
   assert.equal(images.getSnapshot().images, null);
-  assert.equal(revoked.length, 2);
+  assert.equal(revoked.length, 1);
 });

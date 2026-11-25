@@ -82,29 +82,28 @@ export function ClubHeaderImagesScope({clubId,store,authorized,children}:{
 
 type ImageProps = {clubId:string;locale:Locale;shape:ClubImageShape;revision?:number};
 
-export function ClubPrivateImages({header,...props}:ImageProps & {header?:boolean}){
- const scope=useContext(HeaderImages);
- return header && scope?.clubId===props.clubId
-  ? <RetainedHeaderImages {...props} store={scope.store} authorized={scope.authorized}/>
-  : <SessionImages {...props}/>;
+export function ClubPrivateImages(props: ImageProps) {
+ return <SessionImages {...props}/>;
 }
 
-function RetainedHeaderImages({locale,shape,revision,store,authorized}:ImageProps & {store:ClubHeaderImages;authorized:boolean}){
- const state=useSyncExternalStore(store.subscribe,store.getSnapshot,store.getServerSnapshot);
- const current=state.images?.profile.profile_revision;
- const stale=revision!==undefined && current!==undefined && current<revision;
- useLayoutEffect(()=>{
-  if(authorized)store.confirm(revision);
- },[authorized,revision,store]);
- if(!authorized || stale || !state.images)return <ImagePlaceholder shape={shape}>{authorized && state.status==='error'
-  ? <div className="bike-app-muted" role="status">{imageText(locale,'unavailable')} <button className="bike-app-button bike-app-button-secondary" onClick={()=>void store.verify()}>{imageText(locale,'retry')}</button></div>
-  : null}</ImagePlaceholder>;
- const {profile,cover,logo}=state.images;
- if(!cover && !logo)return null;
- return <div className="bike-app-club-image-header" data-club-images="ready">
-  {cover && <FramedImage url={cover} frame={profile.cover_frame as ClubImageFrame|null} slot="cover" label={imageText(locale,'cover')}/>}
-  {logo && <FramedImage url={logo} frame={profile.logo_frame as ClubImageFrame|null} slot="logo" label={imageText(locale,'logo')}/>}
- </div>;
+export function ClubHeaderLogo({ clubId, locale, revision }: Omit<ImageProps, 'shape'>) {
+ const scope = useContext(HeaderImages);
+ return scope?.authorized && scope.clubId === clubId
+  ? <RetainedHeaderLogo locale={locale} revision={revision} store={scope.store}/>
+  : null;
+}
+
+function RetainedHeaderLogo({ locale, revision, store }: Pick<ImageProps, 'locale' | 'revision'> & { store: ClubHeaderImages }) {
+ const state = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
+ useLayoutEffect(() => {
+  store.confirm(revision);
+ }, [revision, store]);
+ const images = state.images;
+ if (state.status === 'error') {
+  return <button type="button" className="bike-app-button bike-app-button-secondary" aria-label={`${imageText(locale, 'unavailable')} ${imageText(locale, 'retry')}`} onClick={() => void store.verify()}>{imageText(locale, 'retry')}</button>;
+ }
+ if (!images?.logo || (revision !== undefined && images.profile.profile_revision < revision)) return null;
+ return <FramedImage url={images.logo} frame={images.profile.logo_frame as ClubImageFrame | null} slot="logo" label={imageText(locale, 'logo')}/>;
 }
 
 function SessionImages({clubId,locale,shape,revision}:ImageProps){
