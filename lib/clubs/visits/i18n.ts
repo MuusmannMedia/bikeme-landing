@@ -9,6 +9,8 @@ const rows={
  back:['All clubs','Alle klubber','Alle Clubs','Todos los clubes','Tutti i club','Tous les clubs','Alle clubs'],
  privateClub:['Back to club','Tilbage til klubben','Zurück zum Club','Volver al club','Torna al club','Retour au club','Terug naar club'],
  preview:['Preview','Forhåndsvisning','Vorschau','Vista previa','Anteprima','Aperçu','Voorbeeld'],
+ memberPreview:['Private preview','Privat forhåndsvisning','Private Vorschau','Vista previa privada','Anteprima privata','Aperçu privé','Privévoorbeeld'],
+ memberPreviewHint:['Only club members can see this preview.','Denne forhåndsvisning er kun synlig for klubbens medlemmer.','Nur Clubmitglieder können diese Vorschau sehen.','Solo los miembros del club pueden ver esta vista previa.','Solo i membri del club possono vedere questa anteprima.','Seuls les membres du club peuvent voir cet aperçu.','Alleen clubleden kunnen dit voorbeeld zien.'],
  draft:['Draft — not published','Kladde — ikke offentliggjort','Entwurf — nicht veröffentlicht','Borrador — sin publicar','Bozza — non pubblicata','Brouillon — non publié','Concept — niet gepubliceerd'],
  published:['Published','Offentliggjort','Veröffentlicht','Publicado','Pubblicato','Publié','Gepubliceerd'],
  hidden:['Hidden','Skjult','Verborgen','Oculto','Nascosto','Masqué','Verborgen'],

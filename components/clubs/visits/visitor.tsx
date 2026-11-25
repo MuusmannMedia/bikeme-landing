@@ -7,12 +7,32 @@ import {AppPageHeader,AppPanel} from '@/components/app-ui';
 import {AccessContinuity} from '../access-continuity';
 import {StableAccessRegion} from '../stable-access-region';
 import {FramedBlob} from '../club-private-images';
+import {imageText} from '@/lib/clubs/image-i18n';
 import {visitText as text,visitMemberCount} from '@/lib/clubs/visits/i18n';
-import type {VisitProfile,VisitSnapshot,VisitCommand} from '@/lib/clubs/visits/contract';
+import type {VisitHeroProfile,VisitSnapshot,VisitCommand} from '@/lib/clubs/visits/contract';
 import type {Locale} from '@/lib/locales';
 import {useVisit} from './use-visit';
-export function VisitHero({profile,cover,logo,locale,children}:{profile:VisitProfile;cover:Blob|null;logo:Blob|null;locale:Locale;children?:React.ReactNode}){return <section className="bike-app-club-masthead bike-app-visit-hero"><div className="bike-app-club-image-header">{cover?<FramedBlob blob={cover} frame={profile.cover_frame} slot="cover" label={text(locale,'cover')}/>:null}{logo?<FramedBlob blob={logo} frame={profile.logo_frame} slot="logo" label={text(locale,'logo')}/>:null}</div><AppPageHeader className="bike-app-club-header" eyebrow={text(locale,'visible')} title={profile.name} intro={profile.member_count===null?'':visitMemberCount(locale,profile.member_count)}/>{children}</section>;}
-export function VisitBoundary({userId,clubId,locale,previewOnly=false}:{userId:string;clubId:string;locale:Locale;previewOnly?:boolean}){const{state:s,store,continuity}=useVisit(userId,clubId);const[body,setBody]=useState(''),[now,setNow]=useState(()=>Date.now());const t=(k:Parameters<typeof text>[1])=>text(locale,k),snapshot=s.data?.snapshot as VisitSnapshot|undefined;
+export function VisitHero({ profile, cover, logo, locale, privatePreview = false, children }: {
+ profile: VisitHeroProfile; cover: Blob | null; logo: Blob | null; locale: Locale; privatePreview?: boolean; children?: React.ReactNode;
+}) {
+ return <section className="bike-app-club-masthead bike-app-visit-hero">
+  {(cover || logo || !privatePreview) && <div className="bike-app-club-image-header">
+   {cover && <FramedBlob blob={cover} frame={profile.cover_frame} slot="cover" label={privatePreview ? imageText(locale, 'cover') : text(locale, 'cover')}/>}
+   {logo && <FramedBlob blob={logo} frame={profile.logo_frame} slot="logo" label={privatePreview ? imageText(locale, 'logo') : text(locale, 'logo')}/>}
+  </div>}
+  <AppPageHeader className="bike-app-club-header" eyebrow={text(locale, privatePreview ? 'memberPreview' : 'visible')}
+   title={profile.name} intro={profile.member_count === null ? '' : visitMemberCount(locale, profile.member_count)}/>
+  {children}
+ </section>;
+}
+export function VisitBoundary({ userId, clubId, locale, previewOnly = false, memberPreview }: {
+ userId: string; clubId: string; locale: Locale; previewOnly?: boolean; memberPreview?: { visitsEnabled: boolean };
+}) {
+ const { state: s, store, continuity } = useVisit(userId, clubId, false, memberPreview?.visitsEnabled);
+ const [body,setBody]=useState(''),[now,setNow]=useState(()=>Date.now());
+ const t=(k:Parameters<typeof text>[1])=>text(locale,k),snapshot=s.data?.snapshot as VisitSnapshot|undefined;
+ const privatePreview = s.data?.memberPreview;
+ const profile = snapshot?.profile ?? privatePreview;
  useEffect(()=>store.subscribe(()=>{const next=store.getSnapshot();if(next.status==='auth'||next.status==='access')setBody('');}),[store]);
  useEffect(()=>{const timer=setInterval(()=>setNow(Date.now()),30000);return()=>clearInterval(timer);},[]);
  async function run(input:Omit<VisitCommand,'actorId'|'clubId'|'key'>){const ok=await store.run({...input,actorId:userId,clubId,key:crypto.randomUUID()});if(ok&&input.op==='apply')setBody('');if(ok&&input.op==='inviteAccept')window.location.assign(`/${locale}/app/clubs/${clubId}`);}
@@ -21,7 +41,7 @@ export function VisitBoundary({userId,clubId,locale,previewOnly=false}:{userId:s
  {!previewOnly?<Link prefetch={false} className="bike-app-button bike-app-button-secondary bike-app-visit-back" href={`/${locale}/app/clubs/all`}>← {t('back')}</Link>:null}
  <StableAccessRegion ready={s.status==='ready'&&!!snapshot} denied={s.status==='access'||s.status==='auth'} fallback={<AppPanel><p role="status">{s.status==='error'?(s.error==='quota'?t('quota'):getAppDictionary(locale)('clubs.loadError')):t(s.status==='loading'?'loading':'unavailable')}</p><button className="bike-app-button bike-app-button-secondary" onClick={()=>void store.refresh(false)}>{t('reload')}</button></AppPanel>}>
  {snapshot?<>
- {snapshot.profile?<><VisitHero profile={snapshot.profile} cover={s.data!.cover} logo={s.data!.logo} locale={locale}/><AppPanel title={t('title')}><p className="bike-app-club-description">{snapshot.profile.description}</p><p className="bike-app-muted">{t('privateHint')}</p></AppPanel>
+ {profile?<><VisitHero profile={profile} cover={s.data!.cover} logo={s.data!.logo} locale={locale} privatePreview={!!privatePreview}/><AppPanel title={t('title')}><p className="bike-app-club-description">{profile.description}</p><p className="bike-app-muted">{t(privatePreview ? 'memberPreviewHint' : 'privateHint')}</p></AppPanel>
  <AppPanel title={t('rides')}><p className="bike-app-muted">{t('rideHint')}</p>{snapshot.rides.length?<div className="bike-app-visit-rides">{snapshot.rides.map(ride=><article className="bike-app-visit-ride" key={ride.id}><span className="bike-app-chip">{new Intl.DateTimeFormat(locale,{dateStyle:'medium',timeStyle:'short'}).format(new Date(ride.start_time))}</span><h3>{ride.title}</h3><p>{ride.description}</p><div className="bike-app-visit-facts"><span>{ride.area}</span><span>{getAppDictionary(locale)(({ROAD:'discipline.road',GRAVEL:'discipline.gravel',MTB:'discipline.mtb',CITY:'discipline.city'} as const)[ride.discipline as 'ROAD'|'GRAVEL'|'MTB'|'CITY']??'rides.discipline')}</span>{ride.distance_km!==null?<span>{new Intl.NumberFormat(locale).format(ride.distance_km)} km</span>:null}</div></article>)}</div>:<p>{t('noRides')}</p>}</AppPanel></>:<AppPanel title={t('title')}><p>{t('unavailable')}</p></AppPanel>}
  {!previewOnly&&(snapshot.profile||snapshot.applications.length>0||snapshot.invitation)?<AppPanel title={t('apply')}>
  {s.error?<p className="bike-app-visit-feedback" role="alert">{t(s.error==='auth'?'access':s.error)}</p>:null}{s.notice?<p role="status">{t('saved')}</p>:null}{s.pending&&!s.busy?<button className="bike-app-button" disabled={s.busy} onClick={()=>void store.retry()}>{t('retry')}</button>:null}

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { ClubAccessDenied } from "@/components/clubs/club-ui";
 import { VisitBoundary } from "@/components/clubs/visits/visitor";
 import { getAppDictionary } from "@/lib/app-i18n";
 import { clubPageContext } from "@/lib/clubs/server";
@@ -25,8 +24,6 @@ export default async function ClubPreviewPage({ params }: {
     <Link prefetch={false} className="bike-app-button bike-app-button-secondary bike-app-visit-back" href={clubHref}>
       <span aria-hidden="true">←</span> {t("clubs.backToClub")}
     </Link>
-    {visitsEnabled(process.env)
-      ? <VisitBoundary userId={userId} clubId={clubId} locale={locale} previewOnly />
-      : <ClubAccessDenied locale={locale} />}
+    <VisitBoundary userId={userId} clubId={clubId} locale={locale} previewOnly memberPreview={{ visitsEnabled: visitsEnabled(process.env) }} />
   </div>;
 }

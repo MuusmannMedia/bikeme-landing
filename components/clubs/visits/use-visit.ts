@@ -3,12 +3,20 @@ import {subscribeOwnSignals} from '@/lib/realtime/own-signals';
 import {useEffect,useMemo,useSyncExternalStore} from 'react';
 import {flushSync} from 'react-dom';
 import {createVisitStore} from '@/lib/clubs/visits/store';
-import {readVisit,sendVisit} from '@/lib/clubs/visits/client';
+import {readVisit,readVisitPreview,sendVisit} from '@/lib/clubs/visits/client';
 import {createClient} from '@/lib/supabase/client';
 import {CLUB_AUTH_EVENT,clubAuthPhase} from '@/lib/clubs/auth-events';
 import {useAccessContinuity} from '../access-continuity';
-export function useVisit(actor:string,clubId:string,manage=false,card=false){const continuity=useAccessContinuity(),bind=continuity.bind;
- const store=useMemo(()=>createVisitStore({actor,identityLost:()=>window.location.reload(),read:(signal,old)=>readVisit(clubId,actor,manage,signal,old,card),send:sendVisit}),[actor,clubId,manage,card]);
+export function useVisit(actor: string, clubId: string, manage = false, memberPreviewVisits?: boolean) {
+ const continuity = useAccessContinuity(), bind = continuity.bind;
+ const store = useMemo(() => createVisitStore({
+  actor,
+  identityLost: () => window.location.reload(),
+  read: (signal, old) => memberPreviewVisits === undefined
+   ? readVisit(clubId, actor, manage, signal, old)
+   : readVisitPreview(clubId, actor, signal, old, memberPreviewVisits),
+  send: sendVisit
+ }), [actor, clubId, manage, memberPreviewVisits]);
  const state=useSyncExternalStore(store.subscribe,store.getSnapshot,store.getServerSnapshot);
  useEffect(()=>{let live=true;store.start();const c=createClient();const refresh=bind(()=>{store.suspend();store.invalidate();},()=>store.refresh(true),()=>store.suspend());const resume=()=>refresh.resume(),visibility=()=>document.visibilityState==='hidden'?refresh.deactivate():resume(),page=(e:PageTransitionEvent)=>{if(e.persisted)resume();};
  const revoke=()=>flushSync(()=>store.revoke()),transition=(p:string|null)=>{if(p)revoke();},local=(e:Event)=>transition((e as CustomEvent<string>).detail),storage=(e:StorageEvent)=>{if(e.key===CLUB_AUTH_EVENT)transition(clubAuthPhase(e.newValue));};

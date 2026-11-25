@@ -3,6 +3,7 @@ import {ClubReadError,type Club} from '../types';
 import {ClubError} from '../membership-types';
 import type {ClubProfile} from '../profile-contract';
 export type VisitProfile={id:string;name:string;description:string;revision:number;applications_open:boolean;has_cover:boolean;has_logo:boolean;cover_frame:ClubImageFrame|null;logo_frame:ClubImageFrame|null;member_count:number|null};
+export type VisitHeroProfile = Pick<VisitProfile, 'name' | 'description' | 'cover_frame' | 'logo_frame' | 'member_count'>;
 export type VisitRide={id:string;title:string;description:string;area:string;start_time:string;discipline:string;distance_km:number|null;status:string;revision:number};
 export type RideSetting={ride_id:string;revision:number;published:boolean;title:string;body:string;area:string};
 export type ApplicationStatus='pending'|'accepted'|'rejected'|'cancelled'|'expired';

@@ -1,5 +1,10 @@
-import {VisitError,visitError,type VisitCommand,type VisitErrorKind,type ManageSnapshot,type VisitSnapshot} from './contract';
-export type VisitData={snapshot:VisitSnapshot|ManageSnapshot;cover:Blob|null;logo:Blob|null};
+import {VisitError,visitError,type VisitCommand,type VisitErrorKind,type ManageSnapshot,type VisitSnapshot,type VisitHeroProfile} from './contract';
+export type VisitData = {
+ snapshot: VisitSnapshot | ManageSnapshot;
+ cover: Blob | null;
+ logo: Blob | null;
+ memberPreview?: VisitHeroProfile & { revision: number };
+};
 export function createVisitStore(o:{actor:string;read:(signal:AbortSignal,old:VisitData|null)=>Promise<{userId:string;data:VisitData}>;send:(command:VisitCommand,signal:AbortSignal)=>Promise<{userId:string;ok:boolean;result:unknown}>;identityLost:()=>void}){
  const initial={status:'loading' as 'loading'|'ready'|'error'|'access'|'auth',data:null as VisitData|null,busy:false,error:null as VisitErrorKind|null,pending:null as VisitCommand|null,notice:false};
  let state={...initial},active=true,generation=0,identity=0,hidden=false,readAbort:AbortController|null=null,writeAbort:AbortController|null=null;
