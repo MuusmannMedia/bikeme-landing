@@ -8,13 +8,18 @@
   --ink-soft: #b4c1df;
   --muted: #95a3c5;
   --brand-blue: #25306d;
-  --brand-purple: #802782;
+  --brand-purple-hover: color-mix(in srgb, var(--brand-purple) 90%, white);
+  --brand-purple-light: color-mix(in srgb, var(--brand-purple) 55%, white);
+  --brand-purple-text: color-mix(in srgb, var(--brand-purple) 24%, white);
+  --brand-purple-border: color-mix(in srgb, var(--brand-purple) 58%, #27324b);
+  --brand-purple-surface: color-mix(in srgb, var(--brand-purple) 25%, var(--surface));
+  --brand-purple-raised: color-mix(in srgb, var(--brand-purple) 48%, var(--surface));
   --panel: rgba(10, 18, 38, 0.8);
   --panel-strong: rgba(11, 20, 43, 0.92);
   --border-soft: rgba(125, 143, 187, 0.28);
   --bike-me-page-background:
     radial-gradient(circle at 12% 0%, rgba(37, 48, 109, 0.55), transparent 38%),
-    radial-gradient(circle at 88% 15%, rgba(128, 39, 130, 0.32), transparent 36%),
+    radial-gradient(circle at 88% 15%, rgb(var(--brand-purple-rgb) / 0.32), transparent 36%),
     radial-gradient(circle at 52% 100%, rgba(57, 86, 168, 0.22), transparent 42%),
     linear-gradient(180deg, #070d1b 0%, #060b16 42%, #050914 100%),
     var(--surface);
@@ -38,7 +43,7 @@ body {
 }
 
 ::selection {
-  background: rgba(128, 39, 130, 0.46);
+  background: rgb(var(--brand-purple-rgb) / 0.46);
   color: #ffffff;
 }
 
@@ -74,7 +79,7 @@ a {
   position: absolute;
   inset: -1px;
   border-radius: inherit;
-  background: linear-gradient(135deg, rgba(37, 48, 109, 0.95), rgba(128, 39, 130, 0.82));
+  background: linear-gradient(135deg, rgba(37, 48, 109, 0.95), rgb(var(--brand-purple-rgb) / 0.82));
   z-index: -1;
 }
 
@@ -133,7 +138,7 @@ a {
   --app-border: rgba(148, 163, 194, 0.2);
   --app-text: #f8faff;
   --app-muted: #b8c6de;
-  --app-active-edge: inset 0 -2px #c979d1;
+  --app-active-edge: inset 0 -2px var(--brand-purple);
   --app-panel-shadow: 0 22px 55px -46px rgba(0, 0, 0, .95);
   min-height: 100vh;
   color: var(--app-text);
@@ -204,20 +209,20 @@ a {
 .bike-app-nav-trigger[data-active="true"],
 .bike-app-club-nav a[aria-current="page"] {
   color: var(--app-text);
-  background: rgba(37, 48, 109, .48);
+  background: rgb(var(--brand-purple-rgb) / .19);
   box-shadow: var(--app-active-edge);
 }
 .bike-app-nav-trigger[aria-expanded="true"],
 .bike-app-mobile-trigger[aria-expanded="true"] {
   color: var(--app-text);
-  border-color: rgba(201, 121, 209, .35);
-  background: rgba(128, 39, 130, .18);
+  border-color: color-mix(in srgb, var(--brand-purple-light) 35%, transparent);
+  background: rgb(var(--brand-purple-rgb) / .18);
 }
 .bike-app a:focus-visible,
 .bike-app button:focus-visible,
 .bike-app input:focus-visible,
 .bike-app select:focus-visible,
-.bike-app textarea:focus-visible { outline: 2px solid #b38bff; outline-offset: 3px; }
+.bike-app textarea:focus-visible { outline: 2px solid var(--brand-purple-light); outline-offset: 3px; }
 .bike-app-nav-group { position: relative; }
 .bike-app-nav-chevron {
   width: 6px;
@@ -248,7 +253,7 @@ a {
 .bike-app-nav-panel[hidden] { display: none; }
 .bike-app-nav-panel .bike-app-nav-link { padding-inline: 11px; }
 .bike-app-nav-panel .bike-app-nav-link[aria-current="page"] {
-  box-shadow: inset 3px 0 #c979d1;
+  box-shadow: inset 3px 0 var(--brand-purple);
 }
 .bike-app-nav-link .bike-message-badge { min-width: 21px; min-height: 21px; margin-inline-start: 0; }
 .bike-app-nav-group[data-profile="true"] .bike-app-nav-panel { inset-inline-start: auto; inset-inline-end: 0; }
@@ -355,7 +360,7 @@ a {
   .bike-app-header-create span:last-child { display: none; }
 }
 
-.bike-app-avatar { display: inline-flex; flex: 0 0 auto; align-items: center; justify-content: center; overflow: hidden; border: 1px solid rgba(255,255,255,.2); border-radius: 999px; background: linear-gradient(135deg, #25306d, #802782); color: white; font-weight: 800; }
+.bike-app-avatar { display: inline-flex; flex: 0 0 auto; align-items: center; justify-content: center; overflow: hidden; border: 1px solid rgba(255,255,255,.2); border-radius: 999px; background: linear-gradient(135deg, #25306d, var(--brand-purple)); color: white; font-weight: 800; }
 .bike-app-avatar[data-size="small"] { width: 36px; height: 36px; font-size: 13px; }
 .bike-app-avatar[data-size="medium"] { width: 48px; height: 48px; font-size: 17px; }
 .bike-app-avatar[data-size="large"] { width: 92px; height: 92px; font-size: 30px; }
@@ -364,7 +369,7 @@ a {
 .bike-app-page-header { display: flex; align-items: end; justify-content: space-between; gap: 30px; margin-bottom: 30px; }
 .bike-app-page-header h1 { margin: 6px 0 10px; font-size: clamp(30px, 3.2vw, 48px); font-weight: 400; line-height: 1.05; }
 .bike-app-page-header > div > p:not(.bike-app-eyebrow) { max-width: 720px; margin: 0; color: var(--app-muted); font-size: 16px; line-height: 1.65; }
-.bike-app-eyebrow { margin: 0; color: #c979d1; font-size: 11px; font-weight: 750; letter-spacing: .14em; text-transform: uppercase; }
+.bike-app-eyebrow { margin: 0; color: var(--brand-purple-light); font-size: 11px; font-weight: 750; letter-spacing: .14em; text-transform: uppercase; }
 .bike-app-page-action { flex: 0 0 auto; }
 .bike-app-grid { display: grid; gap: 18px; }
 .bike-app-grid[data-columns="2"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -379,7 +384,7 @@ a {
 .bike-app-empty { margin: 0; border: 1px dashed rgba(184,198,222,.22); border-radius: 12px; padding: 24px; color: var(--app-muted); text-align: center; line-height: 1.55; }
 .bike-app-club-gate { border: 1px solid var(--app-border); border-radius: 16px; background: #101827; padding: 24px; color: var(--app-muted); }
 .bike-app-club-gate p { margin: 0 0 16px; }
-.bike-app-club-card { display: flex; min-width: 0; flex-direction: column; align-items: flex-start; gap: 16px; border: 1px solid var(--app-border); border-radius: 14px; background: radial-gradient(ellipse at top left,rgba(128,39,130,.13),transparent 70%),#0a1222; padding: 22px; }
+.bike-app-club-card { display: flex; min-width: 0; flex-direction: column; align-items: flex-start; gap: 16px; border: 1px solid var(--app-border); border-radius: 14px; background: radial-gradient(ellipse at top left,rgb(var(--brand-purple-rgb) / .13),transparent 70%),#0a1222; padding: 22px; }
 .bike-app-club-card h3 { font-size: 23px; line-height: 1.25; overflow-wrap: anywhere; }
 .bike-app-club-card h3 a { color: inherit; text-decoration: none; }
 .bike-app-club-card h3 a:hover { text-decoration: underline; }
@@ -440,8 +445,8 @@ a {
 .bike-app-club-skeleton { height: 190px; border-radius: 16px; background: linear-gradient(100deg,#101827,#172239,#101827); animation: bike-app-club-pulse 1.4s ease-in-out infinite alternate; }
 @keyframes bike-app-club-pulse { to { opacity: .45; } }
 @media (prefers-reduced-motion: reduce) { .bike-app-club-skeleton { animation: none; } }
-.bike-app-button { display: inline-flex; min-height: 46px; align-items: center; justify-content: center; border: 1px solid transparent; border-radius: 10px; padding: 0 18px; background: #802782; color: white; font: inherit; font-size: 14px; font-weight: 750; text-decoration: none; cursor: pointer; transition: background-color .16s ease, border-color .16s ease, transform .16s ease; }
-.bike-app-button:hover { background: #963698; }
+.bike-app-button { display: inline-flex; min-height: 46px; align-items: center; justify-content: center; border: 1px solid transparent; border-radius: 10px; padding: 0 18px; background: var(--brand-purple); color: white; font: inherit; font-size: 14px; font-weight: 750; text-decoration: none; cursor: pointer; transition: background-color .16s ease, border-color .16s ease, transform .16s ease; }
+.bike-app-button:hover { background: var(--brand-purple-hover); }
 .bike-app-button:active { transform: translateY(1px); }
 .bike-app-button-secondary { border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.045); }
 .bike-app-button-secondary:hover { border-color: #7f8dc4; background: rgba(37,48,109,.45); }
@@ -456,9 +461,9 @@ a {
 .bike-app-list-main strong { display: block; overflow-wrap: anywhere; }
 .bike-app-list-main small { display: block; margin-top: 4px; color: var(--app-muted); line-height: 1.4; }
 .bike-app-chip { display: inline-flex; min-height: 28px; align-items: center; border: 1px solid rgba(143,168,255,.25); border-radius: 999px; background: rgba(37,48,109,.34); padding: 0 9px; color: #dce5ff; font-size: 11px; font-weight: 720; }
-.bike-app-chip[data-tone="purple"] { border-color: rgba(201,121,209,.32); background: rgba(128,39,130,.23); color: #f1c6f5; }
+.bike-app-chip[data-tone="purple"] { border-color: color-mix(in srgb, var(--brand-purple-light) 32%, transparent); background: rgb(var(--brand-purple-rgb) / .23); color: var(--brand-purple-text); }
 .bike-app-stat { display: block; min-height: 108px; border: 1px solid var(--app-border); border-radius: 14px; background: #101827; padding: 20px; color: inherit; text-decoration: none; transition: border-color .16s ease, box-shadow .16s ease, transform .16s ease; }
-.bike-app-stat:hover { border-color: rgba(201,121,209,.48); box-shadow: 0 20px 44px -36px rgba(201,121,209,.85); transform: translateY(-1px); }
+.bike-app-stat:hover { border-color: color-mix(in srgb, var(--brand-purple-light) 48%, transparent); box-shadow: 0 20px 44px -36px color-mix(in srgb, var(--brand-purple-light) 85%, transparent); transform: translateY(-1px); }
 .bike-app-stat:active { transform: translateY(0); }
 .bike-app-stat span { display: block; color: var(--app-muted); font-size: 12px; font-weight: 650; letter-spacing: .05em; text-transform: uppercase; }
 .bike-app-stat strong { display: block; margin-top: 9px; font-size: clamp(24px, 3vw, 36px); }
@@ -484,8 +489,8 @@ a {
 .bike-app-choice-fieldset legend { margin-bottom: 9px; color: #e7ecf9; font-size: 13px; font-weight: 680; }
 .bike-app-choice-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
 .bike-app-choice-card { display: flex; min-height: 72px; align-items: center; gap: 12px; border: 1px solid rgba(148,163,194,.24); border-radius: 11px; background: #0a1222; padding: 13px; cursor: pointer; }
-.bike-app-choice-card:has(input:checked) { border-color: rgba(201,121,209,.72); background: rgba(128,39,130,.2); }
-.bike-app-choice-card input { width: 20px; height: 20px; flex: 0 0 20px; accent-color: #c979d1; }
+.bike-app-choice-card:has(input:checked) { border-color: color-mix(in srgb, var(--brand-purple-light) 72%, transparent); background: rgb(var(--brand-purple-rgb) / .2); }
+.bike-app-choice-card input { width: 20px; height: 20px; flex: 0 0 20px; accent-color: var(--brand-purple-light); }
 .bike-app-choice-card strong,
 .bike-app-choice-card small { display: block; }
 .bike-app-choice-card small { margin-top: 3px; color: var(--app-muted); line-height: 1.35; }
@@ -499,15 +504,15 @@ a {
 .bike-app-create-schedule { display: grid; grid-column: 1 / -1; grid-template-columns: repeat(2,minmax(0,1fr)); align-items: start; gap: 16px; min-width: 0; }
 .bike-app-preset-list { display: flex; flex-wrap: wrap; gap: 6px; }
 .bike-app-preset-list button { border: 1px solid rgba(143,168,255,.22); border-radius: 999px; background: rgba(37,48,109,.3); padding: 6px 9px; color: #dce5ff; cursor: pointer; font: inherit; font-size: 11px; }
-.bike-app-preset-list button:hover { border-color: rgba(201,121,209,.6); }
+.bike-app-preset-list button:hover { border-color: color-mix(in srgb, var(--brand-purple-light) 60%, transparent); }
 .bike-app-form-note { align-self: end; margin: 0; border: 1px solid rgba(143,168,255,.18); border-radius: 9px; background: rgba(37,48,109,.2); padding: 13px; color: var(--app-muted); font-size: 13px; line-height: 1.45; }
 .bike-app-invite-picker { display: grid; gap: 12px; border: 1px solid rgba(148,163,194,.15); border-radius: 11px; background: rgba(10,18,34,.55); padding: 15px; }
 .bike-app-invite-picker h3 { margin: 0; font-size: 15px; }
 .bike-app-invite-picker p { margin: 4px 0 0; color: var(--app-muted); font-size: 13px; line-height: 1.45; }
 .bike-app-invite-list { display: grid; max-height: 320px; gap: 7px; overflow-y: auto; padding-right: 3px; }
 .bike-app-invite-option { display: flex; min-height: 54px; align-items: center; gap: 11px; border: 1px solid rgba(148,163,194,.17); border-radius: 9px; background: #070e1d; padding: 10px 12px; cursor: pointer; }
-.bike-app-invite-option[data-selected="true"] { border-color: rgba(201,121,209,.65); background: rgba(128,39,130,.2); }
-.bike-app-invite-option input { width: 19px; height: 19px; flex: 0 0 19px; accent-color: #c979d1; }
+.bike-app-invite-option[data-selected="true"] { border-color: color-mix(in srgb, var(--brand-purple-light) 65%, transparent); background: rgb(var(--brand-purple-rgb) / .2); }
+.bike-app-invite-option input { width: 19px; height: 19px; flex: 0 0 19px; accent-color: var(--brand-purple-light); }
 .bike-app-invite-option strong,
 .bike-app-invite-option small { display: block; }
 .bike-app-invite-option small { margin-top: 3px; color: var(--app-muted); }
@@ -523,7 +528,7 @@ a {
 .bike-app-meeting-map-canvas { opacity: 0; transition: opacity .2s ease; }
 .bike-app-meeting-map[data-ready="true"] .bike-app-meeting-map-canvas { opacity: 1; }
 .bike-app-meeting-map-status { display: grid; place-items: center; padding: 24px; color: var(--app-muted); text-align: center; }
-.bike-app-meeting-map-marker { width: 25px; height: 25px; border: 4px solid #fff; border-radius: 999px; background: #802782; box-shadow: 0 0 0 3px rgba(2,8,23,.55),0 5px 14px rgba(2,8,23,.45); }
+.bike-app-meeting-map-marker { width: 25px; height: 25px; border: 4px solid #fff; border-radius: 999px; background: var(--brand-purple); box-shadow: 0 0 0 3px rgba(2,8,23,.55),0 5px 14px rgba(2,8,23,.45); }
 .bike-app-meeting-map .maplibregl-canvas { cursor: crosshair; }
 .bike-app-meeting-map .maplibregl-ctrl-attrib { border-radius: 8px 8px 0 0; background: rgba(255,255,255,.9); font-size: 10px; }
 .bike-app-meeting-map .maplibregl-ctrl-group { overflow: hidden; border: 1px solid rgba(255,255,255,.22); background: rgba(2,8,23,.9); box-shadow: 0 8px 24px rgba(2,8,23,.28); }
@@ -532,7 +537,7 @@ a {
 .bike-app-gpx-picker { display: grid; gap: 12px; border: 1px solid rgba(148,163,194,.15); border-radius: 11px; background: rgba(10,18,34,.55); padding: 15px; }
 .bike-app-gpx-picker h3 { margin: 0; font-size: 15px; }
 .bike-app-gpx-picker p { margin: 4px 0 0; color: var(--app-muted); font-size: 13px; }
-.bike-app-file-input { width: 100%; border: 1px dashed rgba(201,121,209,.45); border-radius: 9px; background: #070e1d; padding: 12px; color: var(--app-muted); font: inherit; }
+.bike-app-file-input { width: 100%; border: 1px dashed color-mix(in srgb, var(--brand-purple-light) 45%, transparent); border-radius: 9px; background: #070e1d; padding: 12px; color: var(--app-muted); font: inherit; }
 .bike-app-gpx-preview { display: grid; gap: 10px; }
 .bike-app-gpx-preview strong,
 .bike-app-gpx-preview small { display: block; overflow-wrap: anywhere; }
@@ -540,11 +545,11 @@ a {
 .bike-app-gpx-preview .bike-app-route { min-height: 190px; }
 .bike-app-gpx-preview .bike-app-route svg { height: 210px; }
 .bike-app-checkbox { display: flex; min-height: 44px; align-items: center; gap: 10px; color: var(--app-muted); font-size: 14px; }
-.bike-app-checkbox input { width: 20px; height: 20px; accent-color: #802782; }
+.bike-app-checkbox input { width: 20px; height: 20px; accent-color: var(--brand-purple); }
 .bike-app-notice { margin-bottom: 22px; border: 1px solid rgba(74,222,128,.3); border-radius: 11px; background: rgba(20,83,45,.28); padding: 14px 16px; color: #dcfce7; }
 .bike-app-notice[data-kind="error"] { border-color: rgba(248,113,113,.35); background: rgba(127,29,29,.25); color: #fee2e2; }
-.bike-app-pro-gate { max-width: 680px; margin: 8vh auto; border: 1px solid rgba(201,121,209,.3); border-radius: 18px; background: #101827; padding: clamp(24px,5vw,44px); text-align: center; }
-.bike-app-pro-gate > span { display: inline-flex; border-radius: 999px; background: #802782; padding: 6px 12px; font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.bike-app-pro-gate { max-width: 680px; margin: 8vh auto; border: 1px solid color-mix(in srgb, var(--brand-purple-light) 30%, transparent); border-radius: 18px; background: #101827; padding: clamp(24px,5vw,44px); text-align: center; }
+.bike-app-pro-gate > span { display: inline-flex; border-radius: 999px; background: var(--brand-purple); padding: 6px 12px; font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 .bike-app-pro-gate h2 { margin: 18px 0 10px; font-size: 30px; }
 .bike-app-pro-gate p { color: var(--app-muted); line-height: 1.65; }
 .bike-app-pro-gate .bike-app-button { margin-top: 10px; }
@@ -560,7 +565,7 @@ a {
 .bike-app-route-map-fallback .bike-app-route svg { height: 100%; min-height: 230px; }
 .bike-app-route-map-open { position: absolute; z-index: 4; top: 12px; right: 12px; display: inline-flex; min-height: 44px; max-width: calc(100% - 24px); align-items: center; border: 1px solid rgba(255,255,255,.3); border-radius: 999px; background: rgba(2,8,23,.86); padding: 10px 15px; color: #f8faff; box-shadow: 0 10px 30px rgba(2,8,23,.28); cursor: zoom-in; font: inherit; font-size: 13px; font-weight: 750; line-height: 1.25; text-align: left; backdrop-filter: blur(10px); }
 .bike-app-route-map-open[hidden] { display: none; }
-.bike-app-route-map-open:hover { border-color: rgba(212,156,255,.75); background: rgba(17,27,46,.94); }
+.bike-app-route-map-open:hover { border-color: color-mix(in srgb, var(--brand-purple-light) 75%, transparent); background: rgba(17,27,46,.94); }
 .bike-app-route-map-marker { width: 22px; height: 22px; border-radius: 999px; box-shadow: 0 0 0 3px rgba(2,8,23,.52),0 4px 12px rgba(2,8,23,.38); }
 .bike-app-route-map-marker-start { border: 4px solid #fff; background: #22c55e; }
 .bike-app-route-map-marker-finish { border: 3px solid #ff6a00; background-color: #fff; background-image: conic-gradient(#020817 25%,#fff 0 50%,#020817 0 75%,#fff 0); background-size: 7px 7px; }
@@ -572,7 +577,7 @@ a {
 .bike-app-route-map-fullscreen-header { position: absolute; z-index: 5; top: 0; right: 0; left: 0; display: flex; min-height: 96px; align-items: flex-start; justify-content: space-between; gap: 18px; background: linear-gradient(180deg,rgba(2,8,23,.9),rgba(2,8,23,0)); padding: max(18px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) 28px max(18px,env(safe-area-inset-left)); pointer-events: none; }
 .bike-app-route-map-fullscreen-header h2 { margin: 5px 0 0; color: #f8faff; font-size: clamp(20px,2.2vw,28px); font-weight: 750; line-height: 1.2; text-shadow: 0 2px 12px rgba(2,8,23,.85); }
 .bike-app-route-map-close { display: inline-grid; width: 44px; height: 44px; flex: 0 0 44px; place-items: center; border: 1px solid rgba(255,255,255,.3); border-radius: 999px; background: rgba(2,8,23,.9); color: #fff; cursor: pointer; font: inherit; font-size: 31px; line-height: 1; pointer-events: auto; }
-.bike-app-route-map-close:hover { border-color: #d49cff; }
+.bike-app-route-map-close:hover { border-color: var(--brand-purple-light); }
 .bike-app-section-gap { margin-top: 20px; }
 .bike-app-overview-grid { margin-top: 20px; align-items: start; }
 .bike-app-overview-grid > .bike-app-panel > .bike-app-panel { border: 0; background: transparent; padding: 0; box-shadow: none; }
@@ -584,7 +589,7 @@ a {
 .bike-app-hotspot { min-width: 0; border: 1px solid rgba(148,163,194,.16); border-radius: 13px; background: #0a1222; padding: 18px; }
 .bike-app-hotspot h3 { margin: 15px 0 8px; }
 .bike-app-hotspot p { min-height: 44px; margin: 0 0 14px; color: var(--app-muted); line-height: 1.5; }
-.bike-app-hotspot a { display: inline-flex; min-height: 44px; align-items: center; color: #d8a6e0; font-weight: 700; }
+.bike-app-hotspot a { display: inline-flex; min-height: 44px; align-items: center; color: var(--brand-purple-light); font-weight: 700; }
 .bike-app-detail-actions { margin-top: 24px; }
 .bike-app-delete-dialog { width: min(520px,calc(100% - 32px)); max-width: none; overflow: visible; border: 1px solid rgba(248,113,113,.32); border-radius: 18px; background: #101827; padding: 0; color: var(--app-text); box-shadow: 0 28px 90px rgba(0,0,0,.65); }
 .bike-app-delete-dialog::backdrop { background: rgba(0,0,0,.74); backdrop-filter: blur(4px); }
@@ -611,7 +616,7 @@ a {
 .bike-app-request-card > header { display: flex; flex-wrap: wrap; align-items: start; justify-content: space-between; gap: 14px; }
 .bike-app-request-card h2 { margin: 0 0 4px; overflow-wrap: anywhere; }
 .bike-app-request-card p { margin: 0; color: var(--app-muted); font-size: 13px; }
-.bike-app-convert-form { border-top: 1px solid rgba(201,121,209,.24); padding-top: 18px; }
+.bike-app-convert-form { border-top: 1px solid color-mix(in srgb, var(--brand-purple-light) 24%, transparent); padding-top: 18px; }
 .bike-app-history-table-wrap { width: 100%; max-width: 100%; min-width: 0; overflow-x: auto; contain: inline-size; }
 .bike-app-table { width: 100%; border-collapse: collapse; min-width: 720px; }
 .bike-app-table th { border-bottom: 1px solid var(--app-border); padding: 13px 12px; color: var(--app-muted); font-size: 11px; letter-spacing: .07em; text-align: left; text-transform: uppercase; }
@@ -621,7 +626,7 @@ a {
 .bike-app-zones { display: grid; gap: 12px; }
 .bike-app-zones > div { display: grid; grid-template-columns: 38px minmax(0,1fr) 70px; align-items: center; gap: 10px; font-size: 12px; }
 .bike-app-zones > div > div { height: 8px; overflow: hidden; border-radius: 999px; background: rgba(255,255,255,.08); }
-.bike-app-zones i { display: block; height: 100%; border-radius: inherit; background: #802782; }
+.bike-app-zones i { display: block; height: 100%; border-radius: inherit; background: var(--brand-purple); }
 .bike-app-zones strong { color: var(--app-muted); text-align: right; }
 .bike-app-copy { margin: 0; min-width: 0; color: var(--app-muted); line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
 .bike-app-segments { display: flex; width: fit-content; max-width: 100%; gap: 4px; overflow-x: auto; border: 1px solid var(--app-border); border-radius: 11px; background: #0a1222; padding: 4px; margin-bottom: 14px; scrollbar-width: none; }
@@ -634,9 +639,9 @@ a {
 .bike-app-status-meta { font-size: var(--status-type-label); font-weight: 650; line-height: 1.4; letter-spacing: normal; text-transform: none; }
 .bike-app-status-dashboard .bike-app-stat span { font-size: var(--status-type-label); font-weight: 650; line-height: 1.4; letter-spacing: normal; text-transform: none; }
 .bike-app-status-dashboard .bike-app-stat strong { font-size: var(--status-type-value); font-weight: 800; line-height: 1.15; white-space: nowrap; }
-.bike-app-status-hero { position: relative; overflow: hidden; border: 1px solid rgba(128,39,130,.58); border-radius: 16px; background: radial-gradient(circle at 8% 0%,rgba(128,39,130,.34),transparent 44%),radial-gradient(circle at 92% 18%,rgba(37,48,109,.55),transparent 46%),#0a1222; padding: clamp(22px,4vw,34px); }
+.bike-app-status-hero { position: relative; overflow: hidden; border: 1px solid rgb(var(--brand-purple-rgb) / .58); border-radius: 16px; background: radial-gradient(circle at 8% 0%,rgb(var(--brand-purple-rgb) / .34),transparent 44%),radial-gradient(circle at 92% 18%,rgba(37,48,109,.55),transparent 46%),#0a1222; padding: clamp(22px,4vw,34px); }
 .bike-app-status-hero-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
-.bike-app-status-hero-top > div:first-child > span { display: block; color: #d49cff; font-size: var(--status-type-label); font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.bike-app-status-hero-top > div:first-child > span { display: block; color: var(--brand-purple-light); font-size: var(--status-type-label); font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 .bike-app-status-hero h2 { margin: 7px 0 0; }
 .bike-app-status-hero-value { display: block; margin-top: clamp(28px,5vw,46px); font-size: clamp(42px,7vw,72px); font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; overflow-wrap: anywhere; }
 .bike-app-status-hero > p { margin: 14px 0 0; color: var(--app-muted); font-size: var(--status-type-label); font-weight: 650; line-height: 1.4; }
@@ -654,7 +659,7 @@ a {
 .bike-app-status-plot { position: relative; width: 100%; min-width: max(100%,calc(var(--status-count,12) * var(--status-point-min-width,24px))); height: 286px; }
 .bike-app-status-plot svg { position: absolute; inset: 0 0 26px; width: 100%; height: calc(100% - 26px); overflow: visible; }
 .bike-app-status-gridline { stroke: rgba(184,198,222,.12); stroke-width: 1; vector-effect: non-scaling-stroke; }
-.bike-app-status-dot { fill: #d49cff; stroke: #101827; stroke-width: 3; vector-effect: non-scaling-stroke; }
+.bike-app-status-dot { fill: var(--brand-purple-light); stroke: #101827; stroke-width: 3; vector-effect: non-scaling-stroke; }
 .bike-app-status-hit-zones { position: absolute; inset: 0 0 26px; display: grid; grid-template-columns: repeat(var(--status-count,12),1fr); }
 .bike-app-status-hit-zones:has(> :nth-child(6):last-child) { grid-template-columns: repeat(6,1fr); }
 .bike-app-status-hit-zones:has(> :nth-child(7):last-child) { grid-template-columns: repeat(7,1fr); }
@@ -667,12 +672,12 @@ a {
 .bike-app-status-x-axis:has(> :nth-child(8):last-child) { grid-template-columns: repeat(8,1fr); }
 .bike-app-status-x-axis small { display: none; text-align: center; white-space: nowrap; }
 .bike-app-status-x-axis small[data-visible="true"] { display: block; }
-.bike-app-status-tooltip { position: absolute; top: 8px; left: 50%; z-index: 2; display: flex; min-width: 180px; align-items: center; gap: 10px; transform: translateX(-50%); border: 1px solid rgba(128,39,130,.72); border-radius: 10px; background: rgba(7,14,29,.96); padding: 9px 9px 9px 12px; box-shadow: 0 16px 40px rgba(0,0,0,.35); text-align: center; }
+.bike-app-status-tooltip { position: absolute; top: 8px; left: 50%; z-index: 2; display: flex; min-width: 180px; align-items: center; gap: 10px; transform: translateX(-50%); border: 1px solid rgb(var(--brand-purple-rgb) / .72); border-radius: 10px; background: rgba(7,14,29,.96); padding: 9px 9px 9px 12px; box-shadow: 0 16px 40px rgba(0,0,0,.35); text-align: center; }
 .bike-app-status-tooltip > div { display: grid; flex: 1; }
 .bike-app-status-tooltip span { margin-top: 3px; color: var(--app-muted); }
 .bike-app-status-tooltip button { display: inline-grid; width: 44px; height: 44px; flex: 0 0 44px; place-items: center; border: 1px solid var(--app-border); border-radius: 999px; background: #101827; color: white; font: inherit; font-size: 18px; cursor: pointer; }
 .bike-app-week-scroller { display: flex; max-width: 100%; gap: 12px; overflow-x: auto; padding: 1px 1px 8px; scroll-snap-type: x mandatory; scrollbar-width: thin; }
-.bike-app-week-scroller:focus-visible { outline: 2px solid #d49cff; outline-offset: 3px; }
+.bike-app-week-scroller:focus-visible { outline: 2px solid var(--brand-purple-light); outline-offset: 3px; }
 .bike-app-week-scroller article { min-width: min(340px,84vw); flex: 0 0 min(340px,84vw); scroll-snap-align: start; border: 1px solid rgba(148,163,194,.16); border-radius: 13px; background: #0a1222; padding: 18px; }
 .bike-app-week-scroller h3 { margin-bottom: 18px; font-size: var(--status-type-subtitle); font-weight: 750; line-height: 1.25; }
 .bike-app-week-scroller dl { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; margin: 0; }
@@ -694,18 +699,18 @@ a {
 .bike-app-calendar-weekdays { margin-bottom: 5px; color: var(--app-muted); font-size: var(--status-type-label); font-weight: 700; line-height: 1.4; text-align: center; letter-spacing: normal; text-transform: none; }
 .bike-app-calendar-grid { padding: 4px; }
 .bike-app-calendar-grid > a, .bike-app-calendar-grid > button { position: relative; display: inline-flex; width: 44px; height: 44px; align-items: center; justify-content: center; border: 1px solid transparent; border-radius: 10px; background: transparent; color: #e2e9f6; font: inherit; font-weight: 650; text-decoration: none; cursor: pointer; }
-.bike-app-calendar-grid > a:hover, .bike-app-calendar-grid > button:not(:disabled):hover { border-color: rgba(212,156,255,.5); background: rgba(128,39,130,.14); }
+.bike-app-calendar-grid > a:hover, .bike-app-calendar-grid > button:not(:disabled):hover { border-color: color-mix(in srgb, var(--brand-purple-light) 50%, transparent); background: rgb(var(--brand-purple-rgb) / .14); }
 .bike-app-calendar-grid > a > span, .bike-app-calendar-grid > button > span { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.2; }
 .bike-app-calendar-grid > button:disabled { color: #e2e9f6; cursor: default; }
 .bike-app-calendar-grid > button[data-in-month="false"]:disabled { color: #8794ad; font-weight: 600; }
 .bike-app-calendar-grid > [data-in-month="false"] > span { font-weight: 600; }
 .bike-app-calendar-grid > [data-rides="true"] { color: #f8faff; font-weight: 750; }
 .bike-app-calendar-grid > [data-rides="true"] > span { font-weight: 750; }
-.bike-app-calendar-grid > [data-today="true"] { border-width: 2px; border-color: #d49cff; color: #f1d4ff; font-weight: 800; }
-.bike-app-calendar-grid > button[data-today="true"]:disabled { color: #f1d4ff; }
+.bike-app-calendar-grid > [data-today="true"] { border-width: 2px; border-color: var(--brand-purple-light); color: var(--brand-purple-text); font-weight: 800; }
+.bike-app-calendar-grid > button[data-today="true"]:disabled { color: var(--brand-purple-text); }
 .bike-app-calendar-grid > [data-today="true"] > span { font-weight: 800; }
-.bike-app-calendar-grid i { position: absolute; bottom: 4px; width: 18px; height: 3px; border-radius: 99px; background: #d49cff; }
-.bike-app-calendar-grid b { position: absolute; top: -4px; right: -4px; z-index: 1; display: grid; min-width: 20px; height: 20px; place-items: center; border: 2px solid #101827; border-radius: 99px; background: #802782; padding-inline: 3px; color: white; font-size: var(--status-type-label); font-weight: 750; line-height: 1; }
+.bike-app-calendar-grid i { position: absolute; bottom: 4px; width: 18px; height: 3px; border-radius: 99px; background: var(--brand-purple-light); }
+.bike-app-calendar-grid b { position: absolute; top: -4px; right: -4px; z-index: 1; display: grid; min-width: 20px; height: 20px; place-items: center; border: 2px solid #101827; border-radius: 99px; background: var(--brand-purple); padding-inline: 3px; color: white; font-size: var(--status-type-label); font-weight: 750; line-height: 1; }
 .bike-app-status-streak-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; margin-top: 14px; }
 .bike-app-status-overview-grid .bike-app-status-streak-grid { grid-template-columns: 1fr; grid-template-rows: repeat(2,minmax(0,1fr)); margin-top: 0; }
 .bike-app-status-streak-grid > div { border: 1px solid var(--app-border); border-radius: 14px; background: #101827; padding: 20px; }
@@ -719,7 +724,7 @@ a {
 .bike-app-zone-info { position: relative; }
 .bike-app-zone-info summary { display: grid; width: 44px; height: 44px; place-items: center; border: 1px solid rgba(148,163,194,.25); border-radius: 999px; cursor: pointer; font-weight: 800; list-style: none; }
 .bike-app-zone-info summary::-webkit-details-marker { display: none; }
-.bike-app-zone-info > div { position: absolute; top: 50px; right: 0; z-index: 10; width: min(560px,calc(100vw - 52px)); max-height: min(660px,70vh); overflow-y: auto; border: 1px solid rgba(128,39,130,.58); border-radius: 12px; background: #07101f; padding: 16px; box-shadow: 0 20px 50px rgba(0,0,0,.55); }
+.bike-app-zone-info > div { position: absolute; top: 50px; right: 0; z-index: 10; width: min(560px,calc(100vw - 52px)); max-height: min(660px,70vh); overflow-y: auto; border: 1px solid rgb(var(--brand-purple-rgb) / .58); border-radius: 12px; background: #07101f; padding: 16px; box-shadow: 0 20px 50px rgba(0,0,0,.55); }
 .bike-app-zone-info > div > h3 { margin: 0; font-size: var(--status-type-card-title); font-weight: 750; line-height: 1.25; }
 .bike-app-zone-info p { margin: 8px 0 0; color: var(--app-muted); line-height: 1.55; }
 .bike-app-zone-info ul { display: grid; gap: 8px; margin: 14px 0; padding-left: 18px; color: #dfe7f8; font-size: 12px; line-height: 1.5; }
@@ -734,7 +739,7 @@ a {
 .bike-app-status-performance > section { min-width: 0; border: 1px solid rgba(148,163,194,.16); border-radius: 12px; background: #0a1222; padding: 17px; }
 .bike-app-status-performance header { min-height: 48px; }
 .bike-app-status-performance .bike-app-status-category-title { font-size: var(--status-type-label); font-weight: 800; line-height: 1.4; letter-spacing: .07em; text-transform: uppercase; }
-.bike-app-status-performance header span { display: block; margin-top: 4px; color: #d49cff; font-size: var(--status-type-label); font-weight: 700; line-height: 1.4; letter-spacing: normal; text-transform: none; }
+.bike-app-status-performance header span { display: block; margin-top: 4px; color: var(--brand-purple-light); font-size: var(--status-type-label); font-weight: 700; line-height: 1.4; letter-spacing: normal; text-transform: none; }
 .bike-app-status-performance dl { margin: 12px 0 0; }
 .bike-app-status-performance dl div { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; border-top: 1px solid rgba(148,163,194,.12); padding: 12px 0; }
 .bike-app-status-performance dt { color: var(--app-muted); font-size: var(--status-type-label); font-weight: 650; line-height: 1.4; }
@@ -752,7 +757,7 @@ a {
 .bike-app-status-ride-value { color: var(--app-text); font-size: var(--status-type-row-value); font-weight: 800; line-height: 1.25; }
 .bike-app-calendar-list { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; }
 .bike-app-calendar-list a { display: grid; grid-template-columns: 60px minmax(0,1fr); gap: 10px; border: 1px solid rgba(148,163,194,.15); border-radius: 10px; background: #0a1222; padding: 12px; color: white; text-decoration: none; }
-.bike-app-calendar-list time { color: #d49cff; font-size: var(--status-type-label); font-weight: 650; line-height: 1.4; letter-spacing: normal; text-transform: none; }
+.bike-app-calendar-list time { color: var(--brand-purple-light); font-size: var(--status-type-label); font-weight: 650; line-height: 1.4; letter-spacing: normal; text-transform: none; }
 .bike-app-calendar-list span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bike-app-profile-hero { display: flex; align-items: center; gap: 18px; }
 .bike-app-profile-hero h2 { margin: 0 0 12px; font-size: 24px; }
@@ -761,7 +766,7 @@ a {
 .bike-app-membership p { color: var(--app-muted); line-height: 1.6; }
 .bike-app-profile-logout { max-width: 360px; }
 .bike-app-loading { display: flex; min-height: 50vh; align-items: center; justify-content: center; gap: 8px; }
-.bike-app-loading span { width: 10px; height: 10px; border-radius: 999px; background: #802782; animation: bike-app-pulse 1.1s infinite alternate; }
+.bike-app-loading span { width: 10px; height: 10px; border-radius: 999px; background: var(--brand-purple); animation: bike-app-pulse 1.1s infinite alternate; }
 .bike-app-loading span:nth-child(2) { animation-delay: .18s; }
 .bike-app-loading span:nth-child(3) { animation-delay: .36s; }
 @keyframes bike-app-pulse { to { opacity: .3; transform: translateY(-5px); } }
@@ -831,14 +836,14 @@ a {
 /* Club membership: existing app controls, scoped dialogs and wrapping actions. */
 .bike-app-club-feedback { overflow-wrap: anywhere; }
 .bike-app-club-feedback:empty { display: none; }
-.bike-app-club-dialog { width: min(92vw, 36rem); max-height: 85dvh; overflow-y: auto; border: 1px solid #705278; border-radius: 1rem; background: #111827; color: #f5f3ff; padding: 1.5rem; overflow-wrap: anywhere; }
+.bike-app-club-dialog { width: min(92vw, 36rem); max-height: 85dvh; overflow-y: auto; border: 1px solid var(--brand-purple-border); border-radius: 1rem; background: #111827; color: var(--brand-purple-text); padding: 1.5rem; overflow-wrap: anywhere; }
 .bike-app-club-dialog::backdrop { background: rgb(2 6 23 / 80%); }
 .bike-app-club-dialog h2 { font-size: 1.35rem; font-weight: 700; }
 .bike-app-club-dialog p { margin: 1rem 0; line-height: 1.6; }
 .bike-app-club-search { margin-top: 1rem; }
 .bike-app-club-search label { display: block; margin-bottom: .5rem; }
 .bike-app-club-search input { min-width: 0; flex: 1 1 14rem; border: 1px solid #596176; border-radius: .65rem; background: #080e1b; color: white; padding: .8rem; }
-.bike-app-club-search input:focus-visible { outline: 2px solid #d1a1ff; outline-offset: 2px; }
+.bike-app-club-search input:focus-visible { outline: 2px solid var(--brand-purple-light); outline-offset: 2px; }
 [data-club-access] .bike-app-actions { flex-wrap: wrap; gap: .65rem; }
 [data-club-access] .bike-app-list-item { flex-wrap: wrap; gap: .85rem; }
 [data-club-access] button:disabled { opacity: .55; cursor: not-allowed; }
@@ -856,7 +861,7 @@ a {
 .bike-app-content-meta { display:flex; flex-wrap:wrap; gap:.5rem 1rem; align-items:center; font-size:.9rem; color:var(--muted); }
 .bike-app-content-meta strong { color:var(--ink); overflow-wrap:anywhere; }
 .bike-app-content-body { white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.65; }
-.bike-app-content-feedback,.bike-app-content-privacy { padding:1rem; border-left:3px solid #bd86de; background:rgba(100,52,128,.15); border-radius:8px; margin:1rem 0; line-height:1.6; }
+.bike-app-content-feedback,.bike-app-content-privacy { padding:1rem; border-left:3px solid var(--brand-purple-light); background:rgb(var(--brand-purple-rgb) / .15); border-radius:8px; margin:1rem 0; line-height:1.6; }
 .bike-app-content-card .bike-app-actions { margin-top:1rem; }
 @media(max-width:640px) { .bike-app-content-card {padding:1rem;} .bike-app-content-card .bike-app-actions {gap:.5rem;} }
 
@@ -866,12 +871,12 @@ a {
 .bike-app-chat-message:last-child {border-bottom:0;}
 .bike-app-chat-message .bike-app-actions {margin-top:10px;}
 .bike-app-chat-history {text-align:center;padding:8px;}
-.bike-app-chat-quote {display:block;text-align:left;width:100%;padding:12px;border:1px solid #65517a;border-left:3px solid #b76cc7;border-radius:10px;background:#161626;color:inherit;overflow-wrap:anywhere;}
+.bike-app-chat-quote {display:block;text-align:left;width:100%;padding:12px;border:1px solid var(--brand-purple-border);border-left:3px solid var(--brand-purple-light);border-radius:10px;background:#161626;color:inherit;overflow-wrap:anywhere;}
 .bike-app-chat-search {display:flex;align-items:end;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
 .bike-app-chat-search .bike-app-field {flex:1;min-width:180px;}
-.bike-app-chat-search-results,.bike-app-chat-context {padding:16px;border:1px solid #44334f;border-radius:14px;margin-bottom:16px;max-height:45dvh;overflow:auto;}
+.bike-app-chat-search-results,.bike-app-chat-context {padding:16px;border:1px solid var(--brand-purple-border);border-radius:14px;margin-bottom:16px;max-height:45dvh;overflow:auto;}
 .bike-app-chat-search-results article {padding:12px 0;border-bottom:1px solid #292d40;}
-.bike-app-chat-status {color:#c4a2d7;font-size:.9rem;}
+.bike-app-chat-status {color:var(--brand-purple-light);font-size:.9rem;}
 .bike-app-chat-composer {padding-top:16px;padding-bottom:max(8px,env(safe-area-inset-bottom));background:#101320;}
 .bike-app-chat-composer textarea {width:100%;min-height:88px;max-height:200px;resize:vertical;font-size:16px;scroll-margin-bottom:140px;}
 .bike-app-chat-send {display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;}
@@ -879,7 +884,7 @@ a {
 
 /* Private messages share chat layout primitives, without club roles or scope. */
 .bike-app-dm-bubble {max-width:92%;margin-right:auto;padding:14px;margin-bottom:12px;border:1px solid #324159;border-radius:14px;background:#111d2c;}
-.bike-app-dm-bubble[data-own="true"] {margin-left:auto;margin-right:0;border-color:#574073;background:#291d42;}
+.bike-app-dm-bubble[data-own="true"] {margin-left:auto;margin-right:0;border-color:var(--brand-purple-border);background:var(--brand-purple-surface);}
 .bike-app-dm-row {display:block;width:100%;color:inherit;text-decoration:none;overflow-wrap:anywhere;}
 .bike-app-dm-row p {margin:8px 0;}
 @media(max-width:640px){.bike-app-dm-bubble{max-width:100%;padding:10px;}.bike-app-dm-bubble .bike-app-actions{gap:6px;}}
@@ -899,7 +904,7 @@ a {
 .bike-app-club-image-header .bike-app-club-image-cover + .bike-app-club-image-logo { position:absolute; bottom:16px; left:16px; box-shadow:none; }
 .bike-app-club-crop-preview { max-width:460px; margin-bottom:20px; }
 .bike-app-club-crop-preview .bike-app-club-image-logo { width:min(100%,560px); }
-.bike-app-club-form-fields input[type="range"] { width:100%; min-height:44px; accent-color:#a56bc0; }
+.bike-app-club-form-fields input[type="range"] { width:100%; min-height:44px; accent-color:var(--brand-purple-light); }
 @media(max-width:600px) { .bike-app-club-image-header .bike-app-club-image-logo { width:160px; } }
 
 .bike-app-chat-feedback { min-height:3.5em; display:flow-root; }
@@ -914,7 +919,7 @@ a {
 /* Member-authorized club collection; the catalog never requests private media. */
 .bike-app-club-cards {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;align-items:stretch;}
 .bike-app-club-cards .bike-app-club-card {padding:0;gap:0;overflow:hidden;align-items:stretch;border-radius:20px;}
-.bike-app-club-card-media {height:279px;position:relative;background:linear-gradient(125deg,#25304d,#31213e);overflow:hidden;}
+.bike-app-club-card-media {height:279px;position:relative;background:linear-gradient(125deg,#25304d,var(--brand-purple-surface));overflow:hidden;}
 .bike-app-club-card-media .bike-app-club-image-header {height:100%;max-width:none;margin:0;}
 .bike-app-club-card-media .bike-app-club-image-cover {position:absolute;top:12%;transform:translateY(-12%);border-radius:0;}
 .bike-app-club-card-media .bike-app-club-image-logo {position:absolute;left:18px;bottom:14px;width:128px!important;border-radius:16px;box-shadow:none;}
@@ -930,7 +935,7 @@ a {
 .bike-app-club-catalog {list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
 .bike-app-club-catalog li {display:flex;align-items:center;gap:14px;min-width:0;padding:20px;border:1px solid var(--app-border);border-radius:16px;background:#0f1829;}
 .bike-app-club-catalog strong {flex:1;overflow-wrap:anywhere;}
-.bike-app-club-catalog-mark {display:grid;place-items:center;flex-shrink:0;width:42px;height:42px;border-radius:12px;background:#252642;color:#ddbae5;font-weight:700;}
+.bike-app-club-catalog-mark {display:grid;place-items:center;flex-shrink:0;width:42px;height:42px;border-radius:12px;background:#252642;color:var(--brand-purple-light);font-weight:700;}
 .bike-app-club-masthead {border:1px solid var(--app-border);border-radius:20px;overflow:hidden;background:#0d1626;margin-bottom:24px;}
 .bike-app-club-masthead .bike-app-club-image-header {height:355px;max-width:none;margin:0;overflow:hidden;}
 .bike-app-club-masthead .bike-app-club-image-cover {position:absolute;top:12%;transform:translateY(-12%);border-radius:0;}
@@ -958,7 +963,7 @@ a {
 .bike-app-club-masthead .bike-app-club-image-logo,.bike-app-club-card-media .bike-app-club-image-logo {z-index:2;}
 
 .bike-app-club-member-link {display:inline-flex;align-items:center;min-height:44px;text-decoration:none;}
-.bike-app-club-member-link:hover {text-decoration:underline;color:#e8c8ee;}
+.bike-app-club-member-link:hover {text-decoration:underline;color:var(--brand-purple-text);}
 
 /* Frame geometry uses the visible cover viewport, without a second outer crop. */
 .bike-app-club-masthead .bike-app-club-image-cover,
@@ -982,9 +987,9 @@ a {
 
 .bike-app-club-search {max-width:640px;margin-bottom:18px;}
 .bike-app-club-search input {font-size:16px;}
-.bike-app-club-catalog-cover {height:100%;position:relative;overflow:hidden;background:radial-gradient(ellipse at 80% 0%,#61387399,transparent 70%),linear-gradient(140deg,#172747,#11192d);}
-.bike-app-club-catalog-cover > span {position:absolute;left:22px;bottom:22px;display:grid;place-items:center;width:68px;height:68px;border-radius:18px;background:#c283d51a;color:#e7c8ee;font-size:2rem;font-weight:650;border:1px solid #c283d540;}
-.bike-app-club-catalog-cover svg {position:absolute;right:8%;top:15%;height:75%;width:65%;stroke:#d1b0df;stroke-width:2;opacity:.25;}
+.bike-app-club-catalog-cover {height:100%;position:relative;overflow:hidden;background:radial-gradient(ellipse at 80% 0%,rgb(var(--brand-purple-rgb) / .6),transparent 70%),linear-gradient(140deg,#172747,#11192d);}
+.bike-app-club-catalog-cover > span {position:absolute;left:22px;bottom:22px;display:grid;place-items:center;width:68px;height:68px;border-radius:18px;background:rgb(var(--brand-purple-rgb) / .1);color:var(--brand-purple-text);font-size:2rem;font-weight:650;border:1px solid rgb(var(--brand-purple-rgb) / .25);}
+.bike-app-club-catalog-cover svg {position:absolute;right:8%;top:15%;height:75%;width:65%;stroke:var(--brand-purple-light);stroke-width:2;opacity:.25;}
 
 /* Authenticated visitor projections and independent management drafts. */
 .bike-app-visit-back { margin-bottom: 1.25rem; }
@@ -997,8 +1002,8 @@ a {
 .bike-app-visit-facts { display:flex;gap:1rem;flex-wrap:wrap;color:#b8c5da;margin-top:1rem; }
 .bike-app-visit-management-grid { display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.25rem;align-items:start; }
 .bike-app-visit-check { display:flex;align-items:center;gap:.75rem;padding:.55rem 0; }
-.bike-app-visit-check input { width:1.2rem;height:1.2rem;accent-color:#a85ac0; }
-.bike-app-visit-feedback { padding:1rem 1.25rem;border:1px solid #a875bd;border-radius:1rem;background:#271b38;margin-bottom:1.25rem; }
+.bike-app-visit-check input { width:1.2rem;height:1.2rem;accent-color:var(--brand-purple-light); }
+.bike-app-visit-feedback { padding:1rem 1.25rem;border:1px solid var(--brand-purple-light);border-radius:1rem;background:var(--brand-purple-surface);margin-bottom:1.25rem; }
 .bike-app-visit-preview { margin-top:1.2rem;border:1px solid #30394c;border-radius:1.25rem;overflow:hidden; }
 .bike-app-visit-preview-copy { padding:1.5rem; }
 .bike-app-visit-preview[data-cover="false"] .bike-app-club-image-cover,.bike-app-visit-preview[data-logo="false"] .bike-app-club-image-logo { display:none; }
@@ -1020,35 +1025,35 @@ a {
 .bike-message-row[data-own=true]{align-items:flex-end;}
 .bike-message-row[data-group-start=true]{margin-top:14px;}
 .bike-message-date{display:block;align-self:center;color:#aab7cd;font-size:.73rem;margin-bottom:8px;text-align:center;}
-.bike-message-author{font-size:.8rem;color:#d9aeff;margin:0 0 4px 8px;}
+.bike-message-author{font-size:.8rem;color:var(--brand-purple-light);margin:0 0 4px 8px;}
 .bike-message-wrap{max-width:min(82%,42rem);width:fit-content;position:relative;min-width:0;}
 .bike-message-bubble{position:relative;padding:9px 14px;border:1px solid #324159;border-radius:17px;background:#111d2c;min-width:2.8rem;}
-.bike-message-wrap[data-own=true] .bike-message-bubble{background:#291d42;border-color:#574073;}
-.bike-message-wrap[data-menu-open=true] .bike-message-bubble{outline:2px solid #d49cff;outline-offset:2px;}
+.bike-message-wrap[data-own=true] .bike-message-bubble{background:var(--brand-purple-surface);border-color:var(--brand-purple-border);}
+.bike-message-wrap[data-menu-open=true] .bike-message-bubble{outline:2px solid var(--brand-purple-light);outline-offset:2px;}
 .bike-message-body{white-space:pre-wrap;overflow-wrap:anywhere;margin:0;line-height:1.45;user-select:text;}
 .bike-message-bubble .bike-app-chat-quote{margin:0 0 6px;padding:6px 9px;max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere;text-align:start;font-size:.85rem;display:block;border-radius:8px;}
-.bike-message-menu-trigger{position:absolute;right:-34px;top:0;min-width:32px;min-height:36px;color:#d9aeff;opacity:0;border-radius:10px;}
+.bike-message-menu-trigger{position:absolute;right:-34px;top:0;min-width:32px;min-height:36px;color:var(--brand-purple-light);opacity:0;border-radius:10px;}
 .bike-message-wrap[data-own=true] .bike-message-menu-trigger{right:auto;left:-34px;}
 .bike-message-wrap:hover .bike-message-menu-trigger,.bike-message-wrap:focus-within .bike-message-menu-trigger{opacity:1;}
 .bike-reaction-chips{display:flex;flex-wrap:wrap;gap:3px;justify-content:flex-end;margin: -2px 4px 0;position:relative;}
-.bike-reaction-chip{font-size:.9rem;min-height:32px;min-width:36px;border:1px solid #574073;border-radius:18px;padding:3px 7px;background:#080e18;color:#f2f6ff;}
-.bike-reaction-chip[aria-pressed=true]{background:#42235d;border-color:#d49cff;}
-.bike-message-dialog{position:fixed;inset:0;margin:auto;width:min(440px,calc(100vw - 24px));max-height:85dvh;overflow:auto;background:#0a111d;color:#f2f6ff;border:1px solid #765398;border-radius:20px;padding:18px;overscroll-behavior:contain;}
+.bike-reaction-chip{font-size:.9rem;min-height:32px;min-width:36px;border:1px solid var(--brand-purple-border);border-radius:18px;padding:3px 7px;background:#080e18;color:#f2f6ff;}
+.bike-reaction-chip[aria-pressed=true]{background:var(--brand-purple-raised);border-color:var(--brand-purple-light);}
+.bike-message-dialog{position:fixed;inset:0;margin:auto;width:min(440px,calc(100vw - 24px));max-height:85dvh;overflow:auto;background:#0a111d;color:#f2f6ff;border:1px solid var(--brand-purple-border);border-radius:20px;padding:18px;overscroll-behavior:contain;}
 .bike-message-dialog::backdrop{background:#0009;}
 .bike-message-close{display:block;margin-left:auto;min-height:44px;min-width:44px;font-size:1.5rem;}
-.bike-message-preview{background:#291d42;border:1px solid #574073;border-radius:14px;padding:10px 14px;margin:12px 0;white-space:pre-wrap;overflow-wrap:anywhere;max-height:28dvh;overflow:auto;user-select:text;}
+.bike-message-preview{background:var(--brand-purple-surface);border:1px solid var(--brand-purple-border);border-radius:14px;padding:10px 14px;margin:12px 0;white-space:pre-wrap;overflow-wrap:anywhere;max-height:28dvh;overflow:auto;user-select:text;}
 .bike-quick-emoji{display:flex;flex-wrap:wrap;gap:2px;justify-content:center;}
 .bike-quick-emoji button,.bike-emoji-grid button{min-width:44px;min-height:44px;font-size:1.65rem;border-radius:10px;}
 .bike-message-menu-actions{display:grid;gap:3px;}
-.bike-message-menu-actions button{text-align:start;min-height:44px;padding:8px 12px;border-radius:8px;color:#d9aeff;}
+.bike-message-menu-actions button{text-align:start;min-height:44px;padding:8px 12px;border-radius:8px;color:var(--brand-purple-light);}
 .bike-message-menu-actions button[data-danger=true]{color:#ffbac8;}
-.bike-message-dialog button:hover,.bike-message-dialog button:focus-visible{background:#42235d;}
-.bike-message-dialog button:focus-visible,.bike-message-menu-trigger:focus-visible,.bike-reaction-chip:focus-visible{outline:2px solid #d49cff;outline-offset:2px;}
+.bike-message-dialog button:hover,.bike-message-dialog button:focus-visible{background:var(--brand-purple-raised);}
+.bike-message-dialog button:focus-visible,.bike-message-menu-trigger:focus-visible,.bike-reaction-chip:focus-visible{outline:2px solid var(--brand-purple-light);outline-offset:2px;}
 .bike-emoji-categories{display:flex;gap:6px;overflow:auto;margin-block:12px;}
-.bike-emoji-categories button{white-space:nowrap;min-height:44px;padding:6px 10px;border:1px solid #574073;border-radius:10px;}
-.bike-emoji-categories button[aria-pressed=true]{background:#42235d;}
+.bike-emoji-categories button{white-space:nowrap;min-height:44px;padding:6px 10px;border:1px solid var(--brand-purple-border);border-radius:10px;}
+.bike-emoji-categories button[aria-pressed=true]{background:var(--brand-purple-raised);}
 .bike-emoji-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:4px;}
-.bike-message-badge{display:inline-flex;align-items:center;justify-content:center;min-width:24px;min-height:24px;padding:2px 6px;margin-inline-start:8px;background:#802782;color:white;border-radius:18px;font-size:.75rem;font-weight:700;}
+.bike-message-badge{display:inline-flex;align-items:center;justify-content:center;min-width:24px;min-height:24px;padding:2px 6px;margin-inline-start:8px;background:var(--brand-purple);color:white;border-radius:18px;font-size:.75rem;font-weight:700;}
 .bike-app-dm-row{position:relative;}
 @media(hover:none){.bike-message-menu-trigger{opacity:.65;}}
 @media(max-width:640px){.bike-message-wrap{max-width:85%;}.bike-message-bubble{padding:8px 11px;}.bike-message-dialog{padding:12px;}}
@@ -1056,8 +1061,8 @@ a {
 
 .bike-app-gallery { margin-top: 22px; }
 .bike-app-gallery-upload { margin-block: 14px 20px; }
-.bike-app-gallery-upload summary { width: fit-content; min-height: 44px; padding: 10px 12px; color: #e4bbef; cursor: pointer; }
-.bike-app-gallery-upload summary:focus-visible { outline: 2px solid #b38bff; outline-offset: 3px; }
+.bike-app-gallery-upload summary { width: fit-content; min-height: 44px; padding: 10px 12px; color: var(--brand-purple-text); cursor: pointer; }
+.bike-app-gallery-upload summary:focus-visible { outline: 2px solid var(--brand-purple-light); outline-offset: 3px; }
 .bike-app-gallery-form { display: grid; gap: 12px; max-width: 590px; padding: 10px 0; }
 .bike-app-gallery-form button { justify-self: start; }
 .bike-app-gallery-form input { min-width: 0; width: 100%; }
@@ -1079,7 +1084,7 @@ a {
   background: var(--app-panel-soft);
   cursor: zoom-in;
 }
-.bike-app-gallery-tile:hover { border-color: #c979d1; }
+.bike-app-gallery-tile:hover { border-color: var(--brand-purple-light); }
 .bike-app-gallery-tile img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .bike-app-gallery-dialog {
   margin: auto;
@@ -1162,12 +1167,12 @@ html:has(.bike-app-gallery-dialog[open][data-gallery-expanded]) { overflow: hidd
   position: absolute;
   min-width: 44px;
   min-height: 44px;
-  border: 1px solid #8b7593;
+  border: 1px solid var(--brand-purple-border);
   background: rgb(17 24 39 / 92%);
   color: #fff;
 }
 .bike-app-gallery-expanded-close:hover,
-.bike-app-gallery-expanded-controls > button:hover { background: #412250; }
+.bike-app-gallery-expanded-controls > button:hover { background: var(--brand-purple-raised); }
 .bike-app-gallery-expanded-controls > button[aria-disabled="true"] { opacity: .55; cursor: default; }
 .bike-app-gallery-expanded-close {
   top: max(12px, env(safe-area-inset-top));
@@ -1246,7 +1251,7 @@ html:has(.bike-app-gallery-dialog[open][data-gallery-expanded]) { overflow: hidd
 }
 .bike-app-gallery-discussion-heading { justify-content: space-between; }
 .bike-app-gallery-like button { white-space: nowrap; }
-.bike-app-gallery-like button[aria-pressed="true"] { color: #f6c6ff; border-color: #b16dc7; }
+.bike-app-gallery-like button[aria-pressed="true"] { color: var(--brand-purple-text); border-color: var(--brand-purple); }
 .bike-app-gallery-comment-form { display: grid; gap: 8px; margin-top: 12px; }
 .bike-app-gallery-comment-form button { justify-self: start; }
 .bike-app-gallery-comment-form button[data-empty="true"] { opacity: .55; cursor: default; }

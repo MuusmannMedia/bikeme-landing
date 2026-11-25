@@ -61,14 +61,14 @@ export function AppStoreQrCard({ appStoreUrl, locale }: AppStoreQrCardProps) {
         <span className="inline-flex items-center rounded-full border border-[rgba(147,171,255,0.32)] bg-[rgba(94,127,255,0.13)] px-3 py-1.5 text-xs font-semibold text-[rgb(178,197,255)]">
           {copy.availability}
         </span>
-        <span className="h-2.5 w-2.5 rounded-full bg-[rgb(209,161,255)] shadow-[0_0_18px_rgba(209,161,255,0.85)]" />
+        <span className="h-2.5 w-2.5 rounded-full bg-brand-purple-light shadow-[0_0_18px_color-mix(in_srgb,var(--brand-purple-light)_85%,transparent)]" />
       </div>
 
       <a
         href={appStoreUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="app-store-qr-link block rounded-[1.45rem] bg-white p-3 shadow-[0_16px_45px_-25px_rgba(143,168,255,0.8)] transition-transform hover:scale-[1.015] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(209,161,255)] focus-visible:ring-offset-4 focus-visible:ring-offset-[#080f21]"
+        className="app-store-qr-link block rounded-[1.45rem] bg-white p-3 shadow-[0_16px_45px_-25px_rgba(143,168,255,0.8)] transition-transform hover:scale-[1.015] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple-light focus-visible:ring-offset-4 focus-visible:ring-offset-[#080f21]"
         aria-label={copy.title}
       >
         <Image
@@ -90,7 +90,7 @@ export function AppStoreQrCard({ appStoreUrl, locale }: AppStoreQrCardProps) {
         href={appStoreUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="app-store-download-link mt-5 flex min-h-16 items-center gap-3 rounded-2xl border border-[rgba(143,168,255,0.45)] bg-[linear-gradient(135deg,rgba(94,127,255,0.88),rgba(128,39,130,0.82))] px-4 py-3 text-white shadow-[0_18px_50px_-30px_rgba(128,39,130,0.95)] transition-transform hover:scale-[1.015] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(209,161,255)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#080f21]"
+        className="app-store-download-link mt-5 flex min-h-16 items-center gap-3 rounded-2xl border border-[rgba(143,168,255,0.45)] bg-[linear-gradient(135deg,rgba(94,127,255,0.88),rgb(var(--brand-purple-rgb)/0.82))] px-4 py-3 text-white shadow-[0_18px_50px_-30px_rgb(var(--brand-purple-rgb)/0.95)] transition-transform hover:scale-[1.015] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple-light focus-visible:ring-offset-2 focus-visible:ring-offset-[#080f21]"
       >
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white">
           <Image

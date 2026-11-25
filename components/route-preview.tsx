@@ -30,7 +30,7 @@ export function RoutePreview({ points, label }: { points: RoutePoint[]; label: s
         <defs>
           <linearGradient id="bike-app-route-gradient" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stopColor="#8fa8ff" />
-            <stop offset="1" stopColor="#c979d1" />
+            <stop offset="1" stopColor="var(--brand-purple)" />
           </linearGradient>
         </defs>
         <path d={path} fill="none" stroke="rgba(255,255,255,.12)" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />

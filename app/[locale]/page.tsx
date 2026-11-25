@@ -117,7 +117,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
             <Link
               href={`/${locale}/login`}
               prefetch={false}
-              className="hidden min-h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-full border border-white/20 bg-white/[0.04] px-2 text-xs font-semibold text-white transition-colors hover:border-[rgba(128,39,130,0.82)] hover:bg-[rgba(128,39,130,0.16)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(209,161,255)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060b16] sm:inline-flex min-[1430px]:absolute min-[1430px]:right-[calc(100%+0.5rem)]"
+              className="hidden min-h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-full border border-white/20 bg-white/[0.04] px-2 text-xs font-semibold text-white transition-colors hover:border-brand-purple/[.82] hover:bg-brand-purple/[.16] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple-light focus-visible:ring-offset-2 focus-visible:ring-offset-[#060b16] sm:inline-flex min-[1430px]:absolute min-[1430px]:right-[calc(100%+0.5rem)]"
             >
               {auth.navLogin}
             </Link>
@@ -132,7 +132,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
           <Link
             href={`/${locale}/login`}
             prefetch={false}
-            className="-my-2 inline-flex min-h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-full border border-white/20 bg-white/[0.04] px-3 text-sm font-semibold text-white transition-colors hover:border-[rgba(128,39,130,0.82)] hover:bg-[rgba(128,39,130,0.16)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(209,161,255)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060b16] sm:hidden"
+            className="-my-2 inline-flex min-h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-full border border-white/20 bg-white/[0.04] px-3 text-sm font-semibold text-white transition-colors hover:border-brand-purple/[.82] hover:bg-brand-purple/[.16] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple-light focus-visible:ring-offset-2 focus-visible:ring-offset-[#060b16] sm:hidden"
           >
             {auth.navLogin}
           </Link>
@@ -177,13 +177,13 @@ export default async function LocalePage({ params }: LocalePageProps) {
                 href={APP_STORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex rounded-full border-2 border-[rgba(143,168,255,0.75)] bg-[linear-gradient(135deg,rgba(94,127,255,0.9),rgba(128,39,130,0.85))] px-7 py-3 text-sm font-semibold text-white shadow-[0_18px_50px_-28px_rgba(128,39,130,0.9)] transition-transform hover:scale-[1.02]"
+                className="inline-flex rounded-full border-2 border-[rgba(143,168,255,0.75)] bg-[linear-gradient(135deg,rgba(94,127,255,0.9),rgb(var(--brand-purple-rgb)/0.85))] px-7 py-3 text-sm font-semibold text-white shadow-[0_18px_50px_-28px_rgb(var(--brand-purple-rgb)/0.9)] transition-transform hover:scale-[1.02]"
               >
                 {t.hero.primaryCta}
               </a>
               <a
                 href="#how-it-works"
-                className="rounded-full border-2 border-[rgba(143,168,255,0.75)] bg-white/[0.02] px-7 py-3 text-sm font-medium text-[var(--ink)] transition-colors hover:border-[rgba(128,39,130,0.95)] hover:bg-[rgba(128,39,130,0.16)]"
+                className="rounded-full border-2 border-[rgba(143,168,255,0.75)] bg-white/[0.02] px-7 py-3 text-sm font-medium text-[var(--ink)] transition-colors hover:border-brand-purple/[.95] hover:bg-brand-purple/[.16]"
               >
                 {t.hero.secondaryCta}
               </a>
@@ -219,7 +219,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
                 <p className="text-lg leading-relaxed text-[var(--ink-soft)]">
                   {t.launch.text}
                 </p>
-                <p className="text-sm font-medium text-[rgb(209,161,255)]">{t.launch.note}</p>
+                <p className="text-sm font-medium text-brand-purple-light">{t.launch.note}</p>
               </div>
 
               <AppStoreQrCard appStoreUrl={APP_STORE_URL} locale={locale} />
@@ -256,7 +256,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
                 <div className="bike-actions flex flex-wrap items-center gap-3 pt-2">
                   <a
                     href="#how-it-works"
-                    className="rounded-full border-2 border-[rgba(143,168,255,0.75)] bg-white/[0.02] px-7 py-3 text-sm font-medium text-[var(--ink)] transition-colors hover:border-[rgba(128,39,130,0.95)] hover:bg-[rgba(128,39,130,0.16)]"
+                    className="rounded-full border-2 border-[rgba(143,168,255,0.75)] bg-white/[0.02] px-7 py-3 text-sm font-medium text-[var(--ink)] transition-colors hover:border-brand-purple/[.95] hover:bg-brand-purple/[.16]"
                   >
                     {t.hero.secondaryCta}
                   </a>
@@ -286,7 +286,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
                 <div className="mb-4 inline-flex h-8 min-w-8 items-center justify-center rounded-full border border-white/15 bg-white/[0.05] px-2 text-xs font-semibold text-[rgb(178,197,255)]">
                   {String(index + 1).padStart(2, "0")}
                 </div>
-                <h3 className="mb-2 font-display text-xl font-semibold text-[rgb(209,161,255)]">
+                <h3 className="mb-2 font-display text-xl font-semibold text-brand-purple-light">
                   {feature.title}
                 </h3>
                 <p className="leading-relaxed text-[var(--ink-soft)]">{feature.description}</p>
@@ -312,7 +312,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
                 className="bike-card glass-panel rounded-3xl border p-6 shadow-[0_20px_60px_-40px_rgba(0,0,0,0.95)]"
               >
                 <p className="mb-4 text-sm font-semibold text-[rgb(147,171,255)]">0{index + 1}</p>
-                <h3 className="mb-2 font-display text-xl font-semibold text-[rgb(209,161,255)]">
+                <h3 className="mb-2 font-display text-xl font-semibold text-brand-purple-light">
                   {step.title}
                 </h3>
                 <p className="leading-relaxed text-[var(--ink-soft)]">{step.description}</p>
@@ -349,7 +349,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
                   />
                 </div>
                 <div className="bike-copy">
-                  <h3 className="font-display text-lg font-semibold text-[rgb(209,161,255)]">
+                  <h3 className="font-display text-lg font-semibold text-brand-purple-light">
                     {item.title}
                   </h3>
                   <p className="text-sm leading-relaxed text-[var(--ink-soft)]">
@@ -377,7 +377,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
                 key={item.question}
                 className="bike-card group rounded-2xl border border-white/12 bg-[rgba(8,15,31,0.9)] p-5 open:border-[rgba(151,177,255,0.45)]"
               >
-                <summary className="cursor-pointer list-none pr-8 font-medium text-[rgb(209,161,255)] marker:hidden">
+                <summary className="cursor-pointer list-none pr-8 font-medium text-brand-purple-light marker:hidden">
                   {item.question}
                 </summary>
                 <p className="pt-3 leading-relaxed text-[var(--ink-soft)]">{item.answer}</p>

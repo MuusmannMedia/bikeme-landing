@@ -1,5 +1,7 @@
 import { ImageResponse } from "next/og";
 
+import { BRAND_PURPLE_RGB } from "@/lib/site-config";
+
 export const size = {
   width: 1200,
   height: 630
@@ -43,7 +45,7 @@ export default function OpengraphImage() {
             borderRadius: 999,
             right: -80,
             bottom: -120,
-            backgroundColor: "rgba(128, 39, 130, 0.28)"
+            backgroundColor: `rgba(${BRAND_PURPLE_RGB.join(", ")}, 0.28)`
           }}
         />
 

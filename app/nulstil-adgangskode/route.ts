@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { BRAND_PURPLE } from "../../lib/site-config";
 import recoveryCopy from "../../lib/password-recovery-copy.json";
 
 const pageCopy = Object.fromEntries(
@@ -71,14 +72,14 @@ const script = String.raw`
 })();`;
 
 const style = `
-:root { color-scheme: dark; font: 100% system-ui, sans-serif; background: #10172a; color: #f8fafc; }
+:root { --brand-purple: ${BRAND_PURPLE}; --brand-purple-light: color-mix(in srgb, var(--brand-purple) 55%, white); color-scheme: dark; font: 100% system-ui, sans-serif; background: #10172a; color: #f8fafc; }
 body { margin: 0; min-height: 100svh; display: grid; place-items: center; }
 main { box-sizing: border-box; width: min(100%, 32rem); padding: 2rem; }
-.brand { color: #c4b5fd; font-weight: 700; }
+.brand { color: var(--brand-purple-light); font-weight: 700; }
 h1 { line-height: 1.15; }
 p { line-height: 1.55; }
-button { min-height: 44px; padding: .75rem 1.25rem; border: 1px solid #a78bfa; border-radius: .65rem; background: #5b21b6; color: #fff; font: inherit; font-weight: 700; }
-button:focus-visible { outline: 3px solid #ddd6fe; outline-offset: 3px; }
+button { min-height: 44px; padding: .75rem 1.25rem; border: 1px solid var(--brand-purple-light); border-radius: .65rem; background: var(--brand-purple); color: #fff; font: inherit; font-weight: 700; }
+button:focus-visible { outline: 3px solid var(--brand-purple-light); outline-offset: 3px; }
 button:disabled { opacity: .65; }
 `;
 

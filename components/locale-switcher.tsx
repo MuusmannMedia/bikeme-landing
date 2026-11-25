@@ -26,9 +26,9 @@ export function LocaleSwitcher({
           href={`/${code}${pathSuffix}`}
           aria-label={localeNames[code]}
           aria-current={code === locale ? "page" : undefined}
-          className={`shrink-0 rounded-full px-2 py-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(209,161,255)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060b16] ${
+          className={`shrink-0 rounded-full px-2 py-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple-light focus-visible:ring-offset-2 focus-visible:ring-offset-[#060b16] ${
             code === locale
-              ? "bg-[linear-gradient(135deg,rgba(94,127,255,0.9),rgba(128,39,130,0.85))] text-white"
+              ? "bg-[linear-gradient(135deg,rgba(94,127,255,0.9),rgb(var(--brand-purple-rgb)/0.85))] text-white"
               : "text-[var(--ink-soft)] hover:bg-white/10 hover:text-white"
           }`}
         >

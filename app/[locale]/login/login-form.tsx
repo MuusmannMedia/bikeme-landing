@@ -54,7 +54,7 @@ export function LoginForm({
           required
           disabled={isSubmitting}
           aria-describedby={errorMessage ? "login-error" : undefined}
-          className="min-h-[52px] w-full rounded-lg border border-white/20 bg-[rgba(6,10,20,0.82)] px-4 text-base text-[var(--ink)] outline-none transition placeholder:text-[var(--muted)] hover:border-white/30 focus-visible:border-[rgba(128,39,130,0.95)] focus-visible:ring-2 focus-visible:ring-[rgba(209,161,255,0.82)] disabled:cursor-wait disabled:opacity-70"
+          className="min-h-[52px] w-full rounded-lg border border-white/20 bg-[rgba(6,10,20,0.82)] px-4 text-base text-[var(--ink)] outline-none transition placeholder:text-[var(--muted)] hover:border-white/30 focus-visible:border-brand-purple/[.95] focus-visible:ring-2 focus-visible:ring-brand-purple-light disabled:cursor-wait disabled:opacity-70"
         />
       </div>
 
@@ -70,7 +70,7 @@ export function LoginForm({
           required
           disabled={isSubmitting}
           aria-describedby={errorMessage ? "login-error" : undefined}
-          className="min-h-[52px] w-full rounded-lg border border-white/20 bg-[rgba(6,10,20,0.82)] px-4 text-base text-[var(--ink)] outline-none transition placeholder:text-[var(--muted)] hover:border-white/30 focus-visible:border-[rgba(128,39,130,0.95)] focus-visible:ring-2 focus-visible:ring-[rgba(209,161,255,0.82)] disabled:cursor-wait disabled:opacity-70"
+          className="min-h-[52px] w-full rounded-lg border border-white/20 bg-[rgba(6,10,20,0.82)] px-4 text-base text-[var(--ink)] outline-none transition placeholder:text-[var(--muted)] hover:border-white/30 focus-visible:border-brand-purple/[.95] focus-visible:ring-2 focus-visible:ring-brand-purple-light disabled:cursor-wait disabled:opacity-70"
         />
       </div>
 
@@ -85,7 +85,7 @@ export function LoginForm({
       <button
         type="submit"
         disabled={isSubmitting}
-        className="inline-flex min-h-[52px] w-full items-center justify-center rounded-lg border border-[rgba(128,39,130,0.9)] bg-[#802782] px-5 text-base font-bold text-white shadow-[0_18px_50px_-28px_rgba(128,39,130,0.9)] transition hover:bg-[#8d3290] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(209,161,255)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0f18] disabled:cursor-wait disabled:opacity-70"
+        className="inline-flex min-h-[52px] w-full items-center justify-center rounded-lg border border-brand-purple/[.9] bg-brand-purple px-5 text-base font-bold text-white shadow-[0_18px_50px_-28px_rgb(var(--brand-purple-rgb)/0.9)] transition hover:bg-brand-purple-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple-light focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0f18] disabled:cursor-wait disabled:opacity-70"
       >
         {isSubmitting ? translations.submitting : translations.submit}
       </button>

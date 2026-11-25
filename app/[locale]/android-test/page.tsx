@@ -102,7 +102,7 @@ export default async function AndroidTestPage({ params }: AndroidTestPageProps) 
 
           <Link
             href={`/${locale}`}
-            className="order-2 inline-flex min-h-11 shrink-0 items-center rounded-full border border-white/20 bg-white/[0.03] px-4 py-2 text-sm font-medium text-[var(--ink-soft)] transition-colors hover:border-white/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(209,161,255)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060b16] sm:order-3 sm:px-5"
+            className="order-2 inline-flex min-h-11 shrink-0 items-center rounded-full border border-white/20 bg-white/[0.03] px-4 py-2 text-sm font-medium text-[var(--ink-soft)] transition-colors hover:border-white/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple-light focus-visible:ring-offset-2 focus-visible:ring-offset-[#060b16] sm:order-3 sm:px-5"
           >
             {copy.page.backToHome}
           </Link>

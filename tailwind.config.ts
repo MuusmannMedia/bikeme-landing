@@ -8,6 +8,11 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      colors: {
+        "brand-purple": "rgb(var(--brand-purple-rgb) / <alpha-value>)",
+        "brand-purple-hover": "var(--brand-purple-hover)",
+        "brand-purple-light": "var(--brand-purple-light)",
+      },
       fontFamily: {
         sans: ["var(--font-body)", "ui-sans-serif", "system-ui", "sans-serif"],
         display: ["var(--font-heading)", "ui-sans-serif", "system-ui", "sans-serif"]

@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import { Inter } from "next/font/google";
 
-import { CANONICAL_DOMAIN } from "@/lib/site-config";
+import { BRAND_PURPLE, BRAND_PURPLE_RGB, CANONICAL_DOMAIN } from "@/lib/site-config";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
 import "./spacing.css";
+
+const brandPalette = {
+  "--brand-purple": BRAND_PURPLE,
+  "--brand-purple-rgb": BRAND_PURPLE_RGB.join(" "),
+} as CSSProperties;
 
 const interBody = Inter({
   subsets: ["latin"],
@@ -50,7 +56,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
+    <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth" style={brandPalette}>
       <body className={`${interBody.variable} ${interHeading.variable} font-sans antialiased`}>
         {children}
       </body>

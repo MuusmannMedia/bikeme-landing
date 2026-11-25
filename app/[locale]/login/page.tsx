@@ -82,7 +82,7 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
               className="h-24 w-24 rounded-full"
               priority
             />
-            <p className="mt-2 text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(209,161,255)]">
+            <p className="mt-2 text-xs font-semibold uppercase tracking-[0.14em] text-brand-purple-light">
               {translations.loginEyebrow}
             </p>
             <h1 className="mt-2 font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">
@@ -109,7 +109,7 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
 
           <Link
             href={`/${locale}`}
-            className="mt-2 inline-flex min-h-11 w-full items-center justify-center rounded-lg px-4 text-sm font-semibold text-[var(--ink-soft)] underline decoration-white/30 underline-offset-4 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(209,161,255)]"
+            className="mt-2 inline-flex min-h-11 w-full items-center justify-center rounded-lg px-4 text-sm font-semibold text-[var(--ink-soft)] underline decoration-white/30 underline-offset-4 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple-light"
           >
             {translations.backToBikeMe}
           </Link>

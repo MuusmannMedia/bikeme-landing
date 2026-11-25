@@ -39,7 +39,7 @@ function SubmitButton({ copy }: { copy: AndroidTesterCopy }) {
       disabled={pending}
       aria-disabled={pending}
       aria-busy={pending}
-      className="inline-flex min-h-12 w-full items-center justify-center rounded-2xl border border-[rgba(179,139,255,0.68)] bg-[linear-gradient(135deg,#5e7fff,#802782)] px-6 py-3 text-sm font-bold text-white shadow-[0_18px_45px_-22px_rgba(128,39,130,0.95)] transition hover:scale-[1.01] hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(209,161,255)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1226] disabled:cursor-wait disabled:opacity-70"
+      className="inline-flex min-h-12 w-full items-center justify-center rounded-2xl border border-[color-mix(in_srgb,var(--brand-purple-light)_68%,transparent)] bg-[linear-gradient(135deg,#5e7fff,var(--brand-purple))] px-6 py-3 text-sm font-bold text-white shadow-[0_18px_45px_-22px_rgb(var(--brand-purple-rgb)/0.95)] transition hover:scale-[1.01] hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple-light focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1226] disabled:cursor-wait disabled:opacity-70"
     >
       {pending ? copy.submitting : copy.submit}
     </button>
@@ -120,15 +120,15 @@ export function AndroidTesterSection({ locale, copy }: { locale: Locale; copy: A
   };
 
   const fieldClass = (field: AndroidTestApplicationField) =>
-    `min-h-12 w-full rounded-xl border bg-[#070e1d]/90 px-3.5 py-3 text-base text-white outline-none transition placeholder:text-[#8391b0] focus:ring-2 focus:ring-[rgb(179,139,255)] focus:ring-offset-2 focus:ring-offset-[#0a1226] ${
+    `min-h-12 w-full rounded-xl border bg-[#070e1d]/90 px-3.5 py-3 text-base text-white outline-none transition placeholder:text-[#8391b0] focus:ring-2 focus:ring-brand-purple-light focus:ring-offset-2 focus:ring-offset-[#0a1226] ${
       displayedErrors[field] ? "border-[#ff8f8f]" : "border-white/20 hover:border-white/35"
     }`;
 
   return (
     <section id="android-test" className="section-shell scroll-mt-28 pb-20 md:pb-24" aria-labelledby="android-test-title">
-      <div className="relative overflow-hidden rounded-[2rem] border border-[rgba(179,139,255,0.35)] bg-[linear-gradient(145deg,rgba(16,28,60,0.97),rgba(28,13,50,0.97))] shadow-[0_42px_100px_-52px_rgba(128,39,130,0.95)]">
+      <div className="relative overflow-hidden rounded-[2rem] border border-[color-mix(in_srgb,var(--brand-purple-light)_35%,transparent)] bg-[linear-gradient(145deg,rgba(16,28,60,0.97),var(--brand-purple-surface))] shadow-[0_42px_100px_-52px_rgb(var(--brand-purple-rgb)/0.95)]">
         <div className="pointer-events-none absolute -left-24 top-0 h-72 w-72 rounded-full bg-[#5e7fff]/20 blur-3xl" />
-        <div className="pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-[#a532a8]/20 blur-3xl" />
+        <div className="pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-brand-purple/20 blur-3xl" />
 
         <div className="bike-inset bike-layout-grid relative grid gap-10 px-5 py-8 sm:px-8 sm:py-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(30rem,1.1fr)] lg:gap-12 lg:px-10 lg:py-12">
           <div className="flex flex-col lg:py-4">
@@ -136,12 +136,12 @@ export function AndroidTesterSection({ locale, copy }: { locale: Locale; copy: A
             <h1 id="android-test-title" className="mt-4 max-w-[17ch] font-display text-3xl font-semibold leading-tight text-white [text-wrap:balance] md:text-5xl">
               {copy.formTitle}
             </h1>
-            <p className="mt-4 max-w-[22ch] font-display text-2xl font-semibold leading-tight text-[rgb(209,161,255)] [text-wrap:balance] md:text-3xl">
+            <p className="mt-4 max-w-[22ch] font-display text-2xl font-semibold leading-tight text-brand-purple-light [text-wrap:balance] md:text-3xl">
               {copy.title}
             </p>
             <p className="mt-5 max-w-xl text-lg leading-relaxed text-[var(--ink-soft)]">{copy.body}</p>
 
-            <div className="bike-card mt-8 rounded-3xl border border-[rgba(201,121,209,0.42)] bg-[linear-gradient(135deg,rgba(94,127,255,0.16),rgba(128,39,130,0.32))] p-5 sm:p-6">
+            <div className="bike-card mt-8 rounded-3xl border border-[color-mix(in_srgb,var(--brand-purple-light)_42%,transparent)] bg-[linear-gradient(135deg,rgba(94,127,255,0.16),rgb(var(--brand-purple-rgb)/0.32))] p-5 sm:p-6">
               <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[rgb(184,200,255)]">{copy.rewardEyebrow}</p>
               <p className="mt-3 font-display text-3xl font-semibold text-white sm:text-4xl">{copy.rewardBadge}</p>
               <p className="mt-3 leading-relaxed text-[rgb(205,214,238)]">{copy.rewardNote}</p>
@@ -222,14 +222,14 @@ export function AndroidTesterSection({ locale, copy }: { locale: Locale; copy: A
 
                   <div className="bike-layout-grid grid gap-3">
                     <label className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3.5 transition ${displayedErrors.commitment ? "border-[#ff8f8f] bg-red-950/15" : "border-white/15 bg-white/[0.035] hover:border-white/30"}`}>
-                      <input name="commitment" type="checkbox" checked={values.commitment} onChange={(event) => updateValue("commitment", event.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 accent-[#a95caf] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(209,161,255)]" required aria-invalid={Boolean(displayedErrors.commitment)} aria-describedby={displayedErrors.commitment ? "android-commitment-error" : undefined} />
+                      <input name="commitment" type="checkbox" checked={values.commitment} onChange={(event) => updateValue("commitment", event.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 accent-brand-purple focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple-light" required aria-invalid={Boolean(displayedErrors.commitment)} aria-describedby={displayedErrors.commitment ? "android-commitment-error" : undefined} />
                       <span className="text-sm leading-relaxed text-[rgb(218,226,245)]">{copy.commitmentLabel}</span>
                     </label>
                     <FieldError id="android-commitment-error" message={errorMessage("commitment")} />
 
                     <label className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3.5 transition ${displayedErrors.privacy ? "border-[#ff8f8f] bg-red-950/15" : "border-white/15 bg-white/[0.035] hover:border-white/30"}`}>
-                      <input name="privacy" type="checkbox" checked={values.privacy} onChange={(event) => updateValue("privacy", event.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 accent-[#a95caf] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(209,161,255)]" required aria-invalid={Boolean(displayedErrors.privacy)} aria-describedby={displayedErrors.privacy ? "android-privacy-error" : undefined} />
-                      <span className="text-sm leading-relaxed text-[rgb(218,226,245)]">{copy.privacyPrefix}<Link href={`/${locale}/privacy`} className="font-semibold text-[rgb(190,204,255)] underline decoration-white/35 underline-offset-4 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(209,161,255)]">{copy.privacyLink}</Link>{copy.privacySuffix}</span>
+                      <input name="privacy" type="checkbox" checked={values.privacy} onChange={(event) => updateValue("privacy", event.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 accent-brand-purple focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple-light" required aria-invalid={Boolean(displayedErrors.privacy)} aria-describedby={displayedErrors.privacy ? "android-privacy-error" : undefined} />
+                      <span className="text-sm leading-relaxed text-[rgb(218,226,245)]">{copy.privacyPrefix}<Link href={`/${locale}/privacy`} className="font-semibold text-[rgb(190,204,255)] underline decoration-white/35 underline-offset-4 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple-light">{copy.privacyLink}</Link>{copy.privacySuffix}</span>
                     </label>
                     <FieldError id="android-privacy-error" message={errorMessage("privacy")} />
                   </div>

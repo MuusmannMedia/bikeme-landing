@@ -104,8 +104,8 @@ export function StatusBars({
       >
         <svg viewBox={`0 0 ${width} ${height}`} aria-hidden="true" preserveAspectRatio="none">
           <defs>
-            <linearGradient id="bike-status-fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#8fa8ff" stopOpacity=".62" /><stop offset="1" stopColor="#802782" stopOpacity=".08" /></linearGradient>
-            <linearGradient id="bike-status-line" x1="0" x2="1"><stop offset="0" stopColor="#8fa8ff" /><stop offset="1" stopColor="#d49cff" /></linearGradient>
+            <linearGradient id="bike-status-fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#8fa8ff" stopOpacity=".62" /><stop offset="1" stopColor="var(--brand-purple)" stopOpacity=".08" /></linearGradient>
+            <linearGradient id="bike-status-line" x1="0" x2="1"><stop offset="0" stopColor="#8fa8ff" /><stop offset="1" stopColor="var(--brand-purple-light)" /></linearGradient>
           </defs>
           <line x1={insetX} x2={width - insetX} y1={insetY} y2={insetY} className="bike-app-status-gridline" />
           <line x1={insetX} x2={width - insetX} y1={height / 2} y2={height / 2} className="bike-app-status-gridline" />

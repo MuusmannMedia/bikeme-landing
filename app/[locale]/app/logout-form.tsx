@@ -30,7 +30,7 @@ export function LogoutForm({ action, locale, translations }: LogoutFormProps) {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="inline-flex min-h-[52px] w-full items-center justify-center rounded-lg border border-white/24 bg-white/[0.05] px-5 text-base font-bold text-white transition hover:border-[rgba(128,39,130,0.82)] hover:bg-[rgba(128,39,130,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(209,161,255)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0f18] disabled:cursor-wait disabled:opacity-70"
+        className="inline-flex min-h-[52px] w-full items-center justify-center rounded-lg border border-white/24 bg-white/[0.05] px-5 text-base font-bold text-white transition hover:border-brand-purple/[.82] hover:bg-brand-purple/[.18] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple-light focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0f18] disabled:cursor-wait disabled:opacity-70"
       >
         {isSubmitting ? translations.loggingOut : translations.logOut}
       </button>
