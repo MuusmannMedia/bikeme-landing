@@ -1660,10 +1660,14 @@ button.club-calendar-entry { background: transparent; border-inline: 0; border-b
 }
 .bike-dm-composer .bike-app-chat-send > button:active { transform: none; }
 .bike-dm-report .bike-app-panel { padding: 0; background: transparent; border: 0; }
-.bike-dm-workspace .bike-message-wrap { max-width: calc(100% - 44px); }
-.bike-dm-workspace .bike-message-wrap[data-inline-reactions="true"] {
-  max-width: calc(100% - 88px);
+.bike-dm-workspace .bike-message-wrap {
+  --message-action-size: 44px;
+  --message-action-count: 1;
+  max-width: calc(100% - var(--message-action-size) * var(--message-action-count));
 }
+.bike-dm-workspace .bike-message-wrap[data-action-count="2"] { --message-action-count: 2; }
+.bike-dm-workspace .bike-message-wrap[data-action-count="3"] { --message-action-count: 3; }
+.bike-dm-workspace .bike-message-bubble[data-gestures="true"] { touch-action: pan-y pinch-zoom; }
 .bike-dm-workspace .bike-message-bubble {
   min-height: 44px;
   border-color: transparent;
@@ -1683,11 +1687,13 @@ button.club-calendar-entry { background: transparent; border-inline: 0; border-b
 }
 .bike-dm-workspace .bike-message-wrap[data-own="true"] .bike-message-action-buttons {
   inset-inline: auto 100%;
+  flex-direction: row-reverse;
 }
-.bike-dm-workspace :is(.bike-message-menu-trigger, .bike-message-reaction-trigger) {
+.bike-dm-workspace .bike-message-action-buttons > button {
   position: static;
   display: grid;
-  width: 44px;
+  width: var(--message-action-size);
+  min-width: var(--message-action-size);
   height: 44px;
   place-items: center;
   border-radius: 10px;
@@ -1695,8 +1701,18 @@ button.club-calendar-entry { background: transparent; border-inline: 0; border-b
   opacity: 1;
   cursor: pointer;
 }
-.bike-dm-workspace :is(.bike-message-menu-trigger, .bike-message-reaction-trigger):hover {
+.bike-dm-workspace .bike-message-action-buttons > button:not(:disabled):is(:hover, [aria-expanded="true"]),
+.bike-message-quick-popover button:is(:hover, [aria-pressed="true"]) {
   background: var(--app-active-fill);
+}
+.bike-dm-workspace .bike-message-action-buttons > button:disabled {
+  opacity: .5;
+  cursor: default;
+}
+.bike-dm-workspace .bike-message-action-buttons > button:focus-visible,
+.bike-message-quick-popover button:focus-visible {
+  outline: 2px solid var(--brand-purple-light);
+  outline-offset: -2px;
 }
 .bike-message-quick-popover {
   position: fixed;
@@ -1708,9 +1724,9 @@ button.club-calendar-entry { background: transparent; border-inline: 0; border-b
   align-items: center;
   gap: 2px;
   border: 1px solid var(--brand-purple-border);
-  border-radius: 17px;
+  border-radius: 22px;
   padding: 4px;
-  background: #1a2237;
+  background: #192236;
   color: var(--app-text);
   box-shadow: 0 7px 24px rgb(0 0 0 / .6);
 }
@@ -1718,18 +1734,24 @@ button.club-calendar-entry { background: transparent; border-inline: 0; border-b
 .bike-message-quick-popover button {
   display: grid;
   flex: 1;
-  width: 40px;
-  height: 42px;
+  width: clamp(36px, 11.5vw, 44px);
+  height: 44px;
   place-items: center;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 0;
-  font-size: 21px;
+  font-size: 23px;
   cursor: pointer;
 }
-.bike-message-quick-popover button:is(:hover, [aria-pressed="true"]) { background: var(--app-active-fill); }
+.bike-message-quick-popover .bike-message-more-emoji {
+  background: var(--brand-purple-surface);
+  color: var(--brand-purple-light);
+  font-size: 25px;
+  line-height: 1;
+}
 .bike-message-menu-actions button:has(> svg) { display: flex; align-items: center; gap: 9px; }
 
 @media (hover: hover) and (pointer: fine) {
+  .bike-dm-workspace .bike-message-wrap { --message-action-size: 36px; }
   .bike-dm-workspace .bike-message-action-buttons { opacity: 0; }
   .bike-dm-workspace .bike-message-wrap:is(:hover, :focus-within, [data-menu-open="true"]) .bike-message-action-buttons,
   .bike-dm-workspace .bike-message-action-buttons:has([aria-expanded="true"]) { opacity: 1; }

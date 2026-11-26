@@ -3,7 +3,8 @@ const paths = {
   restore: "M6 12h12M12 6v12",
   close: "m6 6 12 12M18 6 6 18",
   emoji: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20ZM8 14a4.5 4.5 0 0 0 8 0M8.5 9h.01m7 0h.01",
-  reply: "m9 10-4 4 4 4m-4-4h10a4 4 0 0 0 4-4V6",
+  reply: "m9 6-6 6 6 6m-6-6h10a7 7 0 0 1 7 7",
+  more: "M12 5h.01M12 12h.01M12 19h.01",
   edit: "m14 6 4 4M4 20l4.6-1 11-11a2.8 2.8 0 0 0-4-4l-11 11L4 20Z",
   delete: "M4 7h16m-10 4v6m4-6v6M6 7l1 13h10l1-13M9 7V4h6v3",
   report: "M5 21V4m0 1c5-4 9 4 14 0v9c-5 4-9-4-14 0",
@@ -15,7 +16,7 @@ const paths = {
 
 export function MessageActionIcon({ name }: { name: keyof typeof paths }) {
   return (
-    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={name === "more" ? 3 : 1.7}
       strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d={paths[name]} />
     </svg>
