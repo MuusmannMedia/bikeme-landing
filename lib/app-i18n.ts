@@ -3,6 +3,7 @@ import type { Locale } from "./locales";
 const localeOrder = ["en", "da", "de", "es", "it", "fr", "nl"] as const satisfies readonly Locale[];
 
 const text = {
+  "clubs.menu": ["Club menu", "Klubmenu", "Vereinsmenü", "Menú del club", "Menu del club", "Menu du club", "Clubmenu"],
   "clubs.pages": ["Club pages", "Klubsider", "Clubseiten", "Páginas de clubes", "Pagine dei club", "Pages des clubs", "Clubpagina’s"],
   "clubs.previous": ["Previous", "Forrige", "Zurück", "Anterior", "Precedente", "Précédent", "Vorige"],
   "clubs.next": ["Next", "Næste", "Weiter", "Siguiente", "Successivo", "Suivant", "Volgende"],
