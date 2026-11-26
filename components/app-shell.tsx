@@ -13,6 +13,7 @@ import { AppAvatar } from "./app-avatar";
 import { AppLanguageSwitcher } from "./app-language-switcher";
 import { AppNav } from "./app-nav";
 import { ClubNavScope } from "./clubs/visits/nav-scope";
+import { FloatingMessages } from "./messages/floating-messages";
 import { UnreadProvider } from "./messaging/unread-provider";
 
 type AppShellProps = {
@@ -63,40 +64,43 @@ export function AppShell({ children, locale, viewer, displayName, t }: AppShellP
     <UnreadProvider actor={viewer.profile.id}>
       <ClubNavScope>
         <div className="bike-app" lang={locale}>
-          <AppNav
-            locale={locale}
-            menuLabel={t("shell.menu")}
-            items={items}
-            profileLabel={t("nav.profile")}
-            profileLinks={profileLinks}
-            brand={
-              <Link href={base} className="bike-app-brand" aria-label="Bike Me">
-                <Image src="/brand/bike-me-logo-white.png" alt="" width={46} height={46} priority />
-                <strong>Bike Me</strong>
-              </Link>
-            }
-            actions={
-              <>
-                <Link
-                  aria-label={t("rides.create")}
-                  className="bike-app-button bike-app-header-create"
-                  href={`${base}/rides/new`}
-                >
-                  <span className="bike-app-create-icon" aria-hidden="true">+</span>
-                  <span>{t("rides.create")}</span>
+          <FloatingMessages actor={viewer.profile.id} locale={locale}>
+            <AppNav
+              actor={viewer.profile.id}
+              locale={locale}
+              menuLabel={t("shell.menu")}
+              items={items}
+              profileLabel={t("nav.profile")}
+              profileLinks={profileLinks}
+              brand={
+                <Link href={base} className="bike-app-brand" aria-label="Bike Me">
+                  <Image src="/brand/bike-me-logo-white.png" alt="" width={46} height={46} priority />
+                  <strong>Bike Me</strong>
                 </Link>
-                <AppLanguageSwitcher locale={locale} label={t("shell.language")} />
-              </>
-            }
-            avatar={
-              <>
-                <AppAvatar name={displayName} url={viewer.profile.avatarUrl} size="small" />
-                <span className="bike-app-viewer-name">{displayName}</span>
-              </>
-            }
-            logout={<LogoutForm action={logoutAction} locale={locale} translations={getAuthDictionary(locale)} />}
-          />
-          <main className="bike-app-content">{children}</main>
+              }
+              actions={
+                <>
+                  <Link
+                    aria-label={t("rides.create")}
+                    className="bike-app-button bike-app-header-create"
+                    href={`${base}/rides/new`}
+                  >
+                    <span className="bike-app-create-icon" aria-hidden="true">+</span>
+                    <span>{t("rides.create")}</span>
+                  </Link>
+                  <AppLanguageSwitcher locale={locale} label={t("shell.language")} />
+                </>
+              }
+              avatar={
+                <>
+                  <AppAvatar name={displayName} url={viewer.profile.avatarUrl} size="small" />
+                  <span className="bike-app-viewer-name">{displayName}</span>
+                </>
+              }
+              logout={<LogoutForm action={logoutAction} locale={locale} translations={getAuthDictionary(locale)} />}
+            />
+            <main className="bike-app-content">{children}</main>
+          </FloatingMessages>
         </div>
       </ClubNavScope>
     </UnreadProvider>

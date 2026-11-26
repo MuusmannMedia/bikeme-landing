@@ -1423,3 +1423,212 @@ button.club-calendar-entry { background: transparent; border-inline: 0; border-b
   .club-calendar-dots i { width: 5px; height: 5px; border-radius: 50%; background: var(--cc-purple); }
   .club-calendar-dots i[data-kind="event"] { background: var(--cc-blue); }
 }
+
+.bike-message-nav[data-mobile="true"] {
+  display: none;
+}
+.bike-message-nav .bike-app-nav-trigger[aria-expanded="true"] {
+  box-shadow: var(--app-active-edge);
+}
+.bike-message-popover.bike-app-nav-panel {
+  display: block;
+  width: min(370px, calc(100vw - 24px));
+  min-width: 0;
+  padding: 8px;
+  box-shadow: var(--app-active-edge), 0 14px 38px rgba(2, 6, 23, .55);
+}
+.bike-message-popover.bike-app-nav-panel[hidden] { display: none; }
+.bike-message-popover h2 {
+  padding: 8px 9px;
+  font-size: 16px;
+  font-weight: 700;
+}
+.bike-message-popover-list {
+  max-height: min(390px, calc(100dvh - 10rem));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px;
+}
+.bike-message-popover-list ul {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.bike-message-popover-row {
+  display: flex;
+  width: 100%;
+  min-height: 62px;
+  align-items: center;
+  gap: 9px;
+  border-radius: 9px;
+  padding: 8px;
+  color: var(--app-text);
+  text-align: start;
+  cursor: pointer;
+}
+.bike-message-popover-row:is(:hover, :focus-visible, :has(.bike-message-badge)) {
+  background: var(--app-active-fill);
+  box-shadow: var(--app-active-edge);
+}
+.bike-message-popover-copy {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 1px;
+}
+.bike-message-popover-copy > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bike-message-popover-copy > span,
+.bike-message-popover-meta time {
+  color: var(--app-muted);
+  font-size: 12px;
+}
+.bike-message-popover-meta {
+  display: grid;
+  max-width: 34%;
+  justify-items: end;
+  align-content: center;
+  gap: 2px;
+  text-align: end;
+}
+.bike-message-popover-feedback {
+  padding: 10px;
+  color: var(--app-muted);
+}
+.bike-message-popover .bike-message-popover-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+  color: var(--brand-purple-light);
+}
+
+.bike-message-window {
+  position: fixed;
+  z-index: 24;
+  inset-inline-end: max(18px, env(safe-area-inset-right));
+  inset-block-end: max(14px, env(safe-area-inset-bottom));
+  width: min(380px, calc(100vw - 36px));
+  border: 1px solid var(--app-border);
+  border-radius: 15px;
+  background: var(--app-panel);
+  box-shadow: var(--app-active-edge), 0 12px 40px rgba(2, 6, 23, .65);
+}
+.bike-message-window-header {
+  display: flex;
+  min-height: 58px;
+  align-items: center;
+  gap: 4px;
+  border-radius: 14px 14px 0 0;
+  padding: 5px 7px 5px 12px;
+  background: var(--app-active-fill);
+}
+.bike-message-window-header h2 {
+  flex: 1;
+  min-width: 0;
+  margin-inline-start: 4px;
+  overflow: hidden;
+  font-size: 16px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bike-message-window[data-minimized="true"] .bike-message-window-header {
+  border-radius: inherit;
+}
+.bike-message-window-control {
+  display: grid;
+  min-width: 44px;
+  min-height: 44px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 8px;
+  color: var(--brand-purple-light);
+  font-size: 20px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.bike-message-window-control:hover { background: var(--app-active-fill); }
+.bike-message-window-body {
+  max-height: min(73dvh, calc(var(--message-visible-height, 100dvh) - 5rem));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 5px 3px;
+}
+.bike-message-window-body[hidden] { display: none; }
+.bike-message-window .bike-app-section-gap { margin-top: 0; }
+.bike-message-window .bike-app-panel {
+  border: 0;
+  border-radius: 0;
+  padding: 8px;
+  background: transparent;
+  box-shadow: none;
+}
+.bike-message-window .bike-app-chat-scroll {
+  height: clamp(64px, calc(var(--message-visible-height, 100dvh) - 15rem), 275px);
+  border-radius: 10px;
+  padding: 8px;
+}
+.bike-message-window .bike-app-chat-status {
+  min-height: 0;
+  margin: 5px 8px 0;
+}
+.bike-message-window .bike-app-chat-feedback { min-height: 0; }
+.bike-message-window .bike-app-chat-new-slot:not(:empty) {
+  min-height: 0;
+  padding-top: 6px;
+}
+.bike-message-window .bike-app-chat-new-slot:empty { display: none; }
+.bike-message-window .bike-app-chat-history:has(> p) { display: none; }
+.bike-message-window .bike-app-chat-composer {
+  position: static;
+  padding: 0;
+  background: transparent;
+}
+.bike-message-window .bike-app-chat-composer textarea {
+  min-height: 44px;
+  max-height: 90px;
+}
+.bike-message-window .bike-app-chat-composer form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 0 8px;
+}
+.bike-message-window .bike-app-chat-send { display: contents; }
+.bike-message-window .bike-app-chat-send > span { grid-area: 2 / 1; text-align: end; }
+.bike-message-window .bike-app-chat-send > button { grid-area: 1 / 2; align-self: center; }
+
+@media (max-width: 1120px) {
+  .bike-app-nav .bike-message-nav[data-mobile="false"] { display: none; }
+  .bike-message-nav[data-mobile="true"] { position: static; display: block; }
+  .bike-message-nav[data-mobile="true"] .bike-app-nav-trigger {
+    position: relative;
+    width: 44px;
+    justify-content: center;
+    padding: 0;
+  }
+  .bike-message-nav[data-mobile="true"] .bike-app-nav-trigger > .bike-message-badge {
+    position: absolute;
+    inset: 0 -4px auto auto;
+    min-width: 18px;
+    min-height: 18px;
+    margin: 0;
+    font-size: 10px;
+  }
+  .bike-message-nav[data-mobile="true"] .bike-message-popover {
+    inset-inline: auto 12px;
+    top: calc(100% + 5px);
+  }
+}
+@media (max-width: 620px) {
+  .bike-message-window {
+    inset-inline: max(8px, env(safe-area-inset-left)) max(8px, env(safe-area-inset-right));
+    inset-block-end: calc(max(6px, env(safe-area-inset-bottom)) + var(--message-keyboard-offset, 0px));
+    width: auto;
+  }
+}

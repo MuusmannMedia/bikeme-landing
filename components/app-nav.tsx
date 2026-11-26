@@ -5,9 +5,11 @@ import { usePathname } from "next/navigation";
 import { useEffect, useId, useState, type ReactNode } from "react";
 
 import { isAppNavActive } from "@/lib/clubs/navigation";
+import { dmText } from "@/lib/messages/i18n";
 import type { Locale } from "@/lib/locales";
 
 import { useVisitorNav } from "./clubs/visits/nav-scope";
+import { LazyMessagesBoundary, useFloatingMessages } from "./messages/floating-messages";
 import { UnreadBadge } from "./messaging/unread-provider";
 
 type NavigationLink = {
@@ -23,6 +25,7 @@ type NavigationGroup = {
 };
 
 type AppNavProps = {
+  actor: string;
   locale: Locale;
   menuLabel: string;
   items: (NavigationLink | NavigationGroup)[];
@@ -40,9 +43,11 @@ export function AppNav(props: AppNavProps) {
 }
 
 function NavigationBar({
-  pathname, locale, menuLabel, items, profileLabel, profileLinks, brand, actions, avatar, logout,
+  pathname, actor, locale, menuLabel, items, profileLabel, profileLinks, brand, actions, avatar, logout,
 }: AppNavProps & { pathname: string }) {
   const visitor = useVisitorNav();
+  const openConversation = useFloatingMessages();
+  const messagesLink = items.find((item): item is NavigationLink => "href" in item && !!item.unread);
   const id = useId();
   const navId = `${id}-navigation`;
   const mobileButtonId = `${navId}-button`;
@@ -110,6 +115,54 @@ function NavigationBar({
     return <Link key={link.href} {...props} />;
   }
 
+  function renderMessages(link: NavigationLink, mobile = false) {
+    if (!openConversation) return mobile ? null : renderLink(link);
+
+    const panelId = `${id}-messages-${mobile ? "mobile" : "desktop"}`;
+    const expanded = openPanel === panelId;
+
+    return (
+      <div key={link.href} className="bike-app-nav-group bike-message-nav" data-mobile={mobile}>
+        <button
+          type="button"
+          id={`${panelId}-button`}
+          className="bike-app-nav-trigger"
+          data-messages-trigger
+          data-mobile={mobile || undefined}
+          aria-label={mobile ? link.label : undefined}
+          aria-expanded={expanded}
+          aria-controls={panelId}
+          data-active={active(link)}
+          onClick={() => {
+            setMobileOpen(false);
+            setOpenPanel(expanded ? null : panelId);
+          }}
+        >
+          {mobile ? (
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-4 3v-3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"
+                stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+            </svg>
+          ) : link.label}
+          <UnreadBadge locale={locale} privateTotal />
+          {!mobile && <span className="bike-app-nav-chevron" aria-hidden="true" />}
+        </button>
+        <section id={panelId} className="bike-app-nav-panel bike-message-popover"
+          aria-labelledby={`${panelId}-heading`} hidden={!expanded}>
+          <h2 id={`${panelId}-heading`}>{dmText(locale, "title")}</h2>
+          {expanded && (
+            <LazyMessagesBoundary userId={actor} locale={locale} conversationId={null} peer={null}
+              view={{ kind: "popover", openConversation: conversation => {
+                setOpenPanel(null);
+                openConversation(conversation);
+              } }}
+            />
+          )}
+        </section>
+      </div>
+    );
+  }
+
   function renderGroup(group: NavigationGroup, trigger?: ReactNode, footer?: ReactNode) {
     const panelId = `${id}-${group.id}`;
     const expanded = openPanel === panelId;
@@ -163,8 +216,9 @@ function NavigationBar({
           {!mobileOpen && <UnreadBadge locale={locale} total />}
         </button>
         <nav id={navId} className="bike-app-nav" aria-label="Bike Me" data-mobile-open={mobileOpen}>
-          {items.map(item => "href" in item ? renderLink(item) : renderGroup(item))}
+          {items.map(item => "href" in item ? item.unread ? renderMessages(item) : renderLink(item) : renderGroup(item))}
         </nav>
+        {messagesLink && renderMessages(messagesLink, true)}
         <div className="bike-app-topbar-actions">
           {actions}
           {renderGroup({ id: "profile", label: profileLabel, links: profileLinks }, avatar, logout)}
