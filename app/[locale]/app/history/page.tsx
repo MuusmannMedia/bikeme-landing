@@ -26,7 +26,48 @@ export default async function HistoryPage({ params, searchParams }: { params: Pr
       <AppPageHeader eyebrow={t("common.pro")} title={t("history.title")} intro={t("history.intro")} />
       <AppNotice locale={locale} code={result.failed ? "data" : notice} />
       <AppPanel>
-        {result.value.length ? <div className="bike-app-history-table-wrap"><table className="bike-app-table"><thead><tr><th>{t("history.details")}</th><th>{t("rides.distance")}</th><th>{t("history.duration")}</th><th>{t("history.elevation")}</th><th aria-label={t("common.view")} /></tr></thead><tbody>{result.value.map((ride) => <tr key={ride.id}><td><strong>{ride.title}</strong><small>{formatDate(locale, ride.startedAt)} · {ride.discipline}</small></td><td>{formatDistance(locale, ride.distanceKm, viewer.profile.unitSystem)}</td><td>{formatDuration(ride.durationMinutes)}</td><td>{formatElevation(locale, ride.elevationGain, viewer.profile.unitSystem)}</td><td><Link aria-label={t("common.view")} className="bike-app-button bike-app-button-secondary bike-app-button-small" href={`/${locale}/app/history/${ride.id}`}>{t("common.view")}</Link></td></tr>)}</tbody></table></div> : <AppEmpty>{t("common.empty")}</AppEmpty>}
+        {result.value.length ? (
+          <div className="bike-app-history-table-wrap">
+            <table className="bike-app-table" role="table">
+              <thead role="rowgroup">
+                <tr role="row">
+                  <th role="columnheader" scope="col">{t("history.details")}</th>
+                  <th role="columnheader" scope="col">{t("rides.distance")}</th>
+                  <th role="columnheader" scope="col">{t("history.duration")}</th>
+                  <th role="columnheader" scope="col">{t("history.elevation")}</th>
+                  <th role="columnheader" scope="col" aria-label={t("common.view")} />
+                </tr>
+              </thead>
+              <tbody role="rowgroup">
+                {result.value.map((ride) => (
+                  <tr key={ride.id} className="bike-app-history-row" role="row">
+                    <td className="bike-app-history-title" role="cell">
+                      <Link className="bike-app-history-link" href={`/${locale}/app/history/${ride.id}`}>
+                        <strong>{ride.title}</strong>
+                        <small>{formatDate(locale, ride.startedAt)} · {ride.discipline}</small>
+                      </Link>
+                    </td>
+                    <td className="bike-app-history-metric" role="cell">
+                      <span className="bike-app-history-metric-label" aria-hidden="true">{t("rides.distance")}</span>
+                      {formatDistance(locale, ride.distanceKm, viewer.profile.unitSystem)}
+                    </td>
+                    <td className="bike-app-history-metric" role="cell">
+                      <span className="bike-app-history-metric-label" aria-hidden="true">{t("history.duration")}</span>
+                      {formatDuration(ride.durationMinutes)}
+                    </td>
+                    <td className="bike-app-history-metric" role="cell">
+                      <span className="bike-app-history-metric-label" aria-hidden="true">{t("history.elevation")}</span>
+                      {formatElevation(locale, ride.elevationGain, viewer.profile.unitSystem)}
+                    </td>
+                    <td className="bike-app-history-view" role="cell">
+                      <span className="bike-app-button bike-app-button-secondary bike-app-button-small" aria-hidden="true">{t("common.view")}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : <AppEmpty>{t("common.empty")}</AppEmpty>}
       </AppPanel>
     </>
   );
