@@ -7,6 +7,7 @@ import type { Locale } from "@/lib/locales";
 import { dmText } from "@/lib/messages/i18n";
 
 import { AppAvatar } from "../app-avatar";
+import { MessageActionIcon } from "../messaging/message-action-icon";
 
 export function FloatingMessageWindow({ locale, name, actions, minimized, toggle, close, children }: {
   locale: Locale;
@@ -43,7 +44,8 @@ export function FloatingMessageWindow({ locale, name, actions, minimized, toggle
   return (
     <section ref={panel} className="bike-message-window" data-minimized={minimized} aria-labelledby={`${id}-title`}
       onKeyDown={event => {
-        if (event.key === "Escape" && !event.defaultPrevented && !document.querySelector("dialog[open]")) {
+        if (event.key === "Escape" && !event.defaultPrevented && !document.querySelector("dialog[open]") &&
+            !event.currentTarget.querySelector('.bike-message-reaction-trigger[aria-expanded="true"]')) {
           event.preventDefault();
           close();
         }
@@ -54,10 +56,12 @@ export function FloatingMessageWindow({ locale, name, actions, minimized, toggle
         {actions}
         <button autoFocus type="button" className="bike-message-window-control" aria-expanded={!minimized}
           aria-controls={`${id}-body`} aria-label={dmText(locale, minimized ? "restore" : "minimize")} onClick={toggle}>
-          {minimized ? "+" : "−"}
+          <MessageActionIcon name={minimized ? "restore" : "minimize"} />
         </button>
         <button type="button" className="bike-message-window-control"
-          aria-label={getAppDictionary(locale)("common.close")} onClick={close}>×</button>
+          aria-label={getAppDictionary(locale)("common.close")} onClick={close}>
+          <MessageActionIcon name="close" />
+        </button>
       </header>
       <div id={`${id}-body`} className="bike-message-window-body" hidden={minimized}>
         {children}
