@@ -3,6 +3,7 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { createViewerAccess } from "./app-access";
+import { rideInviteUnavailable } from "./ride-requests";
 import type {
   Hotspot,
   RideDetail,
@@ -334,6 +335,7 @@ export async function loadRideDetail(client: Client, userId: string, rideId: str
     declinedAt: nullableString(row.declined_at),
     rideTitle: ride.title,
     rideStartTime: ride.startTime,
+    rideUnavailable: rideInviteUnavailable(rideRow),
     counterpart: profiles.get(String(row.invitee_id ?? "")) ?? null,
     direction: "sent"
   }));
@@ -416,11 +418,12 @@ export async function listRideInvites(client: Client, userId: string): Promise<R
   const [profiles, ridesResponse] = await Promise.all([
     loadProfilesById(client, counterpartIds),
     rideIds.length
-      ? client.from("rides").select("id,title,start_time,club_id,club_closed_at").in("id", rideIds)
+      ? client.from("rides").select("id,title,type,status,start_time,expires_at,club_id,club_closed_at").in("id", rideIds)
       : Promise.resolve({ data: [], error: null })
   ]);
   if (ridesResponse.error) throw new AppDataError("LOAD_FAILED");
   const rides = new Map(((ridesResponse.data ?? []) as Record<string, unknown>[]).map((row) => [String(row.id), row]));
+  const now = Date.now();
   return rows.filter(row => { const ride=rides.get(String(row.ride_id)); return ride && !ride.club_id && !ride.club_closed_at; }).map((row) => {
     const direction = row.invitee_id === userId ? "received" as const : "sent" as const;
     const counterpartId = String(direction === "received" ? row.host_id : row.invitee_id);
@@ -434,6 +437,7 @@ export async function listRideInvites(client: Client, userId: string): Promise<R
       declinedAt: nullableString(row.declined_at),
       rideTitle: nullableString(ride?.title),
       rideStartTime: nullableString(ride?.start_time),
+      rideUnavailable: rideInviteUnavailable(ride, now),
       counterpart: profiles.get(counterpartId) ?? null,
       direction
     };

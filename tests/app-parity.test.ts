@@ -4,6 +4,7 @@ import { join } from "node:path";
 import test from "node:test";
 
 import { createViewerAccess, hasProAccess } from "../lib/app-access";
+import { isCurrentRideInterest, rideInviteUnavailable } from "../lib/ride-requests";
 import { trimRouteForPrivacy } from "../lib/app-format";
 import { appTranslationKeys, appTranslationLocales, getAppTranslationRow } from "../lib/app-i18n";
 import type { RideHistorySummary, RideInterest, RideInvite, RiderConnection, StatusHistoryRide } from "../lib/app-model";
@@ -87,6 +88,7 @@ test("overview metrics and focused destinations share one authoritative status c
     declinedAt: null,
     rideTitle: "Synthetic ride",
     rideStartTime: null,
+    rideUnavailable: null,
     counterpart: null,
     direction: "received",
     ...overrides
@@ -122,6 +124,8 @@ test("overview metrics and focused destinations share one authoritative status c
 
   assert.deepEqual(selectPendingReceivedInvites([
     invite(),
+    invite({ rideId: "past-pending", rideUnavailable: "expired" }),
+    invite({ rideId: "cancelled-pending", rideUnavailable: "cancelled" }),
     invite({ rideId: "accepted", acceptedAt: "2026-08-09T11:00:00.000Z" }),
     invite({ rideId: "declined", declinedAt: "2026-08-09T11:00:00.000Z" }),
     invite({ rideId: "sent", direction: "sent" })
@@ -137,6 +141,12 @@ test("overview metrics and focused destinations share one authoritative status c
     connection("pending_incoming"),
     connection("pending_outgoing")
   ]).map((item) => item.state), ["accepted"]);
+  assert.equal(isCurrentRideInterest(interest()), true);
+  assert.equal(isCurrentRideInterest(interest({ expired: true })), false);
+  assert.equal(isCurrentRideInterest(interest({ responseStatus: "declined" })), false);
+  assert.equal(isCurrentRideInterest(interest({ responseStatus: "interested" })), false);
+  assert.equal(isCurrentRideInterest(interest({ direction: "sent", responseStatus: "maybe" })), true);
+  assert.equal(isCurrentRideInterest(interest({ direction: "sent", responseStatus: "converted", createdRideId: "ride" })), false);
   assert.equal(selectPendingReceivedInvites([]).length, 0);
   assert.equal(selectPendingReceivedInterest([]).length, 0);
   assert.equal(selectAcceptedConnections([]).length, 0);
@@ -158,12 +168,28 @@ test("overview metrics and focused destinations share one authoritative status c
     assert.ok(overview.includes(selector), selector);
     assert.ok(overview.includes(destination), destination);
   });
-  assert.ok(requests.includes("selectPendingReceivedInvites(invites)"));
-  assert.ok(requests.includes("selectPendingReceivedInterest(interests)"));
+  assert.ok(requests.includes("invites.filter(isCurrentRideInvite)"));
+  assert.ok(requests.includes("interests.filter(isCurrentRideInterest)"));
+  assert.ok(requests.includes("requests?view=invites"));
+  assert.ok(requests.includes("requests?view=interest"));
   assert.ok(riders.includes("selectAcceptedConnections(connections)"));
   assert.ok(history.includes("overviewRecentRideLimit"));
   assert.ok(overview.includes('aria-label={metricLabel('));
   assert.ok(overview.includes('t("overview.viewMetric")'));
+});
+
+test("ride invitations use actual ride status, event start and ping expiry", () => {
+  const now = Date.parse("2026-11-26T09:00:00.000Z");
+  const start = "2026-11-26T09:00:00.000Z";
+  const future = "2026-11-26T10:00:00.000Z";
+  const event = { type: "EVENT", status: "ACTIVE", start_time: future, expires_at: "2026-11-26T12:00:00.000Z" };
+  assert.equal(rideInviteUnavailable(event, now), null);
+  assert.equal(rideInviteUnavailable({ ...event, start_time: start }, now), "expired");
+  assert.equal(rideInviteUnavailable({ ...event, type: "PING", start_time: start }, now), null);
+  assert.equal(rideInviteUnavailable({ ...event, type: "PING", start_time: start, expires_at: start }, now), "expired");
+  assert.equal(rideInviteUnavailable({ ...event, status: "CANCELLED" }, now), "cancelled");
+  assert.equal(rideInviteUnavailable({ ...event, status: "COMPLETED" }, now), "completed");
+  assert.equal(rideInviteUnavailable({ ...event, start_time: "invalid" }, now), "unavailable");
 });
 
 test("the authenticated shell owns the one persistent localized create-ride action", () => {
@@ -1215,7 +1241,7 @@ test("request cards contain long localized actions without expanding the documen
   const styles = projectFile("app/globals.css");
   const directChildRule = styles.match(/\.bike-app-request-card\s*>\s*\*\s*\{([^}]*)\}/)?.[1] ?? "";
   const headerRule = styles.match(/\.bike-app-request-card\s*>\s*header\s*\{([^}]*)\}/)?.[1] ?? "";
-  const titleRule = styles.match(/\.bike-app-request-card\s+h2\s*\{([^}]*)\}/)?.[1] ?? "";
+  const titleRule = styles.match(/\.bike-app-request-card\s+header\s+h3\s*\{([^}]*)\}/)?.[1] ?? "";
   const smallButtonRule = styles.match(/\.bike-app-button-small\s*\{([^}]*)\}/)?.[1] ?? "";
 
   assert.ok(requests.includes('className="bike-app-panel bike-app-request-card"'));

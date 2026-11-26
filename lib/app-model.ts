@@ -80,6 +80,8 @@ export type RideParticipant = RiderProfile & {
   joinedAt: string | null;
 };
 
+export type RideInviteUnavailable = "cancelled" | "completed" | "expired" | "unavailable";
+
 export type RideInvite = {
   rideId: string;
   hostId: string;
@@ -89,6 +91,7 @@ export type RideInvite = {
   declinedAt: string | null;
   rideTitle: string | null;
   rideStartTime: string | null;
+  rideUnavailable: RideInviteUnavailable | null;
   counterpart: RiderProfile | null;
   direction: "received" | "sent";
 };

@@ -78,6 +78,7 @@ export function AppNotice({ locale, code }: { locale: Locale; code?: string | nu
     durationInvalid: "message.durationInvalid",
     meetingInvalid: "message.meetingInvalid",
     inviteInvalid: "message.inviteInvalid",
+    inviteUnavailable: "requests.inviteUnavailable",
     inviteError: "message.inviteError",
     createdInviteError: "message.createdInviteError",
     gpxInvalid: "message.gpxInvalid",
@@ -95,7 +96,7 @@ export function AppNotice({ locale, code }: { locale: Locale; code?: string | nu
   if (!key) return null;
   const isError = [
     "invalid", "titleTooShort", "titleTooLong", "distanceInvalid", "startInvalid", "startFuture", "durationInvalid", "meetingInvalid",
-    "inviteInvalid", "inviteError", "createdInviteError",
+    "inviteInvalid", "inviteUnavailable", "inviteError", "createdInviteError",
     "gpxInvalid", "createdRouteError", "createdRouteInviteError",
     "forbidden", "search", "data", "error", "historyDeleteError", "historyDeleteInvalid"
   ].includes(code);

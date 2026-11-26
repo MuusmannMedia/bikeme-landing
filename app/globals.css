@@ -598,10 +598,58 @@ a {
 .bike-app-rider-connection p { margin: 0; color: var(--app-muted); }
 .bike-app-interest-form { display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 12px; border-top: 1px solid rgba(148,163,194,.15); padding-top: 17px; }
 .bike-app-interest-form .bike-app-button { grid-column: 1 / -1; }
+.bike-app-requests-nav { display: none; }
+.bike-app-requests-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 24px;
+}
+.bike-app-requests-panel { box-shadow: var(--app-active-edge), var(--app-panel-shadow); }
+.bike-app-requests-cards { display: grid; gap: 12px; }
+.bike-app-request-invite { flex-wrap: wrap; }
+@media (min-width: 761px) {
+  .bike-app-request-invite > .bike-app-list-main { flex: 1 1 220px; }
+}
+.bike-app-requests-history { margin-top: 16px; border-top: 1px solid var(--app-border); }
+.bike-app-requests-history summary { min-height: 44px; padding: 12px 4px; cursor: pointer; font-weight: 700; }
+.bike-app-requests-history[open] summary { margin-bottom: 8px; }
+.bike-app-requests-history summary:hover { color: var(--brand-purple-light); }
+@media (max-width: 760px) {
+  .bike-app-requests-grid { grid-template-columns: minmax(0, 1fr); }
+  .bike-app-requests-grid[data-view="invites"] .bike-app-requests-interest,
+  .bike-app-requests-grid[data-view="interest"] .bike-app-requests-invites { display: none; }
+  .bike-app-requests-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .bike-app-requests-nav a {
+    display: grid;
+    place-items: center;
+    min-height: 44px;
+    padding: 8px;
+    border: 1px solid var(--app-border);
+    border-radius: 9px;
+    background: #101827;
+    color: var(--app-muted);
+    font-size: 14px;
+    font-weight: 750;
+    text-align: center;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+  .bike-app-requests-nav a[aria-current="page"] {
+    background: rgb(var(--brand-purple-rgb) / .22);
+    color: var(--app-text);
+    box-shadow: var(--app-active-edge);
+  }
+}
 .bike-app-request-card { display: grid; align-content: start; gap: 18px; }
 .bike-app-request-card > * { min-width: 0; }
 .bike-app-request-card > header { display: flex; flex-wrap: wrap; align-items: start; justify-content: space-between; gap: 14px; }
-.bike-app-request-card h2 { margin: 0 0 4px; overflow-wrap: anywhere; }
+.bike-app-request-card header h3 { margin: 0 0 4px; font-size: 19px; overflow-wrap: anywhere; }
 .bike-app-request-card p { margin: 0; color: var(--app-muted); font-size: 13px; }
 .bike-app-convert-form { border-top: 1px solid color-mix(in srgb, var(--brand-purple-light) 24%, transparent); padding-top: 18px; }
 .bike-app-history-table-wrap { width: 100%; max-width: 100%; min-width: 0; overflow-x: auto; contain: inline-size; }

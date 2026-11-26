@@ -14,6 +14,7 @@ import {
   resolveFreeMeetingLocation,
   resolveRideSchedule
 } from "@/lib/create-ride";
+import { rideInviteUnavailable } from "@/lib/ride-requests";
 import { parseSerializedPlannedRoute } from "@/lib/gpx-import";
 import type { UnitSystem } from "@/lib/app-model";
 import type { Locale } from "@/lib/locales";
@@ -211,22 +212,28 @@ async function updateRideInvite(formData: FormData, accepted: boolean): Promise<
   if (!context) redirect(`/${getSafeLocale(formData.get("locale"))}/login`);
   const rideId = uuidValue(formData, "rideId");
   if (!rideId) redirectResult(context, "invalid");
-  const scope=await context.client.from("rides").select("club_id,club_closed_at").eq("id",rideId).maybeSingle();
+  const scope = await context.client.from("rides")
+    .select("club_id,club_closed_at,type,status,start_time,expires_at").eq("id", rideId).maybeSingle();
   if(scope.error || !scope.data || scope.data.club_closed_at) redirectResult(context,"forbidden");
   if(scope.data.club_id) {
     try {await createClubRideApi(context.client,context.userId).act({clubId:scope.data.club_id,rideId,action:"respond",accept:accepted});}
     catch {redirectResult(context,"forbidden");}
     redirect(clubRideHref(context.locale,scope.data.club_id,rideId));
   }
-  const now = new Date().toISOString();
-  const { error } = await context.client
+  const now = Date.now();
+  if (rideInviteUnavailable(scope.data, now)) redirectResult(context, "inviteUnavailable");
+  const answeredAt = new Date(now).toISOString();
+  const { data, error } = await context.client
     .from("ride_invites")
-    .update(accepted ? { accepted_at: now, declined_at: null } : { accepted_at: null, declined_at: now })
+    .update(accepted ? { accepted_at: answeredAt, declined_at: null } : { accepted_at: null, declined_at: answeredAt })
     .eq("ride_id", rideId)
     .eq("invitee_id", context.userId)
     .is("accepted_at", null)
-    .is("declined_at", null);
+    .is("declined_at", null)
+    .select("ride_id")
+    .maybeSingle();
   if (error) redirectResult(context, error.code === "42501" ? "forbidden" : "error");
+  if (!data) redirectResult(context, "inviteUnavailable");
   revalidateApp(context.locale, [`/${context.locale}/app/requests`, `/${context.locale}/app/rides/${rideId}`]);
   redirectResult(context, "done");
 }
