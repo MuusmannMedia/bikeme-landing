@@ -14,9 +14,11 @@ import {contentText,type ContentTextKey} from '@/lib/clubs/content-i18n';
 import {getAppDictionary} from '@/lib/app-i18n';
 import {formatDateTime} from '@/lib/app-format';
 import {validateMessage,type Message,type Command} from '@/lib/messages/contract';
-import {validateReportDetail} from '@/lib/clubs/content-contract';
+import {SHORT_CONTENT_LIMIT,validateReportDetail} from '@/lib/clubs/content-contract';
 import type {MessagesStore,State} from '@/lib/messages/store';
 import type {Locale} from '@/lib/locales';
+import {ComposerEmoji} from './composer-emoji';
+import {ConversationBlock} from './conversation-block';
 export function MessagesWorkspace({store,state,locale,userId,conversationId,peer,checking=false,floating=false,minimized=false}:{store:MessagesStore;state:State;locale:Locale;userId:string;conversationId:string|null;peer:string|null;checking?:boolean;floating?:boolean;minimized?:boolean}){
  const t=getAppDictionary(locale),ct=(key:ContentTextKey)=>contentText(locale,key),ch=(key:ChatTextKey)=>chatText(locale,key),dm=(key:Parameters<typeof dmText>[1])=>dmText(locale,key),data=state.data,ready=state.status==='ready'&&!!data,locked=!ready||state.busy||!!state.pending;
  const editor=useRef<HTMLTextAreaElement>(null),dialog=useRef<HTMLDialogElement>(null),reportSelect=useRef<HTMLSelectElement>(null),returnId=useRef('');
@@ -30,15 +32,17 @@ export function MessagesWorkspace({store,state,locale,userId,conversationId,peer
  const command=(extra:object)=>({actorId:userId,conversation:conversationId!,...extra}) as Command;
  const ask=(c:Command,title:string,body:string,id:string)=>{setConfirm({command:c,title,body,focusId:id});};
  const choose=(id:string,edit=false)=>store.choose(id,edit);
- function bubble(m:Message,original=false){const own=m.author_id===userId,index=data?.items.findIndex(x=>x.id===m.id)??0,group=messagePresentation(data?.items??[m],Math.max(0,index));const actions:MessageAction[]=original?[]:own?[{key:'edit',label:t('common.edit'),disabled:!data?.canSend,run:()=>void choose(m.id,true)},{key:'delete',label:ct('delete'),danger:true,run:()=>ask(command({type:'change',id:m.id,action:'delete'}),ct('delete'),dm('deleteBody'),`dm-menu-${m.id}`)}]:[{key:'reply',label:ch('reply'),disabled:!data?.canSend,run:()=>void choose(m.id)},{key:'report',label:dm('report'),run:()=>{returnId.current=`dm-menu-${m.id}`;setReport({id:m.id,detail:'',reason:'spam'});}}];return <article className="bike-message-row" data-own={own} data-group-start={group.start} key={`${original?'original':'list'}-${m.id}`} data-dm-message={m.id} data-seen-incoming={!own&&!m.deleted_at?m.id:undefined}>
+ function bubble(m:Message,original=false){const own=m.author_id===userId,index=data?.items.findIndex(x=>x.id===m.id)??0,group=messagePresentation(data?.items??[m],Math.max(0,index));const actions:MessageAction[]=original?[]:own?[{key:'edit',label:t('common.edit'),disabled:!data?.canSend,run:()=>void choose(m.id,true)},{key:'delete',label:ct('delete'),danger:true,run:()=>ask(command({type:'change',id:m.id,action:'delete'}),ct('delete'),dm('deleteBody'),`message-menu-${m.id}`)}]:[{key:'reply',label:ch('reply'),disabled:!data?.canSend,run:()=>void choose(m.id)},{key:'report',label:dm('report'),run:()=>{returnId.current=`message-menu-${m.id}`;setReport({id:m.id,detail:'',reason:'spam'});}}];return <article className="bike-message-row" data-own={own} data-group-start={group.start} key={`${original?'original':'list'}-${m.id}`} data-dm-message={m.id} data-seen-incoming={!own&&!m.deleted_at?m.id:undefined}>
   {group.start||original?<time className="bike-message-date" dateTime={m.created_at}>{formatDateTime(locale,m.created_at)}</time>:null}
-  <MessageBubble id={m.id} own={own} body={m.body} locale={locale} actions={actions} disabled={locked||checking}>
+  <MessageBubble id={m.id} own={own} body={m.body} locale={locale} actions={actions} disabled={locked||checking} actionIcons={floating}>
   {m.reply?<button className="bike-app-chat-quote" onClick={()=>{returnId.current=`dm-original-${original?'opened-':''}${m.id}`;store.original(m.reply!.id);}} id={`dm-original-${original?'opened-':''}${m.id}`}><span>{ch('quote')} · {m.reply.display_name??dm('deletedUser')}</span><br/>{m.reply.deleted?ch('deleted'):m.reply.body}</button>:null}
   <p className="bike-message-body">{m.body}</p>
   </MessageBubble>
  </article>;}
  let valid=false;try{validateMessage(state.draft);valid=true;}catch{}let reportValid=false;try{validateReportDetail(report?.detail??'');reportValid=true;}catch{}
  const error:ContentTextKey=state.error==='contentRejected'?'contentRejected':state.error==='conflict'?'conflict':state.error==='invalid'?'invalid':state.error==='blocked'||state.error==='unavailable'?'unavailable':state.error==='access'?'access':'network';
+ const tooLong=floating&&!valid&&Array.from(state.draft.replace(/^ +| +$/g,"")).length>SHORT_CONTENT_LIMIT;
+ const canWrite=!!data?.canSend&&!locked;
  const selected=data?.selected,available=(!state.edit&&!state.replyId)||!!selected&&!selected.deleted_at;
  return <ReactionScope actor={userId} kind="private" scope={conversationId??''} ids={[...(data?.items??[]).map(m=>m.id),...(state.original?[state.original.id]:[])]} active={ready&&!checking&&!!conversationId&&data?.canSend===true}><VisibleRead actor={userId} conversation={conversationId??''} enabled={ready&&!checking&&!minimized&&!!conversationId&&data?.canSend===true} revision={data?.items}/><div ref={root} data-dm-access={state.status} data-dm-data={data?'present':'empty'}>
   <StableAccessRegion ready={ready} fallback={<AppPanel><p role={state.status==='error'?'alert':'status'}>{ch(state.status==='error'?'offline':'loading')}</p>{state.status==='error'?<button className="bike-app-button" onClick={()=>void store.sync(true)}>{ch('retry')}</button>:null}</AppPanel>}>
@@ -53,7 +57,9 @@ export function MessagesWorkspace({store,state,locale,userId,conversationId,peer
      <AppPanel title={dm('title')} className="bike-app-section-gap">{data!.rows.length?<ul className="bike-app-list">{data!.rows.map(row=><li key={row.id} className="bike-app-list-item"><a className="bike-app-dm-row" href={`/${locale}/app/messages/${row.id}`}><strong>{row.peer.display_name??dm('deletedUser')}</strong><UnreadBadge locale={locale} conversation={row.id}/><p className="bike-app-content-body">{row.last_message?.body??dm('noMessages')}</p><small>{formatDateTime(locale,row.last_message?.edited_at??row.last_message?.created_at??row.created_at)}</small>{row.messaging_blocked?<p className="bike-app-muted">{dm('blocked')}</p>:null}</a></li>)}</ul>:<AppEmpty>{dm('empty')}</AppEmpty>}{data!.hasMore?<button className="bike-app-button bike-app-button-secondary" disabled={state.moreLoading} onClick={()=>void store.more()}>{dm('more')}</button>:null}</AppPanel>
     </>}
    </>:<>
-    <AppPanel className="bike-app-section-gap">{!floating&&<div className="bike-app-actions"><button id="dm-block" className="bike-app-button bike-app-button-secondary" disabled={locked||!data!.conversation?.peer.id} onClick={()=>ask(command({type:'block',value:!data!.conversation!.blocked_by_me}),dm(data!.conversation!.blocked_by_me?'unblock':'block'),dm(data!.conversation!.blocked_by_me?'unblockBody':'blockBody'),'dm-block')}>{dm(data!.conversation!.blocked_by_me?'unblock':'block')}</button></div>}{!data!.canSend?<p role="status">{dm(data!.conversation?.messaging_blocked?'blocked':'cannotSend')}</p>:null}
+    <AppPanel className="bike-app-section-gap">
+     {!floating&&<div className="bike-app-actions"><ConversationBlock locale={locale} blocked={data!.conversation?.blocked_by_me===true}
+      disabled={locked||checking||!data!.conversation?.peer.id} onChange={value=>void store.run(command({type:'block',value}))}/></div>}{!data!.canSend?<p role="status">{dm(data!.conversation?.messaging_blocked?'blocked':'cannotSend')}</p>:null}
      {state.originalId?<section className="bike-app-chat-context"><h3>{ch('quote')}</h3><button className="bike-app-button bike-app-button-secondary" onClick={()=>{store.original(null);restore();}}>{ch('back')}</button>{state.original?state.original.deleted_at?<p>{ch('deleted')}</p>:bubble(state.original,true):<p>{ch(state.originalUnavailable?'unavailable':'loading')}</p>}</section>:null}
      <div className="bike-app-chat-scroll" ref={list} tabIndex={0} role="region" aria-label={dm('title')} onScroll={e=>{const el=e.currentTarget,bottom=el.scrollHeight-el.scrollTop-el.clientHeight<90;store.position(bottom);}}><div className="bike-app-chat-history">{data!.hasMore?<button className="bike-app-button bike-app-button-secondary" disabled={state.moreLoading} onClick={()=>{void store.more();}}>{ch(state.moreLoading?'loading':'older')}</button>:<p>{ch('beginning')}</p>}</div>{data!.items.length?[...data!.items].reverse().map(m=>bubble(m)):<AppEmpty>{dm('noMessages')}</AppEmpty>}</div>
      <div className="bike-app-chat-new-slot">{state.newCount?<button className="bike-app-button" onClick={()=>store.bottom()}>{ch('new')} ({state.newCount})</button>:null}</div>
@@ -72,7 +78,31 @@ export function MessagesWorkspace({store,state,locale,userId,conversationId,peer
    {conversationId?<div className="bike-app-chat-composer">
     {state.edit||state.replyId?<div className="bike-app-chat-quote"><strong>{ch(state.edit?'edit':'quote')}</strong><p className="bike-app-content-body">{available?selected?.body:ch('unavailable')}</p><button className="bike-app-button bike-app-button-secondary" disabled={locked} onClick={()=>{store.cancel();restore();}}>{ch('cancelReply')}</button></div>:null}
     {state.conflict&&selected?<div className="bike-app-chat-quote"><p>{ch('conflict')}</p><strong>{ch('latest')} · {selected.version}</strong><p className="bike-app-content-body">{selected.body}</p><button className="bike-app-button" disabled={locked} onClick={()=>store.rebase()}>{ch('rebase')}</button></div>:null}
-    <form onSubmit={e=>{e.preventDefault();if(valid&&!locked&&available&&data?.canSend)void store.submit().then(saved=>{if(saved)editor.current?.focus({preventScroll:true});});}}><label className="bike-app-field"><span className={floating?"sr-only":undefined}>{ch('message')}</span><textarea id="dm-composer" ref={editor} rows={floating?2:3} placeholder={floating?ch('message'):undefined} value={state.draft} readOnly={locked||!data?.canSend} onChange={e=>store.text(e.target.value)}/></label><div className="bike-app-chat-send"><span>{ch('count').replace('{count}',String(Array.from(state.draft).length))}</span><button className="bike-app-button" disabled={locked||!valid||!available||state.conflict||!data?.canSend}>{state.busy?ch('sending'):state.edit?t('common.save'):ch('send')}</button></div></form>
+    <form onSubmit={event=>{
+      event.preventDefault();
+      if(valid&&canWrite&&available&&!event.currentTarget.querySelector('dialog[open]')){
+       void store.submit().then(saved=>{if(saved)editor.current?.focus({preventScroll:true});});
+      }
+    }}>
+     <div className="bike-app-dm-input">
+      <ComposerEmoji locale={locale} editor={editor} disabled={!canWrite||checking||minimized} onChange={store.text}/>
+      <label className="bike-app-field">
+       <span className={floating?'sr-only':undefined}>{ch('message')}</span>
+       <textarea id="dm-composer" ref={editor} rows={floating?2:3} placeholder={floating?ch('message'):undefined}
+        value={state.draft} readOnly={!canWrite} onChange={event=>store.text(event.target.value)}
+        aria-invalid={tooLong||undefined} aria-describedby={tooLong?'dm-draft-limit':undefined}/>
+      </label>
+     </div>
+     <div className="bike-app-chat-send">
+      {!floating&&<span>{ch('count').replace('{count}',String(Array.from(state.draft).length))}</span>}
+      <button className="bike-app-button" disabled={!canWrite||!valid||!available||state.conflict}>
+       {state.busy?ch('sending'):state.edit?t('common.save'):ch('send')}
+      </button>
+     </div>
+     {tooLong&&<p id="dm-draft-limit" className="bike-app-dm-draft-limit" role="status">
+      {dm('tooLong').replace('{max}',String(SHORT_CONTENT_LIMIT))}
+     </p>}
+    </form>
    </div>:null}
   </AppPanel>:null}
  </div></ReactionScope>;

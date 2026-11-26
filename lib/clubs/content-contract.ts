@@ -16,7 +16,8 @@ export function contentError(error:unknown):ContentError {
  return new ContentError(e?.code==="PT423"?"blocked":e?.code==="42501"?"access":["28000","PGRST301","PGRST302"].includes(e?.code??"")?"auth":e?.code==="22023"?"invalid":["PT409","40001","40P01"].includes(e?.code??"")?"conflict":["P0002","PT410","PGRST202","42P01","42883"].includes(e?.code??"")?"unavailable":"network");
 }
 export function responseContentError(value:unknown){return new ContentError(typeof value==="string"&&["auth","access","blocked","contentRejected","invalid","unavailable","conflict","network"].includes(value)?value as ContentErrorKind:"network");}
-export function validateContent(text:string,kind:ContentKind){if(typeof text!=="string")throw new ContentError("invalid");const body=text.replace(/^ +| +$/g,"");const n=Array.from(body).length;if(!/\S/u.test(body)||!n||n>(kind==="post"?4000:1500)||body.includes("\0"))throw new ContentError("invalid");return body;}
+export const SHORT_CONTENT_LIMIT = 1500;
+export function validateContent(text:string,kind:ContentKind){if(typeof text!=="string")throw new ContentError("invalid");const body=text.replace(/^ +| +$/g,"");const n=Array.from(body).length;if(!/\S/u.test(body)||!n||n>(kind==="post"?4000:SHORT_CONTENT_LIMIT)||body.includes("\0"))throw new ContentError("invalid");return body;}
 export function validateReportDetail(text:string){if(typeof text!=="string")throw new ContentError("invalid");if(Array.from(text).length>500||text.includes("\0"))throw new ContentError("invalid");return text;}
 export type ContentCommand={actorId:string;clubId:string}&(
  {type:"create";id:string;body:string;post:string|null}|

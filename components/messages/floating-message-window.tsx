@@ -8,10 +8,11 @@ import { dmText } from "@/lib/messages/i18n";
 
 import { AppAvatar } from "../app-avatar";
 
-export function FloatingMessageWindow({ locale, conversation, name, minimized, toggle, close, children }: {
+export function FloatingMessageWindow({ locale, conversation, name, actions, minimized, toggle, close, children }: {
   locale: Locale;
   conversation: string;
   name: string | null;
+  actions: ReactNode;
   minimized: boolean;
   toggle: () => void;
   close: () => void;
@@ -50,7 +51,8 @@ export function FloatingMessageWindow({ locale, conversation, name, minimized, t
       }}>
       <header className="bike-message-window-header">
         <AppAvatar name={name} size="small" />
-        <h2 id={`${id}-title`}>{title}</h2>
+        <h2 id={`${id}-title`} title={title}>{title}</h2>
+        {actions}
         {!minimized && name && (
           <a className="bike-message-window-control" href={`/${locale}/app/messages/${conversation}`}
             aria-label={dmText(locale, "full")} title={dmText(locale, "full")}>↗</a>

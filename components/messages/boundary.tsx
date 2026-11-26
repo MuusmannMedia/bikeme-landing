@@ -10,6 +10,7 @@ import {CLUB_AUTH_EVENT,clubAuthPhase} from '@/lib/clubs/auth-events';
 import type {Locale} from '@/lib/locales';
 import {MessagesWorkspace} from './workspace';
 import {dmText} from '@/lib/messages/i18n';
+import {ConversationBlock} from './conversation-block';
 import {FloatingMessageWindow} from './floating-message-window';
 import {MessagePopoverList} from './message-popover-list';
 
@@ -55,8 +56,13 @@ export function MessagesBoundary({userId,conversationId,peer,locale,view}:{userI
  </AccessContinuity>;
  if(view?.kind!=='floating'||!conversationId)return content;
 
- const name=state.status==='ready'&&!continuity.concealed
-  ? state.data?.conversation?.peer.display_name??dmText(locale,'deletedUser') : null;
- return <FloatingMessageWindow locale={locale} conversation={conversationId} name={name}
+ const conversation=state.status==='ready'&&!continuity.concealed ? state.data?.conversation : null;
+ const name=conversation ? conversation.peer.display_name??dmText(locale,'deletedUser') : null;
+ const actions=!view.minimized&&conversation?.peer.id
+  ? <ConversationBlock locale={locale} blocked={conversation.blocked_by_me} compact
+     disabled={continuity.checking||state.busy||!!state.pending}
+     onChange={value=>void store.run({actorId:userId,conversation:conversationId,type:'block',value})}/>
+  : null;
+ return <FloatingMessageWindow locale={locale} conversation={conversationId} name={name} actions={actions}
    minimized={view.minimized} close={view.close} toggle={view.toggle}>{content}</FloatingMessageWindow>;
 }

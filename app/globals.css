@@ -1527,7 +1527,7 @@ button.club-calendar-entry { background: transparent; border-inline: 0; border-b
   padding: 5px 7px 5px 12px;
   background: var(--app-active-fill);
 }
-.bike-message-window-header h2 {
+.bike-message-window-header > h2 {
   flex: 1;
   min-width: 0;
   margin-inline-start: 4px;
@@ -1552,7 +1552,8 @@ button.club-calendar-entry { background: transparent; border-inline: 0; border-b
   text-decoration: none;
   cursor: pointer;
 }
-.bike-message-window-control:hover { background: var(--app-active-fill); }
+.bike-message-window-control:not(:disabled):hover { background: var(--app-active-fill); }
+.bike-message-window-control:disabled { cursor: default; opacity: .55; }
 .bike-message-window-body {
   max-height: min(73dvh, calc(var(--message-visible-height, 100dvh) - 5rem));
   overflow-y: auto;
@@ -1596,12 +1597,52 @@ button.club-calendar-entry { background: transparent; border-inline: 0; border-b
 .bike-message-window .bike-app-chat-composer form {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  align-items: start;
-  gap: 0 8px;
+  align-items: stretch;
+  gap: 5px 8px;
+}
+.bike-app-dm-input {
+  display: flex;
+  min-width: 0;
+  align-items: flex-end;
+  gap: 4px;
+}
+.bike-app-dm-input > .bike-app-field { flex: 1; }
+.bike-message-composer-emoji {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 9px;
+  color: var(--brand-purple-light);
+  cursor: pointer;
+}
+.bike-message-composer-emoji:not(:disabled):hover { background: var(--app-active-fill); }
+.bike-message-composer-emoji:disabled { cursor: default; opacity: .55; }
+.bike-app-dm-draft-limit {
+  grid-column: 1 / -1;
+  color: #ffbac8;
+  font-size: .85rem;
 }
 .bike-message-window .bike-app-chat-send { display: contents; }
-.bike-message-window .bike-app-chat-send > span { grid-area: 2 / 1; text-align: end; }
-.bike-message-window .bike-app-chat-send > button { grid-area: 1 / 2; align-self: center; }
+.bike-message-window .bike-app-chat-send > button {
+  grid-area: 1 / 2;
+  align-self: stretch;
+}
+.bike-message-window .bike-app-chat-send > button:active { transform: none; }
+.bike-message-window .bike-message-wrap { max-width: calc(100% - 44px); }
+.bike-message-window .bike-message-menu-trigger {
+  inset-inline: 100% auto;
+  min-width: 44px;
+  min-height: 44px;
+  opacity: 1;
+}
+.bike-message-window .bike-message-wrap[data-own="true"] .bike-message-menu-trigger { inset-inline: auto 100%; }
+.bike-message-menu-actions button:has(> svg) { display: flex; align-items: center; gap: 9px; }
+
+@media (max-width: 360px) {
+  .bike-message-window-header { gap: 1px; padding-inline: 7px 3px; }
+}
 
 @media (max-width: 1120px) {
   .bike-app-nav .bike-message-nav[data-mobile="false"] { display: none; }
