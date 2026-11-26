@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useId, useState, type ReactNode } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useId, useState, type ReactNode } from "react";
 
 import { isAppNavActive } from "@/lib/clubs/navigation";
+import { messagesEntryFromSearch } from "@/lib/messages/entry";
 import { dmText } from "@/lib/messages/i18n";
 import type { Locale } from "@/lib/locales";
 
@@ -47,12 +48,30 @@ function NavigationBar({
 }: AppNavProps & { pathname: string }) {
   const visitor = useVisitorNav();
   const openConversation = useFloatingMessages();
+  const messagesEntry = messagesEntryFromSearch(useSearchParams());
+  const openLinkedMenu = messagesEntry?.kind === "inbox" || messagesEntry?.kind === "recipient";
+  const linkedPeer = messagesEntry?.kind === "recipient" ? messagesEntry.peer : null;
   const messagesLink = items.find((item): item is NavigationLink => "href" in item && !!item.unread);
   const id = useId();
   const navId = `${id}-navigation`;
   const mobileButtonId = `${navId}-button`;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openPanel, setOpenPanel] = useState<string | null>(null);
+  const [composePeer, setComposePeer] = useState<string | null>(null);
+  const selectConversation = useCallback((conversation: string) => {
+    setOpenPanel(null);
+    openConversation(conversation);
+  }, [openConversation]);
+
+  useEffect(() => {
+    if (!openLinkedMenu) return;
+    const frame = requestAnimationFrame(() => {
+      setComposePeer(linkedPeer);
+      const mobile = window.matchMedia("(max-width: 1120px)").matches;
+      setOpenPanel(`${id}-messages-${mobile ? "mobile" : "desktop"}`);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [id, linkedPeer, openLinkedMenu]);
   const active = (link: NavigationLink) => isAppNavActive(pathname, link.href, visitor);
 
   useEffect(() => {
@@ -108,16 +127,14 @@ function NavigationBar({
         {link.unread && <UnreadBadge locale={locale} total />}
       </>,
     };
-    // Keep document navigation for private club and inbox routes.
-    if (link.href.includes("/app/clubs/") || link.href.endsWith("/messages")) {
+    // Keep document navigation for private club routes.
+    if (link.href.includes("/app/clubs/")) {
       return <a key={link.href} {...props} />;
     }
     return <Link key={link.href} {...props} />;
   }
 
   function renderMessages(link: NavigationLink, mobile = false) {
-    if (!openConversation) return mobile ? null : renderLink(link);
-
     const panelId = `${id}-messages-${mobile ? "mobile" : "desktop"}`;
     const expanded = openPanel === panelId;
 
@@ -132,8 +149,9 @@ function NavigationBar({
           aria-label={mobile ? link.label : undefined}
           aria-expanded={expanded}
           aria-controls={panelId}
-          data-active={active(link)}
+          data-active={expanded}
           onClick={() => {
+            setComposePeer(null);
             setMobileOpen(false);
             setOpenPanel(expanded ? null : panelId);
           }}
@@ -151,11 +169,8 @@ function NavigationBar({
           aria-labelledby={`${panelId}-heading`} hidden={!expanded}>
           <h2 id={`${panelId}-heading`}>{dmText(locale, "title")}</h2>
           {expanded && (
-            <LazyMessagesBoundary userId={actor} locale={locale} conversationId={null} peer={null}
-              view={{ kind: "popover", openConversation: conversation => {
-                setOpenPanel(null);
-                openConversation(conversation);
-              } }}
+            <LazyMessagesBoundary userId={actor} locale={locale}
+              view={{ kind: "popover", peer: composePeer, openConversation: selectConversation, clearPeer: () => setComposePeer(null) }}
             />
           )}
         </section>

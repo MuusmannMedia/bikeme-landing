@@ -9,11 +9,10 @@ import { dmText } from "@/lib/messages/i18n";
 
 import { MessageActionIcon } from "../messaging/message-action-icon";
 
-export function ConversationBlock({ locale, blocked, disabled, compact = false, onChange }: {
+export function ConversationBlock({ locale, blocked, disabled, onChange }: {
   locale: Locale;
   blocked: boolean;
   disabled: boolean;
-  compact?: boolean;
   onChange: (value: boolean) => void;
 }) {
   const titleId = useId();
@@ -26,10 +25,10 @@ export function ConversationBlock({ locale, blocked, disabled, compact = false, 
 
   return (
     <>
-      <button type="button" id={compact ? undefined : "dm-block"} className={compact ? "bike-message-window-control" : "bike-app-button bike-app-button-secondary"}
-        disabled={disabled} aria-label={compact ? title : undefined} title={compact ? title : undefined}
+      <button type="button" className="bike-message-window-control"
+        disabled={disabled} aria-label={title} title={title}
         aria-haspopup="dialog" onClick={() => dialog.current?.showModal()}>
-        {compact ? <MessageActionIcon name={blocked ? "unblock" : "block"} /> : title}
+        <MessageActionIcon name={blocked ? "unblock" : "block"} />
       </button>
       <dialog ref={dialog} className="bike-app-club-dialog" aria-labelledby={titleId}>
         <h2 id={titleId}>{title}</h2>

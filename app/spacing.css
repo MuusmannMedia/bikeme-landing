@@ -88,8 +88,7 @@
 .bike-app-actions,
 [data-club-access] .bike-app-actions,
 .bike-app-content-card .bike-app-actions,
-.bike-app-chat-message .bike-app-actions,
-.bike-app-dm-bubble .bike-app-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-actions); }
+.bike-app-chat-message .bike-app-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-actions); }
 .bike-actions > *, .bike-app-actions > * { min-width: 0; max-width: 100%; }
 .bike-app-button,
 .bike-actions > :is(a,button) { height: auto; min-height: 46px; padding-block: var(--space-3); line-height: 1.4; white-space: normal; text-align: center; overflow-wrap: anywhere; }

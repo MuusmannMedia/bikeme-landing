@@ -1,17 +1,23 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { usePathname } from "next/navigation";
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { useSearchParams } from "next/navigation";
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 
 import type { Locale } from "@/lib/locales";
+import { messagesEntryFromSearch } from "@/lib/messages/entry";
 
 export const LazyMessagesBoundary = dynamic(() => import("./boundary").then(module => module.MessagesBoundary));
 
-const FloatingMessagesContext = createContext<((id: string) => void) | null>(null);
+type OpenConversation = (id: string) => void;
+type ChatTarget = { id: string; message?: string };
+
+const FloatingMessagesContext = createContext<OpenConversation | null>(null);
 
 export function useFloatingMessages() {
-  return useContext(FloatingMessagesContext);
+  const open = useContext(FloatingMessagesContext);
+  if (!open) throw new Error("Missing floating messages provider");
+  return open;
 }
 
 export function FloatingMessages({ actor, locale, children }: {
@@ -19,45 +25,59 @@ export function FloatingMessages({ actor, locale, children }: {
   locale: Locale;
   children: ReactNode;
 }) {
-  const pathname = usePathname();
-  const inboxPath = `/${locale}/app/messages`;
-  const fullPage = pathname === inboxPath || pathname.startsWith(`${inboxPath}/`);
   return (
-    <FloatingMessagesSession key={`${actor}:${locale}:${fullPage}`} actor={actor} locale={locale} fullPage={fullPage}>
+    <FloatingMessagesSession key={`${actor}:${locale}`} actor={actor} locale={locale}>
       {children}
     </FloatingMessagesSession>
   );
 }
 
-function FloatingMessagesSession({ actor, locale, fullPage, children }: {
+function FloatingMessagesSession({ actor, locale, children }: {
   actor: string;
   locale: Locale;
-  fullPage: boolean;
   children: ReactNode;
 }) {
-  const [conversation, setConversation] = useState<string | null>(null);
+  const entry = messagesEntryFromSearch(useSearchParams());
+  const linkedId = entry?.kind === "conversation" ? entry.id : null;
+  const linkedMessage = entry?.kind === "conversation" ? entry.message : undefined;
+  const [conversation, setConversation] = useState<ChatTarget | null>(null);
   const [minimized, setMinimized] = useState(false);
-  const open = (id: string) => {
-    setConversation(id);
+  const open = useCallback((id: string) => {
+    setConversation(current => current?.id === id ? current : { id });
     setMinimized(false);
-  };
-  const close = () => {
+  }, []);
+
+  useEffect(() => {
+    if (!linkedId) return;
+    const frame = requestAnimationFrame(() => {
+      setConversation({ id: linkedId, message: linkedMessage });
+      setMinimized(false);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [linkedId, linkedMessage]);
+
+  function close() {
     setConversation(null);
     const triggers = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-messages-trigger]"));
     triggers.find(trigger => trigger.getClientRects().length > 0)?.focus({ preventScroll: true });
-  };
+  }
 
   return (
-    <FloatingMessagesContext.Provider value={fullPage ? null : open}>
+    <FloatingMessagesContext.Provider value={open}>
       {children}
-      {!fullPage && conversation && (
+      {conversation && (
         <LazyMessagesBoundary
-          key={conversation}
+          key={`${conversation.id}:${conversation.message ?? ""}`}
           userId={actor}
           locale={locale}
-          conversationId={conversation}
-          peer={null}
-          view={{ kind: "floating", minimized, close, toggle: () => setMinimized(value => !value) }}
+          view={{
+            kind: "floating",
+            conversationId: conversation.id,
+            initialMessage: conversation.message,
+            minimized,
+            close,
+            toggle: () => setMinimized(value => !value),
+          }}
         />
       )}
     </FloatingMessagesContext.Provider>
