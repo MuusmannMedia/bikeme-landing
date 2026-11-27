@@ -3,6 +3,7 @@ const rows={
  confirm:["Confirm","Bekræft","Bestätigen","Confirmar","Conferma","Confirmer","Bevestigen"],
  delete:["Delete","Slet","Löschen","Eliminar","Elimina","Supprimer","Verwijderen"],
  title:["Posts","Opslag","Beiträge","Publicaciones","Post","Publications","Berichten"],
+ openPost:["Open post","Åbn opslag","Beitrag öffnen","Abrir publicación","Apri post","Ouvrir la publication","Bericht openen"],
  postMenu:["Post actions","Opslagsmenu","Beitragsaktionen","Acciones de la publicación","Azioni del post","Actions de la publication","Berichtacties"],
  postsView:["Post layout","Visning af opslag","Beitragsansicht","Vista de publicaciones","Vista dei post","Affichage des publications","Weergave van berichten"],
  gridView:["Grid","Gitter","Raster","Cuadrícula","Griglia","Grille","Raster"],

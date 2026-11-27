@@ -43,12 +43,14 @@ export function ClubContentWorkspace({state,store,userId,clubId,locale,query}:{s
  function card(item:ContentItem,readOnly=false,renderKey="content"){
   const own=item.author_id===userId;
   const isPost=item.kind==="post";
+  const preview=isPost&&!readOnly&&data?.mode==="posts"?postsView:undefined;
+  const href=preview?postHref(item.id):undefined;
   const canPin=isPost&&data?.role!=="member";
   const menuId=`content-menu-${item.id}`;
   const actionClass=isPost?"bike-app-nav-link":"bike-app-button bike-app-button-secondary bike-app-button-small";
   const focusId=(action:string)=>isPost?menuId:`${action}-${item.id}`;
   const actions=readOnly?null:<>
-   {isPost&&data?.mode==="posts"?<a className={actionClass} href={postHref(item.id)}>
+   {href?<a className={actionClass} href={href}>
     {text("thread")} ({item.comment_count})
    </a>:null}
    {own?<><button id={isPost?undefined:focusId("content-edit")} type="button" disabled={locked} className={actionClass}
@@ -67,18 +69,32 @@ export function ClubContentWorkspace({state,store,userId,clubId,locale,query}:{s
      onClick={()=>confirm(command("block",{kind:item.kind,id:item.id}),"block","blockBody",focusId("block"))}>{text("block")}</button>:null}
    </>:null}
   </>;
-  const meta=<div className="bike-app-content-meta">
-   <strong>{item.display_name??text("deletedAuthor")}</strong>
-   <time dateTime={item.created_at}>{formatDateTime(locale,item.created_at)}</time>
+  const author=item.display_name??text("deletedAuthor");
+  const date=formatDateTime(locale,item.created_at);
+  const bylineId=preview?`content-byline-${item.id}`:undefined;
+  const meta=<div id={bylineId} className={isPost?"bike-app-content-meta bike-app-content-post-meta":"bike-app-content-meta"}>
+   <strong title={preview?author:undefined}>{author}</strong>
+   <time dateTime={item.created_at} title={preview?date:undefined}>{date}</time>
    {item.is_pinned?<span className="bike-app-chip">{text("pinned")}</span>:null}
   </div>;
-  return <article className="bike-app-content-card" key={`${renderKey}:${item.id}`} data-content-id={item.id}>
+  return <article className="bike-app-content-card" key={`${renderKey}:${item.id}`} data-content-id={item.id} data-preview={preview}>
    {isPost&&actions?<div className="bike-app-content-card-header">
     {meta}
     <ClubMenu label={text("postMenu")} triggerId={menuId}>{actions}</ClubMenu>
    </div>:meta}
    <p className="bike-app-content-body">{item.body}</p>
-   {item.image?<ClubPostImage item={item} locale={locale}/>:null}
+   {preview==="grid"?<div className="bike-app-content-media">
+    {item.image?<ClubPostImage item={item} locale={locale}/>:<div className="bike-app-content-media-placeholder" aria-hidden="true">
+     <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round">
+      <rect x="3" y="4" width="18" height="16" rx="3"/>
+      <circle cx="9" cy="9" r="1.5"/>
+      <path d="m3 17 5-4 3 2 4-5 6 6"/>
+     </svg>
+    </div>}
+   </div>:!preview&&item.image?<ClubPostImage item={item} locale={locale}/>:null}
+   {href?<a className="bike-app-content-open" aria-describedby={bylineId} href={href}>
+    {text("openPost")}<span aria-hidden="true">→</span>
+   </a>:null}
    {!isPost&&actions?<div className="bike-app-actions">{actions}</div>:null}
   </article>;
  }

@@ -984,6 +984,86 @@ a {
   margin-top: 0;
   padding: 1rem;
 }
+.bike-app-content-post-meta {
+  display: grid;
+  grid-template-columns: minmax(0, auto) auto;
+  align-content: center;
+  gap: .25rem .5rem;
+}
+.bike-app-content-post-meta strong { grid-area: 1 / 1; }
+.bike-app-content-post-meta time { grid-area: 2 / 1 / 3 / -1; }
+.bike-app-content-post-meta .bike-app-chip { grid-area: 1 / 2; justify-self: start; }
+
+.bike-app-content-card[data-preview] {
+  --post-preview-lines: 2;
+  position: relative;
+  gap: .75rem;
+}
+.bike-app-content-card[data-preview="grid"] { --post-preview-lines: 3; }
+.bike-app-content-card[data-preview]:has(.bike-app-club-menu-trigger[aria-expanded="true"]) { z-index: 2; }
+.bike-app-content-card[data-preview] .bike-app-content-card-header { block-size: 3rem; }
+.bike-app-content-card[data-preview] .bike-app-club-menu { z-index: 1; }
+.bike-app-content-card[data-preview] .bike-app-content-post-meta :is(strong, time) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bike-app-content-card[data-preview] .bike-app-content-post-meta .bike-app-chip {
+  min-height: 1.25rem;
+  max-width: 6.5rem;
+  overflow: hidden;
+  padding-inline: .4rem;
+  white-space: nowrap;
+}
+.bike-app-content-card[data-preview] .bike-app-content-body {
+  flex: none;
+  block-size: calc(var(--post-preview-lines) * 1lh);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--post-preview-lines);
+  overflow: hidden;
+}
+.bike-app-content-media {
+  flex: none;
+  display: grid;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: .65rem;
+}
+.bike-app-content-media .bike-app-post-image {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+}
+.bike-app-content-media-placeholder {
+  display: grid;
+  place-items: center;
+  color: var(--brand-purple-light);
+  background: var(--app-active-fill);
+  box-shadow: var(--app-active-edge);
+}
+.bike-app-content-open {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  color: var(--brand-purple-light);
+  font-size: .875rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+.bike-app-content-open::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+.bike-app-content-open:hover { text-decoration: underline; }
+.bike-app-content-open:focus-visible::after {
+  outline: 2px solid var(--brand-purple-light);
+  outline-offset: 3px;
+  border-radius: 16px;
+}
 .bike-app-content-stack[data-view="grid"] > .bike-app-empty { grid-column: 1 / -1; }
 @media (min-width: 700px) {
   .bike-app-content-stack[data-view="grid"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
