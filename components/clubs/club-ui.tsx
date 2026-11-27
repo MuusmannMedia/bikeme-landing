@@ -2,7 +2,6 @@ import { calendarText } from "@/lib/clubs/calendar-i18n";
 import {ClubNavigation} from "./club-navigation";
 import { ClubHeaderMenu } from "./club-header-menu";
 import Link from "next/link";
-import {ClubHeaderLogo} from "./club-private-images";
 import { profileText } from "@/lib/clubs/profile-i18n";
 import { galleryText } from "@/lib/clubs/gallery-i18n";
 import { contentText } from "@/lib/clubs/content-i18n";
@@ -38,13 +37,9 @@ export function ClubHeader({ club, locale, selected }: { club: Club; locale: Loc
   const base = `/${locale}/app/clubs/${club.id}`;
   const canEdit = club.canEditProfile && (club.role === "owner" || club.role === "admin");
   return <section className="bike-app-club-masthead">
-    <AppPageHeader
-      className="bike-app-club-header bike-app-club-header-compact"
-      leading={<ClubHeaderLogo clubId={club.id} locale={locale} revision={club.profileRevision}/>}
-      eyebrow={t("clubs.membersOnly")}
-      title={club.name}
-      intro={`${clubRoleLabel(locale, club.role)} · ${(club.memberCount === 1 ? t("clubs.memberCountOne") : t("clubs.memberCount").replace("{count}", new Intl.NumberFormat(locale).format(club.memberCount)))}`}
-      action={<ClubHeaderMenu label={t("clubs.menu")}>
+    <header className="bike-app-page-header bike-app-club-header bike-app-club-header-compact">
+      <h1>{club.name}</h1>
+      <ClubHeaderMenu label={t("clubs.menu")}>
         <Link prefetch={false} className="bike-app-nav-link" href={base} aria-current={selected === "details" ? "page" : undefined}>
           {t("clubs.description")}
         </Link>
@@ -54,8 +49,8 @@ export function ClubHeader({ club, locale, selected }: { club: Club; locale: Loc
         </Link>
         <Link prefetch={false} className="bike-app-nav-link" href={`${base}/preview`}>{t("clubs.viewClub")}</Link>
         <a className="bike-app-nav-link" href={`/${locale}/app/clubs/mine`}>{t("clubs.back")}</a>
-      </ClubHeaderMenu>}
-    />
+      </ClubHeaderMenu>
+    </header>
     <ClubNavigation label={t("clubs.pages")} selected={selected} links={[
       {key:"rides",href:`${base}/rides`,label:calendarText(locale).title},
       {key:"posts",href:`${base}/posts`,label:contentText(locale,"title")},

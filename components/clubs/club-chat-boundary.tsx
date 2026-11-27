@@ -10,25 +10,18 @@ import {CLUB_AUTH_EVENT,clubAuthPhase} from '@/lib/clubs/auth-events';
 import type {Locale} from '@/lib/locales';
 import {ClubChatWorkspace} from './club-chat-workspace';
 import {ClubAccessDenied} from './club-ui';
-import {ClubHeaderImagesScope,useClubHeaderImages} from './club-private-images';
 export function ClubChatBoundary({userId,clubId,locale,initialMessage}:{userId:string;clubId:string;locale:Locale;initialMessage:string|null}){
  const store=useMemo(()=>{const next=createChatStore({actor:userId,identityLost:()=>{flushSync(()=>next.revoke('auth'));window.location.reload();},
   async read(q,signal){q.set('clubId',clubId);const r=await fetch(`/api/clubs/chat?${q}`,{cache:'no-store',credentials:'same-origin',signal});const body=await r.json();if(!r.ok)throw responseContentError(body.error);if(!body.snapshot||typeof body.userId!=='string')throw new ContentError('network');return body;},
   async send(command,signal){const r=await fetch('/api/clubs/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(command),cache:'no-store',credentials:'same-origin',signal});const body=await r.json();if(!r.ok)throw responseContentError(body.error);if(body.ok!==true||typeof body.userId!=='string')throw new ContentError('network');return body;}
  });return next;},[userId,clubId]);
  const continuity=useAccessContinuity(),bindContinuity=continuity.bind;
- const images=useClubHeaderImages(userId,clubId);
  const state=useSyncExternalStore(store.subscribe,store.getSnapshot,store.getServerSnapshot);
  useEffect(()=>{
   store.start();
-  const stopImageAccess=store.subscribe(()=>{
-   const {status}=store.getSnapshot();
-   if(status==='auth')images?.revoke();
-   if(status==='access'||status==='error')images?.clear();
-  });
   let live=true,lifecycle=0,transportLive=false,signalBusy=false,catchUpAfterCheck=false;const pending=new Set<AbortController>();
-  const pause=()=>{if(document.hidden)images?.pause();lifecycle++;pending.forEach(c=>c.abort());if(store.getSnapshot().data)flushSync(()=>store.pause());else store.pause();};
-  const refresh=bindContinuity(pause,async()=>{images?.prepare();if(transportLive)store.connection(true,false);await store.revalidate();if(catchUpAfterCheck){catchUpAfterCheck=false;setTimeout(()=>{if(live)void signals(true);},0);}},()=>{if(document.hidden)images?.pause();lifecycle++;pending.forEach(c=>c.abort());}),verify=()=>refresh.resume();
+  const pause=()=>{lifecycle++;pending.forEach(c=>c.abort());if(store.getSnapshot().data)flushSync(()=>store.pause());else store.pause();};
+  const refresh=bindContinuity(pause,async()=>{if(transportLive)store.connection(true,false);await store.revalidate();if(catchUpAfterCheck){catchUpAfterCheck=false;setTimeout(()=>{if(live)void signals(true);},0);}},()=>{lifecycle++;pending.forEach(c=>c.abort());}),verify=()=>refresh.resume();
   const visibility=()=>document.visibilityState==='hidden'?refresh.deactivate():verify();
   const page=(e:PageTransitionEvent)=>{if(e.persisted)verify();};
   const revoke=()=>{lifecycle++;flushSync(()=>store.revoke('auth'));};
@@ -41,8 +34,8 @@ export function ClubChatBoundary({userId,clubId,locale,initialMessage}:{userId:s
   const stopSignals=subscribeOwnSignals(client,userId,'own-signals-'+crypto.randomUUID(),['club_chat_signals'],{ready:()=>{if(!live)return;transportLive=true;if(document.hidden||!document.hasFocus())return;store.connection(true,false);if(refresh.checking){catchUpAfterCheck=true;return;}void signals(true);},unavailable:()=>{if(live){transportLive=false;store.connection(false,false);}},change:()=>void signals()});
   window.addEventListener('focus',verify);window.addEventListener('blur',refresh.deactivate);window.addEventListener('online',refresh.check);window.addEventListener('offline',offline);document.addEventListener('visibilitychange',visibility);window.addEventListener('pagehide',refresh.suspend);window.addEventListener('pageshow',page);window.addEventListener('storage',storage);window.addEventListener(CLUB_AUTH_EVENT,local);
   const full=setInterval(refresh.check,60000),poll=setInterval(()=>void signals(),10000);refresh.check();
-  return()=>{live=false;stopSignals();refresh.stop();stopImageAccess();pending.forEach(c=>c.abort());clearInterval(full);clearInterval(poll);auth?.unsubscribe();store.stop();window.removeEventListener('focus',verify);window.removeEventListener('blur',refresh.deactivate);window.removeEventListener('online',refresh.check);window.removeEventListener('offline',offline);document.removeEventListener('visibilitychange',visibility);window.removeEventListener('pagehide',refresh.suspend);window.removeEventListener('pageshow',page);window.removeEventListener('storage',storage);window.removeEventListener(CLUB_AUTH_EVENT,local);};
- },[store,userId,bindContinuity,images]);
+  return()=>{live=false;stopSignals();refresh.stop();pending.forEach(c=>c.abort());clearInterval(full);clearInterval(poll);auth?.unsubscribe();store.stop();window.removeEventListener('focus',verify);window.removeEventListener('blur',refresh.deactivate);window.removeEventListener('online',refresh.check);window.removeEventListener('offline',offline);document.removeEventListener('visibilitychange',visibility);window.removeEventListener('pagehide',refresh.suspend);window.removeEventListener('pageshow',page);window.removeEventListener('storage',storage);window.removeEventListener(CLUB_AUTH_EVENT,local);};
+ },[store,userId,bindContinuity]);
  if(state.status==='auth'||state.status==='access')return <div data-chat-access={state.status} data-chat-data="empty"><ClubAccessDenied locale={locale}/></div>;
- return <ClubHeaderImagesScope clubId={clubId} store={images} authorized={state.status==='ready'&&!continuity.concealed}><AccessContinuity {...continuity} locale={locale}><ClubChatWorkspace checking={continuity.checking||continuity.concealed} store={store} state={state} locale={locale} userId={userId} clubId={clubId} initialMessage={initialMessage}/></AccessContinuity></ClubHeaderImagesScope>;
+ return <AccessContinuity {...continuity} locale={locale}><ClubChatWorkspace checking={continuity.checking||continuity.concealed} store={store} state={state} locale={locale} userId={userId} clubId={clubId} initialMessage={initialMessage}/></AccessContinuity>;
 }

@@ -1022,16 +1022,15 @@ a {
 .bike-app-club-masthead:has(> .bike-app-club-header-compact) { overflow: visible; }
 .bike-app-club-header-compact {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
 }
-.bike-app-club-header-compact > .bike-app-page-heading { flex: 1; min-width: 0; }
-.bike-app-club-header-compact > .bike-app-club-image-logo {
-  flex: 0 0 104px;
-  width: 104px;
-  border-radius: 10px;
+.bike-app-club-header-compact > h1 {
+  min-width: 0;
+  margin: 0;
+  padding-block: max(0px, calc((44px - 1lh) / 2));
 }
-.bike-app-club-header-compact > .bike-app-page-action { width: auto; }
+.bike-app-club-menu { flex: none; }
 .bike-app-club-menu-trigger {
   width: 44px;
   justify-content: center;
@@ -1047,12 +1046,6 @@ a {
 .bike-app-club-menu .bike-app-nav-link { white-space: normal; }
 @media (max-width: 960px) {
   .bike-app-club-header-compact { gap: 12px; }
-}
-@media (max-width: 760px) {
-  .bike-app-club-header-compact > .bike-app-club-image-logo {
-    flex-basis: clamp(64px, 20vw, 88px);
-    width: clamp(64px, 20vw, 88px);
-  }
 }
 
 /* Fade only the visual cover surface; logos stay crisp above the overlay. */

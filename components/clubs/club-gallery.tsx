@@ -22,7 +22,6 @@ import { createClient } from "@/lib/supabase/client";
 
 import { ClubGalleryDiscussion } from "./club-gallery-discussion";
 import { ClubReportForm, type ClubReportFields } from "./club-report-form";
-import { ClubHeaderImagesScope, useClubHeaderImages } from "./club-private-images";
 import { ClubAccessDenied, ClubHeader } from "./club-ui";
 
 type Snapshot = GalleryPage;
@@ -84,7 +83,6 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
   const text = (key: GalleryTextKey) => galleryText(locale, key);
   const ct = (key: Parameters<typeof contentText>[1]) => contentText(locale, key);
   const endpoint = `/api/clubs/gallery?clubId=${club.id}`;
-  const images = useClubHeaderImages(userId, club.id);
   const { photoCache, expandedCache, resizeView } = useMemo(() => createGalleryViewer(club.id, userId), [club.id, userId]);
   const assets = useSyncExternalStore(photoCache.subscribe, photoCache.getSnapshot, photoCache.getServerSnapshot);
   const expandedAssets = useSyncExternalStore(expandedCache.subscribe, expandedCache.getSnapshot, expandedCache.getServerSnapshot);
@@ -153,10 +151,7 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
   const dialogConcealed = concealed || Boolean(imageAuthFailure) || (dialogMode === "view" && accessVersion !== discussionVersion);
 
   const denyAccess = useCallback((kind: "auth" | "access") => {
-    if (kind === "auth") {
-      identityInvalidated.current = true;
-      images?.revoke();
-    } else images?.clear();
+    if (kind === "auth") identityInvalidated.current = true;
     photoCache.clear();
     expandedCache.clear();
     setHeldPhotoId(null);
@@ -174,7 +169,7 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
     setReportedComment(null);
     setUpload(emptyUpload);
     setLoadError(kind);
-  }, [expandedCache, images, photoCache]);
+  }, [expandedCache, photoCache]);
 
   useEffect(() => {
     const subscribe = (cache: typeof photoCache) => cache.subscribe(() => {
@@ -265,7 +260,6 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
     loadController.current = controller;
     const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(30_000)]);
     if (more) setPaging(true);
-    images?.prepare();
     try {
       const count = requestedPages.current + (more ? 1 : 0);
       let view = await readPage(null, signal);
@@ -295,7 +289,6 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
         denyAccess(kind);
       } else {
         confirmed.current = false;
-        images?.clear();
         photoCache.clear();
         expandedCache.clear();
         setHeldPhotoId(null);
@@ -309,13 +302,12 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
         if (more) setPaging(false);
       }
     }
-  }, [denyAccess, expandedCache, images, photoCache, readPage]);
+  }, [denyAccess, expandedCache, photoCache, readPage]);
 
   useEffect(() => {
     const client = createClient();
     const pause = () => {
       suspended.current = true;
-      images?.pause();
       photoCache.pause();
       expandedCache.pause();
       loadController.current?.abort();
@@ -390,7 +382,7 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
       window.removeEventListener(CLUB_AUTH_EVENT, onAuth);
       document.removeEventListener("visibilitychange", show);
     };
-  }, [denyAccess, expandedCache, images, photoCache, refresh, userId]);
+  }, [denyAccess, expandedCache, photoCache, refresh, userId]);
 
   useLayoutEffect(() => {
     const element = dialog.current;
@@ -572,10 +564,7 @@ export function ClubGallery({ club, locale, userId }: { club: Club; locale: Loca
     {/* Keep the mounted gallery and its scroll footprint while access is rechecked. */}
     <div ref={gallery} data-gallery-concealed={concealed || Boolean(imageAuthFailure) || undefined}
       inert={concealed || Boolean(imageAuthFailure)}>
-      {snapshot ? <ClubHeaderImagesScope clubId={club.id} store={images} authorized={canDisplay}>
-        <ClubHeader club={{ ...club, role: snapshot.role, imageShape: snapshot.imageShape, profileRevision: snapshot.profileRevision }}
-          locale={locale} selected="gallery" />
-      </ClubHeaderImagesScope> : null}
+      {snapshot ? <ClubHeader club={{ ...club, role: snapshot.role }} locale={locale} selected="gallery" /> : null}
       <AppPanel title={text("title")} className="bike-app-gallery">
         {snapshot && snapshot.role !== "member" ? <a className="bike-app-button bike-app-button-secondary"
           href={`/${locale}/app/clubs/${club.id}/posts/moderation`}>{ct("moderation")}</a> : null}

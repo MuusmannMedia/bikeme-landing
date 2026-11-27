@@ -1,11 +1,10 @@
 'use client';
 /* eslint-disable @next/next/no-img-element -- Private, revocable blob URLs must not enter Next's shared image cache. */
-import {createContext,useContext,useEffect,useLayoutEffect,useMemo,useRef,useState,useSyncExternalStore,type ReactNode} from 'react';
+import {useEffect,useLayoutEffect,useMemo,useRef,useState,useSyncExternalStore,type ReactNode} from 'react';
 import {flushSync} from 'react-dom';
 import {createAccessRefresh} from '@/lib/clubs/access-refresh';
 import {useParentAccess} from './stable-access-region';
 import {createBlobLease} from '@/lib/clubs/image-lease';
-import {createClubHeaderImages,type ClubHeaderImages} from '@/lib/clubs/header-images';
 import {createClubPageGuard} from '@/lib/clubs/page-guard';
 import {ClubReadError} from '@/lib/clubs/types';
 import {clubError} from '@/lib/clubs/membership-types';
@@ -42,68 +41,10 @@ function FramedImage({url,frame,slot,label}:{url:string|null;frame:ClubImageFram
  const geometry=framed&&slot==='logo'&&frame?.whole?{...framed,left:0}:framed;
  return <div ref={container} className={`bike-app-club-image bike-app-club-image-${slot}`} style={{aspectRatio:slot==='cover'?CLUB_COVER_ASPECT:2}}><div style={{position:'absolute',inset:0,left:logoSlot?.left??0,right:logoSlot?.right??0,overflow:'hidden',borderRadius:'inherit'}}>{url?<img key={url} src={url} alt={label} onLoad={e=>setSize({url,width:e.currentTarget.naturalWidth,height:e.currentTarget.naturalHeight})} style={geometry?{position:'absolute',width:geometry.width,height:geometry.height,left:geometry.left,top:geometry.top,maxWidth:'none'}:{width:'100%',height:'100%',objectFit:slot==='logo'?'contain':'cover',objectPosition:slot==='logo'?'left center':undefined}}/>:null}</div></div>;
 }
-const HeaderImages = createContext<{ clubId: string; store: ClubHeaderImages; authorized: boolean } | null>(null);
-const HeaderCache = createContext<{ clubId: string; actor: string; store: ClubHeaderImages } | null>(null);
-
-export function ClubHeaderImageCache({actor,clubId,children}:{actor:string;clubId:string;children:ReactNode}){
- const store=useMemo(()=>createClubHeaderImages({
-  actor, clubId, read: readImageProfile, download: downloadClubImage, failure: error => clubError(error).kind
- }),[actor,clubId]);
- useLayoutEffect(()=>{
-  store.start();
-  const revoke=()=>flushSync(()=>store.revoke());
-  const storage=(event:StorageEvent)=>{if(event.key===CLUB_AUTH_EVENT&&clubAuthPhase(event.newValue))revoke();};
-  const auth=createClient()?.auth.onAuthStateChange((_event,session)=>{
-   if(session?.user.id!==actor)queueMicrotask(revoke);
-  }).data.subscription;
-  window.addEventListener(CLUB_AUTH_EVENT,revoke);
-  window.addEventListener('storage',storage);
-  return()=>{
-   auth?.unsubscribe();
-   window.removeEventListener(CLUB_AUTH_EVENT,revoke);
-   window.removeEventListener('storage',storage);
-   store.revoke();
-  };
- },[store,actor]);
- return <HeaderCache.Provider value={{actor,clubId,store}}>{children}</HeaderCache.Provider>;
-}
-
-export function useClubHeaderImages(actor: string, clubId?: string) {
- const cache=useContext(HeaderCache);
- return cache?.clubId===clubId&&cache?.actor===actor?cache.store:null;
-}
-
-export function ClubHeaderImagesScope({clubId,store,authorized,children}:{
- clubId?:string;store:ClubHeaderImages|null;authorized:boolean;children:ReactNode;
-}) {
- const scope = useMemo(() => clubId && store ? {clubId,store,authorized} : null,[clubId,store,authorized]);
- return <HeaderImages.Provider value={scope}>{children}</HeaderImages.Provider>;
-}
-
 type ImageProps = {clubId:string;locale:Locale;shape:ClubImageShape;revision?:number};
 
 export function ClubPrivateImages(props: ImageProps) {
  return <SessionImages {...props}/>;
-}
-
-export function ClubHeaderLogo({ clubId, locale, revision }: Omit<ImageProps, 'shape'>) {
- const scope = useContext(HeaderImages);
- return scope?.authorized && scope.clubId === clubId
-  ? <RetainedHeaderLogo locale={locale} revision={revision} store={scope.store}/>
-  : null;
-}
-
-function RetainedHeaderLogo({ locale, revision, store }: Pick<ImageProps, 'locale' | 'revision'> & { store: ClubHeaderImages }) {
- const state = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
- useLayoutEffect(() => {
-  store.confirm(revision);
- }, [revision, store]);
- const images = state.images;
- if (state.status === 'error') {
-  return <button type="button" className="bike-app-button bike-app-button-secondary" aria-label={`${imageText(locale, 'unavailable')} ${imageText(locale, 'retry')}`} onClick={() => void store.verify()}>{imageText(locale, 'retry')}</button>;
- }
- if (!images?.logo || (revision !== undefined && images.profile.profile_revision < revision)) return null;
- return <FramedImage url={images.logo} frame={images.profile.logo_frame as ClubImageFrame | null} slot="logo" label={imageText(locale, 'logo')}/>;
 }
 
 function SessionImages({clubId,locale,shape,revision}:ImageProps){

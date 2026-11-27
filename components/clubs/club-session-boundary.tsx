@@ -6,7 +6,6 @@ import {visitText} from '@/lib/clubs/visits/i18n';
 import {BatchCatalogContext} from './visits/catalog-batch-provider';
 import type {CatalogProfile} from '@/lib/clubs/visits/catalog-batch-store';
 import {StableAccessRegion} from "./stable-access-region";
-import {ClubHeaderImagesScope,useClubHeaderImages} from "./club-private-images";
 import {AccessContinuity,useAccessContinuity} from "./access-continuity";
 import {VisitBoundary} from "./visits/visitor";
 import { useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
@@ -87,7 +86,6 @@ export function ClubSessionBoundary({ userId, clubId, locale, selected = "detail
     }
   }), [store, userId, clubId, locale]);
  const continuity=useAccessContinuity(),bindContinuity=continuity.bind;
- const images=useClubHeaderImages(userId,clubId);
   const state = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
   useEffect(() => {
     workflow.start();
@@ -134,21 +132,12 @@ export function ClubSessionBoundary({ userId, clubId, locale, selected = "detail
   const t = getAppDictionary(locale);
   useEffect(() => {
     store.start();
-    const stopImageAccess = store.subscribe(() => {
-      const { status } = store.getSnapshot();
-      if (status === "auth") images?.revoke();
-      if (status === "access" || status === "error") images?.clear();
-    });
     const pause = () => {
-      images?.pause();
       // Avoid flushSync during initial effect setup when there is no data yet.
       if (store.getSnapshot().data) flushSync(() => store.pause());
       else store.pause();
     };
-    const refresh=bindContinuity(pause,async()=>{
-      images?.prepare();
-      await store.verify(true);
-    },()=>{if(document.hidden)images?.pause();});
+    const refresh=bindContinuity(pause,()=>store.verify(true));
     const verify=()=>refresh.resume();
     const visibility = () => { if (document.visibilityState === "hidden") refresh.deactivate(); else verify(); };
     const restored = (event: PageTransitionEvent) => { if (event.persisted) verify(); };
@@ -175,7 +164,7 @@ export function ClubSessionBoundary({ userId, clubId, locale, selected = "detail
     const timer = window.setInterval(refresh.check, 60000);
     refresh.check();
     return () => {
-      refresh.stop(); stopImageAccess(); store.stop(); subscription?.unsubscribe(); window.clearInterval(timer);
+      refresh.stop(); store.stop(); subscription?.unsubscribe(); window.clearInterval(timer);
       window.removeEventListener("storage", storage);
       window.removeEventListener(CLUB_AUTH_EVENT, local);
       document.removeEventListener("visibilitychange", visibility);
@@ -184,7 +173,7 @@ export function ClubSessionBoundary({ userId, clubId, locale, selected = "detail
       window.removeEventListener("blur", refresh.deactivate);
       window.removeEventListener("pageshow", restored);
     };
-  }, [store, userId, bindContinuity, images]);
+  }, [store, userId, bindContinuity]);
   const calendarAccessLost = useCallback((auth: boolean) => {
     if (auth) {
       flushSync(() => store.revoke());
@@ -196,10 +185,10 @@ export function ClubSessionBoundary({ userId, clubId, locale, selected = "detail
   const retryHref = `/${locale}/app/clubs${clubId === undefined ? "" : `/${encodeURIComponent(clubId)}${selected === "members" ? "/members" : selected === "rides" || selected === "newRide" ? "/rides" : ""}`}`;
   const ready=state.status === "ready" && state.data;
   if (allowVisitor && clubId && state.status === "access") return <VisitBoundary userId={userId} clubId={clubId} locale={locale} />;
-  return <ClubHeaderImagesScope clubId={clubId} store={images} authorized={!!ready&&!continuity.concealed}><AccessContinuity {...continuity} locale={locale}><div data-club-access={state.status} data-club-data={state.data === null ? "empty" : "present"}>
+  return <AccessContinuity {...continuity} locale={locale}><div data-club-access={state.status} data-club-data={state.data === null ? "empty" : "present"}>
     <StableAccessRegion denied={state.status==='access'||state.status==='auth'} ready={!!ready} fallback={state.status === "access" ? <ClubAccessDenied locale={locale} /> :
       state.status === "error" ? state.error==='quota'?<div role="alert"><p>{visitText(locale,'quota')}</p><button className="bike-app-button bike-app-button-secondary" onClick={()=>void store.verify()}>{t('common.retry')}</button></div>:<ClubReadFailure locale={locale} kind={state.error ?? "network"} retryHref={retryHref} onRetry={() => void store.verify()} /> :
       <div className="bike-app-club-gate" role="status"><p>{t("clubs.loading")}</p></div>}>{ready?state.data!.view === "rides" ? <ClubRides club={state.data!.club} data={state.data!.rides} locale={locale} userId={userId} created={created} creation={selected==="newRide"} operation={operation} act={rideAction} onAccessLost={calendarAccessLost} calendarDay={calendarDay}/> : <ClubPageContent data={state.data as Exclude<ClubPageData,{view:"rides"}>} locale={locale} selected={selected==="members"?"members":"details"} userId={userId} workflow={workflow} directory={directory} />:null}</StableAccessRegion>
     {selected === "newRide" && clubId && state.status!=="access" && state.status!=="auth" ? <ClubCreateRide userId={userId} clubId={clubId} locale={locale} authorized={!!ready} calendarDay={calendarDay} data={state.data?.view==="rides"?state.data.rides:null}/>:null}
-  </div></AccessContinuity></ClubHeaderImagesScope>;
+  </div></AccessContinuity>;
 }
