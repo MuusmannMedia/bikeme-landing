@@ -17,6 +17,8 @@
   --panel: rgba(10, 18, 38, 0.8);
   --panel-strong: rgba(11, 20, 43, 0.92);
   --border-soft: rgba(125, 143, 187, 0.28);
+  --app-secondary-fill: rgba(255, 255, 255, .045);
+  --app-secondary-border: rgba(255, 255, 255, .25);
   --bike-me-page-background:
     radial-gradient(circle at 12% 0%, rgba(37, 48, 109, 0.55), transparent 38%),
     radial-gradient(circle at 88% 15%, rgb(var(--brand-purple-rgb) / 0.32), transparent 36%),
@@ -416,11 +418,16 @@ a {
   justify-content: center;
   padding: 8px 8px 11px;
   border-radius: 9px;
+  background: var(--app-secondary-fill);
+  box-shadow: inset 0 0 0 1px var(--app-secondary-border);
   color: var(--app-muted);
   font-size: .9rem;
   font-weight: 650;
   text-decoration: none;
   white-space: nowrap;
+}
+.bike-app-club-nav a[aria-current="page"] {
+  box-shadow: var(--app-active-edge), inset 0 0 0 1px var(--app-secondary-border);
 }
 .bike-app-club-nav a:focus-visible { outline-offset: -4px; }
 @media (max-width: 760px) {
@@ -436,7 +443,7 @@ a {
 .bike-app-button { display: inline-flex; min-height: 46px; align-items: center; justify-content: center; border: 1px solid transparent; border-radius: 10px; padding: 0 18px; background: var(--brand-purple); color: white; font: inherit; font-size: 14px; font-weight: 750; text-decoration: none; cursor: pointer; transition: background-color .16s ease, border-color .16s ease, transform .16s ease; }
 .bike-app-button:hover { background: var(--brand-purple-hover); }
 .bike-app-button:active { transform: translateY(1px); }
-.bike-app-button-secondary { border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.045); }
+.bike-app-button-secondary { border-color: var(--app-secondary-border); background: var(--app-secondary-fill); }
 .bike-app-button-secondary:hover { border-color: #7f8dc4; background: rgba(37,48,109,.45); }
 .bike-app-button-danger { border-color: rgba(244,114,114,.4); background: rgba(127,29,29,.24); color: #fecaca; }
 .bike-app-button-small { min-height: 44px; padding-inline: 13px; font-size: 13px; }
