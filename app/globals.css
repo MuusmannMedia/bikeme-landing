@@ -940,6 +940,24 @@ a {
 
 .bike-app-content-stack { display:grid; gap:1rem; margin-top:1rem; }
 .bike-app-content-card { border:1px solid rgba(171,185,222,.18); background:rgba(12,20,36,.75); border-radius:16px; padding:1.25rem; min-width:0; margin-top:1rem; }
+.bike-app-content-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: .5rem;
+}
+.bike-app-content-card-header .bike-app-content-meta { min-width: 0; align-self: center; }
+.bike-app-content-card-header .bike-app-nav-panel button {
+  width: 100%;
+  background: transparent;
+  text-align: start;
+}
+.bike-app-content-card-header .bike-app-nav-panel button:not(:disabled) { cursor: pointer; }
+.bike-app-content-card-header .bike-app-nav-panel button:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+  background: transparent;
+}
 .bike-app-content-meta { display:flex; flex-wrap:wrap; gap:.5rem 1rem; align-items:center; font-size:.9rem; color:var(--muted); }
 .bike-app-content-meta strong { color:var(--ink); overflow-wrap:anywhere; }
 .bike-app-content-body { white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.65; }

@@ -1,6 +1,6 @@
 import { calendarText } from "@/lib/clubs/calendar-i18n";
 import {ClubNavigation} from "./club-navigation";
-import { ClubHeaderMenu } from "./club-header-menu";
+import { ClubMenu } from "./club-menu";
 import Link from "next/link";
 import { profileText } from "@/lib/clubs/profile-i18n";
 import { galleryText } from "@/lib/clubs/gallery-i18n";
@@ -39,7 +39,7 @@ export function ClubHeader({ club, locale, selected }: { club: Club; locale: Loc
   return <section className="bike-app-club-masthead">
     <header className="bike-app-page-header bike-app-club-header bike-app-club-header-compact">
       <h1>{club.name}</h1>
-      <ClubHeaderMenu label={t("clubs.menu")}>
+      <ClubMenu label={t("clubs.menu")} navigation>
         <Link prefetch={false} className="bike-app-nav-link" href={base} aria-current={selected === "details" ? "page" : undefined}>
           {t("clubs.description")}
         </Link>
@@ -49,7 +49,7 @@ export function ClubHeader({ club, locale, selected }: { club: Club; locale: Loc
         </Link>
         <Link prefetch={false} className="bike-app-nav-link" href={`${base}/preview`}>{t("clubs.viewClub")}</Link>
         <a className="bike-app-nav-link" href={`/${locale}/app/clubs/mine`}>{t("clubs.back")}</a>
-      </ClubHeaderMenu>
+      </ClubMenu>
     </header>
     <ClubNavigation label={t("clubs.pages")} selected={selected} links={[
       {key:"rides",href:`${base}/rides`,label:calendarText(locale).title},

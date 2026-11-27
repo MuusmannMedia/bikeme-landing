@@ -2,11 +2,17 @@
 
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 
-export function ClubHeaderMenu({ label, children }: { label: string; children: ReactNode }) {
+export function ClubMenu({ label, children, triggerId, navigation = false }: {
+  label: string;
+  children: ReactNode;
+  triggerId?: string;
+  navigation?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const panelId = useId();
   const container = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
+  const Panel = navigation ? "nav" : "div";
 
   function closeAndFocus() {
     setOpen(false);
@@ -38,7 +44,7 @@ export function ClubHeaderMenu({ label, children }: { label: string; children: R
 
   return (
     <div className="bike-app-nav-group bike-app-club-menu" ref={container}>
-      <button ref={trigger} type="button" className="bike-app-nav-trigger bike-app-club-menu-trigger"
+      <button id={triggerId} ref={trigger} type="button" className="bike-app-nav-trigger bike-app-club-menu-trigger"
         aria-label={label} title={label} aria-expanded={open} aria-controls={panelId}
         onClick={() => setOpen(value => !value)}>
         <svg width="21" height="21" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -46,12 +52,15 @@ export function ClubHeaderMenu({ label, children }: { label: string; children: R
             stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
         </svg>
       </button>
-      <nav id={panelId} className="bike-app-nav-panel" aria-label={label} hidden={!open}
+      <Panel id={panelId} className="bike-app-nav-panel" role={navigation ? undefined : "group"}
+        aria-label={label} hidden={!open}
         onClick={event => {
-          if (event.target instanceof Element && event.target.closest("a")) closeAndFocus();
+          if (!(event.target instanceof Element) || !event.target.closest("a, button:not(:disabled)")) return;
+          if (container.current?.contains(document.activeElement)) closeAndFocus();
+          else setOpen(false);
         }}>
         {children}
-      </nav>
+      </Panel>
     </div>
   );
 }

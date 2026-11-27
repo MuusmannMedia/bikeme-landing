@@ -1,4 +1,5 @@
 "use client";
+import {ClubMenu} from "./club-menu";
 import {ClubPostImage,ClubPostImageEditor} from "./club-post-image";
 import {imageText} from "@/lib/clubs/image-i18n";
 import {StableAccessRegion} from "./stable-access-region";
@@ -39,18 +40,52 @@ export function ClubContentWorkspace({state,store,userId,clubId,locale,query}:{s
  const close=()=>{store.close();restoreFocus();};
  function confirm(command:ContentCommand,title:ContentTextKey,body:ContentTextKey,focusId:string){returnFocus.current=focusId;setConfirmation({command,title,body,focusId});}
  const command=(type:ContentCommand["type"],extra:object)=>({actorId:userId,clubId,type,...extra}) as ContentCommand;
- function card(item:ContentItem,readOnly=false,renderKey="content"){const own=item.author_id===userId,canPin=data?.role!=="member"&&item.kind==="post",id=`content-edit-${item.id}`;
+ function card(item:ContentItem,readOnly=false,renderKey="content"){
+  const own=item.author_id===userId;
+  const isPost=item.kind==="post";
+  const canPin=isPost&&data?.role!=="member";
+  const menuId=`content-menu-${item.id}`;
+  const actionClass=isPost?"bike-app-nav-link":"bike-app-button bike-app-button-secondary bike-app-button-small";
+  const focusId=(action:string)=>isPost?menuId:`${action}-${item.id}`;
+  const actions=readOnly?null:<>
+   {isPost&&data?.mode==="posts"?<a className={actionClass} href={postHref(item.id)}>
+    {text("thread")} ({item.comment_count})
+   </a>:null}
+   {own?<><button id={isPost?undefined:focusId("content-edit")} type="button" disabled={locked} className={actionClass}
+    onClick={()=>{returnFocus.current=focusId("content-edit");store.edit(item);}}>{t("common.edit")}</button>
+    <button id={isPost?undefined:focusId("delete")} type="button" disabled={locked} className={actionClass}
+     onClick={()=>confirm(command("change",{kind:item.kind,id:item.id,action:"delete"}),"removed","deleteBody",focusId("delete"))}>{text("delete")}</button>
+   </>:null}
+   {canPin?<button type="button" disabled={locked} className={actionClass}
+    onClick={()=>void store.run(command("change",{kind:"post",id:item.id,action:item.is_pinned?"unpin":"pin"}))}>
+    {text(item.is_pinned?"unpin":"pin")}
+   </button>:null}
+   {!own&&item.kind!=="chat"?<>
+    <button id={isPost?undefined:focusId("report")} type="button" disabled={locked} className={actionClass}
+     onClick={()=>{returnFocus.current=focusId("report");store.report(item);}}>{text("report")}</button>
+    {item.author_id?<button id={isPost?undefined:focusId("block")} type="button" disabled={locked} className={actionClass}
+     onClick={()=>confirm(command("block",{kind:item.kind,id:item.id}),"block","blockBody",focusId("block"))}>{text("block")}</button>:null}
+   </>:null}
+  </>;
+  const meta=<div className="bike-app-content-meta">
+   <strong>{item.display_name??text("deletedAuthor")}</strong>
+   <time dateTime={item.created_at}>{formatDateTime(locale,item.created_at)}</time>
+   {item.is_pinned?<span className="bike-app-chip">{text("pinned")}</span>:null}
+  </div>;
   return <article className="bike-app-content-card" key={`${renderKey}:${item.id}`} data-content-id={item.id}>
-   <div className="bike-app-content-meta"><strong>{item.display_name??text("deletedAuthor")}</strong><time dateTime={item.created_at}>{formatDateTime(locale,item.created_at)}</time>{item.is_pinned?<span className="bike-app-chip">{text("pinned")}</span>:null}</div>
+   {isPost&&actions?<div className="bike-app-content-card-header">
+    {meta}
+    <ClubMenu label={text("postMenu")} triggerId={menuId}>{actions}</ClubMenu>
+   </div>:meta}
    <p className="bike-app-content-body">{item.body}</p>
    {item.image?<ClubPostImage item={item} locale={locale}/>:null}
-   {!readOnly?<div className="bike-app-actions">
-    {item.kind==="post"&&data?.mode==="posts"?<a className="bike-app-button bike-app-button-secondary bike-app-button-small" href={`${base}/${item.id}${feedQuery()?`?${feedQuery()}`:""}`}>{text("thread")} ({item.comment_count})</a>:null}
-    {own?<><button id={id} disabled={locked} className="bike-app-button bike-app-button-secondary bike-app-button-small" onClick={()=>{returnFocus.current=id;store.edit(item);}}>{t("common.edit")}</button><button id={`delete-${item.id}`} disabled={locked} className="bike-app-button bike-app-button-secondary bike-app-button-small" onClick={()=>confirm(command("change",{kind:item.kind,id:item.id,action:"delete"}),"removed","deleteBody",`delete-${item.id}`)}>{text("delete")}</button></>:null}
-    {canPin?<button disabled={locked} className="bike-app-button bike-app-button-secondary bike-app-button-small" onClick={()=>void store.run(command("change",{kind:"post",id:item.id,action:item.is_pinned?"unpin":"pin"}))}>{text(item.is_pinned?"unpin":"pin")}</button>:null}
-    {!own&&item.kind!=="chat"?<><button id={`report-${item.id}`} disabled={locked} className="bike-app-button bike-app-button-secondary bike-app-button-small" onClick={()=>{returnFocus.current=`report-${item.id}`;store.report(item);}}>{text("report")}</button>{item.author_id?<button id={`block-${item.id}`} disabled={locked} className="bike-app-button bike-app-button-secondary bike-app-button-small" onClick={()=>confirm(command("block",{kind:item.kind,id:item.id}),"block","blockBody",`block-${item.id}`)}>{text("block")}</button>:null}</>:null}
-   </div>:null}
+   {!isPost&&actions?<div className="bike-app-actions">{actions}</div>:null}
   </article>;
+ }
+
+ function postHref(id:string){
+  const query=feedQuery();
+  return `${base}/${id}${query?`?${query}`:""}`;
  }
  function choosePostsView(view: PostsView) {
   setPostsView(view);
