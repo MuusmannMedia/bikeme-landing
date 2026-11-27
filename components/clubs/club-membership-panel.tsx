@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { AppAvatar } from "@/components/app-avatar";
 import { AppEmpty, AppPanel } from "@/components/app-ui";
 import { getAppDictionary } from "@/lib/app-i18n";
@@ -51,17 +51,70 @@ export function ClubMembershipPanel({ membership, club, clubs, userId, locale, w
     {state.pending && !state.busy ? <><p>{t("uncertain")}</p><button type="button" className="bike-app-button" onClick={() => void workflow.retry()}>{t("retry")}</button></> : null}
     {state.notice && !state.busy && !state.error ? <p role="status">{t("done")}</p> : null}
   </div>;
+  const counts = {
+    pending: club?.role === "member" ? 0 : membership.pending.filter(row => !expires(row.expires_at)).length,
+    proposals: membership.proposals.filter(row => !expires(row.expires_at)).length,
+    ownership: membership.transfers.filter(row => !expires(row.expires_at)).length,
+    leave: 0,
+  };
+  const total = counts.pending + counts.proposals + counts.ownership;
+  const number = new Intl.NumberFormat(locale);
+  const pendingLabel = (count: number) => t("pendingCount").replace("{count}", number.format(count));
+  const section = (label: keyof typeof counts, children: ReactNode) => scope === "members"
+    ? <details className="bike-app-membership-setting" data-leave={label === "leave" || undefined}>
+      <summary>{t(label)}{counts[label] > 0 && <span className="bike-app-chip" title={pendingLabel(counts[label])}>{number.format(counts[label])}</span>}</summary>
+      <div className="bike-app-membership-setting-content">{children}</div>
+    </details>
+    : <AppPanel title={t(label)} className="bike-app-section-gap">{children}</AppPanel>;
+  const empty = (label: MembershipTextKey) => scope === "members"
+    ? <p className="bike-app-muted">{t(label)}</p>
+    : <AppEmpty>{t(label)}</AppEmpty>;
   const transferPerson = (clubId: string, personId: string) => (club ?? clubs?.find(c=>c.id===clubId))?.members.find(m=>m.user_id===personId)?.display_name || "Bike Me";
-  const transfers = <AppPanel title={t("ownership")} className="bike-app-section-gap">
+  const transfers = section("ownership", <>
     <p className="bike-app-muted">{t("transferHint")}</p>
-    {membership.transfers.length === 0 ? <AppEmpty>{t("noneTransfers")}</AppEmpty> : <ul className="bike-app-list">{membership.transfers.map(row => <li className="bike-app-list-item" key={row.id}>
+    {membership.transfers.length === 0 ? empty("noneTransfers") : <ul className="bike-app-list">{membership.transfers.map(row => <li className="bike-app-list-item" key={row.id}>
       <div className="bike-app-list-main bike-app-club-copy"><strong>{row.club_name}</strong><span>{t("from")} {transferPerson(row.club_id,row.from_owner_id)}</span><span>{t("to")} {transferPerson(row.club_id,row.to_admin_id)}</span>{deadline(row.expires_at)}</div>
       <div className="bike-app-actions">{row.to_admin_id === userId ? <>{action("accept",{action:"respondOwnership",id:row.id,accept:true},row.club_name,expires(row.expires_at))}{action("decline",{action:"respondOwnership",id:row.id,accept:false},row.club_name,expires(row.expires_at))}</> : action("cancel",{action:"cancelOwnership",id:row.id},row.club_name)}</div>
     </li>)}</ul>}
     {club?.role === "owner" ? <div className="bike-app-section-gap">
       {club.members.filter(m=>m.role === "admin").length === 0 ? <p>{t("noAdmins")}</p> : <ul className="bike-app-list">{club.members.filter(m=>m.role === "admin").map(m=><li key={m.user_id} className="bike-app-list-item"><strong>{m.display_name || "Bike Me"}</strong>{action("transfer",{action:"proposeOwnership",clubId:club.id,targetId:m.user_id},m.display_name || "Bike Me",membership.transfers.some(row=>!expires(row.expires_at)))}</li>)}</ul>}
     </div> : null}
-  </AppPanel>;
+  </>);
+  const settings = club ? <>
+    {club.role !== "member" ? section("pending", membership.pending.length === 0 ? empty("nonePending") :
+      <ul className="bike-app-list">{membership.pending.map(row => {
+        const name = row.invitee_name || "Bike Me";
+        return <li key={row.invite_id} className="bike-app-list-item">
+          <div className="bike-app-list-main bike-app-club-copy"><strong>{name}</strong>{deadline(row.expires_at)}</div>
+          {action("cancel", { action: "cancelInvite", id: row.invite_id }, name)}
+        </li>;
+      })}</ul>
+    ) : null}
+    {section("proposals", membership.proposals.length === 0 ? empty("noneProposals") :
+      <ul className="bike-app-list">{membership.proposals.map(row => {
+        const name = row.invitee_name || "Bike Me";
+        const expired = expires(row.expires_at);
+        return <li key={row.id} className="bike-app-list-item">
+          <div className="bike-app-list-main bike-app-club-copy">
+            <strong>{name}</strong><span>{t("proposedBy")} {row.proposer_name||"Bike Me"}</span>{deadline(row.expires_at)}
+          </div>
+          <div className="bike-app-actions">
+            {club.role !== "member" ? <>
+              {action("approve", { action: "resolveProposal", clubId: club.id, id: row.id, decision: "approve" }, name, expired)}
+              {action("decline", { action: "resolveProposal", clubId: club.id, id: row.id, decision: "reject" }, name, expired)}
+            </> : null}
+            {row.proposer_id === userId
+              ? action("cancel", { action: "resolveProposal", clubId: club.id, id: row.id, decision: "cancel" }, name, expired)
+              : null}
+          </div>
+        </li>;
+      })}</ul>
+    )}
+    {transfers}
+    {section("leave", club.role === "owner"
+      ? <p>{t("ownerCannotLeave")}</p>
+      : action("leave", { action: "leave", clubId: club.id }, club.name))}
+  </> : null;
   return <>
     {(!compact||state.busy||state.error||state.pending||state.notice)?status:null}
     {scope === "incoming" ? <>
@@ -86,10 +139,10 @@ export function ClubMembershipPanel({ membership, club, clubs, userId, locale, w
           {person.is_member || person.has_invitation || person.has_proposal ? <span className="bike-app-chip">{t(person.is_member?"alreadyMember":person.has_invitation?"invited":"suggested")}</span> : action(club.role === "member"?"suggest":"invite",{action:club.role === "member"?"proposeMember":"invite",clubId:club.id,targetId:person.id},person.display_name||"Bike Me")}
         </li>)}</ul> : null}
       </AppPanel>
-      {club.role !== "member" ? <AppPanel title={t("pending")} className="bike-app-section-gap">{membership.pending.length===0?<AppEmpty>{t("nonePending")}</AppEmpty>:<ul className="bike-app-list">{membership.pending.map(row=><li key={row.invite_id} className="bike-app-list-item"><div className="bike-app-list-main bike-app-club-copy"><strong>{row.invitee_name||"Bike Me"}</strong>{deadline(row.expires_at)}</div>{action("cancel",{action:"cancelInvite",id:row.invite_id},row.invitee_name||"Bike Me")}</li>)}</ul>}</AppPanel> : null}
-      <AppPanel title={t("proposals")} className="bike-app-section-gap">{membership.proposals.length===0?<AppEmpty>{t("noneProposals")}</AppEmpty>:<ul className="bike-app-list">{membership.proposals.map(row=><li key={row.id} className="bike-app-list-item"><div className="bike-app-list-main bike-app-club-copy"><strong>{row.invitee_name||"Bike Me"}</strong><span>{t("proposedBy")} {row.proposer_name||"Bike Me"}</span>{deadline(row.expires_at)}</div><div className="bike-app-actions">{club.role !== "member" ? <>{action("approve",{action:"resolveProposal",clubId:club.id,id:row.id,decision:"approve"},row.invitee_name||"Bike Me",expires(row.expires_at))}{action("decline",{action:"resolveProposal",clubId:club.id,id:row.id,decision:"reject"},row.invitee_name||"Bike Me",expires(row.expires_at))}</> : null}{row.proposer_id===userId? action("cancel",{action:"resolveProposal",clubId:club.id,id:row.id,decision:"cancel"},row.invitee_name||"Bike Me",expires(row.expires_at)):null}</div></li>)}</ul>}</AppPanel>
-      {transfers}
-      <AppPanel title={t("leave")} className="bike-app-section-gap">{club.role === "owner" ? <p>{t("ownerCannotLeave")}</p> : action("leave",{action:"leave",clubId:club.id},club.name)}</AppPanel>
+      {scope === "members" ? <details className="bike-app-membership-settings">
+        <summary>{t("moreSettings")}{total > 0 && <span className="bike-app-chip">{pendingLabel(total)}</span>}</summary>
+        <div className="bike-app-membership-settings-body">{settings}</div>
+      </details> : settings}
     </> : null}
     {confirmation ? <ConfirmationDialog value={confirmation} locale={locale} close={()=>setConfirmation(null)} accept={()=>{const command=confirmation.command;setConfirmation(null);void workflow.run(command).then(done => {
       if (!done && !workflow.getSnapshot().error) return;

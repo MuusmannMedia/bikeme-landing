@@ -181,6 +181,24 @@ export const membershipText = {
     "Les propositions vont au propriétaire et aux administrateurs. Après validation, le cycliste doit accepter une invitation.",
     "Voorstellen gaan naar de eigenaar en beheerders. Na goedkeuring moet de fietser een uitnodiging accepteren."
   ],
+  "moreSettings": [
+    "More membership settings",
+    "Flere medlemsindstillinger",
+    "Weitere Mitgliedschaftseinstellungen",
+    "Más opciones de membresía",
+    "Altre impostazioni di iscrizione",
+    "Plus de paramètres d’adhésion",
+    "Meer lidmaatschapsinstellingen"
+  ],
+  "pendingCount": [
+    "{count} pending",
+    "{count} afventende",
+    "{count} ausstehend",
+    "{count} pendientes",
+    "{count} in attesa",
+    "{count} en attente",
+    "{count} in afwachting"
+  ],
   "pending": [
     "Pending invitations",
     "Afventende invitationer",
