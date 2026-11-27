@@ -2,6 +2,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClubReadApi } from "./api";
 import { ContentError, contentError, projectContent, projectReport, validateContent, validateReportDetail, type ContentSnapshot, type ContentCommand } from "./content-contract";
 import { isClubId } from "./types";
+import { isPostImageFrame } from "./post-image";
+import { postImageUploadsEnabled, signPostImage } from "./post-image-server";
 export function createClubContentApi(client:SupabaseClient,actor:string,allowChatModeration=false){
  async function rpc(name:string,args:Record<string,unknown>){
   const session=await client.auth.getSession();if(session.error||session.data.session?.user.id!==actor)throw new ContentError("auth");
@@ -10,7 +12,17 @@ export function createClubContentApi(client:SupabaseClient,actor:string,allowCha
  }
  async function revision(){const session=await client.auth.getSession();if(session.error||session.data.session?.user.id!==actor)throw new ContentError("auth");const r=await client.from("club_chat_signals").select("visibility_revision").eq("user_id",actor).setHeader("Authorization",`Bearer ${session.data.session.access_token}`).maybeSingle();if(r.error)throw contentError(r.error);const value=r.data?.visibility_revision??0;if(!Number.isSafeInteger(value)||value<0)throw new ContentError("network");return Number(value);}
  async function item(clubId:string,kind:string,id:string){return projectContent(await rpc("club_content_item",{p_club:clubId,p_kind:kind,p_id:id}));}
+ async function savePostImage(clubId:string,id:string,request:string,version:number|null,body:string,image:unknown){
+  const args=await signPostImage(actor,clubId,id,request,version,body,image);
+  return rpc("club_post_image_save",args);
+ }
  return {revision,item,
+ async image(clubId:string,id:string,revision:string,source:boolean){
+  if(![clubId,id,revision].every(isClubId))throw new ContentError("invalid");
+  const value=await rpc("club_post_image_read",{p_club:clubId,p_post:id,p_revision:revision,p_source:source});
+  if(typeof value!=="string"||!value)throw new ContentError("unavailable");
+  return Buffer.from(value,"base64");
+ },
  async load(clubId:string,q:URLSearchParams):Promise<ContentSnapshot>{
   const club=await createClubReadApi(client,actor).detail(clubId),before=await revision();
   const mode=q.get("mode");const snapshot:ContentSnapshot={club,role:club.role,visibilityRevision:before,mode:mode==="thread"||mode==="reports"||mode==="blocked"?mode:"posts",items:[],post:null,reports:[],blocked:[],hasMore:false,unavailable:false,editorItem:null};
@@ -33,6 +45,22 @@ export function createClubContentApi(client:SupabaseClient,actor:string,allowCha
   }
   const editorId=cursorId("editorId"),editorKind=q.get("editorKind");
   if(editorId&&["post","comment"].includes(editorKind??""))try{snapshot.editorItem=await item(clubId,editorKind!,editorId);}catch(e){if(contentError(e).kind!=="unavailable")throw e;}
+  if(snapshot.mode!=="blocked"){
+   const reportedPosts=snapshot.reports.flatMap(report=>"content" in report&&report.content?[report.content]:[]);
+   const posts=[...snapshot.items,...reportedPosts,snapshot.post,snapshot.editorItem]
+    .filter((post):post is NonNullable<typeof post>=>post?.kind==="post");
+   const images=await rpc("club_post_image_index",{p_club:clubId,p_posts:[...new Set(posts.map(post=>post.id))]})
+    .catch(error=>{if(contentError(error).kind==="unavailable")return null;throw error;});
+   if(images){
+    snapshot.postImageUpload=postImageUploadsEnabled();
+    for(const post of posts){
+     const image=images[post.id];
+     if(image&&typeof image.revision==="string"&&isClubId(image.revision)&&isPostImageFrame(image.frame)){
+      post.image={revision:image.revision,frame:image.frame};
+     }
+    }
+   }
+  }
   if(await revision()!==before)throw new ContentError("network");
   const latest=await createClubReadApi(client,actor).detail(clubId);if(latest.role!==club.role)throw new ContentError("network");
   return snapshot;
@@ -40,7 +68,15 @@ export function createClubContentApi(client:SupabaseClient,actor:string,allowCha
  async execute(input:unknown){
   const c=input as ContentCommand;if(!c||c.actorId!==actor)throw new ContentError("auth");if(!isClubId(c.clubId??"")||!isClubId(c.id??""))throw new ContentError("invalid");
   const club=await createClubReadApi(client,actor).detail(c.clubId);
-  if(c.type==="create"){if(c.post!==null&&!isClubId(c.post))throw new ContentError("invalid");return rpc("club_content_create",{p_club:c.clubId,p_id:c.id,p_body:validateContent(c.body,c.post?"comment":"post"),p_post:c.post});}
+  if(c.type==="create"){
+   if(c.post!==null&&!isClubId(c.post))throw new ContentError("invalid");
+   const body=validateContent(c.body,c.post?"comment":"post");
+   if(c.image!==undefined){
+    if(c.post!==null||c.image===null)throw new ContentError("invalid");
+    return savePostImage(c.clubId,c.id,c.id,null,body,c.image);
+   }
+   return rpc("club_content_create",{p_club:c.clubId,p_id:c.id,p_body:body,p_post:c.post});
+  }
   if(c.type==="change"){
    if(!["post","comment"].includes(c.kind)||!["edit","delete","pin","unpin"].includes(c.action))throw new ContentError("invalid");
    if(c.action==="delete"||c.action==="edit"){
@@ -53,6 +89,12 @@ export function createClubContentApi(client:SupabaseClient,actor:string,allowCha
     if(row.data.author_id!==actor)throw new ContentError("access");
    }else if(club.role==="member"||c.kind!=="post")throw new ContentError("access");
    if(c.action==="edit"&&(!Number.isSafeInteger(c.version)||!c.version||c.version<1))throw new ContentError("invalid");
+   if(c.image!==undefined){
+    if(c.kind!=="post"||c.action!=="edit"||typeof c.imageRequest!=="string"||!isClubId(c.imageRequest)){
+     throw new ContentError("invalid");
+    }
+    return savePostImage(c.clubId,c.id,c.imageRequest,c.version!,validateContent(c.body??"","post"),c.image);
+   }
    return rpc("club_content_change",{p_club:c.clubId,p_kind:c.kind,p_id:c.id,p_action:c.action,p_body:c.action==="edit"?validateContent(c.body??"",c.kind):null,p_version:c.version??null});
   }
   if(c.type==="report"){

@@ -1835,3 +1835,44 @@ button.club-calendar-entry { background: transparent; border-inline: 0; border-b
     width: auto;
   }
 }
+
+.bike-app-post-image {
+  display: block;
+  width: 100%;
+  max-width: 60rem;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  object-fit: cover;
+  border-radius: 0.65rem;
+  background: #080e18;
+}
+
+.bike-app-post-image-editor {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 0;
+  margin: 1rem 0;
+  border: 0;
+}
+
+.bike-app-post-image-editor .bike-app-post-image {
+  max-width: 36rem;
+}
+
+.bike-app-post-image-preview {
+  position: relative;
+  overflow: hidden;
+}
+
+.bike-app-post-image-preview img {
+  position: absolute;
+  max-width: none;
+}
+
+.bike-app-post-image-controls {
+  display: grid;
+  max-width: 36rem;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+}

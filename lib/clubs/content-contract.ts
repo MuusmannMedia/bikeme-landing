@@ -1,13 +1,14 @@
 import type { Club, ClubRole } from "./types";
+import type { PostImageChoice, PostImageInfo, PostImageUpload } from "./post-image";
 export type ContentKind="post"|"comment"|"chat";
-export type ContentItem={kind:ContentKind|"chat";id:string;club_id:string;post_id:string;author_id:string|null;display_name:string|null;body:string;created_at:string;edited_at:string|null;version:number;is_pinned:boolean;comment_count:number};
+export type ContentItem={kind:ContentKind|"chat";id:string;club_id:string;post_id:string;author_id:string|null;display_name:string|null;body:string;created_at:string;edited_at:string|null;version:number;is_pinned:boolean;comment_count:number;image?:PostImageInfo};
 type ReportMetadata = { id:string;club_id:string;target_id:string;reason:string;detail:string;status:"pending"|"removed"|"dismissed";created_at:string;resolved_at:string|null };
 export type ContentReport = ReportMetadata & (
  {target_kind:ContentItem["kind"];snapshot:ContentItem;content:ContentItem|null;context:ContentItem[]} |
  {target_kind:"photo"|"photo_comment";snapshot:{text:string;author:string|null};hasImageEvidence:boolean}
 );
-export type ContentSnapshot={club:Club;role:ClubRole;visibilityRevision:number;mode:"posts"|"thread"|"reports"|"blocked";items:ContentItem[];post:ContentItem|null;reports:ContentReport[];blocked:{id:string;display_name:string|null}[];hasMore:boolean;unavailable:boolean;editorItem:ContentItem|null};
-export type ContentErrorKind="auth"|"access"|"blocked"|"contentRejected"|"invalid"|"unavailable"|"conflict"|"network";
+export type ContentSnapshot={club:Club;role:ClubRole;visibilityRevision:number;mode:"posts"|"thread"|"reports"|"blocked";items:ContentItem[];post:ContentItem|null;reports:ContentReport[];blocked:{id:string;display_name:string|null}[];hasMore:boolean;unavailable:boolean;editorItem:ContentItem|null;postImageUpload?:boolean};
+export type ContentErrorKind="auth"|"access"|"blocked"|"contentRejected"|"invalid"|"image"|"unavailable"|"conflict"|"network";
 export class ContentError extends Error {constructor(public readonly kind:ContentErrorKind){super(kind);}}
 export function contentError(error:unknown):ContentError {
  if(error instanceof ContentError)return error;
@@ -15,18 +16,18 @@ export function contentError(error:unknown):ContentError {
  if(e?.code==="22023"&&e.message==="BIKEME_CONTENT_REJECTED")return new ContentError("contentRejected");
  return new ContentError(e?.code==="PT423"?"blocked":e?.code==="42501"?"access":["28000","PGRST301","PGRST302"].includes(e?.code??"")?"auth":e?.code==="22023"?"invalid":["PT409","40001","40P01"].includes(e?.code??"")?"conflict":["P0002","PT410","PGRST202","42P01","42883"].includes(e?.code??"")?"unavailable":"network");
 }
-export function responseContentError(value:unknown){return new ContentError(typeof value==="string"&&["auth","access","blocked","contentRejected","invalid","unavailable","conflict","network"].includes(value)?value as ContentErrorKind:"network");}
+export function responseContentError(value:unknown){return new ContentError(typeof value==="string"&&["auth","access","blocked","contentRejected","invalid","image","unavailable","conflict","network"].includes(value)?value as ContentErrorKind:"network");}
 export const SHORT_CONTENT_LIMIT = 1500;
 export function validateContent(text:string,kind:ContentKind){if(typeof text!=="string")throw new ContentError("invalid");const body=text.replace(/^ +| +$/g,"");const n=Array.from(body).length;if(!/\S/u.test(body)||!n||n>(kind==="post"?4000:SHORT_CONTENT_LIMIT)||body.includes("\0"))throw new ContentError("invalid");return body;}
 export function validateReportDetail(text:string){if(typeof text!=="string")throw new ContentError("invalid");if(Array.from(text).length>500||text.includes("\0"))throw new ContentError("invalid");return text;}
 export type ContentCommand={actorId:string;clubId:string}&(
- {type:"create";id:string;body:string;post:string|null}|
- {type:"change";kind:ContentKind;id:string;action:"edit"|"delete"|"pin"|"unpin";body?:string;version?:number}|
+ {type:"create";id:string;body:string;post:string|null;image?:PostImageUpload}|
+ {type:"change";kind:ContentKind;id:string;action:"edit"|"delete"|"pin"|"unpin";body?:string;version?:number;image?:PostImageUpload|null;imageRequest?:string}|
  {type:"report";kind:ContentKind;id:string;reason:"spam"|"harassment"|"unsafe"|"other";detail:string;destination:"club"|"bikeMe"}|
  {type:"resolve";id:string;action:"remove"|"dismiss"}|
  {type:"block";kind:ContentKind|"member";id:string}|
  {type:"unblock";id:string});
-export type ContentDraft={kind:ContentKind;id:string|null;post:string|null;version:number|null;text:string;key:string};
+export type ContentDraft={kind:ContentKind;id:string|null;post:string|null;version:number|null;text:string;key:string;image?:PostImageChoice|null};
 export type ReportDraft={kind:ContentKind;id:string;reason:"spam"|"harassment"|"unsafe"|"other";detail:string;destination:"club"|"bikeMe"};
 export const contentBase=(locale:string,clubId:string)=>`/${locale}/app/clubs/${clubId}/posts`;
 // Explicit projection: never forward reporter identities, internal evidence flags,

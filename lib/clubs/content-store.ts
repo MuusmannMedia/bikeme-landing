@@ -1,3 +1,4 @@
+import type { PostImageChoice } from "./post-image";
 import { isClubId } from "./types";
 import { ContentError, contentError, type ContentCommand, type ContentDraft, type ContentItem, type ContentSnapshot, type ReportDraft } from "./content-contract";
 export type ContentState={feedback:number;status:"loading"|"ready"|"error"|"access"|"auth";data:ContentSnapshot|null;draft:ContentDraft|null;report:ReportDraft|null;conflict:boolean;pending:ContentCommand|null;busy:boolean;error:string|null;notice:string|null};
@@ -28,7 +29,7 @@ export function createContentStore(options:{actor:string;clubId:string;key:()=>s
    if(!suspended)await refresh();return true;
   }catch(e){if(!active||epoch!==identity)return false;const error=contentError(e);if(error.kind==="auth"){revoke("auth");options.identityLost();return false;}
    patch({error:error.kind,pending:error.kind==="network"?work:null,conflict:error.kind==="conflict"&&work.type==="change"&&work.action==="edit"});
-   if(!suspended&&error.kind!=="contentRejected"&&error.kind!=="invalid")await refresh();return false;
+   if(!suspended&&error.kind!=="contentRejected"&&error.kind!=="invalid"&&error.kind!=="image")await refresh();return false;
   }finally{clearTimeout(timer);if(active&&epoch===identity)patch({busy:false});}
  }
  return {
@@ -38,11 +39,25 @@ export function createContentStore(options:{actor:string;clubId:string;key:()=>s
  observe(next:number){if(!active||authRevoked||state.status==="access")return;if(next>revision){revision=next;clearPayload();if(!suspended)void refresh();}},
  edit(item:ContentItem|null,post:string|null=null){if(!active||authRevoked||state.status!=="ready"||state.busy||state.pending)return;const kind=item?.kind??(post?"comment":"post");if(kind==="chat")return;patch({report:null,error:null,notice:null,conflict:false,draft:{kind,id:item?.id??null,post:item?.post_id??post,version:item?.version??null,text:item?.body??"",key:options.key()}});},
  text(text:string){if(state.draft&&!state.busy&&!state.pending)patch({draft:{...state.draft,text}});},
+ postImage(key:string,image:PostImageChoice|null|undefined){
+  if(active&&!authRevoked&&state.draft?.kind==="post"&&state.draft.key===key&&!state.busy&&!state.pending){
+   patch({draft:{...state.draft,image},error:state.error==="image"?null:state.error});
+  }
+ },
  report(item:ContentItem){if(!active||authRevoked||state.status!=="ready"||state.busy||state.pending||item.kind==="chat")return;patch({draft:null,conflict:false,error:null,notice:null,report:{kind:item.kind,id:item.id,reason:"spam",detail:"",destination:"club"}});},
  reportText(p:Partial<ReportDraft>){if(state.report&&!state.busy&&!state.pending)patch({report:{...state.report,...p}});},
  close(){if(state.busy||state.pending)return;patch({draft:null,report:null,conflict:false,error:null});},
  rebase(){if(state.draft&&state.data?.editorItem?.id===state.draft.id&&state.conflict&&!state.busy&&!state.pending)patch({draft:{...state.draft,version:state.data.editorItem.version},conflict:false,error:null});},
- submit(){const d=state.draft;if(!d)return Promise.resolve(false);return run(d.id?{actorId:options.actor,clubId:options.clubId,type:"change",kind:d.kind,id:d.id,action:"edit",body:d.text,version:d.version??undefined}:{actorId:options.actor,clubId:options.clubId,type:"create",id:d.key,post:d.kind==="comment"?d.post:null,body:d.text});},
+ submit(){
+  const d=state.draft;
+  if(!d)return Promise.resolve(false);
+  const base={actorId:options.actor,clubId:options.clubId};
+  const image=d.image?{source:d.image.source,frame:d.image.frame}:d.image;
+  if(d.id)return run({...base,type:"change",kind:d.kind,id:d.id,action:"edit",body:d.text,version:d.version??undefined,
+   ...(image!==undefined?{image,imageRequest:options.key()}:{}),
+  });
+  return run({...base,type:"create",id:d.key,post:d.kind==="comment"?d.post:null,body:d.text,...(image?{image}:{})});
+ },
  submitReport(){const r=state.report;return r?run({actorId:options.actor,clubId:options.clubId,type:"report",...r}):Promise.resolve(false);},
  run,retry(){return state.pending?run(state.pending,true):Promise.resolve(false);}
  };

@@ -1,4 +1,6 @@
 "use client";
+import {ClubPostImage,ClubPostImageEditor} from "./club-post-image";
+import {imageText} from "@/lib/clubs/image-i18n";
 import {StableAccessRegion} from "./stable-access-region";
 import {useEffect,useRef,useState} from "react";
 import {AppEmpty,AppPanel} from "../app-ui";
@@ -27,8 +29,9 @@ export function ClubContentWorkspace({state,store,userId,clubId,locale,query}:{s
  });
  const dialog=useRef<HTMLDialogElement>(null),editor=useRef<HTMLTextAreaElement>(null),report=useRef<HTMLSelectElement>(null),returnFocus=useRef("");
  const lastFeedback=useRef("");
+ const [preparingImage,setPreparingImage]=useState(false);
  const editorKey=state.draft?.key,reportId=state.report?.id;
- const ready=state.status==="ready"&&data!==null,locked=state.busy||!!state.pending;
+ const ready=state.status==="ready"&&data!==null,locked=state.busy||!!state.pending||preparingImage;
  useEffect(()=>{if(ready&&confirmation)dialog.current?.showModal();},[ready,confirmation]);
  useEffect(()=>{if(editorKey)editor.current?.focus({preventScroll:true});else if(reportId)report.current?.focus({preventScroll:true});},[editorKey,reportId]);
  useEffect(()=>{const message=state.error??state.notice;if(!ready||state.busy||!message)return;const key=`${state.feedback}:${message}`;if(lastFeedback.current===key)return;const element=document.getElementById(state.error?"content-error":"content-notice");if(element){element.focus({preventScroll:true});lastFeedback.current=key;}},[ready,state.busy,state.feedback,state.error,state.notice]);
@@ -40,6 +43,7 @@ export function ClubContentWorkspace({state,store,userId,clubId,locale,query}:{s
   return <article className="bike-app-content-card" key={`${renderKey}:${item.id}`} data-content-id={item.id}>
    <div className="bike-app-content-meta"><strong>{item.display_name??text("deletedAuthor")}</strong><time dateTime={item.created_at}>{formatDateTime(locale,item.created_at)}</time>{item.is_pinned?<span className="bike-app-chip">{text("pinned")}</span>:null}</div>
    <p className="bike-app-content-body">{item.body}</p>
+   {item.image?<ClubPostImage item={item} locale={locale}/>:null}
    {!readOnly?<div className="bike-app-actions">
     {item.kind==="post"&&data?.mode==="posts"?<a className="bike-app-button bike-app-button-secondary bike-app-button-small" href={`${base}/${item.id}${feedQuery()?`?${feedQuery()}`:""}`}>{text("thread")} ({item.comment_count})</a>:null}
     {own?<><button id={id} disabled={locked} className="bike-app-button bike-app-button-secondary bike-app-button-small" onClick={()=>{returnFocus.current=id;store.edit(item);}}>{t("common.edit")}</button><button id={`delete-${item.id}`} disabled={locked} className="bike-app-button bike-app-button-secondary bike-app-button-small" onClick={()=>confirm(command("change",{kind:item.kind,id:item.id,action:"delete"}),"removed","deleteBody",`delete-${item.id}`)}>{text("delete")}</button></>:null}
@@ -62,22 +66,28 @@ export function ClubContentWorkspace({state,store,userId,clubId,locale,query}:{s
  const confirmName=confirmTarget?.type==="unblock"?data?.blocked.find(peer=>peer.id===confirmTarget.id)?.display_name:confirmTarget?.type==="block"?confirmTarget.kind==="member"?data?.club.members.find(peer=>peer.user_id===confirmTarget.id)?.display_name:[...(data?.items??[]),...(data?.post?[data.post]:[])].find(item=>item.id===confirmTarget.id)?.display_name:null;
  const draftTarget=state.draft?.id??state.draft?.post;
  const available=!draftTarget||data?.editorItem?.id===draftTarget||[...(data?.items??[]),...(data?.post?[data.post]:[])].some(item=>item.id===draftTarget);
+ const draftPost=state.draft?.kind==="post"&&state.draft.id
+  ? [data?.editorItem,data?.post,...(data?.items??[])].find(item=>item?.id===state.draft?.id)??undefined
+  : undefined;
  const errorKey:ContentTextKey=state.error==="contentRejected"?"contentRejected":state.error==="conflict"?"conflict":state.error==="invalid"?"invalid":state.error==="unavailable"?"unavailable":state.error==="access"||state.error==="auth"||state.error==="blocked"?"access":"network";
  return <div data-club-access={state.status} data-club-data={data?"present":"empty"}>
  <StableAccessRegion denied={state.status==='access'||state.status==='auth'} ready={ready} fallback={state.status==="access"?<ClubAccessDenied locale={locale}/>:state.status==="error"?<ClubReadFailure locale={locale} kind="network" retryHref="" onRetry={()=>void store.refresh()}/>:<div className="bike-app-club-gate" role="status">{t("clubs.loading")}</div>}>
   {ready&&data?<>
   <ClubHeader club={data.club} locale={locale} selected="posts"/>
   <div className="bike-app-actions">{data.mode!=="posts"?<a className="bike-app-button bike-app-button-secondary" href={`${base}${data.mode==="thread"&&feedQuery()?`?${feedQuery()}`:""}`}>{text("back")}</a>:null}<a className="bike-app-button bike-app-button-secondary" href={`${base}/blocked`}>{text("blocked")}</a>{data.role!=="member"?<a className="bike-app-button bike-app-button-secondary" href={`${base}/moderation`}>{text("moderation")}</a>:null}</div>
-  {state.error?<p id="content-error" tabIndex={-1} className="bike-app-content-feedback" role="alert">{text(errorKey)}</p>:null}
+  {state.error?<p id="content-error" tabIndex={-1} className="bike-app-content-feedback" role="alert">{state.error==="image"?imageText(locale,"invalid"):text(errorKey)}</p>:null}
   {state.notice?<p id="content-notice" tabIndex={-1} className="bike-app-content-feedback" role="status">{text(state.notice as ContentTextKey)}</p>:null}
   {state.pending?<button className="bike-app-button bike-app-section-gap" disabled={state.busy} onClick={()=>void store.retry()}>{text(state.busy?"busy":"retryAction")}</button>:null}
   {state.draft?<AppPanel title={text(state.draft.kind==="post"?"write":"comment")} className="bike-app-section-gap">
-   <form onSubmit={e=>{e.preventDefault();if(draftValid&&!locked&&available&&!state.conflict)void store.submit();}}>
+   <form onSubmit={e=>{e.preventDefault();if(draftValid&&!locked&&available&&!state.conflict&&(state.draft?.image===undefined||data.postImageUpload))void store.submit();}}>
     <label className="bike-app-field"><span>{text(state.draft.kind==="post"?"write":"comment")}</span><textarea ref={editor} value={state.draft.text} disabled={locked} onChange={e=>store.text(e.target.value)} rows={6}/></label>
     <p className="bike-app-muted">{text("counter").replace("{count}",String(Array.from(state.draft.text).length)).replace("{max}",state.draft.kind==="post"?"4000":"1500")}</p>
+    {state.draft.kind==="post"&&data.postImageUpload&&available?<ClubPostImageEditor key={state.draft.key}
+     draft={state.draft} item={draftPost} locale={locale} locked={state.busy||!!state.pending}
+     onChange={choice=>store.postImage(state.draft!.key,choice)} onBusy={setPreparingImage}/>:null}
     {state.conflict&&data.editorItem?<div className="bike-app-content-card"><h3>{text("latest")} · {data.editorItem.version}</h3><p className="bike-app-content-body">{data.editorItem.body}</p><button type="button" className="bike-app-button bike-app-button-secondary" disabled={locked} onClick={()=>store.rebase()}>{text("rebase")}</button></div>:null}
     {!available?<p role="status">{text("draftUnavailable")}</p>:null}
-    <div className="bike-app-actions"><button className="bike-app-button" disabled={locked||!draftValid||!available||state.conflict} type="submit">{locked?text("busy"):t("common.save")}</button><button className="bike-app-button bike-app-button-secondary" disabled={locked} type="button" onClick={close}>{t("common.cancel")}</button></div>
+    <div className="bike-app-actions"><button className="bike-app-button" disabled={locked||!draftValid||!available||state.conflict||(state.draft.image!==undefined&&!data.postImageUpload)} type="submit">{locked?text("busy"):t("common.save")}</button><button className="bike-app-button bike-app-button-secondary" disabled={locked} type="button" onClick={close}>{t("common.cancel")}</button></div>
    </form>
   </AppPanel>:null}
   {state.report?<AppPanel title={text("report")} className="bike-app-section-gap"><form onSubmit={e=>{e.preventDefault();if(draftValid&&!locked)void store.submitReport();}}>
