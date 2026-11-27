@@ -23,7 +23,10 @@ export function createMessageReactionsApi(client: SupabaseClient, user: string, 
  }
  return {
   read: (ids: string[]) => rpc<ReactionSnapshot>("message_reactions", {p_kind:kind,p_scope:scope,p_messages:ids}),
-  set: (id: string, emoji: string | null, request: string) => rpc<void>("message_react", {p_kind:kind,p_scope:scope,p_message:id,p_emoji:emoji,p_request:request})
+  set: async (id: string, emoji: string | null, request: string) => {
+   if (kind === "club") throw new ContentError("invalid");
+   return rpc<void>("message_react", {p_kind:kind,p_scope:scope,p_message:id,p_emoji:emoji,p_request:request});
+  }
  };
 }
 // One scope snapshot, batched at 100 IDs. Never apply a read started before a newer signal.

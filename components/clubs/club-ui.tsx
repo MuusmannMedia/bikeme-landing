@@ -49,6 +49,9 @@ export function ClubHeader({ club, locale, selected }: { club: Club; locale: Loc
           {t("clubs.description")}
         </Link>
         {canEdit && <a className="bike-app-nav-link" href={`${base}/edit`}>{profileText(locale, "editClub")}</a>}
+        <Link prefetch={false} className="bike-app-nav-link" href={`${base}/chat`} aria-current={selected === "chat" ? "page" : undefined}>
+          {t("clubs.chatArchive")}
+        </Link>
         <Link prefetch={false} className="bike-app-nav-link" href={`${base}/preview`}>{t("clubs.viewClub")}</Link>
         <a className="bike-app-nav-link" href={`/${locale}/app/clubs/mine`}>{t("clubs.back")}</a>
       </ClubHeaderMenu>}
@@ -56,7 +59,6 @@ export function ClubHeader({ club, locale, selected }: { club: Club; locale: Loc
     <ClubNavigation label={t("clubs.pages")} selected={selected} links={[
       {key:"rides",href:`${base}/rides`,label:calendarText(locale).title},
       {key:"posts",href:`${base}/posts`,label:contentText(locale,"title")},
-      {key:"chat",href:`${base}/chat`,label:t("clubs.tabs.chat")},
       {key:"members",href:`${base}/members`,label:t("clubs.members")},
       {key:"gallery",href:`${base}/gallery`,label:galleryText(locale,"title")}
     ]}/>

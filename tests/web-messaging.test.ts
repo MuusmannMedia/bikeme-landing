@@ -1,6 +1,6 @@
 import test from 'node:test';import assert from 'node:assert/strict';
 import {createUnreadApi,createSeenQueue,createUnreadStore,parseUnread,emptyUnread} from '../lib/messages/unread';
-import {createReactionStore} from '../lib/messages/reactions';
+import {createMessageReactionsApi,createReactionStore} from '../lib/messages/reactions';
 import {messagePresentation} from '../lib/messages/presentation';
 import {emojiCatalog,searchEmoji} from '../lib/messages/emoji-catalog';
 import {deliverBrowserPush,retryAfter,type TransportRow} from '../lib/web-push/worker';
@@ -11,6 +11,12 @@ const tick=()=>new Promise(r=>setTimeout(r,0));const id='00000000-0000-0000-0000
 test('deduplicated server total is not summed across club entrances; unsupported clears',()=>{assert.equal(parseUnread(unread(2,3)).total,3);assert.equal(parseUnread({...unread(3,3),supported:false}).total,0);assert.throws(()=>parseUnread({...unread(2,3),total:-1}));});
 test('late unread snapshot after newer signal and account pause cannot restore badges',async()=>{const reads:((v:ReturnType<typeof unread>)=>void)[]=[];const store=createUnreadStore(()=>new Promise(r=>reads.push(r)));store.active(true);await tick();void store.refresh();reads[0](unread(1,7));await tick();assert.equal(store.getSnapshot().total,0);reads[1](unread(2,1));await tick();assert.equal(store.getSnapshot().total,1);void store.refresh();store.active(false);reads[2](unread(3,10));await tick();assert.deepEqual(store.getSnapshot(),emptyUnread());});
 test('seen IDs retry exact batch; concurrent new message never joins in-flight read',async()=>{const sent:string[][]=[];let finish:()=>void=()=>{},fail=true,acks=0;const q=createSeenQueue(ids=>{sent.push([...ids]);return new Promise<void>((ok,bad)=>{finish=()=>fail?bad(Error()):ok();});},()=>acks++);q.observe(['seen']);q.observe(['new-after-observation']);finish();await tick();fail=false;void q.flush();assert.deepEqual(sent,[['seen'],['seen']]);finish();await tick();assert.equal(acks,1);void q.flush();assert.deepEqual(sent[2],['new-after-observation']);q.stop();finish();await tick();assert.equal(acks,1);});
+test('the web archive reaction adapter rejects writes without calling Supabase', async () => {
+ const client = { rpc: () => assert.fail('archive write reached Supabase') } as never;
+ const reactions = createMessageReactionsApi(client, id, 'club', id);
+ await assert.rejects(reactions.set(id, '❤️', id), {kind:'invalid'});
+ await assert.rejects(reactions.set(id, null, id), {kind:'invalid'});
+});
 test('reaction unknown outcome keeps request/payload and replay cannot become toggle',async()=>{const sent:unknown[]=[];let fail=true;const store=createReactionStore({read:async()=>({supported:true,emoji_version:'15.1',messages:{[id]:[]}}),set:async(...args)=>{sent.push(args);if(fail)throw Error();}},()=>id);store.active(true);store.ids([id]);await tick();await store.set(id,'🇩🇰');assert.equal(store.getSnapshot().pending,true);await store.set(id,'👍');fail=false;await store.retry();assert.deepEqual(sent,[[id,'🇩🇰',id],[id,'🇩🇰',id]]);store.stop();});
 test('reaction invalidation rejects old scope result and clears protected rows',async()=>{let resolve:(v:{supported:boolean;messages:Record<string,{emoji:string;count:number;mine:boolean}[]>})=>void=()=>{};const store=createReactionStore({read:()=>new Promise(r=>resolve=r),set:async()=>{}},()=>id);store.ids([id]);store.active(true);store.active(false);resolve({supported:true,messages:{[id]:[{emoji:'👍',count:2,mine:false}]}});await tick();assert.deepEqual(store.getSnapshot().messages,{});store.stop();});
 test('build134 grouping separates dates, quotes and senders within five minutes',()=>{const a={author_id:id,created_at:'2026-11-22T12:01:00Z'},b={...a,created_at:'2026-11-22T12:00:00Z'};assert.equal(messagePresentation([a,b],0).start,false);assert.equal(messagePresentation([{...a,reply_to_id:id},b],0).start,true);assert.equal(messagePresentation([a,{...b,author_id:'other'}],0).start,true);});

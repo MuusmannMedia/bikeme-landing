@@ -12,7 +12,7 @@ import {ClubChatWorkspace} from './club-chat-workspace';
 import {ClubAccessDenied} from './club-ui';
 import {ClubHeaderImagesScope,useClubHeaderImages} from './club-private-images';
 export function ClubChatBoundary({userId,clubId,locale,initialMessage}:{userId:string;clubId:string;locale:Locale;initialMessage:string|null}){
- const store=useMemo(()=>{const next=createChatStore({actor:userId,club:clubId,key:()=>crypto.randomUUID(),identityLost:()=>{flushSync(()=>next.revoke('auth'));window.location.reload();},
+ const store=useMemo(()=>{const next=createChatStore({actor:userId,identityLost:()=>{flushSync(()=>next.revoke('auth'));window.location.reload();},
   async read(q,signal){q.set('clubId',clubId);const r=await fetch(`/api/clubs/chat?${q}`,{cache:'no-store',credentials:'same-origin',signal});const body=await r.json();if(!r.ok)throw responseContentError(body.error);if(!body.snapshot||typeof body.userId!=='string')throw new ContentError('network');return body;},
   async send(command,signal){const r=await fetch('/api/clubs/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(command),cache:'no-store',credentials:'same-origin',signal});const body=await r.json();if(!r.ok)throw responseContentError(body.error);if(body.ok!==true||typeof body.userId!=='string')throw new ContentError('network');return body;}
  });return next;},[userId,clubId]);

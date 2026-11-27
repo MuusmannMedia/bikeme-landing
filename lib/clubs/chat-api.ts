@@ -3,7 +3,7 @@ import {createClubReadApi} from './api';
 import {createClubContentApi} from './content-api';
 import {ContentError,contentError} from './content-contract';
 import {isClubId} from './types';
-import {positive,projectChat,validateChat,type ChatCommand,type ChatRead} from './chat-contract';
+import {positive,projectChat,type ChatCommand,type ChatRead} from './chat-contract';
 export function createClubChatApi(client:SupabaseClient,actor:string){
  const content=createClubContentApi(client,actor,true);
  async function rpc(name:string,args:Record<string,unknown>){const session=await client.auth.getSession();if(session.error||session.data.session?.user.id!==actor)throw new ContentError('auth');const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),20000);try{const r=await client.rpc(name,args).setHeader('Authorization',`Bearer ${session.data.session.access_token}`).abortSignal(controller.signal);if(r.error)throw contentError(r.error);return r.data;}catch(e){throw contentError(e);}finally{clearTimeout(timer);}}
@@ -26,6 +26,13 @@ export function createClubChatApi(client:SupabaseClient,actor:string){
   else throw new ContentError('invalid');
   const after=await signals();if(after.visibilityRevision!==before.visibilityRevision)throw new ContentError('network');const latest=await clubs.detail(clubId);if(latest.role!==role)throw new ContentError('network');return {club:latest,...result};
  },
- async execute(raw:unknown){const c=raw as ChatCommand;if(!c||c.actorId!==actor)throw new ContentError('auth');if(!isClubId(c.clubId)||!isClubId(c.id))throw new ContentError('invalid');if(c.type==='send'){if(c.replyTo!==null&&!isClubId(c.replyTo))throw new ContentError('invalid');await createClubReadApi(client,actor).detail(c.clubId);return projectChat(await rpc('club_chat_send',{p_club:c.clubId,p_id:c.id,p_body:validateChat(c.body),p_reply_to:c.replyTo}));}if(!['change','report','block','unblock'].includes(c.type))throw new ContentError('invalid');if((c.type==='change'||c.type==='report')&&c.kind!=='chat')throw new ContentError('invalid');return content.execute(c);}
+ async execute(raw: unknown) {
+  const command = raw as ChatCommand | null;
+  if (!command || command.actorId !== actor) throw new ContentError('auth');
+  if (!isClubId(command.clubId) || !isClubId(command.id)) throw new ContentError('invalid');
+  if (!['report', 'block', 'unblock'].includes(command.type)) throw new ContentError('invalid');
+  if (command.type !== 'unblock' && command.kind !== 'chat') throw new ContentError('invalid');
+  return content.execute(command);
+ }
  };
 }

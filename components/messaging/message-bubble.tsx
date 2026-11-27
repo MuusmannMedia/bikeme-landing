@@ -23,7 +23,7 @@ export type MessageAction = {
 };
 
 export function MessageBubble({ id, own, body, locale, actions, disabled = false, actionIcons = false,
-  quickActions = false, menuId, children }: {
+  quickActions = false, readOnlyReactions = false, menuId, children }: {
   id: string;
   own: boolean;
   body: string;
@@ -32,6 +32,7 @@ export function MessageBubble({ id, own, body, locale, actions, disabled = false
   disabled?: boolean;
   actionIcons?: boolean;
   quickActions?: boolean;
+  readOnlyReactions?: boolean;
   menuId?: string;
   children: ReactNode;
 }) {
@@ -52,7 +53,7 @@ export function MessageBubble({ id, own, body, locale, actions, disabled = false
   const mine = rows?.find(row => row.mine)?.emoji;
   const extended = state.emoji_version === "15.1";
   const emojis = quickActions && extended ? privateReactionEmojis : reactionEmojis;
-  const canReact = !!rows && state.supported && !own && !disabled;
+  const canReact = !!rows && state.supported && !own && !disabled && !readOnlyReactions;
   const reactionLocked = state.busy || state.pending;
   const inlineReactions = quickActions && canReact;
   const reply = quickActions ? actions.find(action => action.key === "reply") : undefined;
@@ -92,7 +93,7 @@ export function MessageBubble({ id, own, body, locale, actions, disabled = false
   }
 
   function choose(emoji: string) {
-    if (disabled || reactionLocked || (!canReact && mine !== emoji)) return;
+    if (disabled || readOnlyReactions || reactionLocked || (!canReact && mine !== emoji)) return;
     if (!extended && mine !== emoji && !reactionEmojis.some(value => value === emoji)) return;
     if (open) close();
     void store?.set(id, mine === emoji ? null : emoji);
@@ -198,7 +199,7 @@ export function MessageBubble({ id, own, body, locale, actions, disabled = false
           {rows.map(row => {
             const count = row.emoji + (row.count > 1 ? ` ${row.count}` : "");
             const label = reactionText(locale, "reactions.count", { emoji: row.emoji, count: row.count });
-            return own && !row.mine
+            return readOnlyReactions || own && !row.mine
               ? <span key={row.emoji} className="bike-reaction-chip" aria-label={label}>{count}</span>
               : <button key={row.emoji} type="button" className="bike-reaction-chip" aria-pressed={row.mine}
                   aria-label={label} disabled={disabled || reactionLocked} onClick={() => choose(row.emoji)}>{count}</button>;

@@ -4,7 +4,7 @@ export type ChatQuote={id:string;seq:number;change_seq:number;deleted:boolean;au
 export type ChatMessage=ContentItem&{kind:'chat';seq:number;change_seq:number;deleted_at:string|null;reply_to_id:string|null;reply:ChatQuote|null;reply_unavailable:boolean};
 export type ChatHit={id:string;display_name:string|null;created_at:string;excerpt:string};
 export type ChatRead={club:Club;visibilityRevision:number;signalRevision:number;items:ChatMessage[];cursor:number;hasMore:boolean;hits:ChatHit[];nextBefore:number|null;context:ChatMessage[];selected:ChatMessage|null};
-export type ChatCommand={actorId:string;clubId:string;type:'send';id:string;body:string;replyTo:string|null}|ContentCommand;
+export type ChatCommand = Extract<ContentCommand, {type: 'report' | 'block' | 'unblock'}>;
 export function positive(value:unknown,zero=false){if(!Number.isSafeInteger(value)||Number(value)<(zero?0:1))throw new ContentError('network');return Number(value);}
 export function projectChat(raw:unknown):ChatMessage {
  const r=raw as Record<string,unknown>;const item=projectContent(raw);if(item.kind!=='chat')throw new ContentError('network');
