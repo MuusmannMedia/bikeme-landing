@@ -1,5 +1,5 @@
 const en = {
-  title: "Calendar", all: "All", rides: "Rides", events: "Events", ride: "Ride", event: "Event", create: "Create",
+  title: "Calendar", today: "Today", all: "All", rides: "Rides", events: "Events", ride: "Ride", event: "Event", create: "Create",
   createHeading: "Create in the calendar", type: "Type", createRide: "Create ride", createEvent: "Create event",
   previousWeek: "Previous week", nextWeek: "Next week", previousMonth: "Previous month", nextMonth: "Next month",
   one: "1 activity", many: "{count} activities", empty: "No activities on this day.", private: "Club members only",
@@ -9,12 +9,12 @@ const en = {
   saveError: "The event could not be saved.", uncertain: "We could not confirm the save. Try again to check the same event.",
   saved: "Event created.", unavailableRide: "This ride is no longer available.",
 };
-type Text = typeof en;
+type Text = typeof en & { todayShort?: string };
 
 const languages: Record<string, Text> = {
   en,
   da: {
-    title:"Kalender", all:"Alle", rides:"Ture", events:"Arrangementer", ride:"Tur", event:"Arrangement", create:"Opret",
+    title:"Kalender", today:"I dag", all:"Alle", rides:"Ture", events:"Arrangementer", ride:"Tur", event:"Arrangement", create:"Opret",
     createHeading:"Opret i kalenderen", type:"Type", createRide:"Opret tur", createEvent:"Opret arrangement",
     previousWeek:"Forrige uge", nextWeek:"Næste uge", previousMonth:"Forrige måned", nextMonth:"Næste måned",
     one:"1 aktivitet", many:"{count} aktiviteter", empty:"Ingen aktiviteter denne dag.", private:"Kun for klubbens medlemmer",
@@ -25,7 +25,7 @@ const languages: Record<string, Text> = {
     saved:"Arrangement oprettet.", unavailableRide:"Turen er ikke længere tilgængelig.",
   },
   de: {
-    title:"Kalender", all:"Alle", rides:"Ausfahrten", events:"Veranstaltungen", ride:"Ausfahrt", event:"Veranstaltung", create:"Erstellen",
+    title:"Kalender", today:"Heute", all:"Alle", rides:"Ausfahrten", events:"Veranstaltungen", ride:"Ausfahrt", event:"Veranstaltung", create:"Erstellen",
     createHeading:"Kalendereintrag erstellen", type:"Typ", createRide:"Ausfahrt erstellen", createEvent:"Veranstaltung erstellen",
     previousWeek:"Vorherige Woche", nextWeek:"Nächste Woche", previousMonth:"Vorheriger Monat", nextMonth:"Nächster Monat",
     one:"1 Aktivität", many:"{count} Aktivitäten", empty:"Keine Aktivitäten an diesem Tag.", private:"Nur für Clubmitglieder",
@@ -36,7 +36,7 @@ const languages: Record<string, Text> = {
     saved:"Veranstaltung erstellt.", unavailableRide:"Diese Ausfahrt ist nicht mehr verfügbar.",
   },
   es: {
-    title:"Calendario", all:"Todas", rides:"Rutas", events:"Eventos", ride:"Ruta", event:"Evento", create:"Crear",
+    title:"Calendario", today:"Hoy", all:"Todas", rides:"Rutas", events:"Eventos", ride:"Ruta", event:"Evento", create:"Crear",
     createHeading:"Crear en el calendario", type:"Tipo", createRide:"Crear ruta", createEvent:"Crear evento",
     previousWeek:"Semana anterior", nextWeek:"Semana siguiente", previousMonth:"Mes anterior", nextMonth:"Mes siguiente",
     one:"1 actividad", many:"{count} actividades", empty:"No hay actividades este día.", private:"Solo para miembros del club",
@@ -47,7 +47,7 @@ const languages: Record<string, Text> = {
     saved:"Evento creado.", unavailableRide:"Esta ruta ya no está disponible.",
   },
   it: {
-    title:"Calendario", all:"Tutte", rides:"Uscite", events:"Eventi", ride:"Uscita", event:"Evento", create:"Crea",
+    title:"Calendario", today:"Oggi", all:"Tutte", rides:"Uscite", events:"Eventi", ride:"Uscita", event:"Evento", create:"Crea",
     createHeading:"Crea nel calendario", type:"Tipo", createRide:"Crea uscita", createEvent:"Crea evento",
     previousWeek:"Settimana precedente", nextWeek:"Settimana successiva", previousMonth:"Mese precedente", nextMonth:"Mese successivo",
     one:"1 attività", many:"{count} attività", empty:"Nessuna attività per questo giorno.", private:"Riservato ai membri del club",
@@ -58,7 +58,7 @@ const languages: Record<string, Text> = {
     saved:"Evento creato.", unavailableRide:"Questa uscita non è più disponibile.",
   },
   fr: {
-    title:"Calendrier", all:"Tout", rides:"Sorties", events:"Événements", ride:"Sortie", event:"Événement", create:"Créer",
+    title:"Calendrier", today:"Aujourd’hui", todayShort:"Auj.", all:"Tout", rides:"Sorties", events:"Événements", ride:"Sortie", event:"Événement", create:"Créer",
     createHeading:"Créer dans le calendrier", type:"Type", createRide:"Créer une sortie", createEvent:"Créer un événement",
     previousWeek:"Semaine précédente", nextWeek:"Semaine suivante", previousMonth:"Mois précédent", nextMonth:"Mois suivant",
     one:"1 activité", many:"{count} activités", empty:"Aucune activité ce jour-là.", private:"Réservé aux membres du club",
@@ -69,7 +69,7 @@ const languages: Record<string, Text> = {
     saved:"Événement créé.", unavailableRide:"Cette sortie n’est plus disponible.",
   },
   nl: {
-    title:"Kalender", all:"Alles", rides:"Ritten", events:"Evenementen", ride:"Rit", event:"Evenement", create:"Maken",
+    title:"Kalender", today:"Vandaag", all:"Alles", rides:"Ritten", events:"Evenementen", ride:"Rit", event:"Evenement", create:"Maken",
     createHeading:"Toevoegen aan de kalender", type:"Type", createRide:"Rit maken", createEvent:"Evenement maken",
     previousWeek:"Vorige week", nextWeek:"Volgende week", previousMonth:"Vorige maand", nextMonth:"Volgende maand",
     one:"1 activiteit", many:"{count} activiteiten", empty:"Geen activiteiten op deze dag.", private:"Alleen voor clubleden",

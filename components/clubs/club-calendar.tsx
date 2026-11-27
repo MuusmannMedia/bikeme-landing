@@ -29,6 +29,7 @@ type Read = { key: string; entries: CalendarEntry[]; error?: boolean };
 export function ClubCalendar({ clubId, userId, locale, miles, initialDay, onAccessLost }: Props) {
   const s = calendarText(locale);
   const [day, setDay] = useState(() => (initialDay && localCalendarDate(initialDay)) || new Date());
+  const [today, setToday] = useState(() => calendarDate(new Date()));
   const [filter, setFilter] = useState<CalendarFilter>("all");
   const [state, setState] = useState<Read>();
   const [revision, setRevision] = useState(0);
@@ -73,7 +74,11 @@ export function ClubCalendar({ clubId, userId, locale, miles, initialDay, onAcce
     return () => { current = false; controller.abort(); window.clearTimeout(timeout); };
   }, [key, clubId, userId, from, to, revision, onAccessLost]);
   useEffect(() => {
-    const verify = () => { if (document.visibilityState === "visible") refresh(); };
+    const verify = () => {
+      if (document.visibilityState !== "visible") return;
+      setToday(calendarDate(new Date()));
+      refresh();
+    };
     const timer = window.setInterval(verify, 30000);
     window.addEventListener("focus", verify);
     return () => { window.clearInterval(timer); window.removeEventListener("focus", verify); inflight.current?.abort(); inflight.current = null; };
@@ -162,10 +167,18 @@ export function ClubCalendar({ clubId, userId, locale, miles, initialDay, onAcce
         {dates.slice(0, 7).map((date, i) => <span key={i} className="club-calendar-weekday" aria-hidden="true">{labelDate(date, { weekday: "short" })}</span>)}
         {dates.map(date => {
           const id = calendarDate(date), items = grouped.get(id) ?? [];
+          const isToday = id === today;
           return <button key={id} type="button" className="club-calendar-day" data-day={id} data-outside={date.getMonth() !== day.getMonth()}
             aria-label={fullDate(date) + ", " + count(items.length)} aria-pressed={id === selected}
+            aria-current={isToday ? "date" : undefined}
             onClick={() => { setDay(date); setMessage(false); }}>
-            <span className="club-calendar-number">{date.getDate()}</span>
+            <span className="club-calendar-date-label">
+              <span className="club-calendar-number">{date.getDate()}</span>
+              {isToday && <span className="club-calendar-today" aria-hidden="true">
+                <span>{s.today}</span>
+                {s.todayShort && <span className="club-calendar-today-short">{s.todayShort}</span>}
+              </span>}
+            </span>
             {items.slice(0, 2).map(item => <span className="club-calendar-mark" data-kind={item.kind} key={item.kind + item.id} aria-hidden="true">{item.title}</span>)}
             {items.length > 2 ? <span className="club-calendar-overflow">+{items.length - 2}</span> : null}
             <span className="club-calendar-dots" aria-hidden="true">{filters.slice(1).filter(k => items.some(i => i.kind === k)).map(k => <i data-kind={k} key={k} />)}</span>

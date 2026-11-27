@@ -1379,8 +1379,11 @@ html:has(.bike-app-gallery-dialog[open][data-gallery-expanded]) { overflow: hidd
 .club-calendar-day:nth-child(7n) { border-right: 0; }
 .club-calendar-day[data-outside="true"] { color: var(--cc-muted); }
 .club-calendar-day[aria-pressed="true"] { background: #362749; box-shadow: inset 0 0 0 1px #c193f69b; }
-.club-calendar-number { min-width: 23px; padding: 1px 2px; text-align: center; font-size: .82rem; font-weight: 650; }
-.club-calendar-day[aria-pressed="true"] .club-calendar-number { border-radius: 5px; background: var(--cc-purple); color: #231433; }
+.club-calendar-date-label { display: flex; flex-wrap: wrap; align-items: center; gap: 3px 5px; max-width: 100%; }
+.club-calendar-number { display: grid; min-width: 24px; min-height: 24px; padding: 1px 2px; place-items: center; font-size: .82rem; font-weight: 650; }
+.club-calendar-day[aria-current="date"] .club-calendar-number { border-radius: 50%; background: var(--cc-purple); color: #231433; font-weight: 800; }
+.club-calendar-today { color: var(--cc-purple); font-size: .7rem; font-weight: 750; line-height: 1.1; }
+.club-calendar-today-short { display: none; }
 .club-calendar-mark { padding: 2px 4px; border-left: 2px solid #c193f6; border-radius: 3px; background: #c193f61a; color: #ead5ff; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .7rem; }
 .club-calendar-mark[data-kind="event"] { border-color: #91c4ff; background: #91c4ff19; color: #d2e7ff; }
 .club-calendar-overflow { font-size: .72rem; color: var(--cc-muted); }
@@ -1426,10 +1429,16 @@ button.club-calendar-entry { background: transparent; border-inline: 0; border-b
 @media (max-width: 760px) {
   .club-calendar-body { grid-template-columns: minmax(0, 1fr); }
   .club-calendar-day { min-height: 48px; align-items: center; padding-inline: 2px; }
+  .club-calendar-date-label { flex-direction: column; flex-wrap: nowrap; }
+  .club-calendar-today { font-size: clamp(.5rem, 2.6vw, .7rem); letter-spacing: -.015em; }
   .club-calendar-mark, .club-calendar-overflow { display: none; }
   .club-calendar-dots { display: flex; gap: 3px; }
   .club-calendar-dots i { width: 5px; height: 5px; border-radius: 50%; background: var(--cc-purple); }
   .club-calendar-dots i[data-kind="event"] { background: var(--cc-blue); }
+}
+@media (max-width: 460px) {
+  .club-calendar-today:has(.club-calendar-today-short) > :first-child { display: none; }
+  .club-calendar-today-short { display: inline; }
 }
 
 .bike-message-nav[data-mobile="true"] {
