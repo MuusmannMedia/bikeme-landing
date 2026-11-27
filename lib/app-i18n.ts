@@ -35,6 +35,7 @@ const text = {
   "clubs.owner": ["Owner", "Ejer", "Inhaber", "Propietario", "Proprietario", "Propriétaire", "Eigenaar"],
   "clubs.admin": ["Admin", "Administrator", "Administrator", "Administrador", "Amministratore", "Administrateur", "Beheerder"],
   "clubs.member": ["Member", "Medlem", "Mitglied", "Miembro", "Membro", "Membre", "Lid"],
+  "clubs.home": ["Home", "Forside", "Startseite", "Inicio", "Home", "Accueil", "Startpagina"],
   "clubs.description": ["About the club", "Om klubben", "Über den Club", "Acerca del club", "Informazioni sul club", "À propos du club", "Over de club"],
   "clubs.noDescription": ["The club has no description yet.", "Klubben har endnu ingen beskrivelse.", "Der Club hat noch keine Beschreibung.", "El club aún no tiene descripción.", "Il club non ha ancora una descrizione.", "Le club n’a pas encore de description.", "De club heeft nog geen beschrijving."],
   "clubs.open": ["Open club", "Åbn klub", "Club öffnen", "Abrir club", "Apri club", "Ouvrir le club", "Club openen"],

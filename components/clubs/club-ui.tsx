@@ -52,6 +52,7 @@ export function ClubHeader({ club, locale, selected }: { club: Club; locale: Loc
       </ClubMenu>
     </header>
     <ClubNavigation label={t("clubs.pages")} selected={selected} links={[
+      {key:"details",href:base,label:t("clubs.home")},
       {key:"rides",href:`${base}/rides`,label:calendarText(locale).title},
       {key:"posts",href:`${base}/posts`,label:contentText(locale,"title")},
       {key:"members",href:`${base}/members`,label:t("clubs.members")},
