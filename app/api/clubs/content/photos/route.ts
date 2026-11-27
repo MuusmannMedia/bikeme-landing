@@ -1,10 +1,12 @@
 import { createHash, createHmac } from "node:crypto";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import { GalleryError, galleryLimits } from "@/lib/clubs/gallery-contract";
 import { normalizeGalleryPhoto } from "@/lib/clubs/gallery-normalize";
 import { galleryBody, galleryRpc, galleryUploadBytes, galleryUploadKey } from "@/lib/clubs/gallery-server";
 import { isClubRequestOrigin } from "@/lib/clubs/request-origin";
 import { isClubId } from "@/lib/clubs/types";
+import { getSupabaseEnvironment } from "@/lib/supabase/config";
 import { preventAuthCaching } from "@/lib/supabase/proxy";
 import { createClient } from "@/lib/supabase/server";
 
@@ -27,6 +29,21 @@ async function context(request: NextRequest, writing = false) {
   const club = query.get("clubId") ?? "", post = query.get("postId") ?? "";
   const photo = query.get("id");
   if (!isClubId(club) || !isClubId(post) || (photo !== null && !isClubId(photo))) throw new GalleryError("invalid");
+  const authorization = request.method === "POST" ? request.headers.get("authorization") : null;
+  if (authorization !== null) {
+    const token = authorization.match(/^Bearer ([^\s,]+)$/i)?.[1];
+    if (!token) throw new GalleryError("auth");
+    const env = getSupabaseEnvironment();
+    if (!env) throw new GalleryError("uploadUnavailable");
+    const auth = { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false };
+    const validator = createSupabaseClient(env.url, env.publishableKey, { auth });
+    const { data, error } = await validator.auth.getUser(token);
+    if (error && ![400, 401, 403].includes(error.status ?? 401)) throw new GalleryError("network");
+    const actor = data.user?.id;
+    if (!actor || request.headers.get("x-gallery-actor") !== actor) throw new GalleryError("auth");
+    const client = createSupabaseClient(env.url, env.publishableKey, { auth, accessToken: async () => token });
+    return { client, actor, club: club.toLowerCase(), post: post.toLowerCase(), photo, source: "mobile" as const };
+  }
   if (writing && !isClubRequestOrigin(request.headers.get("origin"), request.headers.get("x-forwarded-host") ?? request.headers.get("host"),
     request.headers.get("x-forwarded-proto") ?? request.nextUrl.protocol.slice(0, -1))) throw new GalleryError("access");
   const client = await createClient();
@@ -34,7 +51,7 @@ async function context(request: NextRequest, writing = false) {
   if (error && ![400, 401, 403].includes(error.status ?? 401)) throw new GalleryError("network");
   const actor = data.user?.id;
   if (!actor || (writing && request.headers.get("x-gallery-actor") !== actor)) throw new GalleryError("auth");
-  return { client, actor, club: club.toLowerCase(), post: post.toLowerCase(), photo };
+  return { client, actor, club: club.toLowerCase(), post: post.toLowerCase(), photo, source: "web" as const };
 }
 
 export async function GET(request: NextRequest) {
@@ -56,7 +73,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { client, actor, club, post, photo } = await context(request, true);
+    const { client, actor, club, post, photo, source } = await context(request, true);
     const mime = request.headers.get("content-type") ?? "";
     if (photo || !mime.startsWith("multipart/form-data;")) throw new GalleryError("invalid");
     const args = { p_club: club, p_post: post };
@@ -65,7 +82,8 @@ export async function POST(request: NextRequest) {
     });
     if (entry.author_id !== actor) throw new GalleryError("access");
     const key = galleryUploadKey();
-    const raw = await galleryBody(request, galleryLimits.batch * galleryLimits.browserInput + 16_384);
+    const web = source === "web";
+    const raw = await galleryBody(request, web ? galleryLimits.batch * galleryLimits.browserInput + 16_384 : galleryLimits.request);
     const form = await new Response(raw, { headers: { "Content-Type": mime } }).formData().catch(() => {
       throw new GalleryError("invalid");
     });
@@ -73,7 +91,7 @@ export async function POST(request: NextRequest) {
     const files = form.getAll("photo");
     if (typeof id !== "string" || !isClubId(id) || !files.length || files.length > galleryLimits.batch ||
         !files.every((file): file is File => file instanceof File)) throw new GalleryError("invalid");
-    const bytes = await galleryUploadBytes(files, true);
+    const bytes = await galleryUploadBytes(files, web);
     const hashes = bytes.map(file => createHash("sha256").update(file).digest("hex"));
     const digest = createHash("sha256").update(JSON.stringify(hashes)).digest("hex");
     const deadline = performance.now() + 24_000;
