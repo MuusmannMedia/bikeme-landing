@@ -427,9 +427,6 @@ a {
   text-decoration: none;
   white-space: nowrap;
 }
-.bike-app-club-nav a[aria-current="page"] {
-  box-shadow: var(--app-active-edge), inset 0 0 0 1px var(--app-secondary-border);
-}
 .bike-app-club-nav a:focus-visible { outline-offset: -4px; }
 @media (max-width: 760px) {
   .bike-app-club-nav { margin-inline: 16px; }
