@@ -11,9 +11,20 @@ import { galleryText } from "@/lib/clubs/gallery-i18n";
 import {contentBase,validateContent,validateReportDetail,type ContentCommand,type ContentItem} from "@/lib/clubs/content-contract";
 import type {ContentStore,ContentState} from "@/lib/clubs/content-store";
 import type {Locale} from "@/lib/locales";
+const postsViewKey = "bike-me-club-posts-view";
+const views = ["grid", "list"] as const;
+type PostsView = typeof views[number];
+
 export function ClubContentWorkspace({state,store,userId,clubId,locale,query}:{state:ContentState;store:ContentStore;userId:string;clubId:string;locale:Locale;query:string}){
  const t=getAppDictionary(locale),text=(key:ContentTextKey)=>contentText(locale,key),base=contentBase(locale,clubId),q=new URLSearchParams(query),data=state.data;
  const [confirmation,setConfirmation]=useState<{command:ContentCommand;title:ContentTextKey;body:ContentTextKey;focusId:string}|null>(null);
+ const [postsView, setPostsView] = useState<PostsView>(() => {
+  try {
+   return typeof window !== "undefined" && localStorage.getItem(postsViewKey) === "list" ? "list" : "grid";
+  } catch {
+   return "grid";
+  }
+ });
  const dialog=useRef<HTMLDialogElement>(null),editor=useRef<HTMLTextAreaElement>(null),report=useRef<HTMLSelectElement>(null),returnFocus=useRef("");
  const lastFeedback=useRef("");
  const editorKey=state.draft?.key,reportId=state.report?.id;
@@ -36,6 +47,10 @@ export function ClubContentWorkspace({state,store,userId,clubId,locale,query}:{s
     {!own&&item.kind!=="chat"?<><button id={`report-${item.id}`} disabled={locked} className="bike-app-button bike-app-button-secondary bike-app-button-small" onClick={()=>{returnFocus.current=`report-${item.id}`;store.report(item);}}>{text("report")}</button>{item.author_id?<button id={`block-${item.id}`} disabled={locked} className="bike-app-button bike-app-button-secondary bike-app-button-small" onClick={()=>confirm(command("block",{kind:item.kind,id:item.id}),"block","blockBody",`block-${item.id}`)}>{text("block")}</button>:null}</>:null}
    </div>:null}
   </article>;
+ }
+ function choosePostsView(view: PostsView) {
+  setPostsView(view);
+  try { localStorage.setItem(postsViewKey, view); } catch { /* The choice still applies to the current page. */ }
  }
  function feedQuery(){const params=new URLSearchParams();for(const key of ["beforeTime","beforeId","beforePinned"])if(q.has(key))params.set(key,q.get(key)!);return params.toString();}
  function nextHref(){const next=new URLSearchParams(query);next.delete("mode");next.delete("postId");if(!data)return base;const last=data.mode==="reports"?data.reports.at(-1):data.items.at(-1);if(!last)return base;
@@ -74,7 +89,25 @@ export function ClubContentWorkspace({state,store,userId,clubId,locale,query}:{s
   </form></AppPanel>:null}
   {data.mode==="blocked"?<AppPanel title={text("blocked")} className="bike-app-section-gap">{data.blocked.length?<ul className="bike-app-list">{data.blocked.map(peer=><li key={peer.id} className="bike-app-list-item"><strong>{peer.display_name??text("deletedAuthor")}</strong><button id={`unblock-${peer.id}`} disabled={locked} className="bike-app-button bike-app-button-secondary" onClick={()=>confirm(command("unblock",{id:peer.id}),"unblock","unblockBody",`unblock-${peer.id}`)}>{text("unblock")}</button></li>)}</ul>:<AppEmpty>{text("noBlocked")}</AppEmpty>}</AppPanel>:null}
   {data.mode==="blocked"?<AppPanel title={t("clubs.members")} className="bike-app-section-gap"><ul className="bike-app-list">{data.club.members.filter(member=>member.user_id!==userId&&!data.blocked.some(block=>block.id===member.user_id)).map(member=><li key={member.user_id} className="bike-app-list-item"><strong>{member.display_name??text("deletedAuthor")}</strong><button id={`block-member-${member.user_id}`} disabled={locked} className="bike-app-button bike-app-button-secondary" onClick={()=>confirm(command("block",{kind:"member",id:member.user_id}),"block","blockBody",`block-member-${member.user_id}`)}>{text("block")}</button></li>)}</ul></AppPanel>:null}
-  {data.mode==="posts"?<><div className="bike-app-actions bike-app-section-gap"><button id="new-content" disabled={locked} className="bike-app-button" onClick={()=>{returnFocus.current="new-content";store.edit(null);}}>{text("write")}</button></div><section className="bike-app-content-stack" aria-label={text("title")}>{data.items.length?data.items.map(item=>card(item)):<AppEmpty>{text("empty")}</AppEmpty>}</section></>:null}
+  {data.mode==="posts" ? <>
+   <div className="bike-app-actions bike-app-section-gap bike-app-posts-toolbar">
+    <button id="new-content" disabled={locked} className="bike-app-button" onClick={() => {
+     returnFocus.current = "new-content";
+     store.edit(null);
+    }}>{text("write")}</button>
+    <div className="bike-app-posts-view-picker" role="group" aria-label={text("postsView")}>
+     {views.map(view => (
+      <button key={view} type="button" className="bike-app-nav-trigger" aria-pressed={postsView === view}
+       data-active={postsView === view} onClick={() => choosePostsView(view)}>
+       {text(view === "grid" ? "gridView" : "listView")}
+      </button>
+     ))}
+    </div>
+   </div>
+   <section className="bike-app-content-stack" aria-label={text("title")} data-view={postsView}>
+    {data.items.length ? data.items.map(item => card(item)) : <AppEmpty>{text("empty")}</AppEmpty>}
+   </section>
+  </> : null}
   {data.mode==="thread"?<>{data.unavailable?<AppPanel><p>{text("unavailable")}</p></AppPanel>:data.post?<><section className="bike-app-content-stack">{card(data.post)}</section><AppPanel title={text("thread")} className="bike-app-section-gap"><button id="new-comment" disabled={locked} className="bike-app-button" onClick={()=>{returnFocus.current="new-comment";store.edit(null,data.post!.id);}}>{text("comment")}</button><section className="bike-app-content-stack">{data.items.length?data.items.map(item=>card(item)):<AppEmpty>{text("emptyComments")}</AppEmpty>}</section></AppPanel></>:null}</>:null}
   {data.mode==="reports"?<AppPanel title={text("moderation")} className="bike-app-section-gap"><div className="bike-app-actions"><a href={`${base}/moderation`}>{text("pending")}</a><a href={`${base}/moderation?closed=true`}>{text("closed")}</a></div><p className="bike-app-muted">{text("anonymous")}</p>{data.reports.length?data.reports.map(row=><article className="bike-app-content-card" key={row.id}><h3>{text(["spam","harassment","unsafe","other"].includes(row.reason)?row.reason as ContentTextKey:"other")} · {text(row.status==="pending"?"pending":row.status==="removed"?"removed":"dismissed")}</h3><time>{formatDateTime(locale,row.created_at)}</time>{row.detail?<p className="bike-app-content-body">{row.detail}</p>:null}<h4>{text("snapshot")}</h4>{"hasImageEvidence" in row?<>
     {row.target_kind==="photo_comment"?<p className="bike-app-muted">{galleryText(locale,"reportComment")}</p>:null}

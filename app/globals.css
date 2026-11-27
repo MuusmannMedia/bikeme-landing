@@ -947,6 +947,33 @@ a {
 .bike-app-content-card .bike-app-actions { margin-top:1rem; }
 @media(max-width:640px) { .bike-app-content-card {padding:1rem;} .bike-app-content-card .bike-app-actions {gap:.5rem;} }
 
+.bike-app-posts-toolbar { align-items: center; justify-content: space-between; }
+.bike-app-posts-view-picker {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--app-border);
+  border-radius: 12px;
+  background: var(--app-panel-soft);
+}
+.bike-app-posts-view-picker .bike-app-nav-trigger { justify-content: center; min-width: 60px; }
+.bike-app-content-stack[data-view="grid"] {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+.bike-app-content-stack[data-view="grid"] > .bike-app-content-card {
+  margin-top: 0;
+  padding: 1rem;
+}
+.bike-app-content-stack[data-view="grid"] > .bike-app-empty { grid-column: 1 / -1; }
+@media (min-width: 700px) {
+  .bike-app-content-stack[data-view="grid"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1080px) {
+  .bike-app-content-stack[data-view="grid"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
 /* Club shared chat: all content stays in the access boundary. */
 .bike-app-chat-scroll {height:clamp(240px,50dvh,620px);overflow:auto;overscroll-behavior:contain;overflow-anchor:none;border:1px solid var(--border, #292d40);border-radius:16px;padding:14px;scrollbar-gutter:stable;}
 .bike-app-chat-message {padding:16px 4px;border-bottom:1px solid #292d40;overflow-wrap:anywhere;}
