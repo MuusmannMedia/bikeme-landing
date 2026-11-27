@@ -1,4 +1,8 @@
 "use client";
+import Image from "next/image";
+import {ClubPostPhotos} from "./club-post-photos";
+import {postAttachmentsUrl} from "@/lib/clubs/post-attachments";
+import {postImageText} from "@/lib/clubs/post-image-i18n";
 import {ClubMenu} from "./club-menu";
 import {ClubPostImage,ClubPostImageEditor} from "./club-post-image";
 import {imageText} from "@/lib/clubs/image-i18n";
@@ -18,7 +22,7 @@ const postsViewKey = "bike-me-club-posts-view";
 const views = ["grid", "list"] as const;
 type PostsView = typeof views[number];
 
-export function ClubContentWorkspace({state,store,userId,clubId,locale,query}:{state:ContentState;store:ContentStore;userId:string;clubId:string;locale:Locale;query:string}){
+export function ClubContentWorkspace({state,store,userId,clubId,locale,query,concealed}:{state:ContentState;store:ContentStore;userId:string;clubId:string;locale:Locale;query:string;concealed:boolean}){
  const t=getAppDictionary(locale),text=(key:ContentTextKey)=>contentText(locale,key),base=contentBase(locale,clubId),q=new URLSearchParams(query),data=state.data;
  const [confirmation,setConfirmation]=useState<{command:ContentCommand;title:ContentTextKey;body:ContentTextKey;focusId:string}|null>(null);
  const [postsView, setPostsView] = useState<PostsView>(() => {
@@ -45,6 +49,7 @@ export function ClubContentWorkspace({state,store,userId,clubId,locale,query}:{s
   const isPost=item.kind==="post";
   const preview=isPost&&!readOnly&&data?.mode==="posts"?postsView:undefined;
   const href=preview?postHref(item.id):undefined;
+  const threadPost=isPost&&!readOnly&&data?.mode==="thread";
   const canPin=isPost&&data?.role!=="member";
   const menuId=`content-menu-${item.id}`;
   const actionClass=isPost?"bike-app-nav-link":"bike-app-button bike-app-button-secondary bike-app-button-small";
@@ -84,14 +89,20 @@ export function ClubContentWorkspace({state,store,userId,clubId,locale,query}:{s
    </div>:meta}
    <p className="bike-app-content-body">{item.body}</p>
    {preview==="grid"?<div className="bike-app-content-media">
-    {item.image?<ClubPostImage item={item} locale={locale}/>:<div className="bike-app-content-media-placeholder" aria-hidden="true">
+    {item.image?<ClubPostImage item={item} locale={locale}/>:item.attachmentCoverId?
+     <Image unoptimized className="bike-app-post-image" width={960} height={540} alt={postImageText(locale,"image")}
+      src={postAttachmentsUrl(clubId,item.id,item.attachmentCoverId,"thumbnail")} loading="lazy"/>:
+     <div className="bike-app-content-media-placeholder" aria-hidden="true">
      <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round">
       <rect x="3" y="4" width="18" height="16" rx="3"/>
       <circle cx="9" cy="9" r="1.5"/>
       <path d="m3 17 5-4 3 2 4-5 6 6"/>
      </svg>
     </div>}
-   </div>:!preview&&item.image?<ClubPostImage item={item} locale={locale}/>:null}
+   </div>:threadPost?<ClubPostPhotos item={item} actor={userId} locale={locale} concealed={concealed}
+    supportsAttachments={data?.postAttachments===true}
+    canUpload={own&&data?.postAttachments===true&&data.postImageUpload===true}
+    onChanged={()=>void store.refresh(true)}/>:!preview&&item.image?<ClubPostImage item={item} locale={locale}/>:null}
    {href?<a className="bike-app-content-open" aria-describedby={bylineId} href={href}>
     {text("openPost")}<span aria-hidden="true">→</span>
    </a>:null}

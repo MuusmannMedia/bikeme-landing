@@ -406,6 +406,7 @@ a {
 .bike-app-club-header h1 { overflow-wrap: anywhere; }
 .bike-app-club-nav {
   display: flex;
+  gap: var(--space-actions);
   margin: 0 24px 22px;
   overflow-x: auto;
 }
@@ -1315,6 +1316,7 @@ a {
   overflow: auto;
 }
 [data-gallery-concealed] { visibility: hidden; }
+.bike-app-content-card > .bike-app-gallery-dialog { margin-block: auto; }
 .bike-app-gallery-dialog-content { display: contents; }
 .bike-app-gallery-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
 .bike-app-gallery-dialog-header h2 { margin: 0; }

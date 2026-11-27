@@ -53,11 +53,13 @@ export function createClubContentApi(client:SupabaseClient,actor:string,allowCha
     .catch(error=>{if(contentError(error).kind==="unavailable")return null;throw error;});
    if(images){
     snapshot.postImageUpload=postImageUploadsEnabled();
+    snapshot.postAttachments=images.attachmentsSupported===true;
     for(const post of posts){
      const image=images[post.id];
      if(image&&typeof image.revision==="string"&&isClubId(image.revision)&&isPostImageFrame(image.frame)){
       post.image={revision:image.revision,frame:image.frame};
      }
+     if(typeof image?.attachment==="string"&&isClubId(image.attachment))post.attachmentCoverId=image.attachment;
     }
    }
   }

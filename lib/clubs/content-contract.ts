@@ -1,13 +1,13 @@
 import type { Club, ClubRole } from "./types";
 import type { PostImageChoice, PostImageInfo, PostImageUpload } from "./post-image";
 export type ContentKind="post"|"comment"|"chat";
-export type ContentItem={kind:ContentKind|"chat";id:string;club_id:string;post_id:string;author_id:string|null;display_name:string|null;body:string;created_at:string;edited_at:string|null;version:number;is_pinned:boolean;comment_count:number;image?:PostImageInfo};
+export type ContentItem={kind:ContentKind|"chat";id:string;club_id:string;post_id:string;author_id:string|null;display_name:string|null;body:string;created_at:string;edited_at:string|null;version:number;is_pinned:boolean;comment_count:number;image?:PostImageInfo;attachmentCoverId?:string};
 type ReportMetadata = { id:string;club_id:string;target_id:string;reason:string;detail:string;status:"pending"|"removed"|"dismissed";created_at:string;resolved_at:string|null };
 export type ContentReport = ReportMetadata & (
  {target_kind:ContentItem["kind"];snapshot:ContentItem;content:ContentItem|null;context:ContentItem[]} |
  {target_kind:"photo"|"photo_comment";snapshot:{text:string;author:string|null};hasImageEvidence:boolean}
 );
-export type ContentSnapshot={club:Club;role:ClubRole;visibilityRevision:number;mode:"posts"|"thread"|"reports"|"blocked";items:ContentItem[];post:ContentItem|null;reports:ContentReport[];blocked:{id:string;display_name:string|null}[];hasMore:boolean;unavailable:boolean;editorItem:ContentItem|null;postImageUpload?:boolean};
+export type ContentSnapshot={club:Club;role:ClubRole;visibilityRevision:number;mode:"posts"|"thread"|"reports"|"blocked";items:ContentItem[];post:ContentItem|null;reports:ContentReport[];blocked:{id:string;display_name:string|null}[];hasMore:boolean;unavailable:boolean;editorItem:ContentItem|null;postImageUpload?:boolean;postAttachments?:boolean};
 export type ContentErrorKind="auth"|"access"|"blocked"|"contentRejected"|"invalid"|"image"|"unavailable"|"conflict"|"network";
 export class ContentError extends Error {constructor(public readonly kind:ContentErrorKind){super(kind);}}
 export function contentError(error:unknown):ContentError {

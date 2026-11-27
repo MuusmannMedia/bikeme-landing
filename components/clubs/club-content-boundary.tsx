@@ -40,5 +40,5 @@ export function ClubContentBoundary({userId,clubId,locale,query}:{userId:string;
   const timer=setInterval(refresh.check,60000),poll=setInterval(()=>void revision(),10000);refresh.check();
   return()=>{live=false;stopSignals();refresh.stop();controllers.forEach(c=>c.abort());clearInterval(timer);clearInterval(poll);auth?.unsubscribe();store.stop();window.removeEventListener("focus",verify);window.removeEventListener("blur",refresh.deactivate);document.removeEventListener("visibilitychange",visibility);window.removeEventListener("pagehide",refresh.suspend);window.removeEventListener("pageshow",restored);window.removeEventListener("storage",storage);window.removeEventListener(CLUB_AUTH_EVENT,local);};
  },[store,userId,bindContinuity]);
- return <AccessContinuity {...continuity} locale={locale}><ClubContentWorkspace state={state} store={store} userId={userId} clubId={clubId} locale={locale} query={query}/></AccessContinuity>;
+ return <AccessContinuity {...continuity} locale={locale}><ClubContentWorkspace state={state} store={store} userId={userId} clubId={clubId} locale={locale} query={query} concealed={continuity.concealed}/></AccessContinuity>;
 }

@@ -10,7 +10,7 @@ import { imageSourceDimensions, requireCompleteStaticImage } from "./image-brows
 import { isClubId } from "./types";
 import { signGalleryUpload } from "./gallery-upload-signature";
 
-function galleryUploadKey() {
+export function galleryUploadKey() {
   const key = process.env.BIKE_ME_GALLERY_UPLOAD_HMAC_KEY?.trim();
   if (!key || !/^[a-f0-9]{64}$/.test(key)) throw new GalleryError("uploadUnavailable");
   return Buffer.from(key, "hex");
@@ -59,6 +59,26 @@ export async function galleryBody(request: NextRequest, limit: number) {
   }
 }
 
+export async function galleryUploadBytes(files: File[], web: boolean) {
+  if (!files.every(file => file instanceof File && file.size > 0)) throw new GalleryError("image");
+  if (web && files.some(file => file.size > galleryLimits.browserInput)) throw new GalleryError("size");
+  if (files.reduce((sum, file) => sum + file.size, 0) > galleryLimits.input) throw new GalleryError("size");
+
+  const bytes = await Promise.all(files.map(async file => new Uint8Array(await file.arrayBuffer())));
+  for (const file of bytes) {
+    try {
+      const size = imageSourceDimensions(file);
+      requireCompleteStaticImage(file);
+      if (!size.width || !size.height || size.width * size.height > galleryLimits.pixels) throw new GalleryError("image");
+      if (web && Math.max(size.width, size.height) > galleryLimits.browserEdge) throw new GalleryError("size");
+    } catch (error) {
+      if (error instanceof GalleryError) throw error;
+      throw new GalleryError("image");
+    }
+  }
+  return bytes;
+}
+
 export async function saveGalleryUpload(
   request: NextRequest, client: SupabaseClient, actor: string, clubId: string, mime: string, source: "web" | "mobile",
 ) {
@@ -77,22 +97,7 @@ export async function saveGalleryUpload(
   const captions = form.getAll("caption").map(galleryCaption);
   if (typeof requestId !== "string" || !isClubId(requestId) || !files.length ||
       files.length > galleryLimits.batch || files.length !== captions.length) throw new GalleryError("invalid");
-  if (!files.every(file => file instanceof File && file.size > 0)) throw new GalleryError("image");
-  if (web && files.some(file => file.size > galleryLimits.browserInput)) throw new GalleryError("size");
-  if (files.reduce((sum, file) => sum + file.size, 0) > galleryLimits.input) throw new GalleryError("size");
-
-  const bytes = await Promise.all(files.map(async file => new Uint8Array(await file.arrayBuffer())));
-  for (const file of bytes) {
-    try {
-      const size = imageSourceDimensions(file);
-      requireCompleteStaticImage(file);
-      if (!size.width || !size.height || size.width * size.height > galleryLimits.pixels) throw new GalleryError("image");
-      if (web && Math.max(size.width, size.height) > galleryLimits.browserEdge) throw new GalleryError("size");
-    } catch (error) {
-      if (error instanceof GalleryError) throw error;
-      throw new GalleryError("image");
-    }
-  }
+  const bytes = await galleryUploadBytes(files, web);
   const fingerprint = JSON.stringify(bytes.map((file, index) => [
     captions[index], createHash("sha256").update(file).digest("hex"),
   ]));
