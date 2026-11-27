@@ -121,11 +121,18 @@ export function ClubContentWorkspace({state,store,userId,clubId,locale,query}:{s
   ? [data?.editorItem,data?.post,...(data?.items??[])].find(item=>item?.id===state.draft?.id)??undefined
   : undefined;
  const errorKey:ContentTextKey=state.error==="contentRejected"?"contentRejected":state.error==="conflict"?"conflict":state.error==="invalid"?"invalid":state.error==="unavailable"?"unavailable":state.error==="access"||state.error==="auth"||state.error==="blocked"?"access":"network";
+ const moderationLinks=<>
+  <a className="bike-app-button bike-app-button-secondary" href={`${base}/blocked`}>{text("blocked")}</a>
+  {data?.role!=="member"?<a className="bike-app-button bike-app-button-secondary" href={`${base}/moderation`}>{text("moderation")}</a>:null}
+ </>;
  return <div data-club-access={state.status} data-club-data={data?"present":"empty"}>
  <StableAccessRegion denied={state.status==='access'||state.status==='auth'} ready={ready} fallback={state.status==="access"?<ClubAccessDenied locale={locale}/>:state.status==="error"?<ClubReadFailure locale={locale} kind="network" retryHref="" onRetry={()=>void store.refresh()}/>:<div className="bike-app-club-gate" role="status">{t("clubs.loading")}</div>}>
   {ready&&data?<>
   <ClubHeader club={data.club} locale={locale} selected="posts"/>
-  <div className="bike-app-actions">{data.mode!=="posts"?<a className="bike-app-button bike-app-button-secondary" href={`${base}${data.mode==="thread"&&feedQuery()?`?${feedQuery()}`:""}`}>{text("back")}</a>:null}<a className="bike-app-button bike-app-button-secondary" href={`${base}/blocked`}>{text("blocked")}</a>{data.role!=="member"?<a className="bike-app-button bike-app-button-secondary" href={`${base}/moderation`}>{text("moderation")}</a>:null}</div>
+  {data.mode!=="posts"?<div className="bike-app-actions">
+   <a className="bike-app-button bike-app-button-secondary" href={`${base}${data.mode==="thread"&&feedQuery()?`?${feedQuery()}`:""}`}>{text("back")}</a>
+   {moderationLinks}
+  </div>:null}
   {state.error?<p id="content-error" tabIndex={-1} className="bike-app-content-feedback" role="alert">{state.error==="image"?imageText(locale,"invalid"):text(errorKey)}</p>:null}
   {state.notice?<p id="content-notice" tabIndex={-1} className="bike-app-content-feedback" role="status">{text(state.notice as ContentTextKey)}</p>:null}
   {state.pending?<button className="bike-app-button bike-app-section-gap" disabled={state.busy} onClick={()=>void store.retry()}>{text(state.busy?"busy":"retryAction")}</button>:null}
@@ -152,10 +159,13 @@ export function ClubContentWorkspace({state,store,userId,clubId,locale,query}:{s
   {data.mode==="blocked"?<AppPanel title={t("clubs.members")} className="bike-app-section-gap"><ul className="bike-app-list">{data.club.members.filter(member=>member.user_id!==userId&&!data.blocked.some(block=>block.id===member.user_id)).map(member=><li key={member.user_id} className="bike-app-list-item"><strong>{member.display_name??text("deletedAuthor")}</strong><button id={`block-member-${member.user_id}`} disabled={locked} className="bike-app-button bike-app-button-secondary" onClick={()=>confirm(command("block",{kind:"member",id:member.user_id}),"block","blockBody",`block-member-${member.user_id}`)}>{text("block")}</button></li>)}</ul></AppPanel>:null}
   {data.mode==="posts" ? <>
    <div className="bike-app-actions bike-app-section-gap bike-app-posts-toolbar">
-    <button id="new-content" disabled={locked} className="bike-app-button" onClick={() => {
-     returnFocus.current = "new-content";
-     store.edit(null);
-    }}>{text("write")}</button>
+    <div className="bike-app-actions">
+     <button id="new-content" disabled={locked} className="bike-app-button" onClick={() => {
+      returnFocus.current = "new-content";
+      store.edit(null);
+     }}>{text("write")}</button>
+     {moderationLinks}
+    </div>
     <div className="bike-app-posts-view-picker" role="group" aria-label={text("postsView")}>
      {views.map(view => (
       <button key={view} type="button" className="bike-app-nav-trigger" aria-pressed={postsView === view}
